@@ -1,0 +1,505 @@
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Le Séquenceur — 🇬🇧 🇺🇸 🇪🇸 🇩🇪</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📝</text></svg>">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Playfair+Display:wght@700;800&display=swap');
+
+:root {
+  --bg:#0f1729;--panel:#1a2340;--card:#232e50;--border:rgba(255,255,255,0.08);
+  --text:#e2e8f0;--text-muted:#8892b0;--preview-bg:#111827;
+  --glow:rgba(62,207,142,0.15);--shadow-sheet:0 8px 48px rgba(0,0,0,0.5);
+  --scrollbar:rgba(255,255,255,0.12);--toggle-bg:#232e50;
+  --accent:#3ecf8e;--accent2:#6c63ff;--accent3:#f97316;--accent4:#06b6d4;--accent5:#ec4899;
+  --radius:12px;--radius-sm:8px;
+}
+[data-theme="light"] {
+  --bg:#f0f2f5;--panel:#ffffff;--card:#f0f2f5;--border:rgba(0,0,0,0.09);
+  --text:#1e293b;--text-muted:#64748b;--preview-bg:#e5e7eb;
+  --glow:rgba(62,207,142,0.18);--shadow-sheet:0 8px 32px rgba(0,0,0,0.12);
+  --scrollbar:rgba(0,0,0,0.15);--toggle-bg:#e2e8f0;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;transition:background .3s,color .3s}
+
+.app-header{background:var(--panel);border-bottom:1px solid var(--border);padding:12px 28px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;transition:background .3s}
+.logo{display:flex;align-items:center;gap:12px}
+.logo-icon{width:40px;height:40px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;box-shadow:0 4px 16px rgba(62,207,142,0.3)}
+.logo-flags{font-size:24px;display:flex;gap:6px;align-items:center;user-select:none;margin-left:8px}
+.logo-text{font-family:'Playfair Display',serif;font-size:22px;font-weight:800;background:linear-gradient(135deg,var(--accent),var(--accent4));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.logo-sub{font-size:12px;color:var(--text-muted);letter-spacing:1px;text-transform:uppercase}
+.header-actions{display:flex;gap:8px;align-items:center}
+
+.theme-toggle{background:var(--toggle-bg);border:1px solid var(--border);border-radius:20px;width:56px;height:28px;cursor:pointer;position:relative;transition:background .3s;flex-shrink:0}
+.theme-toggle::after{content:'🌙';position:absolute;top:2px;left:2px;width:24px;height:24px;border-radius:50%;background:var(--accent2);display:flex;align-items:center;justify-content:center;font-size:13px;transition:all .3s;box-shadow:0 2px 8px rgba(0,0,0,0.2)}
+[data-theme="light"] .theme-toggle::after{content:'☀️';left:30px;background:var(--accent3)}
+
+.btn{border:none;border-radius:var(--radius-sm);font-weight:700;font-size:13px;cursor:pointer;display:flex;align-items:center;gap:6px;transition:all .2s;font-family:inherit;padding:9px 18px}
+.btn-export{background:linear-gradient(135deg,var(--accent),#2ba86e);color:#fff;box-shadow:0 4px 16px rgba(62,207,142,0.3)}
+.btn-export:hover{transform:translateY(-1px);box-shadow:0 6px 24px rgba(62,207,142,0.4)}
+.btn-word{background:linear-gradient(135deg,var(--accent2),#5a52e0);color:#fff;box-shadow:0 4px 16px rgba(108,99,255,0.3)}
+.btn-word:hover{transform:translateY(-1px);box-shadow:0 6px 24px rgba(108,99,255,0.4)}
+.btn-reset{background:rgba(128,128,128,0.12);color:var(--text-muted);border:1px solid var(--border)}
+.btn-reset:hover{background:rgba(128,128,128,0.2);color:var(--text)}
+
+.main-container{display:grid;grid-template-columns:440px 1fr;gap:0;min-height:calc(100vh - 52px)}
+.editor-panel{background:var(--panel);border-right:1px solid var(--border);padding:20px 22px;overflow-y:auto;max-height:calc(100vh - 52px);transition:background .3s}
+.editor-panel::-webkit-scrollbar{width:5px}
+.editor-panel::-webkit-scrollbar-track{background:transparent}
+.editor-panel::-webkit-scrollbar-thumb{background:var(--scrollbar);border-radius:3px}
+
+.section-label{font-size:10px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--accent);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.section-label::before{content:'';width:16px;height:2px;background:var(--accent);border-radius:1px}
+.section-label.purple{color:var(--accent2)}.section-label.purple::before{background:var(--accent2)}
+.section-label.orange{color:var(--accent3)}.section-label.orange::before{background:var(--accent3)}
+.section-label.cyan{color:var(--accent4)}.section-label.cyan::before{background:var(--accent4)}
+.section-label.pink{color:var(--accent5)}.section-label.pink::before{background:var(--accent5)}
+
+.field-group{margin-bottom:14px}
+.field-label{font-size:11px;font-weight:600;color:var(--text-muted);margin-bottom:5px;display:block}
+.field-input,.field-select,.field-textarea{width:100%;background:var(--card);border:1px solid var(--border);color:var(--text);padding:9px 12px;border-radius:var(--radius-sm);font-family:inherit;font-size:13px;transition:all .2s;outline:none}
+.field-input:focus,.field-select:focus,.field-textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--glow)}
+.field-select{cursor:pointer;appearance:none;padding-right:32px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%238892b0'%3E%3Cpath d='M6 8L1 3h10z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center}
+.field-textarea{resize:vertical;min-height:56px}
+.select-with-add{display:flex;gap:6px;align-items:stretch}
+.select-with-add .field-select, .select-with-add .field-input{flex:1;min-width:0}
+.btn-add{color:#fff;border:none;width:36px;min-width:36px;border-radius:var(--radius-sm);font-size:20px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0}
+.btn-add:hover{transform:scale(1.08)}.btn-add:active{transform:scale(0.95)}
+.btn-add.v{background:linear-gradient(135deg,var(--accent2),#8b7cf7);box-shadow:0 2px 10px rgba(108,99,255,0.3)}
+.btn-add.g{background:linear-gradient(135deg,var(--accent),#2ba86e);box-shadow:0 2px 10px rgba(62,207,142,0.3)}
+.btn-add.o{background:linear-gradient(135deg,var(--accent3),#e8590c);box-shadow:0 2px 10px rgba(249,115,22,0.3)}
+.btn-add.c{background:linear-gradient(135deg,var(--accent4),#0891b2);box-shadow:0 2px 10px rgba(6,182,212,0.3)}
+.btn-add.p{background:linear-gradient(135deg,var(--accent5),#be185d);box-shadow:0 2px 10px rgba(236,72,153,0.3)}
+.divider{height:1px;background:var(--border);margin:18px 0}
+
+.added-tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px}
+.tag{padding:3px 9px;border-radius:16px;font-size:10.5px;font-weight:600;display:flex;align-items:center;gap:5px;animation:tagIn .25s ease;max-width:100%;line-height:1.4}
+.tag .tl{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:280px}
+.tag .tr{cursor:pointer;opacity:.5;font-size:13px;line-height:1;transition:opacity .15s;flex-shrink:0}
+.tag .tr:hover{opacity:1}
+.tag.v{background:rgba(108,99,255,0.15);color:#a5a0ff}
+.tag.g{background:rgba(62,207,142,0.15);color:#6ee7b7}
+.tag.o{background:rgba(249,115,22,0.15);color:#fdba74}
+.tag.c{background:rgba(6,182,212,0.15);color:#67e8f9}
+.tag.p{background:rgba(236,72,153,0.15);color:#f9a8d4}
+[data-theme="light"] .tag.v{background:rgba(108,99,255,0.1);color:#4f46e5}
+[data-theme="light"] .tag.g{background:rgba(62,207,142,0.1);color:#059669}
+[data-theme="light"] .tag.o{background:rgba(249,115,22,0.1);color:#c2410c}
+[data-theme="light"] .tag.c{background:rgba(6,182,212,0.1);color:#0e7490}
+[data-theme="light"] .tag.p{background:rgba(236,72,153,0.1);color:#be185d}
+@keyframes tagIn{from{opacity:0;transform:scale(.8)}to{opacity:1;transform:scale(1)}}
+
+.preview-panel{background:var(--preview-bg);padding:28px;overflow-y:auto;max-height:calc(100vh - 52px);display:flex;justify-content:center;align-items:flex-start;transition:background .3s}
+.a4-sheet{background:#fff;width:210mm;min-height:297mm;padding:24mm 20mm;box-shadow:var(--shadow-sheet);border-radius:4px;color:#1e293b;position:relative;flex-shrink:0}
+.a4-badge{position:absolute;top:16mm;right:20mm;background:linear-gradient(135deg,#1e3a5f,#2d5a8e);color:#fff;padding:4px 14px;border-radius:16px;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase}
+.a4-title{font-family:'Playfair Display',serif;font-size:24px;font-weight:800;color:#1e293b;text-align:center;margin-bottom:6px;line-height:1.3;padding:0 50px}
+.a4-prob{text-align:center;font-style:italic;color:#475569;font-size:13px;margin-bottom:20px;padding:8px 16px;border-left:3px solid var(--accent2);border-right:3px solid var(--accent2);background:#f8fafc;border-radius:4px}
+.a4-sec{margin-bottom:14px}
+.a4-sec-title{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;padding:6px 12px;border-radius:5px;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.a4-sec-title.culture{background:linear-gradient(135deg,#ede9fe,#e0e7ff);color:#4338ca}
+.a4-sec-title.grammar{background:linear-gradient(135deg,#d1fae5,#ccfbf1);color:#065f46}
+.a4-sec-title.lexique{background:linear-gradient(135deg,#dbeafe,#e0f2fe);color:#1e40af}
+.a4-sec-title.phono{background:linear-gradient(135deg,#fee2e2,#fef3c7);color:#b45309}
+.a4-sec-title.pragma{background:linear-gradient(135deg,#fce7f3,#fae8ff);color:#9333ea}
+.a4-sec-title.comp{background:linear-gradient(135deg,#ecfdf5,#f0fdf4);color:#166534}
+.a4-list{list-style:none;padding:0}
+.a4-list li{font-size:11px;color:#334155;padding:3px 0 3px 16px;position:relative;line-height:1.5}
+.a4-list li::before{content:'▸';position:absolute;left:3px;font-weight:bold}
+.a4-list.v li::before{color:#6c63ff}.a4-list.g li::before{color:#10b981}
+.a4-list.b li::before{color:#3b82f6}.a4-list.o li::before{color:#f59e0b}
+.a4-list.p li::before{color:#a855f7}.a4-list.t li::before{color:#06b6d4}
+.a4-empty{color:#94a3b8;font-style:italic;font-size:11px;padding:6px 0;text-align:center}
+.a4-sub{margin-bottom:6px;padding-left:4px}
+.a4-sub-title{font-size:10px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.8px;margin-bottom:2px}
+.a4-footer{position:absolute;bottom:12mm;left:20mm;right:20mm;text-align:center;font-size:8px;color:#cbd5e1;border-top:1px solid #e2e8f0;padding-top:6px}
+
+@media print{
+  body{background:#fff!important}
+  .app-header,.editor-panel{display:none!important}
+  .main-container{display:block!important}
+  .preview-panel{display:block!important;background:#fff!important;padding:0!important;max-height:none!important}
+  .a4-sheet{box-shadow:none!important;border-radius:0!important;margin:0!important;width:210mm;min-height:297mm}
+  @page{size:A4;margin:0}
+}
+@media(max-width:1100px){
+  .main-container{grid-template-columns:1fr}
+  .editor-panel{max-height:none;border-right:none;border-bottom:1px solid var(--border)}
+  .preview-panel{padding:16px;max-height:none}
+  .a4-sheet{width:100%;min-height:auto;padding:20px 16px}
+}
+</style>
+</head>
+<body data-theme="light">
+
+<header class="app-header">
+  <div class="logo">
+    <div class="logo-icon">🎯</div>
+    <div>
+      <div class="logo-text">Le Séquenceur</div>
+      <div class="logo-sub">Anglais Collège</div>
+    </div>
+    <div class="logo-flags">
+      <span>🇬🇧</span>
+      <span>🇺🇸</span>
+      <span title="Ça arrive bientôt" style="cursor:help; opacity:0.4; filter:grayscale(50%);">🇪🇸</span>
+      <span title="Ça arrive bientôt" style="cursor:help; opacity:0.4; filter:grayscale(50%);">🇩🇪</span>
+    </div>
+  </div>
+  <div class="header-actions">
+    <div class="theme-toggle" onclick="toggleTheme()" title="Changer de thème"></div>
+    <button class="btn btn-reset" onclick="resetAll()">↺ Reset</button>
+    <button class="btn btn-word" onclick="exportWord()">📝 Exporter Word</button>
+    <button class="btn btn-export" onclick="window.print()">📄 Exporter PDF</button>
+  </div>
+</header>
+
+<div class="main-container">
+  <div class="editor-panel">
+    <div class="section-label">Configuration</div>
+    <div class="field-group"><label class="field-label">Niveau</label><select class="field-select" id="niveau" onchange="onNiveauChange()"><option value="">— Choisir un niveau —</option><option value="6ème">6ème</option><option value="5ème">5ème</option><option value="4ème">4ème</option><option value="3ème">3ème</option></select></div>
+    <div class="field-group"><label class="field-label">Titre de la séquence</label><input class="field-input" id="titre" placeholder="Ex : My Home, My Castle" oninput="updatePreview()"></div>
+    <div class="field-group"><label class="field-label">Problématique</label><textarea class="field-textarea" id="problematique" placeholder="Ex : How do homes reflect culture and identity?" oninput="updatePreview()"></textarea></div>
+
+    <div class="divider"></div>
+    <div class="section-label purple">Ancrage Culturel</div>
+    <div class="field-group"><label class="field-label">Axe culturel</label>
+      <div class="select-with-add">
+        <select class="field-select" id="axe" onchange="onAxeChange()"><option value="">— Choisir d'abord un niveau —</option></select>
+        <button class="btn-add v" onclick="addItem('axe','axe','v')">+</button>
+      </div>
+      <div class="added-tags" id="tags-axe"></div>
+    </div>
+    <div class="field-group"><label class="field-label">Objet d'étude</label><div class="select-with-add"><select class="field-select" id="objet"><option value="">— Choisir d'abord un axe —</option></select><button class="btn-add v" onclick="addItem('objet','culture','v')">+</button></div><div class="added-tags" id="tags-culture"></div></div>
+
+    <div class="divider"></div>
+    <div class="section-label cyan">Compétences Langagières</div>
+    <div class="field-group"><label class="field-label">Compréhension orale (CO)</label><div class="select-with-add"><select class="field-select" id="comp_co"><option value="">— Choisir un niveau —</option></select><button class="btn-add c" onclick="addItem('comp_co','comp_co','c')">+</button></div><div class="added-tags" id="tags-comp_co"></div></div>
+    <div class="field-group"><label class="field-label">Compréhension écrite (CE)</label><div class="select-with-add"><select class="field-select" id="comp_ce"><option value="">— Choisir un niveau —</option></select><button class="btn-add c" onclick="addItem('comp_ce','comp_ce','c')">+</button></div><div class="added-tags" id="tags-comp_ce"></div></div>
+    <div class="field-group"><label class="field-label">Production orale (PO)</label><div class="select-with-add"><select class="field-select" id="comp_po"><option value="">— Choisir un niveau —</option></select><button class="btn-add c" onclick="addItem('comp_po','comp_po','c')">+</button></div><div class="added-tags" id="tags-comp_po"></div></div>
+    <div class="field-group"><label class="field-label">Production écrite (PE)</label><div class="select-with-add"><select class="field-select" id="comp_pe"><option value="">— Choisir un niveau —</option></select><button class="btn-add c" onclick="addItem('comp_pe','comp_pe','c')">+</button></div><div class="added-tags" id="tags-comp_pe"></div></div>
+    <div class="field-group"><label class="field-label">Interaction orale (PEC)</label><div class="select-with-add"><select class="field-select" id="comp_pec"><option value="">— Choisir un niveau —</option></select><button class="btn-add c" onclick="addItem('comp_pec','comp_pec','c')">+</button></div><div class="added-tags" id="tags-comp_pec"></div></div>
+
+    <div class="divider"></div>
+    <div class="section-label">Objectifs Linguistiques</div>
+    
+    <div class="field-group">
+      <label class="field-label">Grammaire</label>
+      <div class="select-with-add" style="margin-bottom: 6px;">
+        <select class="field-select" id="grammaire"><option value="">— Choisir un niveau —</option></select>
+        <button class="btn-add g" onclick="addItem('grammaire','grammar','g')">+</button>
+      </div>
+      <div class="select-with-add">
+        <input type="text" class="field-input" id="grammaire-custom" placeholder="...ou ajoutez un objectif libre">
+        <button class="btn-add g" onclick="addCustomItem('grammaire-custom','grammar','g')">+</button>
+      </div>
+      <div class="added-tags" id="tags-grammar"></div>
+    </div>
+    
+    <div class="field-group">
+      <label class="field-label">Lexique</label>
+      <div class="select-with-add" style="margin-bottom: 6px;">
+        <select class="field-select" id="lexique"><option value="">— Choisir un niveau —</option></select>
+        <button class="btn-add v" onclick="addItem('lexique','lexique','v')">+</button>
+      </div>
+      <div class="select-with-add">
+        <input type="text" class="field-input" id="lexique-custom" placeholder="...ou ajoutez un objectif libre">
+        <button class="btn-add v" onclick="addCustomItem('lexique-custom','lexique','v')">+</button>
+      </div>
+      <div class="added-tags" id="tags-lexique"></div>
+    </div>
+
+    <div class="divider"></div>
+    <div class="section-label orange">Phonologie</div>
+    <div class="field-group"><div class="select-with-add"><select class="field-select" id="phonologie"><option value="">— Choisir un niveau —</option></select><button class="btn-add o" onclick="addItem('phonologie','phono','o')">+</button></div><div class="added-tags" id="tags-phono"></div></div>
+
+    <div class="divider"></div>
+    <div class="section-label pink">Pragmatique</div>
+    <div class="field-group"><div class="select-with-add"><select class="field-select" id="pragmatique"><option value="">— Choisir un niveau —</option></select><button class="btn-add p" onclick="addItem('pragmatique','pragma','p')">+</button></div><div class="added-tags" id="tags-pragma"></div></div>
+    <div style="height:40px"></div>
+  </div>
+
+  <div class="preview-panel">
+    <div class="a4-sheet" id="a4">
+      <div class="a4-badge" id="a4-badge" style="display:none"></div>
+      <div class="a4-title" id="a4-title">Titre de la séquence</div>
+      <div class="a4-prob" id="a4-prob" style="display:none"></div>
+      <div class="a4-sec"><div class="a4-sec-title culture">📚 Ancrage Culturel</div>
+        <div id="a4-axe"></div>
+        <div id="a4-culture"><div class="a4-empty">Ajoutez des axes ou objets d'étude</div></div>
+      </div>
+      <div class="a4-sec"><div class="a4-sec-title comp">🎧 Compétences Langagières</div><div id="a4-comp"><div class="a4-empty">Ajoutez des compétences (CO, CE, PO, PE, PEC)</div></div></div>
+      <div class="a4-sec"><div class="a4-sec-title grammar">📝 Grammaire</div><div id="a4-grammar"><div class="a4-empty">Ajoutez des points de grammaire</div></div></div>
+      <div class="a4-sec"><div class="a4-sec-title lexique">📖 Lexique</div><div id="a4-lexique"><div class="a4-empty">Ajoutez des champs lexicaux</div></div></div>
+      <div class="a4-sec"><div class="a4-sec-title phono">🔊 Phonologie</div><div id="a4-phono"><div class="a4-empty">Ajoutez des objectifs phonologiques</div></div></div>
+      <div class="a4-sec"><div class="a4-sec-title pragma">💬 Pragmatique</div><div id="a4-pragma"><div class="a4-empty">Ajoutez des éléments pragmatiques</div></div></div>
+      <div class="a4-footer">Le Séquenceur — Outil de planification pédagogique</div>
+    </div>
+  </div>
+</div>
+
+<script>
+const AXES = {
+  "6ème": {
+    "Axe 1. Personnes et personnages": ["Journal de bord et journal intime", "Familles fictives et réelles", "Les animaux à l'origine de leçons de vie dans les fictions", "Masques et costumes"],
+    "Axe 2. Le quotidien : vivre, jouer, apprendre": ["Les lieux de vie des élèves des pays anglophones", "Sports populaires et traditionnels", "L'école et son organisation", "Les vacances aux États-Unis et leurs spécificités"],
+    "Axe 3. Pays et paysages": ["À la découverte du fleuve Mississippi", "Les Highlands en Écosse", "Les parcs nationaux du Kenya, avec leur faune et flore", "Mers et océans dans les pays anglophones, un bain linguistique"],
+    "Axe 4. Imaginaire, contes et légendes": ["L'image du dragon", "L'Irlande, terre de mythes et de légendes", "It's a kind of magic : sorciers et magiciens dans le folklore et la fiction", "L'univers poétique et farfelu du Dr. Seuss"],
+    "Axe 5. Arts et expression des sentiments": ["Réalité augmentée, un regard sur l'art", "Le pouvoir évocateur de la musique", "L'imagerie des fêtes de fin d'année", "Supercalifragilisticexpialidocious et la musicalité de la langue anglaise"]
+  },
+  "5ème": {
+    "Axe 1. Portrait, autoportrait": ["Les yearbooks et la valorisation des talents des élèves", "Les familles présidentielles américaines", "The National Portrait Gallery : l'histoire britannique en image", "Écrire sur soi et sur les autres : l'espace intime et ludique de la poésie"],
+    "Axe 2. Le quotidien : lieux, rythmes, saisons": ["Les rythmes et saisons à travers la peinture", "Les vacances au rythme des saisons", "Rythmes de vie : les moyens de déplacement", "Autour de la table"],
+    "Axe 3. Le réel et l'imaginaire": ["Mondes réels, mondes rêvés : de la cité idéale de la famille Cadbury à l'imaginaire de Roald Dahl", "Un imaginaire nourri de clichés : les images véhiculées par les médias sur les pays anglophones", "L'imaginaire pour penser le réel dans la littérature fantastique", "Rêveries initiatiques (naviguer avec Mark Twain)"],
+    "Axe 4. École et loisirs": ["Découvrir des formes scolaires inhabituelles", "Des cliques aux fraternités et sororités", "Les clubs à l'école", "Représenter, raconter l'école dans les œuvres littéraires et cinématographiques"],
+    "Axe 5. Des langues, des lieux, des histoires": ["Migrations : lieux de passage, lieux de mémoire", "Écrire sur la ville, écrire dans la ville", "Une langue, des déclinaisons : comprendre l'évolution de la langue anglaise", "Un patrimoine, des histoires : l'exemple de Columbus Day, Thanksgiving ou Juneteenth"],
+    "Axe 6. Le Royaume-Uni": ["Découvrir le patrimoine britannique grâce au National Trust", "Du Nord au Sud : Un Royaume-Uni aux multiples identités", "La famille royale à travers son iconographie", "La BBC, une institution dans la vie des familles britanniques"]
+  },
+  "4ème": {
+    "Axe 1. Sport et société": ["NCAA, le sport universitaire aux États-Unis", "Le hockey sur glace : une institution au Canada", "Le cricket dans les pays du Commonwealth", "Aussie Rules football : incarner les valeurs de la société australienne par le sport"],
+    "Axe 2. Voyages et explorations": ["La fin de l'ère héroïque de l'exploration : Ernest Shackleton et l'Endurance", "Les grands voyages de découverte : Captain Cook", "L'Empire britannique : Stanley et Livingstone", "La conquête spatiale : l'espace de tous les possibles"],
+    "Axe 3. Villes, villages, quartiers": ["Melbourne, the Garden City", "Soweto, Johannesburg, et la lutte contre l'apartheid", "Poundbury, Dorset : ville nouvelle", "Les gated communities aux États-Unis : une nouvelle forme de ségrégation ?"],
+    "Axe 4. Inventer, innover, créer": ["La création artistique pour sensibiliser notre regard", "La mode à l'avant-garde", "Révolution numérique et évolution sociale", "Le génie à l'œuvre : comment la figure de l'inventeur reflète-t-elle les transformations des sociétés ?"],
+    "Axe 5. Langages et messages artistiques": ["La musique, langage artistique et politique", "La mécanique du gag", "Des planches aux plateaux de cinéma", "Tradition et modernité : la transmission des traditions par l'art"],
+    "Axe 6. L'Irlande": ["Céad míle fáilte, bienvenue cent mille fois : l'Irlande, terre d'accueil", "Les traditions irlandaises à l'heure de la modernité", "L'Irlande sur la scène européenne", "The Wild Atlantic Way : une route source d'inspiration"]
+  },
+  "3ème": {
+    "Axe 1. À la rencontre de l'autre": ["La rencontre dans les œuvres de fiction ou les œuvres d'art", "Les couples célèbres", "L'expérience de la marginalité vue par les artistes du monde anglophone", "Rencontre entre les peuples : James Cook et les Maoris, entre violence et réconciliation"],
+    "Axe 2. Travailler hier, aujourd'hui, demain": ["Le travail des enfants a-t-il vraiment disparu dans tous les pays de l'aire anglophone ?", "L'organisation du travail : les États-Unis, un laboratoire", "Dépasser les stéréotypes et les assignations", "Teen jobs : les « petits boulots » des adolescents américains hier et aujourd'hui"],
+    "Axe 3. Voyages et migrations": ["Migrations internes aux États-Unis", "Migration vers l'Australie", "Errer, vagabonder, se perdre : la représentation du « vagabond » dans les œuvres anglophones", "Le tourisme de masse dans les Caraïbes"],
+    "Axe 4. Langages et médias": ["Diversité des langues : la place du multilinguisme dans les pays de l'aire anglophone", "Les codes linguistiques ou la langue comme marqueur social, géographique, générationnel", "Grands discours, grands orateurs qui inspirent et provoquent des changements significatifs", "La publicité, entre communication et soft power"],
+    "Axe 5. Formes de l'engagement": ["L'engagement politique pour les droits des femmes ou des minorités", "L'engagement des artistes", "L'engagement individuel au service de la communauté", "La philanthropie, un engagement pour le bien public ?"],
+    "Axe 6. Les États-Unis": ["L'expédition de Lewis et Clark", "Jeune pays, grande Histoire, multiples acteurs : de la Seconde Guerre mondiale à nos jours", "Chicago, ville représentative des États-Unis ?", "La culture, outil du soft power américain"]
+  }
+};
+
+const GRAMMAIRE = {
+  "6ème": ["G1 · Present simple (être, avoir, verbes courants)", "G2 · La 3e personne du singulier : he sleeps, she rides, etc.", "G3 · Auxiliaires de modalité : can/can't, must/mustn't", "G4 · L'impératif (forme affirmative et négative)", "G5 · Present be+ing (reconnaissance de formes courantes)", "G6 · Present be+ing pour exprimer un futur proche", "G7 · Expression du passé : quelques verbes courants au prétérit", "G8 · Exprimer une intention : I want to, I would like to", "G9 · Le groupe nominal : articles (a, the, Ø), démonstratifs", "G10 · Le déterminant possessif et le génitif", "G11 · La place de l'adjectif épithète (à gauche du nom)", "G12 · Les pronoms personnels sujets et compléments", "G13 · Les pronoms possessifs : mine, yours, his, hers, etc.", "G14 · Les mots interrogatifs : who, what, where, when, why, how", "G15 · Marqueurs temporels essentiels : today, tomorrow, yesterday", "G16 · Prépositions de lieu : on, in, under, over, between, above", "G17 · Conjonctions de coordination : and, but, or", "G18 · Connecteurs chronologiques : first, then, finally", "G19 · Modalisateurs : maybe, perhaps", "G20 · Pluriels réguliers et irréguliers : foot/feet, child/children", "G21 · Noms composés : snowman, policeman, bedroom", "G22 · Suffixes et dérivation : cloud/cloudy, magic/magician"],
+  "5ème": ["G23 · Present simple : affirmatif, négatif et interrogatif", "G24 · Present be+ing (formes courantes et futur proche)", "G25 · Expression du passé : prétérit (réguliers et irréguliers)", "G26 · Modaux : can/can't, must/mustn't, should, could", "G27 · L'impératif et le gérondif : Mind the stairs! No diving!", "G28 · Expression du futur avec will et be going to + BV", "G29 · Expression du souhait : I wish to, I would love to", "G30 · Expression de l'opinion : I think, I believe, In my opinion", "G31 · Comparatifs et superlatifs : longer than, the best", "G32 · Antonymes : quiet/noisy, freedom/constraint", "G33 · Quantifieurs : much, many, some", "G34 · Pronoms réfléchis : myself, himself, themselves", "G35 · Adverbes de fréquence", "G36 · Marqueurs temporels : at two o'clock, six months ago", "G37 · Situer dans l'espace : foreground/background, top/bottom", "G38 · Opposition, concession : but, whereas, however", "G39 · Adverbes d'intensité : so, enough, really, almost, quite", "G40 · Subordonnées de condition : If you gaze…, you'll notice…", "G41 · Discours direct et indirect : The author wonders if…", "G42 · Dérivation : recognise/recognisable/unrecognisable"],
+  "4ème": ["G43 · Present simple et present be+ing (approfondissement)", "G44 · Prétérit simple et prétérit en be+ing", "G45 · Present perfect", "G46 · Expression du futur : be+V-ing, will, be going to + BV", "G47 · Conditionnel : would + BV", "G48 · Modaux de probabilité : can, may, must", "G49 · Verbes réfléchis et réciproques", "G50 · Structures partitives : some of them, most of us", "G51 · Comparatifs, superlatifs et adverbes de degré variés", "G52 · Pronoms possessifs : a friend of mine, a book of hers", "G53 · Pronoms réfléchis : myself, himself, ourselves", "G54 · Marqueurs temporels : two days ago, for three years, since 2018", "G55 · Espace : over there, not far from, round the corner", "G56 · Opposition : on the one hand/on the other hand, yet", "G57 · Intensité : almost, quite, so much better, good enough", "G58 · Connecteurs : before, afterwards, for instance, consequently", "G59 · Propositions relatives : who, which", "G60 · Subordonnées hypothétiques : If I travel… / If I were…", "G61 · Discours indirect : He asked me if I wanted to…"],
+  "3ème": ["G62 · Phrasal verbs : give up, look forward to, get down", "G63 · Temps du passé : prétérit, be+ing, past perfect", "G64 · Hypothèse : If she goes… / If I went…", "G65 · Modaux étendus : might, would, ought to, be able to", "G66 · Souhait/regret : I wish I knew, he wishes he were", "G67 · Choix entre les temps (ensemble du système verbal)", "G68 · La voix passive", "G69 · Synonymes et antonymes", "G70 · Déterminants distributifs : both, either, every, each", "G71 · Comparatifs et superlatifs (maîtrise complète)", "G72 · Adjectifs composés : a black-haired man, a ten-minute break", "G73 · Interrogatifs : How often? How much? How tall? How long?", "G74 · Marqueurs temporels : over the past years, as soon as", "G75 · Espace : in the top left-hand corner, north of", "G76 · Opposition : yet, on the contrary", "G77 · Emphase : extremely, barely, absolutely, I do like", "G78 · Connecteurs : moreover, consequently, as a result", "G79 · Relatives : who, that ; subordonnées : when, while, as", "G80 · Propositions infinitives : want sb to + BV", "G81 · Discours rapporté : say, tell, ask, answer", "G82 · Questions indirectes : I wonder if/how/why"]
+};
+
+const LEXIQUE = {
+  "6ème": ["L1 · La famille", "L2 · Nationalités", "L3 · L'apparence physique", "L4 · Le caractère", "L5 · Les vêtements", "L6 · Le corps humain", "L7 · Les métiers", "L8 · Les animaux", "L9 · Les habitudes et le quotidien", "L10 · L'habitat et la maison", "L11 · Le jeu", "L12 · Les aliments", "L13 · Les loisirs et sports", "L14 · Les fêtes", "L15 · Zones géographiques et paysages", "L16 · Les contes et légendes", "L17 · Les émotions et sentiments", "L18 · Compter (nombres ordinaux)"],
+  "5ème": ["L19 · L'école et le rythme scolaire", "L20 · Description physique et morale (approfondissement)", "L21 · Les transports et déplacements", "L22 · Les paysages et saisons", "L23 · Les lieux", "L24 · Les traditions culinaires", "L25 · L'art", "L26 · L'aventure et la découverte", "L27 · L'imaginaire", "L28 · Les sentiments et émotions (approfondissement)"],
+  "4ème": ["L29 · Les sports (spécialisation)", "L30 · Description physique et morale (niveau avancé)", "L31 · Les transports (approfondissement)", "L32 · Monde, géographie, paysages (approfondissement)", "L33 · Les espaces urbains", "L34 · Science et innovation", "L35 · L'art (approfondissement)", "L36 · L'aventure et les voyages", "L37 · L'imaginaire (approfondissement)", "L38 · Les sentiments et émotions (niveau avancé)"],
+  "3ème": ["L39 · La rencontre, l'entente, le conflit", "L40 · L'amour, l'amitié, l'hospitalité", "L41 · L'engagement", "L42 · Le monde du travail", "L43 · Voyages et migrations", "L44 · Langages et médias", "L45 · La description morale (niveau expert)", "L46 · Paysages naturels et urbains"]
+};
+
+const PHONOLOGIE = {
+  "6ème": ["PH1 · Prononciation du -s : /s/, /z/, /ɪz/", "PH2 · Voyelles courtes avant doublement de consonnes", "PH3 · Accentuation des polysyllabiques : favourite, beautiful", "PH4 · Les consonnes muettes : light, autumn, Wednesday", "PH5 · Les diphtongues : /eɪ/, /aɪ/, /ɔɪ/, /əʊ/, /aʊ/", "PH6 · Graphie/phonie ; intonation affirmatif/interrogatif"],
+  "5ème": ["PH7 · Intonation des énoncés affirmatifs et interrogatifs", "PH8 · Prononciation du -s et du -ed : /t/, /d/, /ɪd/", "PH9 · Accentuation : intelligent, comfortable, interesting", "PH10 · Formes faibles : of, to, at, from", "PH11 · Schémas intonatifs : montante/descendante", "PH12 · Rythme de la phrase et accent tonique", "PH13 · Les formes contractées", "PH14 · Voyelles longues/courtes : sheep/ship, cat/car", "PH15 · Diphtongues (approfondissement)"],
+  "4ème": ["PH16 · Rythme et mise en relief des mots-clés", "PH17 · Connaissances phonologiques : muettes, /h/, voyelles", "PH18 · Consonnes fricatives : /θ/ (think) et /ð/ (this)"],
+  "3ème": ["PH19 · Schémas intonatifs systématiques", "PH20 · Consonnes affriquées : /ʧ/ et /ʤ/", "PH21 · Emphase et mots-clés", "PH22 · Accentuation selon composition du mot", "PH23 · Accents régionaux : américain, indien, australien"]
+};
+
+const PRAGMATIQUE = {
+  "6ème": ["PR1 · Connecteurs logiques : and, but, or, so, because", "PR2 · Connecteurs chronologiques : first, then, finally", "PR3 · Illustrer : for example, for instance, such as, like", "PR4 · Modalisateurs : maybe, perhaps, probably, certainly"],
+  "5ème": ["PR5 · Connecteurs logiques et chronologiques élargis", "PR6 · Expression de l'opinion : I think, I believe, In my opinion", "PR7 · Opposition, concession : but, whereas, however", "PR8 · Modalisateurs : maybe, perhaps", "PR9 · Adverbes d'intensité : so, enough, really, almost"],
+  "4ème": ["PR10 · Connecteurs : before, afterwards", "PR11 · Connecteurs : for instance, besides, consequently", "PR12 · Propositions relatives : who, which", "PR13 · Subordonnées hypothétiques et conditionnelles", "PR14 · Discours direct et indirect", "PR15 · Modalisateurs et adverbes de degré avancés"],
+  "3ème": ["PR16 · Connecteurs : moreover, consequently, as a result", "PR17 · Emphase : extremely, barely, absolutely, I do like", "PR18 · Relatives : who, that ; subordonnées : when, while, as", "PR19 · Propositions infinitives : want sb to + BV", "PR20 · Discours direct et rapporté (présent et passé)", "PR21 · Questions indirectes : I wonder if/how/why"]
+};
+
+const COMP_CO = {
+  "6ème": ["CO1 · Comprendre des expressions isolées dans des énoncés très simples", "CO2 · Suivre des consignes et instructions habituelles (débit lent)", "CO3 · Comprendre et relier à un titre/thème des expressions simples"],
+  "5ème": ["CO3 · Comprendre et relier à un titre/thème des expressions simples", "CO4 · Suivre des consignes en situation prévisible (débit lent)", "CO5 · Repérer des informations simples (diction claire et lente)"],
+  "4ème": ["CO6 · Comprendre et relier des expressions isolées", "CO7 · Repérer les informations principales (vocabulaire fréquent)", "CO8 · Identifier nuances, divergences, oppositions"],
+  "3ème": ["CO9 · Repérer des informations dans des textes/conversations", "CO10 · Comprendre les points principaux (langue claire et standard)", "CO11 · Comprendre bulletins d'information ou programmes TV", "CO12 · Suivre des films (action et image, langue claire)"]
+};
+
+const COMP_CE = {
+  "6ème": ["CE1 · Comprendre des expressions dans des textes très simples", "CE2 · Identifier genres/types de textes (mise en page)", "CE3 · S'appuyer sur mots transparents et familiers"],
+  "5ème": ["CE4 · Comprendre un texte court sur des sujets familiers", "CE5 · Identifier la nature du document (indices paratextuels)", "CE6 · Repérer des informations simples (expressions connues)"],
+  "4ème": ["CE7 · Identifier les informations principales (document long)", "CE8 · Repérer des articulations logiques simples du discours", "CE9 · S'appuyer sur temps et marqueurs spatiotemporels"],
+  "3ème": ["CE10 · Identifier les informations principales (textes factuels)", "CE11 · Suivre l'intrigue de récits, romans, BD", "CE12 · Inférer le sens de mots inconnus (contexte, dérivation)", "CE13 · Indices culturels pour interpréter et problématiser"]
+};
+
+const COMP_PO = {
+  "6ème": ["PO1 · Expressions simples pour décrire personnes, lieux, objets", "PO2 · Exprimer ses goûts, raconter brièvement des événements", "PO3 · Décrire brièvement en suivant un modèle connu"],
+  "5ème": ["PO4 · Coordonner et organiser des éléments simples", "PO5 · Décrire activités, personnes, lieux, projets", "PO6 · Dire ce qu'on aime, donner ses impressions"],
+  "4ème": ["PO7 · Décrire avec précision personnes, objets, lieux", "PO8 · Présenter un point de vue et le justifier", "PO9 · Raconter une histoire brève", "PO10 · Comparer et exprimer des préférences"],
+  "3ème": ["PO11 · Raconter, décrire et exprimer ses sentiments", "PO12 · Exposé préparé ou description détaillée", "PO13 · Donner des raisons pour justifier un point de vue", "PO14 · Justifier une opinion, comparer, peser le pour/contre"]
+};
+
+const COMP_PE = {
+  "6ème": ["PE1 · Écrire sous la dictée des phrases très simples", "PE2 · Prononcer et lire de manière expressive"],
+  "5ème": ["PE3 · Écrire un texte court et structuré (sujets familiers)", "PE4 · Écrire/continuer une histoire (avec dictionnaire)", "PE5 · Reformuler des éléments de documents de réception"],
+  "4ème": ["PE6 · Texte court et structuré avec connecteurs variés", "PE7 · Articuler et hiérarchiser les informations", "PE8 · Travailler la correction linguistique"],
+  "3ème": ["PE9 · Texte structuré avec stratégies variées", "PE10 · Justifier un point de vue (critique de film, livre)", "PE11 · Contrôler sa production de manière autonome"]
+};
+
+const COMP_PEC = {
+  "6ème": ["PEC1 · Répondre à des questions simples et en poser", "PEC2 · Réagir à des affirmations, salutation et congé", "PEC3 · Interactions stéréotypées, engager et clore une conversation"],
+  "5ème": ["PEC4 · Échange simple sur des sujets familiers", "PEC5 · Communiquer pour une tâche simple", "PEC6 · Échanges sociaux courts (avec aide)", "PEC7 · Transmettre les points principaux"],
+  "4ème": ["PEC8 · Exprimer accord/désaccord de manière variée", "PEC9 · Interagir dans des situations prévisibles", "PEC10 · Poser des questions, échanger des idées", "PEC11 · Relater des informations de textes informatifs"],
+  "3ème": ["PEC12 · Conversation en langue standard", "PEC13 · Conversations prolongées avec initiatives", "PEC14 · Résumer l'information et les arguments", "PEC15 · Consignes claires, questions pour clarifier", "PEC16 · Accord/désaccord avec nuance, reformuler"]
+};
+
+const LEVELS = ["6ème", "5ème", "4ème", "3ème"];
+const state = { axe: [], culture: [], grammar: [], lexique: [], phono: [], pragma: [], comp_co: [], comp_ce: [], comp_po: [], comp_pe: [], comp_pec: [] };
+
+// Fonction de nettoyage pour enlever les G1, L2, PH3, etc. dans les menus
+const cleanCode = (txt) => txt.replace(/^[A-Z]+\d+\s*·\s*/, '');
+
+function toggleTheme() {
+  const t = document.body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+  document.body.setAttribute('data-theme', t);
+  try { localStorage.setItem('seq-theme', t) } catch (e) {}
+}
+
+try {
+  const s = localStorage.getItem('seq-theme');
+  if (s) document.body.setAttribute('data-theme', s);
+  else document.body.setAttribute('data-theme', 'light');
+} catch (e) {}
+
+function onNiveauChange() {
+  const n = document.getElementById('niveau').value;
+  populateAxes(n);
+  [['grammaire', GRAMMAIRE], ['lexique', LEXIQUE], ['phonologie', PHONOLOGIE], ['pragmatique', PRAGMATIQUE], ['comp_co', COMP_CO], ['comp_ce', COMP_CE], ['comp_po', COMP_PO], ['comp_pe', COMP_PE], ['comp_pec', COMP_PEC]].forEach(([id, data]) => populateSelect(id, data, n));
+  updatePreview();
+}
+
+function populateAxes(n) {
+  const s = document.getElementById('axe');
+  s.innerHTML = '<option value="">— Choisir un axe —</option>';
+  document.getElementById('objet').innerHTML = '<option value="">— Choisir d\'abord un axe —</option>';
+  if (!n || !AXES[n]) return;
+  Object.keys(AXES[n]).forEach(a => { s.innerHTML += `<option value="${esc(a)}">${a}</option>` });
+}
+
+function onAxeChange() {
+  const n = document.getElementById('niveau').value, a = document.getElementById('axe').value, s = document.getElementById('objet');
+  s.innerHTML = '<option value="">— Choisir un objet d\'étude —</option>';
+  if (!n || !a || !AXES[n] || !AXES[n][a]) return;
+  AXES[n][a].forEach(o => { s.innerHTML += `<option value="${esc(o)}">${o}</option>` });
+}
+
+function populateSelect(id, data, niv) {
+  const s = document.getElementById(id);
+  s.innerHTML = '<option value="">— Choisir —</option>';
+  if (!niv) return;
+  if (data[niv]) {
+    const g = document.createElement('optgroup');
+    g.label = `── ${niv} (niveau actuel) ──`;
+    data[niv].forEach(i => { const o = document.createElement('option'); o.value = cleanCode(i); o.textContent = cleanCode(i); g.appendChild(o); });
+    s.appendChild(g);
+  }
+  LEVELS.forEach(l => {
+    if (l === niv || !data[l]) return;
+    const g = document.createElement('optgroup');
+    g.label = `── ${l} (révision) ──`;
+    data[l].forEach(i => { const o = document.createElement('option'); o.value = cleanCode(i); o.textContent = cleanCode(i); g.appendChild(o); });
+    s.appendChild(g);
+  });
+}
+
+function addItem(selId, stateKey, colorClass) {
+  const s = document.getElementById(selId), v = s.value;
+  if (!v || state[stateKey].includes(v)) return;
+  state[stateKey].push(v);
+  renderTags(stateKey, colorClass);
+  updatePreview();
+  const b = s.parentElement.querySelector('.btn-add');
+  if (b) { b.style.transform = 'scale(1.2)'; setTimeout(() => b.style.transform = '', 200) }
+}
+
+function addCustomItem(inputId, stateKey, colorClass) {
+  const inp = document.getElementById(inputId), v = inp.value.trim();
+  if (!v || state[stateKey].includes(v)) return;
+  state[stateKey].push(v);
+  renderTags(stateKey, colorClass);
+  updatePreview();
+  inp.value = '';
+  const b = inp.parentElement.querySelector('.btn-add');
+  if (b) { b.style.transform = 'scale(1.2)'; setTimeout(() => b.style.transform = '', 200) }
+}
+
+function removeItem(k, i, c) {
+  state[k].splice(i, 1);
+  renderTags(k, c);
+  updatePreview();
+}
+
+function renderTags(k, c) {
+  const el = document.getElementById(`tags-${k}`);
+  el.innerHTML = '';
+  state[k].forEach((item, i) => {
+    const sh = item.length > 55 ? item.substring(0, 52) + '…' : item;
+    el.innerHTML += `<span class="tag ${c}"><span class="tl" title="${esc(item)}">${sh}</span><span class="tr" onclick="removeItem('${k}',${i},'${c}')">✕</span></span>`;
+  });
+}
+
+function updatePreview() {
+  const n = document.getElementById('niveau').value, t = document.getElementById('titre').value, p = document.getElementById('problematique').value;
+  const badge = document.getElementById('a4-badge');
+  if (n) { badge.style.display = 'block'; badge.textContent = n; } else { badge.style.display = 'none'; }
+  document.getElementById('a4-title').textContent = t || 'Titre de la séquence';
+  const pe = document.getElementById('a4-prob');
+  if (p) { pe.style.display = 'block'; pe.textContent = p; } else { pe.style.display = 'none'; }
+
+  renderA4List('a4-axe', state.axe, 'v', '');
+  renderA4List('a4-culture', state.culture, 'v', state.axe.length ? 'Ajoutez des objets d\'étude' : 'Ajoutez des axes ou objets d\'étude');
+
+  const allC = [{ l: 'CO', items: state.comp_co }, { l: 'CE', items: state.comp_ce }, { l: 'PO', items: state.comp_po }, { l: 'PE', items: state.comp_pe }, { l: 'PEC', items: state.comp_pec }];
+  const cd = document.getElementById('a4-comp');
+  if (!allC.some(c => c.items.length > 0)) {
+    cd.innerHTML = '<div class="a4-empty">Ajoutez des compétences (CO, CE, PO, PE, PEC)</div>';
+  } else {
+    let h = '';
+    allC.forEach(c => {
+      if (!c.items.length) return;
+      h += `<div class="a4-sub"><div class="a4-sub-title">${c.l}</div><ul class="a4-list t">`;
+      c.items.forEach(it => { h += `<li>${it}</li>`; });
+      h += '</ul></div>';
+    });
+    cd.innerHTML = h;
+  }
+
+  renderA4List('a4-grammar', state.grammar, 'g', 'Ajoutez des points de grammaire');
+  renderA4List('a4-lexique', state.lexique, 'b', 'Ajoutez des champs lexicaux');
+  renderA4List('a4-phono', state.phono, 'o', 'Ajoutez des objectifs phonologiques');
+  renderA4List('a4-pragma', state.pragma, 'p', 'Ajoutez des éléments pragmatiques');
+}
+
+function renderA4List(id, items, cls, empty) {
+  const d = document.getElementById(id);
+  if (!items.length) { if (empty) d.innerHTML = `<div class="a4-empty">${empty}</div>`; else d.innerHTML = ''; return; }
+  let h = `<ul class="a4-list ${cls}">`;
+  items.forEach(i => { h += `<li>${i}</li>`; });
+  h += '</ul>';
+  d.innerHTML = h;
+}
+
+function exportWord() {
+  const preHtml = "<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'><title>Export HTML to Word</title></head><body>";
+  const postHtml = "</body></html>";
+  const html = preHtml + document.getElementById('a4').innerHTML + postHtml;
+  const blob = new Blob(['\ufeff', html], { type: 'application/msword' });
+  const url = 'data:application/vnd.ms-word;charset=utf-8,' + encodeURIComponent(html);
+  const downloadLink = document.createElement("a");
+  document.body.appendChild(downloadLink);
+  downloadLink.href = url;
+  downloadLink.download = (document.getElementById('titre').value || 'Sequence') + '.doc';
+  downloadLink.click();
+  document.body.removeChild(downloadLink);
+}
+
+function resetAll() {
+  document.getElementById('niveau').value = ''; document.getElementById('titre').value = ''; document.getElementById('problematique').value = '';
+  document.getElementById('axe').innerHTML = '<option value="">— Choisir d\'abord un niveau —</option>';
+  document.getElementById('objet').innerHTML = '<option value="">— Choisir d\'abord un axe —</option>';
+  ['grammaire', 'lexique', 'phonologie', 'pragmatique', 'comp_co', 'comp_ce', 'comp_po', 'comp_pe', 'comp_pec'].forEach(id => { document.getElementById(id).innerHTML = '<option value="">— Choisir un niveau —</option>'; });
+  document.getElementById('grammaire-custom').value = ''; document.getElementById('lexique-custom').value = '';
+  Object.keys(state).forEach(k => state[k] = []);
+  Object.keys(state).forEach(k => { const el = document.getElementById(`tags-${k}`); if (el) el.innerHTML = ''; });
+  updatePreview();
+}
+
+function esc(s) { return s.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;'); }
+updatePreview();
+</script>
+</body>
+</html>

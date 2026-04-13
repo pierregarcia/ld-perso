@@ -32,7 +32,6 @@ body { font-family:'Plus Jakarta Sans',sans-serif; background:var(--bg); color:v
 .app-header { background:var(--panel); border-bottom:1px solid var(--border); padding:16px 28px; display:flex; align-items:center; justify-content:center; flex:0 0 auto; z-index:100; transition:background .3s; }
 .logo { display:flex; align-items:center; gap:12px; }
 .logo-icon { width:40px; height:40px; background:linear-gradient(135deg,var(--accent),var(--accent2)); border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:20px; box-shadow:0 4px 16px rgba(62,207,142,0.3); }
-/* Correction de la barre du 'q' coupée : ajout de padding-bottom et line-height plus souple */
 .logo-text { font-family:'Playfair Display',serif; font-size:24px; font-weight:800; background:linear-gradient(135deg,var(--accent),var(--accent4)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; line-height:1.2; padding-bottom:4px; margin-bottom:-4px; }
 .logo-flags { font-size:24px; display:flex; gap:6px; align-items:center; user-select:none; margin-left:8px; }
 
@@ -45,15 +44,29 @@ body { font-family:'Plus Jakarta Sans',sans-serif; background:var(--bg); color:v
 
 /* Panneaux scindés */
 .main-container { display:grid; grid-template-columns:440px 1fr; flex:1 1 auto; overflow:hidden; }
-.editor-panel { background:var(--panel); border-right:1px solid var(--border); padding:20px 22px 100px 22px; overflow-y:auto; transition:background .3s; }
+.editor-panel { background:var(--panel); border-right:1px solid var(--border); padding:20px 22px 100px 22px; overflow-y:auto; transition:background .3s; display:flex; flex-direction:column; }
 .editor-panel::-webkit-scrollbar { width:5px; }
 .editor-panel::-webkit-scrollbar-thumb { background:var(--scrollbar); border-radius:3px; }
 .preview-panel { background:var(--preview-bg); padding:28px 28px 100px 28px; overflow-y:auto; display:flex; justify-content:center; align-items:flex-start; transition:background .3s; }
 
-/* Mentions légales en pied de panneau gauche */
-.legal-footer { margin-top: 40px; padding-top: 20px; border-top: 1px solid var(--border); font-size: 10.5px; color: var(--text-muted); line-height: 1.5; }
-.legal-footer h4 { font-size: 11px; color: var(--text); margin: 16px 0 6px 0; text-transform: uppercase; letter-spacing: 0.5px; }
-.legal-footer p { margin-bottom: 8px; }
+/* Bouton Mentions légales */
+.legal-link-container { margin-top: auto; padding-top: 30px; text-align: center; }
+.btn-legal { background:none; border:none; color:var(--text-muted); font-size:11px; text-decoration:underline; cursor:pointer; font-family:inherit; transition:color 0.2s; }
+.btn-legal:hover { color:var(--text); }
+
+/* Fenêtre surgissante (Modal) */
+.modal-overlay { position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.6); backdrop-filter:blur(3px); z-index:9999; display:flex; justify-content:center; align-items:center; opacity:0; visibility:hidden; transition:all 0.3s ease; }
+.modal-overlay.active { opacity:1; visibility:visible; }
+.modal-content { background:var(--panel); color:var(--text); width:90%; max-width:600px; max-height:85vh; border-radius:var(--radius); padding:30px; position:relative; overflow-y:auto; box-shadow:0 10px 40px rgba(0,0,0,0.3); border:1px solid var(--border); transform:translateY(20px); transition:transform 0.3s ease; }
+.modal-overlay.active .modal-content { transform:translateY(0); }
+.modal-content::-webkit-scrollbar { width:5px; }
+.modal-content::-webkit-scrollbar-thumb { background:var(--scrollbar); border-radius:3px; }
+.modal-close { position:absolute; top:15px; right:20px; background:none; border:none; font-size:20px; color:var(--text-muted); cursor:pointer; transition:color 0.2s; }
+.modal-close:hover { color:var(--accent5); }
+.modal-header { font-family:'Playfair Display',serif; font-size:22px; font-weight:800; margin-bottom:15px; color:var(--text); border-bottom:1px solid var(--border); padding-bottom:10px; }
+.modal-body h4 { font-size:12px; color:var(--accent2); margin:16px 0 6px 0; text-transform:uppercase; letter-spacing:0.5px; }
+.modal-body p { font-size:12px; color:var(--text-muted); line-height:1.6; margin-bottom:8px; }
+.modal-body strong { color:var(--text); }
 
 /* Barre d'action fixe en bas */
 .header-actions { position:fixed; bottom:0; left:0; right:0; background:var(--panel); padding:12px 28px; border-top:1px solid var(--border); box-shadow:0 -4px 24px rgba(0,0,0,0.15); z-index:1000; display:flex; justify-content:center; align-items:center; gap:16px; transition:background .3s; }
@@ -137,7 +150,7 @@ body { font-family:'Plus Jakarta Sans',sans-serif; background:var(--bg); color:v
 
 /* === RESPONSIVE ÉCRANS === */
 @media print {
-  .app-header, .header-actions, .editor-panel { display:none!important; }
+  .app-header, .header-actions, .editor-panel, .modal-overlay { display:none!important; }
 }
 
 @media (max-width: 1100px) {
@@ -159,6 +172,7 @@ body { font-family:'Plus Jakarta Sans',sans-serif; background:var(--bg); color:v
   .a4-sheet { padding:20px 15px; min-height:auto; }
   .a4-badge { top:10px; right:10px; }
   .a4-footer { position:relative; bottom:auto; left:auto; right:auto; margin-top:30px; }
+  .modal-content { width:95%; padding:20px; }
 }
 </style>
 </head>
@@ -255,26 +269,8 @@ body { font-family:'Plus Jakarta Sans',sans-serif; background:var(--bg); color:v
     <div class="section-label pink">Pragmatique</div>
     <div class="field-group"><div class="select-with-add"><select class="field-select" id="pragmatique"><option value="">— Choisir un niveau —</option></select><button class="btn-add p" onclick="addItem('pragmatique','pragma','p')">+</button></div><div class="added-tags" id="tags-pragma"></div></div>
 
-    <div class="legal-footer">
-      <h4>Mentions légales</h4>
-      <p><strong>Éditeur de l'application</strong><br>Charlie Rollo<br>Fonction : Professeur d'anglais / Formateur au numérique éducatif (Drane de Versailles / INSPE)<br>Email : charlie.rollo@ac-versailles.fr</p>
-      <p><strong>Hébergement</strong><br>Hébergeur : Forge des Communs Numériques Éducatifs<br>Raison sociale : Ministère de l'Éducation nationale et de la Jeunesse<br>Adresse : 110 rue de Grenelle, 75007 Paris, France<br>Téléphone : +33 1 55 55 10 10</p>
-      <p><strong>Responsable de la publication</strong><br>Charlie ROLLO en qualité d'éditeur bénévole.</p>
-      
-      <h4>Conditions générales d'utilisation</h4>
-      <p>Ce site permet aux utilisateurs de générer des fiches de séquence. L'affichage s'effectue localement. L'utilisateur est seul responsable de l'usage de l'outil. L'application est proposée à titre gratuit, sans aucune garantie de fonctionnement ou de résultat. L'éditeur décline toute responsabilité en cas de mauvaise interprétation des contenus ou d'usage inapproprié.</p>
-      
-      <h4>Propriété intellectuelle</h4>
-      <p>L'ensemble des codes sources, éléments graphiques et contenus sont placés sous licence CC-BY-NC 4.0 (Creative Commons Attribution — Pas d'utilisation commerciale). Leur réutilisation est permise dans les conditions de cette licence. Toute redistribution ou modification doit citer l'auteur original : Charlie ROLLO.</p>
-      
-      <h4>Données personnelles</h4>
-      <p>Aucun cookie de suivi n'est utilisé. Aucune donnée personnelle n'est collectée ni stockée par l'application.</p>
-      
-      <h4>Accessibilité</h4>
-      <p>L'application est conçue pour être compatible avec une utilisation sur ordinateur, incluant les modes sombre/clair, la navigation au clavier et le contraste élevé selon les thèmes. Une amélioration continue de l'accessibilité est en cours, en lien avec les recommandations du RGAA.</p>
-      
-      <h4>Droit applicable</h4>
-      <p>Ce site est soumis au droit français.</p>
+    <div class="legal-link-container">
+      <button class="btn-legal" onclick="openModal()">⚖️ Mentions légales</button>
     </div>
   </div>
 
@@ -306,6 +302,38 @@ body { font-family:'Plus Jakarta Sans',sans-serif; background:var(--bg); color:v
   <div class="export-actions">
     <button class="btn btn-word" onclick="exportWord()">📝 Format Word</button>
     <button class="btn btn-export" onclick="exportPDF()">📄 Format PDF</button>
+  </div>
+</div>
+
+<div id="legalModal" class="modal-overlay" onclick="closeModal(event)">
+  <div class="modal-content" onclick="event.stopPropagation()">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div class="modal-header">Mentions légales</div>
+    <div class="modal-body">
+      <h4>Éditeur de l'application</h4>
+      <p><strong>Charlie Rollo</strong><br>Fonction : Professeur d'anglais / Formateur au numérique éducatif (Drane de Versailles / INSPE)<br>Email : charlie.rollo@ac-versailles.fr</p>
+      
+      <h4>Hébergement</h4>
+      <p><strong>Hébergeur :</strong> Forge des Communs Numériques Éducatifs<br><strong>Raison sociale :</strong> Ministère de l'Éducation nationale et de la Jeunesse<br><strong>Adresse :</strong> 110 rue de Grenelle, 75007 Paris, France<br><strong>Téléphone :</strong> +33 1 55 55 10 10</p>
+      
+      <h4>Responsable de la publication</h4>
+      <p>Charlie ROLLO en qualité d'éditeur bénévole.</p>
+      
+      <h4>Conditions générales d'utilisation</h4>
+      <p>Ce site permet aux utilisateurs de générer des fiches de séquence. L'affichage s'effectue localement. L'utilisateur est seul responsable de l'usage de l'outil. L'application est proposée à titre gratuit, sans aucune garantie de fonctionnement ou de résultat. L'éditeur décline toute responsabilité en cas de mauvaise interprétation des contenus ou d'usage inapproprié.</p>
+      
+      <h4>Propriété intellectuelle</h4>
+      <p>L'ensemble des codes sources, éléments graphiques et contenus sont placés sous licence <strong>CC-BY-NC 4.0</strong> (Creative Commons Attribution — Pas d'utilisation commerciale). Leur réutilisation est permise dans les conditions de cette licence. Toute redistribution ou modification doit citer l'auteur original : Charlie ROLLO.</p>
+      
+      <h4>Données personnelles</h4>
+      <p>Aucun cookie de suivi n'est utilisé. Aucune donnée personnelle n'est collectée ni stockée par l'application.</p>
+      
+      <h4>Accessibilité</h4>
+      <p>L'application est conçue pour être compatible avec une utilisation sur ordinateur, incluant les modes sombre/clair, la navigation au clavier et le contraste élevé selon les thèmes. Une amélioration continue de l'accessibilité est en cours, en lien avec les recommandations du RGAA.</p>
+      
+      <h4>Droit applicable</h4>
+      <p>Ce site est soumis au droit français.</p>
+    </div>
   </div>
 </div>
 
@@ -423,6 +451,16 @@ try {
   const s = localStorage.getItem('seq-theme');
   if (s) document.body.setAttribute('data-theme', s);
 } catch (e) {}
+
+function openModal() {
+  document.getElementById('legalModal').classList.add('active');
+}
+
+function closeModal(e) {
+  if (!e || e.target.id === 'legalModal' || e.type === 'click') {
+    document.getElementById('legalModal').classList.remove('active');
+  }
+}
 
 function onNiveauChange() {
   const n = document.getElementById('niveau').value;

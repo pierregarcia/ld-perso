@@ -28,23 +28,31 @@ body { font-family:'Plus Jakarta Sans',sans-serif; background:var(--bg); color:v
 /* === HEADER === */
 .app-header { background:var(--panel); border-bottom:1px solid var(--border); padding:12px 28px; display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:100; transition:background .3s; flex-wrap:wrap; gap:16px; }
 .logo { display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
-.logo-icon { width:40px; height:40px; background:linear-gradient(135deg,var(--accent),var(--accent2)); border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:20px; box-shadow:0 4px 16px rgba(62,207,142,0.3); }
+.logo-icon { width:40px; height:40px; background:linear-gradient(135deg,var(--accent),var(--accent2)); border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:18px; box-shadow:0 4px 16px rgba(62,207,142,0.3); }
 .logo-text { font-family:'Playfair Display',serif; font-size:22px; font-weight:800; background:linear-gradient(135deg,var(--accent),var(--accent4)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
 .logo-sub { font-size:12px; color:var(--text-muted); letter-spacing:1px; text-transform:uppercase; }
 .logo-flags { font-size:24px; display:flex; gap:6px; align-items:center; user-select:none; margin-left:8px; }
-.header-actions { display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+.header-actions { display:flex; gap:12px; align-items:center; flex-wrap:wrap; }
+
+/* === TOOLTIPS DRAPEAUX === */
+.flag-disabled { position:relative; cursor:help; opacity:0.4; filter:grayscale(50%); display:inline-block; }
+.flag-disabled::after { content:attr(data-tooltip); position:absolute; top:100%; left:50%; transform:translateX(-50%) translateY(8px); background:var(--panel); color:var(--text); padding:6px 12px; border-radius:6px; font-size:11px; font-weight:700; font-family:'Plus Jakarta Sans',sans-serif; white-space:nowrap; opacity:0; visibility:hidden; transition:all 0.2s cubic-bezier(0.4, 0, 0.2, 1); box-shadow:0 4px 12px rgba(0,0,0,0.15); border:1px solid var(--border); z-index:200; pointer-events:none; }
+.flag-disabled::before { content:''; position:absolute; top:100%; left:50%; transform:translateX(-50%); border:5px solid transparent; border-bottom-color:var(--border); opacity:0; visibility:hidden; transition:all 0.2s; z-index:200; pointer-events:none; }
+.flag-disabled:hover::after { opacity:1; visibility:visible; transform:translateX(-50%) translateY(4px); }
+.flag-disabled:hover::before { opacity:1; visibility:visible; transform:translateX(-50%) translateY(-1px); }
 
 /* === BUTTONS & TOGGLES === */
 .theme-toggle { background:var(--toggle-bg); border:1px solid var(--border); border-radius:20px; width:56px; height:28px; cursor:pointer; position:relative; transition:background .3s; flex-shrink:0; }
 .theme-toggle::after { content:'🌙'; position:absolute; top:2px; left:2px; width:24px; height:24px; border-radius:50%; background:var(--accent2); display:flex; align-items:center; justify-content:center; font-size:13px; transition:all .3s; box-shadow:0 2px 8px rgba(0,0,0,0.2); }
 [data-theme="light"] .theme-toggle::after { content:'☀️'; left:30px; background:var(--accent3); }
-.btn { border:none; border-radius:var(--radius-sm); font-weight:700; font-size:13px; cursor:pointer; display:flex; align-items:center; gap:6px; transition:all .2s; font-family:inherit; padding:9px 18px; }
-.btn-export { background:linear-gradient(135deg,var(--accent),#2ba86e); color:#fff; box-shadow:0 4px 16px rgba(62,207,142,0.3); }
-.btn-word { background:linear-gradient(135deg,var(--accent2),#5a52e0); color:#fff; box-shadow:0 4px 16px rgba(108,99,255,0.3); }
-.btn-reset { background:rgba(128,128,128,0.12); color:var(--text-muted); border:1px solid var(--border); }
+.export-actions { display:flex; flex-direction:column; gap:6px; }
+.btn { border:none; border-radius:var(--radius-sm); font-weight:700; font-size:12px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px; transition:all .2s; font-family:inherit; padding:8px 16px; width:100%; }
+.btn-export { background:linear-gradient(135deg,var(--accent),#2ba86e); color:#fff; box-shadow:0 4px 12px rgba(62,207,142,0.2); }
+.btn-word { background:linear-gradient(135deg,var(--accent2),#5a52e0); color:#fff; box-shadow:0 4px 12px rgba(108,99,255,0.2); }
+.btn-reset { background:rgba(128,128,128,0.12); color:var(--text-muted); border:1px solid var(--border); height:100%; padding:0 16px; }
 .btn:hover { transform:translateY(-1px); }
-.btn-export:hover { box-shadow:0 6px 24px rgba(62,207,142,0.4); }
-.btn-word:hover { box-shadow:0 6px 24px rgba(108,99,255,0.4); }
+.btn-export:hover { box-shadow:0 6px 16px rgba(62,207,142,0.3); }
+.btn-word:hover { box-shadow:0 6px 16px rgba(108,99,255,0.3); }
 .btn-reset:hover { background:rgba(128,128,128,0.2); color:var(--text); transform:none; }
 
 /* === LAYOUT === */
@@ -138,9 +146,11 @@ body { font-family:'Plus Jakarta Sans',sans-serif; background:var(--bg); color:v
 
 @media (max-width: 600px) {
   .app-header { flex-direction:column; align-items:flex-start; padding:16px; gap:16px; }
-  .header-actions { width:100%; justify-content:space-between; }
+  .header-actions { width:100%; justify-content:space-between; flex-direction:row; align-items:stretch; }
+  .export-actions { flex-direction:row; flex:1; }
+  .btn-reset { height:auto; padding:8px 12px; }
   .logo-flags { font-size:20px; }
-  .btn { padding:8px 12px; font-size:12px; }
+  .btn { padding:8px 10px; font-size:11px; }
   .a4-sheet { padding:20px 15px; min-height:auto; }
   .a4-badge { top:10px; right:10px; }
   .a4-footer { position:relative; bottom:auto; left:auto; right:auto; margin-top:30px; }
@@ -151,7 +161,7 @@ body { font-family:'Plus Jakarta Sans',sans-serif; background:var(--bg); color:v
 
 <header class="app-header">
   <div class="logo">
-    <div class="logo-icon">🎯</div>
+    <div class="logo-icon">📜✏️</div>
     <div>
       <div class="logo-text">Le Séquenceur</div>
       <div class="logo-sub">Anglais Collège</div>
@@ -159,15 +169,17 @@ body { font-family:'Plus Jakarta Sans',sans-serif; background:var(--bg); color:v
     <div class="logo-flags">
       <span>🇬🇧</span>
       <span>🇺🇸</span>
-      <span title="Ça arrive bientôt" style="cursor:help; opacity:0.4; filter:grayscale(50%);">🇪🇸</span>
-      <span title="Ça arrive bientôt" style="cursor:help; opacity:0.4; filter:grayscale(50%);">🇩🇪</span>
+      <span class="flag-disabled" data-tooltip="Ça arrive bientôt !">🇪🇸</span>
+      <span class="flag-disabled" data-tooltip="Ça arrive bientôt !">🇩🇪</span>
     </div>
   </div>
   <div class="header-actions">
     <div class="theme-toggle" onclick="toggleTheme()" title="Changer de thème"></div>
     <button class="btn btn-reset" onclick="resetAll()">↺ Reset</button>
-    <button class="btn btn-word" onclick="exportWord()">📝 Exporter Word</button>
-    <button class="btn btn-export" onclick="window.print()">📄 Exporter PDF</button>
+    <div class="export-actions">
+      <button class="btn btn-word" onclick="exportWord()">📝 Format Word</button>
+      <button class="btn btn-export" onclick="window.print()">📄 Format PDF</button>
+    </div>
   </div>
 </header>
 

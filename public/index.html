@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Le Séquenceur — Anglais Collège</title>
+<title>Le Séquenceur — 🇬🇧 🇺🇸 🇪🇸 🇩🇪</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📝</text></svg>">
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Playfair+Display:wght@700;800&display=swap');
@@ -25,14 +25,12 @@
 * { margin:0; padding:0; box-sizing:border-box; }
 body { font-family:'Plus Jakarta Sans',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; overflow-x:hidden; transition:background .3s,color .3s; }
 
-/* === HEADER === */
-.app-header { background:var(--panel); border-bottom:1px solid var(--border); padding:12px 28px; display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:100; transition:background .3s; flex-wrap:wrap; gap:16px; }
-.logo { display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
-.logo-icon { width:40px; height:40px; background:linear-gradient(135deg,var(--accent),var(--accent2)); border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:18px; box-shadow:0 4px 16px rgba(62,207,142,0.3); }
-.logo-text { font-family:'Playfair Display',serif; font-size:22px; font-weight:800; background:linear-gradient(135deg,var(--accent),var(--accent4)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
-.logo-sub { font-size:12px; color:var(--text-muted); letter-spacing:1px; text-transform:uppercase; }
+/* === HEADER (TOP) === */
+.app-header { background:var(--panel); border-bottom:1px solid var(--border); padding:16px 28px; display:flex; align-items:center; justify-content:center; position:sticky; top:0; z-index:100; transition:background .3s; }
+.logo { display:flex; align-items:center; gap:12px; }
+.logo-icon { width:40px; height:40px; background:linear-gradient(135deg,var(--accent),var(--accent2)); border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:20px; box-shadow:0 4px 16px rgba(62,207,142,0.3); }
+.logo-text { font-family:'Playfair Display',serif; font-size:24px; font-weight:800; background:linear-gradient(135deg,var(--accent),var(--accent4)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; line-height:1; }
 .logo-flags { font-size:24px; display:flex; gap:6px; align-items:center; user-select:none; margin-left:8px; }
-.header-actions { display:flex; gap:12px; align-items:center; flex-wrap:wrap; }
 
 /* === TOOLTIPS DRAPEAUX === */
 .flag-disabled { position:relative; cursor:help; opacity:0.4; filter:grayscale(50%); display:inline-block; }
@@ -41,26 +39,27 @@ body { font-family:'Plus Jakarta Sans',sans-serif; background:var(--bg); color:v
 .flag-disabled:hover::after { opacity:1; visibility:visible; transform:translateX(-50%) translateY(4px); }
 .flag-disabled:hover::before { opacity:1; visibility:visible; transform:translateX(-50%) translateY(-1px); }
 
-/* === BUTTONS & TOGGLES === */
+/* === ACTION BAR (BOTTOM) === */
+.header-actions { position:fixed; bottom:0; left:0; right:0; background:var(--panel); padding:12px 28px; border-top:1px solid var(--border); box-shadow:0 -4px 24px rgba(0,0,0,0.15); z-index:1000; display:flex; justify-content:center; align-items:center; gap:16px; transition:background .3s; }
+.export-actions { display:flex; gap:12px; }
 .theme-toggle { background:var(--toggle-bg); border:1px solid var(--border); border-radius:20px; width:56px; height:28px; cursor:pointer; position:relative; transition:background .3s; flex-shrink:0; }
 .theme-toggle::after { content:'🌙'; position:absolute; top:2px; left:2px; width:24px; height:24px; border-radius:50%; background:var(--accent2); display:flex; align-items:center; justify-content:center; font-size:13px; transition:all .3s; box-shadow:0 2px 8px rgba(0,0,0,0.2); }
 [data-theme="light"] .theme-toggle::after { content:'☀️'; left:30px; background:var(--accent3); }
-.export-actions { display:flex; flex-direction:column; gap:6px; }
-.btn { border:none; border-radius:var(--radius-sm); font-weight:700; font-size:12px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px; transition:all .2s; font-family:inherit; padding:8px 16px; width:100%; }
+.btn { border:none; border-radius:var(--radius-sm); font-weight:700; font-size:13px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px; transition:all .2s; font-family:inherit; padding:10px 20px; }
 .btn-export { background:linear-gradient(135deg,var(--accent),#2ba86e); color:#fff; box-shadow:0 4px 12px rgba(62,207,142,0.2); }
 .btn-word { background:linear-gradient(135deg,var(--accent2),#5a52e0); color:#fff; box-shadow:0 4px 12px rgba(108,99,255,0.2); }
-.btn-reset { background:rgba(128,128,128,0.12); color:var(--text-muted); border:1px solid var(--border); height:100%; padding:0 16px; }
-.btn:hover { transform:translateY(-1px); }
+.btn-reset { background:rgba(128,128,128,0.12); color:var(--text-muted); border:1px solid var(--border); }
+.btn:hover { transform:translateY(-2px); }
 .btn-export:hover { box-shadow:0 6px 16px rgba(62,207,142,0.3); }
 .btn-word:hover { box-shadow:0 6px 16px rgba(108,99,255,0.3); }
 .btn-reset:hover { background:rgba(128,128,128,0.2); color:var(--text); transform:none; }
 
 /* === LAYOUT === */
-.main-container { display:grid; grid-template-columns:440px 1fr; gap:0; min-height:calc(100vh - 70px); }
-.editor-panel { background:var(--panel); border-right:1px solid var(--border); padding:20px 22px 40px 22px; overflow-y:auto; max-height:calc(100vh - 70px); transition:background .3s; }
+.main-container { display:grid; grid-template-columns:440px 1fr; gap:0; min-height:100vh; }
+.editor-panel { background:var(--panel); border-right:1px solid var(--border); padding:20px 22px 100px 22px; overflow-y:auto; transition:background .3s; }
 .editor-panel::-webkit-scrollbar { width:5px; }
 .editor-panel::-webkit-scrollbar-thumb { background:var(--scrollbar); border-radius:3px; }
-.preview-panel { background:var(--preview-bg); padding:28px; overflow-y:auto; max-height:calc(100vh - 70px); display:flex; justify-content:center; align-items:flex-start; transition:background .3s; }
+.preview-panel { background:var(--preview-bg); padding:28px 28px 100px 28px; overflow-y:auto; display:flex; justify-content:center; align-items:flex-start; transition:background .3s; }
 
 /* === EDITOR COMPONENTS === */
 .section-label { font-size:10px; font-weight:700; letter-spacing:2.5px; text-transform:uppercase; color:var(--accent); margin-bottom:14px; display:flex; align-items:center; gap:8px; }
@@ -131,56 +130,31 @@ body { font-family:'Plus Jakarta Sans',sans-serif; background:var(--bg); color:v
 /* === RESPONSIVE & PRINT === */
 @media print {
   body { background:#fff!important; }
-  .app-header, .editor-panel { display:none!important; }
-  .main-container { display:block!important; }
+  .app-header, .header-actions, .editor-panel { display:none!important; }
+  .main-container { display:block!important; min-height:auto; }
   .preview-panel { display:block!important; background:#fff!important; padding:0!important; max-height:none!important; }
   .a4-sheet { box-shadow:none!important; border-radius:0!important; margin:0!important; width:210mm!important; max-width:210mm!important; min-height:297mm!important; }
   @page { size:A4; margin:0; }
 }
 
 @media (max-width: 1100px) {
-  .main-container { grid-template-columns: 1fr; min-height:auto; }
-  .editor-panel { max-height:none; border-right:none; border-bottom:1px solid var(--border); overflow:visible; }
-  .preview-panel { padding:20px 16px; max-height:none; overflow:visible; }
+  .main-container { grid-template-columns: 1fr; }
+  .editor-panel { border-right:none; border-bottom:1px solid var(--border); overflow:visible; padding-bottom:30px; }
+  .preview-panel { padding:20px 16px 100px 16px; overflow:visible; }
 }
 
-/* === SMARTPHONE : BOTTOM ACTION BAR === */
 @media (max-width: 600px) {
-  .app-header { padding: 12px 16px; justify-content: center; }
-  .logo { justify-content: center; }
-  .logo-icon { width: 34px; height: 34px; font-size: 16px; }
-  .logo-text { font-size: 18px; }
-  .logo-sub { font-size: 10px; }
-  .logo-flags { font-size: 18px; margin-left: 4px; }
-  
-  /* Transformation de la div d'actions en barre fixe en bas */
-  .header-actions {
-    position: fixed;
-    bottom: 0; left: 0; right: 0;
-    width: auto;
-    background: var(--panel);
-    padding: 10px 12px;
-    border-top: 1px solid var(--border);
-    box-shadow: 0 -4px 20px rgba(0,0,0,0.15);
-    z-index: 1000;
-    flex-direction: row;
-    justify-content: space-between;
-    gap: 6px;
-  }
-  
-  .export-actions { flex-direction: row; flex: 1; gap: 6px; }
-  .btn { padding: 8px 6px; font-size: 11px; flex: 1; white-space: nowrap; }
-  .btn-reset { height: auto; padding: 8px; flex: 0 1 auto; }
-  
-  .theme-toggle { width: 44px; height: 26px; }
-  .theme-toggle::after { width: 22px; height: 22px; }
-  [data-theme="light"] .theme-toggle::after { left: 20px; }
-  
-  /* On ajoute une marge en bas du panel pour ne pas cacher la fin de la page A4 sous la barre d'action */
-  .preview-panel { padding: 20px 15px 80px 15px; } 
-  .a4-sheet { padding: 20px 15px; min-height: auto; }
-  .a4-badge { top: 10px; right: 10px; }
-  .a4-footer { position: relative; bottom: auto; left: auto; right: auto; margin-top: 30px; }
+  .app-header { padding:12px 16px; }
+  .logo-icon { width:34px; height:34px; font-size:16px; }
+  .logo-text { font-size:20px; }
+  .logo-flags { font-size:20px; }
+  .header-actions { padding:10px 12px; justify-content:space-between; gap:8px; }
+  .export-actions { flex:1; gap:6px; }
+  .btn { padding:8px 10px; font-size:11px; width:100%; }
+  .btn-reset { padding:8px 12px; }
+  .a4-sheet { padding:20px 15px; min-height:auto; }
+  .a4-badge { top:10px; right:10px; }
+  .a4-footer { position:relative; bottom:auto; left:auto; right:auto; margin-top:30px; }
 }
 </style>
 </head>
@@ -188,24 +162,13 @@ body { font-family:'Plus Jakarta Sans',sans-serif; background:var(--bg); color:v
 
 <header class="app-header">
   <div class="logo">
-    <div class="logo-icon">📜✏️</div>
-    <div>
-      <div class="logo-text">Le Séquenceur</div>
-      <div class="logo-sub">Anglais Collège</div>
-    </div>
+    <div class="logo-icon">📝</div>
+    <div class="logo-text">Le Séquenceur</div>
     <div class="logo-flags">
       <span>🇬🇧</span>
       <span>🇺🇸</span>
       <span class="flag-disabled" data-tooltip="Ça arrive bientôt !">🇪🇸</span>
       <span class="flag-disabled" data-tooltip="Ça arrive bientôt !">🇩🇪</span>
-    </div>
-  </div>
-  <div class="header-actions">
-    <div class="theme-toggle" onclick="toggleTheme()" title="Changer de thème"></div>
-    <button class="btn btn-reset" onclick="resetAll()">↺ Reset</button>
-    <div class="export-actions">
-      <button class="btn btn-word" onclick="exportWord()">📝 Format Word</button>
-      <button class="btn btn-export" onclick="window.print()">📄 Format PDF</button>
     </div>
   </div>
 </header>
@@ -256,7 +219,7 @@ body { font-family:'Plus Jakarta Sans',sans-serif; background:var(--bg); color:v
     
     <div class="field-group">
       <label class="field-label">Grammaire</label>
-      <div class="select-with-add">
+      <div class="select-with-add" style="margin-bottom:6px;">
         <select class="field-select" id="grammaire"><option value="">— Choisir un niveau —</option></select>
         <button class="btn-add g" onclick="addItem('grammaire','grammar','g')">+</button>
       </div>
@@ -269,7 +232,7 @@ body { font-family:'Plus Jakarta Sans',sans-serif; background:var(--bg); color:v
     
     <div class="field-group">
       <label class="field-label">Lexique</label>
-      <div class="select-with-add">
+      <div class="select-with-add" style="margin-bottom:6px;">
         <select class="field-select" id="lexique"><option value="">— Choisir un niveau —</option></select>
         <button class="btn-add v" onclick="addItem('lexique','lexique','v')">+</button>
       </div>
@@ -308,6 +271,15 @@ body { font-family:'Plus Jakarta Sans',sans-serif; background:var(--bg); color:v
       
       <div class="a4-footer">Le Séquenceur — Outil de planification pédagogique</div>
     </div>
+  </div>
+</div>
+
+<div class="header-actions">
+  <div class="theme-toggle" onclick="toggleTheme()" title="Changer de thème"></div>
+  <button class="btn btn-reset" onclick="resetAll()">↺ Reset</button>
+  <div class="export-actions">
+    <button class="btn btn-word" onclick="exportWord()">📝 Format Word</button>
+    <button class="btn btn-export" onclick="window.print()">📄 Format PDF</button>
   </div>
 </div>
 
@@ -412,7 +384,6 @@ const COMP_PEC = {
 const LEVELS = ["6ème", "5ème", "4ème", "3ème"];
 const state = { axe: [], culture: [], grammar: [], lexique: [], phono: [], pragma: [], comp_co: [], comp_ce: [], comp_po: [], comp_pe: [], comp_pec: [] };
 
-// Fonction de nettoyage pour enlever les G1, L2, PH3, etc. dans les menus
 const cleanCode = (txt) => txt.replace(/^[A-Z]+\d+\s*·\s*/, '');
 const esc = (s) => s.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
 

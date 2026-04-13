@@ -26,13 +26,14 @@
 }
 * { margin:0; padding:0; box-sizing:border-box; }
 
-/* === NOUVEAU LAYOUT GLOBAL (Indépendant) === */
+/* === LAYOUT GLOBAL === */
 body { font-family:'Plus Jakarta Sans',sans-serif; background:var(--bg); color:var(--text); height:100vh; overflow:hidden; display:flex; flex-direction:column; transition:background .3s,color .3s; }
 
 .app-header { background:var(--panel); border-bottom:1px solid var(--border); padding:16px 28px; display:flex; align-items:center; justify-content:center; flex:0 0 auto; z-index:100; transition:background .3s; }
 .logo { display:flex; align-items:center; gap:12px; }
 .logo-icon { width:40px; height:40px; background:linear-gradient(135deg,var(--accent),var(--accent2)); border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:20px; box-shadow:0 4px 16px rgba(62,207,142,0.3); }
-.logo-text { font-family:'Playfair Display',serif; font-size:24px; font-weight:800; background:linear-gradient(135deg,var(--accent),var(--accent4)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; line-height:1; }
+/* Correction de la barre du 'q' coupée : ajout de padding-bottom et line-height plus souple */
+.logo-text { font-family:'Playfair Display',serif; font-size:24px; font-weight:800; background:linear-gradient(135deg,var(--accent),var(--accent4)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; line-height:1.2; padding-bottom:4px; margin-bottom:-4px; }
 .logo-flags { font-size:24px; display:flex; gap:6px; align-items:center; user-select:none; margin-left:8px; }
 
 /* Tooltips Drapeaux */
@@ -48,6 +49,11 @@ body { font-family:'Plus Jakarta Sans',sans-serif; background:var(--bg); color:v
 .editor-panel::-webkit-scrollbar { width:5px; }
 .editor-panel::-webkit-scrollbar-thumb { background:var(--scrollbar); border-radius:3px; }
 .preview-panel { background:var(--preview-bg); padding:28px 28px 100px 28px; overflow-y:auto; display:flex; justify-content:center; align-items:flex-start; transition:background .3s; }
+
+/* Mentions légales en pied de panneau gauche */
+.legal-footer { margin-top: 40px; padding-top: 20px; border-top: 1px solid var(--border); font-size: 10.5px; color: var(--text-muted); line-height: 1.5; }
+.legal-footer h4 { font-size: 11px; color: var(--text); margin: 16px 0 6px 0; text-transform: uppercase; letter-spacing: 0.5px; }
+.legal-footer p { margin-bottom: 8px; }
 
 /* Barre d'action fixe en bas */
 .header-actions { position:fixed; bottom:0; left:0; right:0; background:var(--panel); padding:12px 28px; border-top:1px solid var(--border); box-shadow:0 -4px 24px rgba(0,0,0,0.15); z-index:1000; display:flex; justify-content:center; align-items:center; gap:16px; transition:background .3s; }
@@ -129,7 +135,7 @@ body { font-family:'Plus Jakarta Sans',sans-serif; background:var(--bg); color:v
 .a4-sub-title { font-size:10px; font-weight:700; color:#64748b; text-transform:uppercase; letter-spacing:.8px; margin-bottom:2px; }
 .a4-footer { position:absolute; bottom:12mm; left:20mm; right:20mm; text-align:center; font-size:8px; color:#cbd5e1; border-top:1px solid #e2e8f0; padding-top:6px; }
 
-/* === RESPONSIVE ÉCRANS MOYENS / PETITS === */
+/* === RESPONSIVE ÉCRANS === */
 @media print {
   .app-header, .header-actions, .editor-panel { display:none!important; }
 }
@@ -160,7 +166,7 @@ body { font-family:'Plus Jakarta Sans',sans-serif; background:var(--bg); color:v
 
 <header class="app-header">
   <div class="logo">
-    <div class="logo-icon">📜✏️</div>
+    <div class="logo-icon">📝</div>
     <div class="logo-text">Le Séquenceur</div>
     <div class="logo-flags">
       <span>🇬🇧</span>
@@ -248,6 +254,28 @@ body { font-family:'Plus Jakarta Sans',sans-serif; background:var(--bg); color:v
     <div class="divider"></div>
     <div class="section-label pink">Pragmatique</div>
     <div class="field-group"><div class="select-with-add"><select class="field-select" id="pragmatique"><option value="">— Choisir un niveau —</option></select><button class="btn-add p" onclick="addItem('pragmatique','pragma','p')">+</button></div><div class="added-tags" id="tags-pragma"></div></div>
+
+    <div class="legal-footer">
+      <h4>Mentions légales</h4>
+      <p><strong>Éditeur de l'application</strong><br>Charlie Rollo<br>Fonction : Professeur d'anglais / Formateur au numérique éducatif (Drane de Versailles / INSPE)<br>Email : charlie.rollo@ac-versailles.fr</p>
+      <p><strong>Hébergement</strong><br>Hébergeur : Forge des Communs Numériques Éducatifs<br>Raison sociale : Ministère de l'Éducation nationale et de la Jeunesse<br>Adresse : 110 rue de Grenelle, 75007 Paris, France<br>Téléphone : +33 1 55 55 10 10</p>
+      <p><strong>Responsable de la publication</strong><br>Charlie ROLLO en qualité d'éditeur bénévole.</p>
+      
+      <h4>Conditions générales d'utilisation</h4>
+      <p>Ce site permet aux utilisateurs de générer des fiches de séquence. L'affichage s'effectue localement. L'utilisateur est seul responsable de l'usage de l'outil. L'application est proposée à titre gratuit, sans aucune garantie de fonctionnement ou de résultat. L'éditeur décline toute responsabilité en cas de mauvaise interprétation des contenus ou d'usage inapproprié.</p>
+      
+      <h4>Propriété intellectuelle</h4>
+      <p>L'ensemble des codes sources, éléments graphiques et contenus sont placés sous licence CC-BY-NC 4.0 (Creative Commons Attribution — Pas d'utilisation commerciale). Leur réutilisation est permise dans les conditions de cette licence. Toute redistribution ou modification doit citer l'auteur original : Charlie ROLLO.</p>
+      
+      <h4>Données personnelles</h4>
+      <p>Aucun cookie de suivi n'est utilisé. Aucune donnée personnelle n'est collectée ni stockée par l'application.</p>
+      
+      <h4>Accessibilité</h4>
+      <p>L'application est conçue pour être compatible avec une utilisation sur ordinateur, incluant les modes sombre/clair, la navigation au clavier et le contraste élevé selon les thèmes. Une amélioration continue de l'accessibilité est en cours, en lien avec les recommandations du RGAA.</p>
+      
+      <h4>Droit applicable</h4>
+      <p>Ce site est soumis au droit français.</p>
+    </div>
   </div>
 
   <div class="preview-panel">
@@ -541,11 +569,8 @@ function renderA4List(id, items, cls, emptyMessage) {
   d.innerHTML = h;
 }
 
-// === EXPORT 100% WYSIWYG PDF ===
 function exportPDF() {
   const element = document.getElementById('a4');
-  
-  // Retirer temporairement les phrases "Ajoutez des..." de la fiche pour le PDF
   const empties = element.querySelectorAll('.a4-empty');
   empties.forEach(el => el.style.display = 'none');
 
@@ -558,21 +583,15 @@ function exportPDF() {
   };
   
   html2pdf().set(opt).from(element).save().then(() => {
-    empties.forEach(el => el.style.display = 'block'); // On les remet une fois exporté
+    empties.forEach(el => el.style.display = 'block');
   });
 }
 
-// === EXPORT WORD OPTIMISÉ ===
 function exportWord() {
-  // On clone la fiche pour pouvoir la modifier discrètement
   const clone = document.getElementById('a4').cloneNode(true);
   clone.querySelectorAll('.a4-empty').forEach(el => el.remove());
-  
-  // Word ne gère pas bien les pseudo-éléments "::before" pour les listes. 
-  // On injecte donc la petite flèche (▸) manuellement dans le HTML exporté.
   clone.querySelectorAll('li').forEach(li => { li.innerHTML = '&#9656; ' + li.innerHTML; });
 
-  // Injection d'un CSS spécifique compris par Microsoft Word
   const wordCSS = `
     <style>
       @page { size: A4 portrait; margin: 2cm; }

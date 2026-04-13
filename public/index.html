@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Le Séquenceur — 🇬🇧 🇺🇸 🇪🇸 🇩🇪</title>
+<title>Le Séquenceur — Anglais Collège</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📝</text></svg>">
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Playfair+Display:wght@700;800&display=swap');
@@ -144,16 +144,43 @@ body { font-family:'Plus Jakarta Sans',sans-serif; background:var(--bg); color:v
   .preview-panel { padding:20px 16px; max-height:none; overflow:visible; }
 }
 
+/* === SMARTPHONE : BOTTOM ACTION BAR === */
 @media (max-width: 600px) {
-  .app-header { flex-direction:column; align-items:flex-start; padding:16px; gap:16px; }
-  .header-actions { width:100%; justify-content:space-between; flex-direction:row; align-items:stretch; }
-  .export-actions { flex-direction:row; flex:1; }
-  .btn-reset { height:auto; padding:8px 12px; }
-  .logo-flags { font-size:20px; }
-  .btn { padding:8px 10px; font-size:11px; }
-  .a4-sheet { padding:20px 15px; min-height:auto; }
-  .a4-badge { top:10px; right:10px; }
-  .a4-footer { position:relative; bottom:auto; left:auto; right:auto; margin-top:30px; }
+  .app-header { padding: 12px 16px; justify-content: center; }
+  .logo { justify-content: center; }
+  .logo-icon { width: 34px; height: 34px; font-size: 16px; }
+  .logo-text { font-size: 18px; }
+  .logo-sub { font-size: 10px; }
+  .logo-flags { font-size: 18px; margin-left: 4px; }
+  
+  /* Transformation de la div d'actions en barre fixe en bas */
+  .header-actions {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    width: auto;
+    background: var(--panel);
+    padding: 10px 12px;
+    border-top: 1px solid var(--border);
+    box-shadow: 0 -4px 20px rgba(0,0,0,0.15);
+    z-index: 1000;
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 6px;
+  }
+  
+  .export-actions { flex-direction: row; flex: 1; gap: 6px; }
+  .btn { padding: 8px 6px; font-size: 11px; flex: 1; white-space: nowrap; }
+  .btn-reset { height: auto; padding: 8px; flex: 0 1 auto; }
+  
+  .theme-toggle { width: 44px; height: 26px; }
+  .theme-toggle::after { width: 22px; height: 22px; }
+  [data-theme="light"] .theme-toggle::after { left: 20px; }
+  
+  /* On ajoute une marge en bas du panel pour ne pas cacher la fin de la page A4 sous la barre d'action */
+  .preview-panel { padding: 20px 15px 80px 15px; } 
+  .a4-sheet { padding: 20px 15px; min-height: auto; }
+  .a4-badge { top: 10px; right: 10px; }
+  .a4-footer { position: relative; bottom: auto; left: auto; right: auto; margin-top: 30px; }
 }
 </style>
 </head>

@@ -1,0 +1,9 @@
+pages:
+  script:
+    - echo "Rien à faire…"
+  artifacts:
+    paths:
+      - public
+  rules:
+        - if: '$CI_COMMIT_BRANCH == "main"'
+

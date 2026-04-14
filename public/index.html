@@ -374,7 +374,7 @@ const DB = {
         "Axe 6. Les États-Unis": ["L'expédition de Lewis et Clark", "Jeune pays, grande Histoire, multiples acteurs : de la Seconde Guerre mondiale à nos jours", "Chicago, ville représentative des États-Unis ?", "La culture, outil du soft power américain"]
       }
     },
-    grammaire: {
+    grammar: {
       "6ème": ["G1 · Present simple (être, avoir, verbes courants)", "G2 · La 3e personne du singulier : he sleeps, she rides, etc.", "G3 · Auxiliaires de modalité : can/can't, must/mustn't", "G4 · L'impératif (forme affirmative et négative)", "G5 · Present be+ing (reconnaissance de formes courantes)", "G6 · Present be+ing pour exprimer un futur proche", "G7 · Expression du passé : quelques verbes courants au prétérit", "G8 · Exprimer une intention : I want to, I would like to", "G9 · Le groupe nominal : articles (a, the, Ø), démonstratifs", "G10 · Le déterminant possessif et le génitif", "G11 · La place de l'adjectif épithète (à gauche du nom)", "G12 · Les pronoms personnels sujets et compléments", "G13 · Les pronoms possessifs : mine, yours, his, hers, etc.", "G14 · Les mots interrogatifs : who, what, where, when, why, how", "G15 · Marqueurs temporels essentiels : today, tomorrow, yesterday", "G16 · Prépositions de lieu : on, in, under, over, between, above", "G17 · Conjonctions de coordination : and, but, or", "G18 · Connecteurs chronologiques : first, then, finally", "G19 · Modalisateurs : maybe, perhaps", "G20 · Pluriels réguliers et irréguliers : foot/feet, child/children", "G21 · Noms composés : snowman, policeman, bedroom", "G22 · Suffixes et dérivation : cloud/cloudy, magic/magician"],
       "5ème": ["G23 · Present simple : affirmatif, négatif et interrogatif", "G24 · Present be+ing (formes courantes et futur proche)", "G25 · Expression du passé : prétérit (réguliers et irréguliers)", "G26 · Modaux : can/can't, must/mustn't, should, could", "G27 · L'impératif et le gérondif : Mind the stairs! No diving!", "G28 · Expression du futur avec will et be going to + BV", "G29 · Expression du souhait : I wish to, I would love to", "G30 · Expression de l'opinion : I think, I believe, In my opinion", "G31 · Comparatifs et superlatifs : longer than, the best", "G32 · Antonymes : quiet/noisy, freedom/constraint", "G33 · Quantifieurs : much, many, some", "G34 · Pronoms réfléchis : myself, himself, themselves", "G35 · Adverbes de fréquence", "G36 · Marqueurs temporels : at two o'clock, six months ago", "G37 · Situer dans l'espace : foreground/background, top/bottom", "G38 · Opposition, concession : but, whereas, however", "G39 · Adverbes d'intensité : so, enough, really, almost, quite", "G40 · Subordonnées de condition : If you gaze…, you'll notice…", "G41 · Discours direct et indirect : The author wonders if…", "G42 · Dérivation : recognise/recognisable/unrecognisable"],
       "4ème": ["G43 · Present simple et present be+ing (approfondissement)", "G44 · Prétérit simple et prétérit en be+ing", "G45 · Present perfect", "G46 · Expression du futur : be+V-ing, will, be going to + BV", "G47 · Conditionnel : would + BV", "G48 · Modaux de probabilité : can, may, must", "G49 · Verbes réfléchis et réciproques", "G50 · Structures partitives : some of them, most of us", "G51 · Comparatifs, superlatifs et adverbes de degré variés", "G52 · Pronoms possessifs : a friend of mine, a book of hers", "G53 · Pronoms réfléchis : myself, himself, ourselves", "G54 · Marqueurs temporels : two days ago, for three years, since 2018", "G55 · Espace : over there, not far from, round the corner", "G56 · Opposition : on the one hand/on the other hand, yet", "G57 · Intensité : almost, quite, so much better, good enough", "G58 · Connecteurs : before, afterwards, for instance, consequently", "G59 · Propositions relatives : who, which", "G60 · Subordonnées hypothétiques : If I travel… / If I were…", "G61 · Discours indirect : He asked me if I wanted to…"],
@@ -579,14 +579,14 @@ function populateSelect(id, data, niv) {
   
   if (data[niv]) {
     const g = document.createElement('optgroup');
-    g.label = `── ${niv} (niveau actuel) ──`;
+    g.label = `── ${niv} ──`;
     data[niv].forEach(i => { const o = document.createElement('option'); o.value = cleanCode(i); o.textContent = cleanCode(i); g.appendChild(o); });
     s.appendChild(g);
   }
   LEVELS.forEach(l => {
     if (l === niv || !data[l]) return;
     const g = document.createElement('optgroup');
-    g.label = `── ${l} (révision) ──`;
+    g.label = `── ${l} ──`;
     data[l].forEach(i => { const o = document.createElement('option'); o.value = cleanCode(i); o.textContent = cleanCode(i); g.appendChild(o); });
     s.appendChild(g);
   });

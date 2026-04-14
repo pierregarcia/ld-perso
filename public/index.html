@@ -33,10 +33,13 @@ body { font-family:'Plus Jakarta Sans',sans-serif; background:var(--bg); color:v
 .logo { display:flex; align-items:center; gap:12px; }
 .logo-icon { width:40px; height:40px; background:linear-gradient(135deg,var(--accent),var(--accent2)); border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:20px; box-shadow:0 4px 16px rgba(62,207,142,0.3); }
 .logo-text { font-family:'Playfair Display',serif; font-size:24px; font-weight:800; background:linear-gradient(135deg,var(--accent),var(--accent4)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; line-height:1.2; padding-bottom:4px; margin-bottom:-4px; }
-.logo-flags { font-size:24px; display:flex; gap:6px; align-items:center; user-select:none; margin-left:8px; }
+.logo-flags { font-size:24px; display:flex; gap:8px; align-items:center; user-select:none; margin-left:12px; }
 
-/* Tooltips Drapeaux */
-.flag-disabled { position:relative; cursor:help; opacity:0.4; filter:grayscale(50%); display:inline-block; }
+/* Drapeaux cliquables et inactifs */
+.flag-btn { cursor:pointer; transition:all 0.2s; opacity:0.3; filter:grayscale(80%); }
+.flag-btn:hover { transform:scale(1.1); opacity:0.7; filter:grayscale(20%); }
+.flag-btn.active { opacity:1; filter:grayscale(0%); transform:scale(1.15); text-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+.flag-disabled { position:relative; cursor:help; opacity:0.3; filter:grayscale(80%); display:inline-block; }
 .flag-disabled::after { content:attr(data-tooltip); position:absolute; top:100%; left:50%; transform:translateX(-50%) translateY(8px); background:var(--panel); color:var(--text); padding:6px 12px; border-radius:6px; font-size:11px; font-weight:700; font-family:'Plus Jakarta Sans',sans-serif; white-space:nowrap; opacity:0; visibility:hidden; transition:all 0.2s cubic-bezier(0.4, 0, 0.2, 1); box-shadow:0 4px 12px rgba(0,0,0,0.15); border:1px solid var(--border); z-index:200; pointer-events:none; }
 .flag-disabled::before { content:''; position:absolute; top:100%; left:50%; transform:translateX(-50%); border:5px solid transparent; border-bottom-color:var(--border); opacity:0; visibility:hidden; transition:all 0.2s; z-index:200; pointer-events:none; }
 .flag-disabled:hover::after { opacity:1; visibility:visible; transform:translateX(-50%) translateY(4px); }
@@ -164,7 +167,7 @@ body { font-family:'Plus Jakarta Sans',sans-serif; background:var(--bg); color:v
   .app-header { padding:12px 16px; }
   .logo-icon { width:34px; height:34px; font-size:16px; }
   .logo-text { font-size:20px; }
-  .logo-flags { font-size:20px; }
+  .logo-flags { font-size:18px; }
   .header-actions { padding:10px 12px; justify-content:space-between; gap:8px; }
   .export-actions { flex:1; gap:6px; }
   .btn { padding:8px 10px; font-size:11px; width:100%; }
@@ -183,10 +186,9 @@ body { font-family:'Plus Jakarta Sans',sans-serif; background:var(--bg); color:v
     <div class="logo-icon">📝</div>
     <div class="logo-text">Le Séquenceur</div>
     <div class="logo-flags">
-      <span>🇬🇧</span>
-      <span>🇺🇸</span>
+      <span class="flag-btn active" id="flag-en" onclick="setLanguage('en')" title="Passer en Anglais">🇬🇧 🇺🇸</span>
       <span class="flag-disabled" data-tooltip="Ça arrive bientôt !">🇪🇸</span>
-      <span class="flag-disabled" data-tooltip="Ça arrive bientôt !">🇩🇪</span>
+      <span class="flag-btn" id="flag-de" onclick="setLanguage('de')" title="Passer en Allemand">🇩🇪</span>
     </div>
   </div>
 </header>
@@ -195,7 +197,7 @@ body { font-family:'Plus Jakarta Sans',sans-serif; background:var(--bg); color:v
   <div class="editor-panel">
     <div class="section-label">Configuration</div>
     <div class="field-group">
-      <label class="field-label">Niveau</label>
+      <label class="field-label" id="label-niveau">Niveau</label>
       <select class="field-select" id="niveau" onchange="onNiveauChange()">
         <option value="">— Choisir un niveau —</option>
         <option value="6ème">6ème</option><option value="5ème">5ème</option>
@@ -291,7 +293,7 @@ body { font-family:'Plus Jakarta Sans',sans-serif; background:var(--bg); color:v
       <div class="a4-sec"><div class="a4-sec-title phono">🔊 Phonologie</div><div id="a4-phono"><div class="a4-empty">Ajoutez des objectifs phonologiques</div></div></div>
       <div class="a4-sec"><div class="a4-sec-title pragma">💬 Pragmatique</div><div id="a4-pragma"><div class="a4-empty">Ajoutez des éléments pragmatiques</div></div></div>
       
-      <div class="a4-footer">Le Séquenceur — Outil de planification pédagogique</div>
+      <div class="a4-footer" id="a4-footer-text">Le Séquenceur — Anglais Collège</div>
     </div>
   </div>
 </div>
@@ -312,25 +314,18 @@ body { font-family:'Plus Jakarta Sans',sans-serif; background:var(--bg); color:v
     <div class="modal-body">
       <h4>Éditeur de l'application</h4>
       <p><strong>Charlie Rollo</strong><br>Fonction : Professeur d'anglais / Formateur au numérique éducatif (Drane de Versailles / INSPE)<br>Email : charlie.rollo@ac-versailles.fr</p>
-      
       <h4>Hébergement</h4>
       <p><strong>Hébergeur :</strong> Forge des Communs Numériques Éducatifs<br><strong>Raison sociale :</strong> Ministère de l'Éducation nationale et de la Jeunesse<br><strong>Adresse :</strong> 110 rue de Grenelle, 75007 Paris, France<br><strong>Téléphone :</strong> +33 1 55 55 10 10</p>
-      
       <h4>Responsable de la publication</h4>
       <p>Charlie ROLLO en qualité d'éditeur bénévole.</p>
-      
       <h4>Conditions générales d'utilisation</h4>
       <p>Ce site permet aux utilisateurs de générer des fiches de séquence. L'affichage s'effectue localement. L'utilisateur est seul responsable de l'usage de l'outil. L'application est proposée à titre gratuit, sans aucune garantie de fonctionnement ou de résultat. L'éditeur décline toute responsabilité en cas de mauvaise interprétation des contenus ou d'usage inapproprié.</p>
-      
       <h4>Propriété intellectuelle</h4>
       <p>L'ensemble des codes sources, éléments graphiques et contenus sont placés sous licence <strong>CC-BY-NC 4.0</strong> (Creative Commons Attribution — Pas d'utilisation commerciale). Leur réutilisation est permise dans les conditions de cette licence. Toute redistribution ou modification doit citer l'auteur original : Charlie ROLLO.</p>
-      
       <h4>Données personnelles</h4>
       <p>Aucun cookie de suivi n'est utilisé. Aucune donnée personnelle n'est collectée ni stockée par l'application.</p>
-      
       <h4>Accessibilité</h4>
       <p>L'application est conçue pour être compatible avec une utilisation sur ordinateur, incluant les modes sombre/clair, la navigation au clavier et le contraste élevé selon les thèmes. Une amélioration continue de l'accessibilité est en cours, en lien avec les recommandations du RGAA.</p>
-      
       <h4>Droit applicable</h4>
       <p>Ce site est soumis au droit français.</p>
     </div>
@@ -338,96 +333,161 @@ body { font-family:'Plus Jakarta Sans',sans-serif; background:var(--bg); color:v
 </div>
 
 <script>
-const AXES = {
-  "6ème": {
-    "Axe 1. Personnes et personnages": ["Journal de bord et journal intime", "Familles fictives et réelles", "Les animaux à l'origine de leçons de vie dans les fictions", "Masques et costumes"],
-    "Axe 2. Le quotidien : vivre, jouer, apprendre": ["Les lieux de vie des élèves des pays anglophones", "Sports populaires et traditionnels", "L'école et son organisation", "Les vacances aux États-Unis et leurs spécificités"],
-    "Axe 3. Pays et paysages": ["À la découverte du fleuve Mississippi", "Les Highlands en Écosse", "Les parcs nationaux du Kenya, avec leur faune et flore", "Mers et océans dans les pays anglophones, un bain linguistique"],
-    "Axe 4. Imaginaire, contes et légendes": ["L'image du dragon", "L'Irlande, terre de mythes et de légendes", "It's a kind of magic : sorciers et magiciens dans le folklore et la fiction", "L'univers poétique et farfelu du Dr. Seuss"],
-    "Axe 5. Arts et expression des sentiments": ["Réalité augmentée, un regard sur l'art", "Le pouvoir évocateur de la musique", "L'imagerie des fêtes de fin d'année", "Supercalifragilisticexpialidocious et la musicalité de la langue anglaise"]
+// ==========================================
+// BASES DE DONNÉES (ANGLAIS & ALLEMAND)
+// ==========================================
+const DB = {
+  en: {
+    subtitle: "Anglais Collège",
+    phTitle: "Ex : My Home, My Castle",
+    phProb: "Ex : How do homes reflect culture and identity?",
+    axes: {
+      "6ème": {
+        "Axe 1. Personnes et personnages": ["Journal de bord et journal intime", "Familles fictives et réelles", "Les animaux à l'origine de leçons de vie dans les fictions", "Masques et costumes"],
+        "Axe 2. Le quotidien : vivre, jouer, apprendre": ["Les lieux de vie des élèves des pays anglophones", "Sports populaires et traditionnels", "L'école et son organisation", "Les vacances aux États-Unis et leurs spécificités"],
+        "Axe 3. Pays et paysages": ["À la découverte du fleuve Mississippi", "Les Highlands en Écosse", "Les parcs nationaux du Kenya, avec leur faune et flore", "Mers et océans dans les pays anglophones, un bain linguistique"],
+        "Axe 4. Imaginaire, contes et légendes": ["L'image du dragon", "L'Irlande, terre de mythes et de légendes", "It's a kind of magic : sorciers et magiciens dans le folklore et la fiction", "L'univers poétique et farfelu du Dr. Seuss"],
+        "Axe 5. Arts et expression des sentiments": ["Réalité augmentée, un regard sur l'art", "Le pouvoir évocateur de la musique", "L'imagerie des fêtes de fin d'année", "Supercalifragilisticexpialidocious et la musicalité de la langue anglaise"]
+      },
+      "5ème": {
+        "Axe 1. Portrait, autoportrait": ["Les yearbooks et la valorisation des talents des élèves", "Les familles présidentielles américaines", "The National Portrait Gallery : l'histoire britannique en image", "Écrire sur soi et sur les autres : l'espace intime et ludique de la poésie"],
+        "Axe 2. Le quotidien : lieux, rythmes, saisons": ["Les rythmes et saisons à travers la peinture", "Les vacances au rythme des saisons", "Rythmes de vie : les moyens de déplacement", "Autour de la table"],
+        "Axe 3. Le réel et l'imaginaire": ["Mondes réels, mondes rêvés : de la cité idéale de la famille Cadbury à l'imaginaire de Roald Dahl", "Un imaginaire nourri de clichés : les images véhiculées par les médias sur les pays anglophones", "L'imaginaire pour penser le réel dans la littérature fantastique", "Rêveries initiatiques (naviguer avec Mark Twain)"],
+        "Axe 4. École et loisirs": ["Découvrir des formes scolaires inhabituelles", "Des cliques aux fraternités et sororités", "Les clubs à l'école", "Représenter, raconter l'école dans les œuvres littéraires et cinématographiques"],
+        "Axe 5. Des langues, des lieux, des histoires": ["Migrations : lieux de passage, lieux de mémoire", "Écrire sur la ville, écrire dans la ville", "Une langue, des déclinaisons : comprendre l'évolution de la langue anglaise", "Un patrimoine, des histoires : l'exemple de Columbus Day, Thanksgiving ou Juneteenth"],
+        "Axe 6. Le Royaume-Uni": ["Découvrir le patrimoine britannique grâce au National Trust", "Du Nord au Sud : Un Royaume-Uni aux multiples identités", "La famille royale à travers son iconographie", "La BBC, une institution dans la vie des familles britanniques"]
+      },
+      "4ème": {
+        "Axe 1. Sport et société": ["NCAA, le sport universitaire aux États-Unis", "Le hockey sur glace : eine institution au Canada", "Le cricket dans les pays du Commonwealth", "Aussie Rules football : incarner les valeurs de la société australienne par le sport"],
+        "Axe 2. Voyages et explorations": ["La fin de l'ère héroïque de l'exploration : Ernest Shackleton et l'Endurance", "Les grands voyages de découverte : Captain Cook", "L'Empire britannique : Stanley et Livingstone", "La conquête spatiale : l'espace de tous les possibles"],
+        "Axe 3. Villes, villages, quartiers": ["Melbourne, the Garden City", "Soweto, Johannesburg, et la lutte contre l'apartheid", "Poundbury, Dorset : ville nouvelle", "Les gated communities aux États-Unis : une nouvelle forme de ségrégation ?"],
+        "Axe 4. Inventer, innover, créer": ["La création artistique pour sensibiliser notre regard", "La mode à l'avant-garde", "Révolution numérique et évolution sociale", "Le génie à l'œuvre : comment la figure de l'inventeur reflète-t-elle les transformations des sociétés ?"],
+        "Axe 5. Langages et messages artistiques": ["La musique, langage artistique et politique", "La mécanique du gag", "Des planches aux plateaux de cinéma", "Tradition et modernité : la transmission des traditions par l'art"],
+        "Axe 6. L'Irlande": ["Céad míle fáilte, bienvenue cent mille fois : l'Irlande, terre d'accueil", "Les traditions irlandaises à l'heure de la modernité", "L'Irlande sur la scène européenne", "The Wild Atlantic Way : une route source d'inspiration"]
+      },
+      "3ème": {
+        "Axe 1. À la rencontre de l'autre": ["La rencontre dans les œuvres de fiction ou les œuvres d'art", "Les couples célèbres", "L'expérience de la marginalité vue par les artistes du monde anglophone", "Rencontre entre les peuples : James Cook et les Maoris, entre violence et réconciliation"],
+        "Axe 2. Travailler hier, aujourd'hui, demain": ["Le travail des enfants a-t-il vraiment disparu dans tous les pays de l'aire anglophone ?", "L'organisation du travail : les États-Unis, un laboratoire", "Dépasser les stéréotypes et les assignations", "Teen jobs : les « petits boulots » des adolescents américains hier et aujourd'hui"],
+        "Axe 3. Voyages et migrations": ["Migrations internes aux États-Unis", "Migration vers l'Australie", "Errer, vagabonder, se perdre : la représentation du « vagabond » dans les œuvres anglophones", "Le tourisme de masse dans les Caraïbes"],
+        "Axe 4. Langages et médias": ["Diversité des langues : la place du multilinguisme dans les pays de l'aire anglophone", "Les codes linguistiques ou la langue comme marqueur social, géographique, générationnel", "Grands discours, grands orateurs qui inspirent et provoquent des changements significatifs", "La publicité, entre communication et soft power"],
+        "Axe 5. Formes de l'engagement": ["L'engagement politique pour les droits des femmes ou des minorités", "L'engagement des artistes", "L'engagement individuel au service de la communauté", "La philanthropie, un engagement pour le bien public ?"],
+        "Axe 6. Les États-Unis": ["L'expédition de Lewis et Clark", "Jeune pays, grande Histoire, multiples acteurs : de la Seconde Guerre mondiale à nos jours", "Chicago, ville représentative des États-Unis ?", "La culture, outil du soft power américain"]
+      }
+    },
+    grammaire: {
+      "6ème": ["G1 · Present simple (être, avoir, verbes courants)", "G2 · La 3e personne du singulier : he sleeps, she rides, etc.", "G3 · Auxiliaires de modalité : can/can't, must/mustn't", "G4 · L'impératif (forme affirmative et négative)", "G5 · Present be+ing (reconnaissance de formes courantes)", "G6 · Present be+ing pour exprimer un futur proche", "G7 · Expression du passé : quelques verbes courants au prétérit", "G8 · Exprimer une intention : I want to, I would like to", "G9 · Le groupe nominal : articles (a, the, Ø), démonstratifs", "G10 · Le déterminant possessif et le génitif", "G11 · La place de l'adjectif épithète (à gauche du nom)", "G12 · Les pronoms personnels sujets et compléments", "G13 · Les pronoms possessifs : mine, yours, his, hers, etc.", "G14 · Les mots interrogatifs : who, what, where, when, why, how", "G15 · Marqueurs temporels essentiels : today, tomorrow, yesterday", "G16 · Prépositions de lieu : on, in, under, over, between, above", "G17 · Conjonctions de coordination : and, but, or", "G18 · Connecteurs chronologiques : first, then, finally", "G19 · Modalisateurs : maybe, perhaps", "G20 · Pluriels réguliers et irréguliers : foot/feet, child/children", "G21 · Noms composés : snowman, policeman, bedroom", "G22 · Suffixes et dérivation : cloud/cloudy, magic/magician"],
+      "5ème": ["G23 · Present simple : affirmatif, négatif et interrogatif", "G24 · Present be+ing (formes courantes et futur proche)", "G25 · Expression du passé : prétérit (réguliers et irréguliers)", "G26 · Modaux : can/can't, must/mustn't, should, could", "G27 · L'impératif et le gérondif : Mind the stairs! No diving!", "G28 · Expression du futur avec will et be going to + BV", "G29 · Expression du souhait : I wish to, I would love to", "G30 · Expression de l'opinion : I think, I believe, In my opinion", "G31 · Comparatifs et superlatifs : longer than, the best", "G32 · Antonymes : quiet/noisy, freedom/constraint", "G33 · Quantifieurs : much, many, some", "G34 · Pronoms réfléchis : myself, himself, themselves", "G35 · Adverbes de fréquence", "G36 · Marqueurs temporels : at two o'clock, six months ago", "G37 · Situer dans l'espace : foreground/background, top/bottom", "G38 · Opposition, concession : but, whereas, however", "G39 · Adverbes d'intensité : so, enough, really, almost, quite", "G40 · Subordonnées de condition : If you gaze…, you'll notice…", "G41 · Discours direct et indirect : The author wonders if…", "G42 · Dérivation : recognise/recognisable/unrecognisable"],
+      "4ème": ["G43 · Present simple et present be+ing (approfondissement)", "G44 · Prétérit simple et prétérit en be+ing", "G45 · Present perfect", "G46 · Expression du futur : be+V-ing, will, be going to + BV", "G47 · Conditionnel : would + BV", "G48 · Modaux de probabilité : can, may, must", "G49 · Verbes réfléchis et réciproques", "G50 · Structures partitives : some of them, most of us", "G51 · Comparatifs, superlatifs et adverbes de degré variés", "G52 · Pronoms possessifs : a friend of mine, a book of hers", "G53 · Pronoms réfléchis : myself, himself, ourselves", "G54 · Marqueurs temporels : two days ago, for three years, since 2018", "G55 · Espace : over there, not far from, round the corner", "G56 · Opposition : on the one hand/on the other hand, yet", "G57 · Intensité : almost, quite, so much better, good enough", "G58 · Connecteurs : before, afterwards, for instance, consequently", "G59 · Propositions relatives : who, which", "G60 · Subordonnées hypothétiques : If I travel… / If I were…", "G61 · Discours indirect : He asked me if I wanted to…"],
+      "3ème": ["G62 · Phrasal verbs : give up, look forward to, get down", "G63 · Temps du passé : prétérit, be+ing, past perfect", "G64 · Hypothèse : If she goes… / If I went…", "G65 · Modaux étendus : might, would, ought to, be able to", "G66 · Souhait/regret : I wish I knew, he wishes he were", "G67 · Choix entre les temps (ensemble du système verbal)", "G68 · La voix passive", "G69 · Synonymes et antonymes", "G70 · Déterminants distributifs : both, either, every, each", "G71 · Comparatifs et superlatifs (maîtrise complète)", "G72 · Adjectifs composés : a black-haired man, a ten-minute break", "G73 · Interrogatifs : How often? How much? How tall? How long?", "G74 · Marqueurs temporels : over the past years, as soon as", "G75 · Espace : in the top left-hand corner, north of", "G76 · Opposition : yet, on the contrary", "G77 · Emphase : extremely, barely, absolutely, I do like", "G78 · Connecteurs : moreover, consequently, as a result", "G79 · Relatives : who, that ; subordonnées : when, while, as", "G80 · Propositions infinitives : want sb to + BV", "G81 · Discours rapporté : say, tell, ask, answer", "G82 · Questions indirectes : I wonder if/how/why"]
+    },
+    lexique: {
+      "6ème": ["L1 · La famille", "L2 · Nationalités", "L3 · L'apparence physique", "L4 · Le caractère", "L5 · Les vêtements", "L6 · Le corps humain", "L7 · Les métiers", "L8 · Les animaux", "L9 · Les habitudes et le quotidien", "L10 · L'habitat et la maison", "L11 · Le jeu", "L12 · Les aliments", "L13 · Les loisirs et sports", "L14 · Les fêtes", "L15 · Zones géographiques et paysages", "L16 · Les contes et légendes", "L17 · Les émotions et sentiments", "L18 · Compter (nombres ordinaux)"],
+      "5ème": ["L19 · L'école et le rythme scolaire", "L20 · Description physique et morale (approfondissement)", "L21 · Les transports et déplacements", "L22 · Les paysages et saisons", "L23 · Les lieux", "L24 · Les traditions culinaires", "L25 · L'art", "L26 · L'aventure et la découverte", "L27 · L'imaginaire", "L28 · Les sentiments et émotions (approfondissement)"],
+      "4ème": ["L29 · Les sports (spécialisation)", "L30 · Description physique et morale (niveau avancé)", "L31 · Les transports (approfondissement)", "L32 · Monde, géographie, paysages (approfondissement)", "L33 · Les espaces urbains", "L34 · Science et innovation", "L35 · L'art (approfondissement)", "L36 · L'aventure et les voyages", "L37 · L'imaginaire (approfondissement)", "L38 · Les sentiments et émotions (niveau avancé)"],
+      "3ème": ["L39 · La rencontre, l'entente, le conflit", "L40 · L'amour, l'amitié, l'hospitalité", "L41 · L'engagement", "L42 · Le monde du travail", "L43 · Voyages et migrations", "L44 · Langages et médias", "L45 · La description morale (niveau expert)", "L46 · Paysages naturels et urbains"]
+    },
+    phono: {
+      "6ème": ["PH1 · Prononciation du -s : /s/, /z/, /ɪz/", "PH2 · Voyelles courtes avant doublement de consonnes", "PH3 · Accentuation des polysyllabiques : favourite, beautiful", "PH4 · Les consonnes muettes : light, autumn, Wednesday", "PH5 · Les diphtongues : /eɪ/, /aɪ/, /ɔɪ/, /əʊ/, /aʊ/", "PH6 · Graphie/phonie ; intonation affirmatif/interrogatif"],
+      "5ème": ["PH7 · Intonation des énoncés affirmatifs et interrogatifs", "PH8 · Prononciation du -s et du -ed : /t/, /d/, /ɪd/", "PH9 · Accentuation : intelligent, comfortable, interesting", "PH10 · Formes faibles : of, to, at, from", "PH11 · Schémas intonatifs : montante/descendante", "PH12 · Rythme de la phrase et accent tonique", "PH13 · Les formes contractées", "PH14 · Voyelles longues/courtes : sheep/ship, cat/car", "PH15 · Diphtongues (approfondissement)"],
+      "4ème": ["PH16 · Rythme et mise en relief des mots-clés", "PH17 · Connaissances phonologiques : muettes, /h/, voyelles", "PH18 · Consonnes fricatives : /θ/ (think) et /ð/ (this)"],
+      "3ème": ["PH19 · Schémas intonatifs systématiques", "PH20 · Consonnes affriquées : /ʧ/ et /ʤ/", "PH21 · Emphase et mots-clés", "PH22 · Accentuation selon composition du mot", "PH23 · Accents régionaux : américain, indien, australien"]
+    },
+    pragma: {
+      "6ème": ["PR1 · Connecteurs logiques : and, but, or, so, because", "PR2 · Connecteurs chronologiques : first, then, finally", "PR3 · Illustrer : for example, for instance, such as, like", "PR4 · Modalisateurs : maybe, perhaps, probably, certainly"],
+      "5ème": ["PR5 · Connecteurs logiques et chronologiques élargis", "PR6 · Expression de l'opinion : I think, I believe, In my opinion", "PR7 · Opposition, concession : but, whereas, however", "PR8 · Modalisateurs : maybe, perhaps", "PR9 · Adverbes d'intensité : so, enough, really, almost"],
+      "4ème": ["PR10 · Connecteurs : before, afterwards", "PR11 · Connecteurs : for instance, besides, consequently", "PR12 · Propositions relatives : who, which", "PR13 · Subordonnées hypothétiques et conditionnelles", "PR14 · Discours direct et indirect", "PR15 · Modalisateurs et adverbes de degré avancés"],
+      "3ème": ["PR16 · Connecteurs : moreover, consequently, as a result", "PR17 · Emphase : extremely, barely, absolutely, I do like", "PR18 · Relatives : who, that ; subordonnées : when, while, as", "PR19 · Propositions infinitives : want sb to + BV", "PR20 · Discours direct et rapporté (présent et passé)", "PR21 · Questions indirectes : I wonder if/how/why"]
+    }
   },
-  "5ème": {
-    "Axe 1. Portrait, autoportrait": ["Les yearbooks et la valorisation des talents des élèves", "Les familles présidentielles américaines", "The National Portrait Gallery : l'histoire britannique en image", "Écrire sur soi et sur les autres : l'espace intime et ludique de la poésie"],
-    "Axe 2. Le quotidien : lieux, rythmes, saisons": ["Les rythmes et saisons à travers la peinture", "Les vacances au rythme des saisons", "Rythmes de vie : les moyens de déplacement", "Autour de la table"],
-    "Axe 3. Le réel et l'imaginaire": ["Mondes réels, mondes rêvés : de la cité idéale de la famille Cadbury à l'imaginaire de Roald Dahl", "Un imaginaire nourri de clichés : les images véhiculées par les médias sur les pays anglophones", "L'imaginaire pour penser le réel dans la littérature fantastique", "Rêveries initiatiques (naviguer avec Mark Twain)"],
-    "Axe 4. École et loisirs": ["Découvrir des formes scolaires inhabituelles", "Des cliques aux fraternités et sororités", "Les clubs à l'école", "Représenter, raconter l'école dans les œuvres littéraires et cinématographiques"],
-    "Axe 5. Des langues, des lieux, des histoires": ["Migrations : lieux de passage, lieux de mémoire", "Écrire sur la ville, écrire dans la ville", "Une langue, des déclinaisons : comprendre l'évolution de la langue anglaise", "Un patrimoine, des histoires : l'exemple de Columbus Day, Thanksgiving ou Juneteenth"],
-    "Axe 6. Le Royaume-Uni": ["Découvrir le patrimoine britannique grâce au National Trust", "Du Nord au Sud : Un Royaume-Uni aux multiples identités", "La famille royale à travers son iconographie", "La BBC, une institution dans la vie des familles britanniques"]
-  },
-  "4ème": {
-    "Axe 1. Sport et société": ["NCAA, le sport universitaire aux États-Unis", "Le hockey sur glace : une institution au Canada", "Le cricket dans les pays du Commonwealth", "Aussie Rules football : incarner les valeurs de la société australienne par le sport"],
-    "Axe 2. Voyages et explorations": ["La fin de l'ère héroïque de l'exploration : Ernest Shackleton et l'Endurance", "Les grands voyages de découverte : Captain Cook", "L'Empire britannique : Stanley et Livingstone", "La conquête spatiale : l'espace de tous les possibles"],
-    "Axe 3. Villes, villages, quartiers": ["Melbourne, the Garden City", "Soweto, Johannesburg, et la lutte contre l'apartheid", "Poundbury, Dorset : ville nouvelle", "Les gated communities aux États-Unis : une nouvelle forme de ségrégation ?"],
-    "Axe 4. Inventer, innover, créer": ["La création artistique pour sensibiliser notre regard", "La mode à l'avant-garde", "Révolution numérique et évolution sociale", "Le génie à l'œuvre : comment la figure de l'inventeur reflète-t-elle les transformations des sociétés ?"],
-    "Axe 5. Langages et messages artistiques": ["La musique, langage artistique et politique", "La mécanique du gag", "Des planches aux plateaux de cinéma", "Tradition et modernité : la transmission des traditions par l'art"],
-    "Axe 6. L'Irlande": ["Céad míle fáilte, bienvenue cent mille fois : l'Irlande, terre d'accueil", "Les traditions irlandaises à l'heure de la modernité", "L'Irlande sur la scène européenne", "The Wild Atlantic Way : une route source d'inspiration"]
-  },
-  "3ème": {
-    "Axe 1. À la rencontre de l'autre": ["La rencontre dans les œuvres de fiction ou les œuvres d'art", "Les couples célèbres", "L'expérience de la marginalité vue par les artistes du monde anglophone", "Rencontre entre les peuples : James Cook et les Maoris, entre violence et réconciliation"],
-    "Axe 2. Travailler hier, aujourd'hui, demain": ["Le travail des enfants a-t-il vraiment disparu dans tous les pays de l'aire anglophone ?", "L'organisation du travail : les États-Unis, un laboratoire", "Dépasser les stéréotypes et les assignations", "Teen jobs : les « petits boulots » des adolescents américains hier et aujourd'hui"],
-    "Axe 3. Voyages et migrations": ["Migrations internes aux États-Unis", "Migration vers l'Australie", "Errer, vagabonder, se perdre : la représentation du « vagabond » dans les œuvres anglophones", "Le tourisme de masse dans les Caraïbes"],
-    "Axe 4. Langages et médias": ["Diversité des langues : la place du multilinguisme dans les pays de l'aire anglophone", "Les codes linguistiques ou la langue comme marqueur social, géographique, générationnel", "Grands discours, grands orateurs qui inspirent et provoquent des changements significatifs", "La publicité, entre communication et soft power"],
-    "Axe 5. Formes de l'engagement": ["L'engagement politique pour les droits des femmes ou des minorités", "L'engagement des artistes", "L'engagement individuel au service de la communauté", "La philanthropie, un engagement pour le bien public ?"],
-    "Axe 6. Les États-Unis": ["L'expédition de Lewis et Clark", "Jeune pays, grande Histoire, multiples acteurs : de la Seconde Guerre mondiale à nos jours", "Chicago, ville représentative des États-Unis ?", "La culture, outil du soft power américain"]
+  de: {
+    subtitle: "Allemand Collège",
+    phTitle: "Ex : Eine Reise nach Berlin",
+    phProb: "Ex : Inwiefern spiegelt die Stadt die deutsche Geschichte wider?",
+    axes: {
+      "6ème": {
+        "Axe 1. Personnes et personnages": ["Je suis un (grand) personnage, rate mal, wer ich bin!", "Habsbourg, Mozart, Haribo… Esprit de famille, es-tu là ?", "Tierisch gut! Des animaux et des hommes", "Freches Kind, braves Kind? Les enfants impertinents, héros de la littérature pour enfants outre-Rhin"],
+        "Axe 2. Le quotidien : vivre, jouer, apprendre": ["Es geht um die Wurst! La cuisine allemande", "Mensch, ärgere dich nicht! Apprendre en jouant", "Im Freien. Espaces de loisirs, espaces de liberté", "Advent, Advent! Temps de l’Avent et Noël"],
+        "Axe 3. Pays et paysages": ["L’Allemagne, une grande diversité de paysages à découvrir", "À la découverte de deux pays alpins, la Suisse et l’Autriche", "Le Rhin, un fleuve vivant", "Mer Baltique ou Mer du Nord ?"],
+        "Axe 4. Imaginaire, contes et légendes": ["Ein Märchen aus uralten Zeiten… Allemagne, terre de légendes", "Hänsel, Gretel & Cie… Les enfants dans les contes", "Heinzelmännchen und Kobolde, des mythes et des monstres", "Fantasy mit Fantasie! Vivre dans un monde imaginaire"],
+        "Axe 5. Arts et expression des sentiments": ["An die Freude! Exprimer ses émotions grâce aux arts", "Kinderreime – Poésies et chansons allemandes", "Farbe ist Leben! Les couleurs c’est la vie"]
+      },
+      "5ème": {
+        "Axe 1. Portrait, autoportrait": ["Federer, Klimt, Merkel… Galerie de portraits germanophones", "Spieglein, Spieglein… L’autoportrait ou l’art de se mettre en scène", "Geschwisterpaare. Frère et sœur, portraits croisés", "Freundschaftsbande. Ami un jour, ami toujours ? Les formes de l’amitié en Allemagne"],
+        "Axe 2. Le quotidien : lieux, rythmes, saisons": ["Tag für Tag. Vis ma vie de jeune en Allemagne !", "Sylt oder Innsbruck? Plutôt mer ou montagne ?", "Kaffeekuchen. Le « quatre-heures » dans l’espace germanophone", "Karneval, Fasching, Fastnet, die 5. Jahreszeit. Une cinquième saison en Allemagne : le carnaval"],
+        "Axe 3. École et loisirs": ["Halbtagsschule, Ganztagsschule… Et si on échangeait nos écoles ?", "Deutsche Vereinskultur, les associations entre traditions et excentricités", "Projektwoche, Wandertage… L’école hors la classe", "L’école d’hier, d’aujourd’hui et de demain"],
+        "Axe 4. Le réel et l’imaginaire": ["Neuschwanstein, Heliotrop… : architecture et utopie", "Hasi, Christkind… Mais qui donc apporte les cadeaux ?", "Hokus Pokus Simsalabim : Entre flûte enchantée et citrouille magique, quel apprenti sorcier es-tu ?", "Sacré Charlemagne ! Entre réel et imaginaire"],
+        "Axe 5. Des langues, des lieux, des histoires": ["Anticonstitutionnellement n’a qu’à bien se tenir : faire de la plasticité de l’allemand un jeu", "Apropos, Deutsch ist gar nicht diffizil! Découvrir les mots transparents dans la langue allemande", "Im Beisl : quel drôle de menu ! La richesse des dialectes dans l’aire germanophone", "L’allemand, une langue accueillante : l’essor de l’allemand en version simplifiée pour mieux accueillir celles et ceux qui parlent d’autres langues"],
+        "Axe 6. 16 nuances d’Allemagne": ["Der 3. Oktober. Pourquoi une journée de l’unité allemande ?", "Du Schwarz-Rot-Gold au VW-Käfer, les symboles qui font l’Allemagne", "Qu’est-ce que le fédéralisme ?", "Ein Bundesland, 1/16e d’Allemagne"]
+      },
+      "4ème": {
+        "Axe 1. Sport et société": ["Le foot, sport préféré des Allemands ?", "Wanderlust : marcher dans la nature, une passion allemande", "Sport für alle. Le sport, un moyen d’intégration ?", "1936 vs. 2006 : sport, politique et identité allemande"],
+        "Axe 2. Voyages et exploration": ["Die Reiselust, le gout du voyage chez les Allemands", "Einmal Freunde, immer Freunde. Les échanges franco-allemands", "Die Vermessung der Welt. Les explorateurs et exploratrices allemands", "Völlig losgelöst von der Erde. Les Allemands dans l’espace"],
+        "Axe 3. Villes, villages, quartiers": ["Fribourg, Zurich, modèles des villes de demain ?", "Maibaum et Spargelfest. Les traditions villageoises aujourd’hui", "Vienne, « la ville la plus agréable à vivre du monde » ?", "Kiez, Gräzl, le village dans la grande ville ?"],
+        "Axe 4. Inventer, innover, créer": ["Du Bauhaus aux Passivhäuser, habiter le futur", "Deutschland auf zwei Rädern. Le vélo, transport de l’avenir ?", "Jugend forscht. La jeunesse allemande, une génération innovante", "Automobile, ordinateur, etc. Des inventions allemandes qui ont marqué le monde"],
+        "Axe 5. Langages et messages artistiques": ["Meine deutsche Playlist, les scènes musicales allemandes", "Rock me Amadeus. Que connais-tu de la musique classique ?", "Leselust 2.0. Comment lit-on aujourd’hui ?", "Die Macht der Sprache ou le Poetry-Slam"],
+        "Axe 6. Suisse et Autriche": ["Sisi, une icône autrichienne ?", "Schlemmen. Suisse et Autriche, pays de gourmets", "Tyrolienne et cor des Alpes, la riche tradition musicale alpine", "La Suisse, un État-Nation ?"]
+      },
+      "3ème": {
+        "Axe 1. À la rencontre de l’autre": ["Histoires de retrouvailles après 1945 et 1989 : quel retour au quotidien après le nazisme ou la chute du Mur ?", "Leonce und Lena, Paul und Paula : des histoires d’amour à l’encontre des conventions", "Ossis und Wessis, des mondes inconciliables ?", "Les jeux de société, une spécialité allemande"],
+        "Axe 2. Travailler hier, aujourd’hui, demain": ["Gesellen und Azubis. Des formations par apprentissage valorisées dans l’espace germanophone", "Der deutsche Mittelstand, une histoire de famille", "Schüler-, Ferien-, Mini-, Nebenjobs : quelle première expérience professionnelle ?", "Kinder, Küche und Karriere? Concilier famille et vie professionnelle"],
+        "Axe 3. Voyages et migrations": ["Voltaire-, Sauzay-Programm : une version moderne de la Bildungsreise ?", "Les Vertriebenen, première vague migratoire après 1945", "Gast- und Vertragsarbeiter, migration économique en RFA et RDA", "Wir schaffen das… wieder! Immigration et intégration depuis 2015"],
+        "Axe 4. Langages et médias": ["Bayerisch, Schwäbisch oder Sächsisch : quel avenir pour les dialectes ?", "Entre street art et scène techno, Berlin toujours à l’avant-garde ?", "Séries et bandes dessinées allemandes : deux genres en plein essor, frissons garantis !", "Simsen, Denglisch, Neudeutsch: l’allemand, une langue en permanente évolution"],
+        "Axe 5. Formes de l’engagement": ["Grünes Deutschland. L’Allemagne est-elle aussi verte qu’on le pense ?", "Birkenstock et Stofftasche, consommer de façon responsable ?", "Engagement macht Schule. L’école, lieu d’engagement ?", "Kritisch bleiben. Jusqu’où s’engager ?"],
+        "Axe 6. Le monde franco-allemand": ["L’amitié franco-allemande, une longue tradition", "Regio Lab. Coopération transfrontalière", "Les entreprises franco-allemandes, histoire d’un succès ?", "Les Franco-Allemands d’hier et d’aujourd’hui"]
+      }
+    },
+    grammar: {
+      "6ème": ["G1 · Présent de l’indicatif (haben, sein, modaux, faibles, forts)", "G2 · Présent à valeur de futur", "G3 · Impératif (formes courantes : Setzt euch! Komm bitte!)", "G4 · Temps du passé : marques simples (war/hatte)", "G5 · Parfait (emploi par imitation, sans explicitation détaillée)", "G6 · Subjonctif II présent (möchte, hätte gerne)", "G7 · Majuscule pour le nom", "G8 · GN sujet (nominatif) et objet (accusatif)", "G9 · Articles définis, indéfinis, négateur kein", "G10 · Déterminants possessifs et génitif saxon", "G11 · Genre, pluriels fréquents, suffixe -in, noms composés", "G12 · Place de l’adjectif épithète", "G13 · Pronoms personnels nominatif, mich/dich, mir/dir, man, Sie", "G14 · Pronoms impersonnels (es ist, das ist)", "G15 · Pronoms interrogatifs (wer, wo, wann, was, wie)", "G16 · Marqueurs spatiotemporels, dates et années", "G17 · Verbes de position/déplacement avec préposition de lieu", "G18 · Constructions attributives (intensité, comparatif)", "G19 · Syntaxe : interrogatives totales/partielles et impératives", "G20 · Place du verbe (V2) et préverbe séparable (pince verbale)"],
+      "5ème": ["G21 · Présent de l'indicatif (inkl. préverbes séparables)", "G22 · Impératif (consignes et expressions : Pass auf!)", "G23 · Prétérit (sein, haben, modaux, verbes fréquents)", "G24 · Parfait (verbes faibles, forts/mixtes, auxiliaires haben/sein)", "G25 · Futur en werden", "G26 · Subjonctif II (souhait, würden gern, könnten/sollten)", "G27 · GN : kein, possessifs, génitif saxon, démonstratifs (dieser)", "G28 · Quantificateurs courants (jedes, viele, alle)", "G29 · Noms : genre, composés (centre commercial), dérivés (-in, -ung)", "G30 · Cas : Nominatif, Accusatif, Datif (verbes trivalents, blocs)", "G31 · Adjectifs épithètes déclinés d'emploi fréquent", "G32 · Adjectifs : intensité, comparatifs irréguliers, superlatif", "G33 · Pronoms personnels à l'accusatif et au datif", "G34 · Pronoms interrogatifs (diversifiés) et réfléchis (sich)", "G35 · Marqueurs spatiotemporels : adverbes et prépositions", "G36 · Verbes de position/déplacement, contractions (ins, am)", "G37 · Prépositions mixtes (an, auf, in, neben, etc.)", "G38 · Syntaxe : V2, inversion, pince verbale close (participe 2)", "G39 · Subordonnées : complétive (dass), interrogative indirecte (ob)", "G40 · Subordonnées : temps (wenn, als), cause (weil)", "G41 · Subordonnée relative avec pronom relatif au nominatif", "G42 · Proposition infinitive (Lust, ... zu fahren)"],
+      "4ème": ["G43 · Présent et Impératif (consolidation et conjugaison courante)", "G44 · Futur avec l'auxiliaire werden", "G45 · Prétérit (sein, haben, modaux, es gab, verbes courants)", "G46 · Parfait (auxiliaire sein, faibles/forts courants)", "G47 · Subjonctif II (souhait, conseil, conditionnel avec würde)", "G48 · Verbes de changement d'état (werden + adjectif)", "G49 · GN : articles, possessifs, génitif saxon, démonstratifs", "G50 · Quantificateurs (jedes, einige, mehrere, alle)", "G51 · Noms composés (lien hypotaxique) et surcomposés", "G52 · Noms et adjectifs dérivés (affixes, substantivation)", "G53 · Cas : Accusatif (durch, für, gegen, ohne, um)", "G54 · Cas : Datif (aus, bei, mit, nach, seit, von, zu)", "G55 · Adjectifs épithètes déclinés (Für mich ist Mozart der beste...)", "G56 · Comparatif et Superlatif absolu/relatif", "G57 · Participe 1 et 2 employés comme adjectifs (faszinierend)", "G58 · Pronoms personnels (acc/dat) et réfléchis (rections)", "G59 · Pronoms interrogatifs avec préposition (seit wann, mit wem)", "G60 · Pronoms indéfinis (niemand, jemand, alle)", "G61 · Marqueurs temporels (früher, damals) et spatiaux", "G62 · Syntaxe : Inversion (complément ou subordonnée en P1)", "G63 · Subordonnées : complétive, temps (wenn, als), cause (weil), concession (obwohl)", "G64 · Subordonnée relative (nominatif, accusatif)", "G65 · Proposition infinitive en um...zu (but)"],
+      "3ème": ["G66 · Prétérit : faibles, forts, irréguliers (denken, bringen)", "G67 · Parfait : sein/haben, participe 2 sans ge-", "G68 · Le plus-que-parfait", "G69 · Subjonctif II : forme composée (würde + inf) et passé (hätte gedacht)", "G70 · Le passif : présent, prétérit, complément d'agent (von)", "G71 · Quantificateurs : déclinaison (solche, manche)", "G72 · Nominalisation : infinitif, adjectif, participe 1 et 2 déclinés", "G73 · Réduction lexicale (Azubi, Abi)", "G74 · Pluriels : types (¨-e, -en, ¨-er, -s) et règles", "G75 · Déclinaison complète (articles, quantificateurs, adjectif épithète)", "G76 · Le génitif", "G77 · Rection des verbes (sprechen über, Angst haben vor)", "G78 · Le masculin faible", "G79 · Expansions du nom (von, rection, relative)", "G80 · Subordonnée relative (accusatif, datif)", "G81 · Superlatif dans le groupe prépositionnel (am Schlimmsten)", "G82 · Pronom en da- (darauf)", "G83 · Pronoms interrogatifs (wovon, worüber, wozu)", "G84 · Simultanéité (während)", "G85 · Anaphoriser un groupe prépositionnel (daneben, davor)", "G86 · Syntaxe : Subordonnée en P1", "G87 · Subordonnées : temporelle et adversative (während), but (damit)"]
+    },
+    lexique: {
+      "6ème": ["L1 · La famille", "L2 · Nationalités et entités régionales", "L3 · L’apparence", "L4 · Le caractère", "L5 · Les vêtements de base", "L6 · Le corps humain", "L7 · Les métiers génériques", "L8 · Les animaux", "L9 · Les habitudes, le quotidien", "L10 · L’habitat, la maison", "L11 · Le jeu et ses consignes", "L12 · Les aliments et habitudes alimentaires", "L13 · Les loisirs et les sports", "L14 · Les fêtes calendaires et spécialités", "L15 · Zones géographiques et paysages", "L16 · Les contes et légendes", "L17 · Les émotions et sentiments", "L18 · Compter", "L19 · Exprimer l’heure"],
+      "5ème": ["L20 · L’identité", "L21 · Les données chiffrées", "L22 · Description physique et d’un objet", "L23 · Le caractère, les émotions", "L24 · Les loisirs, les sports", "L25 · La famille, les amis", "L26 · Le quotidien", "L27 · La nourriture", "L28 · La maison", "L29 · L’école", "L30 · Le merveilleux", "L31 · L’environnement proche", "L32 · Les traditions", "L33 · Les repères géographiques", "L34 · Les repères historiques"],
+      "4ème": ["L35 · Le sport", "L36 · L’expression du ressenti", "L37 · Le voyage", "L38 · La météo", "L39 · Migration et échanges", "L40 · Le monde scientifique et technique", "L41 · La ville", "L42 · La protection de l’environnement", "L43 · La maison (objets, appareils)", "L44 · Les relations sociales", "L45 · Les repères artistiques", "L46 · Les repères historiques et culturels", "L47 · L’alimentation"],
+      "3ème": ["L48 · L’amour, l’amitié", "L49 · Les relations Est / Ouest", "L50 · Les jeux de société", "L51 · Le monde professionnel", "L52 · La formation, l’apprentissage", "L53 · Les différences hommes/femmes", "L54 · Voyages et migration", "L55 · Les dialectes", "L56 · La culture alternative", "L57 · Polars et séries noires", "L58 · Téléphones portables et nouvelles technologies", "L59 · Protection de l’environnement", "L60 · Engagement à l’école", "L61 · Le franco-allemand"]
+    },
+    phono: {
+      "6ème": ["PH1 · Le graphème ch : [x] (Ach-Laut) ou [ç] (Ich-Laut)", "PH2 · Les voyelles infléchies : ä, ö, ü", "PH3 · Les diphtongues : [aɪ], [aʊ], [ɔɪ]", "PH4 · [ʃt]/[ʃp] à l’initiale, [v]/[f] à l’initiale", "PH5 · Le h aspiré vs l'attaque dure", "PH6 · Z [ts]", "PH7 · La nasale vélaire [ŋ]", "PH8 · Voyelles ouvertes/fermées et longues/brèves", "PH9 · Vocaliser le -r en finale [ɐ], prononcer le -e final [ə]", "PH10 · Accent de mot et syllabes non accentuées", "PH11 · Intonation ascendante/descendante", "PH12 · Brèves avant double consonne, longues devant ß et h", "PH13 · Prononcer correctement -ig", "PH14 · Accentuer les préverbes séparables"],
+      "5ème": ["PH15 · Consonnes b, d, g en position finale (ab, Tag, Abend)", "PH16 · Le schwa dans les préfixes (bekommen, bewundern)", "PH17 · Le coup de glotte sur les voyelles (und / Hund)", "PH18 · Accent de mot d’un nom composé", "PH19 · Accentuer les préverbes séparables composés (herein-, zurück-)", "PH20 · Accent contrastif pour répondre à une question"],
+      "4ème": ["PH21 · Voyelles non fléchies et fléchies au pluriel (Bruder/Brüder)", "PH22 · Le schwa (Tasse, Blume)", "PH23 · Le -ch en fonction de son environnement", "PH24 · Accentuer mot simple du fonds germanique", "PH25 · Accentuer les préverbes séparables", "PH26 · Repérer les syllabes non accentuées", "PH27 · -ch [r] en [ç] au pluriel (Buch/Bücher)", "PH28 · Différence entre ich-Laut et sch (Kirche/Kirsche)", "PH29 · Voyelles ouvertes et fermées", "PH30 · Accent de mot sur emprunts et mots composés"],
+      "3ème": ["PH31 · Consonnes b, d, g, s en fin de mot", "PH32 · Prononciation du s, z", "PH33 · Le e, en en position finale", "PH34 · La nasale vélaire [ŋ]", "PH35 · Accentuation des verbes en -ieren", "PH36 · Accentuation et prononciation des emprunts", "PH37 · Diphtongue [aɪ] par opposition au [i:] long", "PH38 · Prononciation et accentuation des mots (sur)composés"]
+    },
+    pragma: {
+      "6ème": ["PR1 · Conjonctions de coordination : und, oder, aber, denn", "PR2 · Connecteurs chronologiques : dann, später", "PR3 · Connecteurs logiques (illustrer) : wie, zum Beispiel, also", "PR4 · Modalisateurs (vraisemblance) : vielleicht, sicher", "PR5 · Appréciatifs : leider (regret), zum Glück (soulagement)"],
+      "5ème": ["PR6 · Connecteurs de restructuration : einerseits, andererseits", "PR7 · Marqueurs de reformulation : das heißt", "PR8 · Justifier son avis : denn, weil", "PR9 · Exprimer une opposition ou concession : aber, doch"],
+      "4ème": ["PR10 · Concession et opposition : doch, dennoch, trotzdem, dagegen", "PR11 · Conséquence : deshalb", "PR12 · Connecteurs qui structurent la phrase : zwar… aber, entweder… oder"],
+      "3ème": ["PR13 · Reformulation : anders gesagt", "PR14 · Double conjonction : weder… noch", "PR15 · Modalisation : wahrscheinlich, müssen/mögen au présent"]
+    }
   }
 };
 
-const GRAMMAIRE = {
-  "6ème": ["G1 · Present simple (être, avoir, verbes courants)", "G2 · La 3e personne du singulier : he sleeps, she rides, etc.", "G3 · Auxiliaires de modalité : can/can't, must/mustn't", "G4 · L'impératif (forme affirmative et négative)", "G5 · Present be+ing (reconnaissance de formes courantes)", "G6 · Present be+ing pour exprimer un futur proche", "G7 · Expression du passé : quelques verbes courants au prétérit", "G8 · Exprimer une intention : I want to, I would like to", "G9 · Le groupe nominal : articles (a, the, Ø), démonstratifs", "G10 · Le déterminant possessif et le génitif", "G11 · La place de l'adjectif épithète (à gauche du nom)", "G12 · Les pronoms personnels sujets et compléments", "G13 · Les pronoms possessifs : mine, yours, his, hers, etc.", "G14 · Les mots interrogatifs : who, what, where, when, why, how", "G15 · Marqueurs temporels essentiels : today, tomorrow, yesterday", "G16 · Prépositions de lieu : on, in, under, over, between, above", "G17 · Conjonctions de coordination : and, but, or", "G18 · Connecteurs chronologiques : first, then, finally", "G19 · Modalisateurs : maybe, perhaps", "G20 · Pluriels réguliers et irréguliers : foot/feet, child/children", "G21 · Noms composés : snowman, policeman, bedroom", "G22 · Suffixes et dérivation : cloud/cloudy, magic/magician"],
-  "5ème": ["G23 · Present simple : affirmatif, négatif et interrogatif", "G24 · Present be+ing (formes courantes et futur proche)", "G25 · Expression du passé : prétérit (réguliers et irréguliers)", "G26 · Modaux : can/can't, must/mustn't, should, could", "G27 · L'impératif et le gérondif : Mind the stairs! No diving!", "G28 · Expression du futur avec will et be going to + BV", "G29 · Expression du souhait : I wish to, I would love to", "G30 · Expression de l'opinion : I think, I believe, In my opinion", "G31 · Comparatifs et superlatifs : longer than, the best", "G32 · Antonymes : quiet/noisy, freedom/constraint", "G33 · Quantifieurs : much, many, some", "G34 · Pronoms réfléchis : myself, himself, themselves", "G35 · Adverbes de fréquence", "G36 · Marqueurs temporels : at two o'clock, six months ago", "G37 · Situer dans l'espace : foreground/background, top/bottom", "G38 · Opposition, concession : but, whereas, however", "G39 · Adverbes d'intensité : so, enough, really, almost, quite", "G40 · Subordonnées de condition : If you gaze…, you'll notice…", "G41 · Discours direct et indirect : The author wonders if…", "G42 · Dérivation : recognise/recognisable/unrecognisable"],
-  "4ème": ["G43 · Present simple et present be+ing (approfondissement)", "G44 · Prétérit simple et prétérit en be+ing", "G45 · Present perfect", "G46 · Expression du futur : be+V-ing, will, be going to + BV", "G47 · Conditionnel : would + BV", "G48 · Modaux de probabilité : can, may, must", "G49 · Verbes réfléchis et réciproques", "G50 · Structures partitives : some of them, most of us", "G51 · Comparatifs, superlatifs et adverbes de degré variés", "G52 · Pronoms possessifs : a friend of mine, a book of hers", "G53 · Pronoms réfléchis : myself, himself, ourselves", "G54 · Marqueurs temporels : two days ago, for three years, since 2018", "G55 · Espace : over there, not far from, round the corner", "G56 · Opposition : on the one hand/on the other hand, yet", "G57 · Intensité : almost, quite, so much better, good enough", "G58 · Connecteurs : before, afterwards, for instance, consequently", "G59 · Propositions relatives : who, which", "G60 · Subordonnées hypothétiques : If I travel… / If I were…", "G61 · Discours indirect : He asked me if I wanted to…"],
-  "3ème": ["G62 · Phrasal verbs : give up, look forward to, get down", "G63 · Temps du passé : prétérit, be+ing, past perfect", "G64 · Hypothèse : If she goes… / If I went…", "G65 · Modaux étendus : might, would, ought to, be able to", "G66 · Souhait/regret : I wish I knew, he wishes he were", "G67 · Choix entre les temps (ensemble du système verbal)", "G68 · La voix passive", "G69 · Synonymes et antonymes", "G70 · Déterminants distributifs : both, either, every, each", "G71 · Comparatifs et superlatifs (maîtrise complète)", "G72 · Adjectifs composés : a black-haired man, a ten-minute break", "G73 · Interrogatifs : How often? How much? How tall? How long?", "G74 · Marqueurs temporels : over the past years, as soon as", "G75 · Espace : in the top left-hand corner, north of", "G76 · Opposition : yet, on the contrary", "G77 · Emphase : extremely, barely, absolutely, I do like", "G78 · Connecteurs : moreover, consequently, as a result", "G79 · Relatives : who, that ; subordonnées : when, while, as", "G80 · Propositions infinitives : want sb to + BV", "G81 · Discours rapporté : say, tell, ask, answer", "G82 · Questions indirectes : I wonder if/how/why"]
-};
-
-const LEXIQUE = {
-  "6ème": ["L1 · La famille", "L2 · Nationalités", "L3 · L'apparence physique", "L4 · Le caractère", "L5 · Les vêtements", "L6 · Le corps humain", "L7 · Les métiers", "L8 · Les animaux", "L9 · Les habitudes et le quotidien", "L10 · L'habitat et la maison", "L11 · Le jeu", "L12 · Les aliments", "L13 · Les loisirs et sports", "L14 · Les fêtes", "L15 · Zones géographiques et paysages", "L16 · Les contes et légendes", "L17 · Les émotions et sentiments", "L18 · Compter (nombres ordinaux)"],
-  "5ème": ["L19 · L'école et le rythme scolaire", "L20 · Description physique et morale (approfondissement)", "L21 · Les transports et déplacements", "L22 · Les paysages et saisons", "L23 · Les lieux", "L24 · Les traditions culinaires", "L25 · L'art", "L26 · L'aventure et la découverte", "L27 · L'imaginaire", "L28 · Les sentiments et émotions (approfondissement)"],
-  "4ème": ["L29 · Les sports (spécialisation)", "L30 · Description physique et morale (niveau avancé)", "L31 · Les transports (approfondissement)", "L32 · Monde, géographie, paysages (approfondissement)", "L33 · Les espaces urbains", "L34 · Science et innovation", "L35 · L'art (approfondissement)", "L36 · L'aventure et les voyages", "L37 · L'imaginaire (approfondissement)", "L38 · Les sentiments et émotions (niveau avancé)"],
-  "3ème": ["L39 · La rencontre, l'entente, le conflit", "L40 · L'amour, l'amitié, l'hospitalité", "L41 · L'engagement", "L42 · Le monde du travail", "L43 · Voyages et migrations", "L44 · Langages et médias", "L45 · La description morale (niveau expert)", "L46 · Paysages naturels et urbains"]
-};
-
-const PHONOLOGIE = {
-  "6ème": ["PH1 · Prononciation du -s : /s/, /z/, /ɪz/", "PH2 · Voyelles courtes avant doublement de consonnes", "PH3 · Accentuation des polysyllabiques : favourite, beautiful", "PH4 · Les consonnes muettes : light, autumn, Wednesday", "PH5 · Les diphtongues : /eɪ/, /aɪ/, /ɔɪ/, /əʊ/, /aʊ/", "PH6 · Graphie/phonie ; intonation affirmatif/interrogatif"],
-  "5ème": ["PH7 · Intonation des énoncés affirmatifs et interrogatifs", "PH8 · Prononciation du -s et du -ed : /t/, /d/, /ɪd/", "PH9 · Accentuation : intelligent, comfortable, interesting", "PH10 · Formes faibles : of, to, at, from", "PH11 · Schémas intonatifs : montante/descendante", "PH12 · Rythme de la phrase et accent tonique", "PH13 · Les formes contractées", "PH14 · Voyelles longues/courtes : sheep/ship, cat/car", "PH15 · Diphtongues (approfondissement)"],
-  "4ème": ["PH16 · Rythme et mise en relief des mots-clés", "PH17 · Connaissances phonologiques : muettes, /h/, voyelles", "PH18 · Consonnes fricatives : /θ/ (think) et /ð/ (this)"],
-  "3ème": ["PH19 · Schémas intonatifs systématiques", "PH20 · Consonnes affriquées : /ʧ/ et /ʤ/", "PH21 · Emphase et mots-clés", "PH22 · Accentuation selon composition du mot", "PH23 · Accents régionaux : américain, indien, australien"]
-};
-
-const PRAGMATIQUE = {
-  "6ème": ["PR1 · Connecteurs logiques : and, but, or, so, because", "PR2 · Connecteurs chronologiques : first, then, finally", "PR3 · Illustrer : for example, for instance, such as, like", "PR4 · Modalisateurs : maybe, perhaps, probably, certainly"],
-  "5ème": ["PR5 · Connecteurs logiques et chronologiques élargis", "PR6 · Expression de l'opinion : I think, I believe, In my opinion", "PR7 · Opposition, concession : but, whereas, however", "PR8 · Modalisateurs : maybe, perhaps", "PR9 · Adverbes d'intensité : so, enough, really, almost"],
-  "4ème": ["PR10 · Connecteurs : before, afterwards", "PR11 · Connecteurs : for instance, besides, consequently", "PR12 · Propositions relatives : who, which", "PR13 · Subordonnées hypothétiques et conditionnelles", "PR14 · Discours direct et indirect", "PR15 · Modalisateurs et adverbes de degré avancés"],
-  "3ème": ["PR16 · Connecteurs : moreover, consequently, as a result", "PR17 · Emphase : extremely, barely, absolutely, I do like", "PR18 · Relatives : who, that ; subordonnées : when, while, as", "PR19 · Propositions infinitives : want sb to + BV", "PR20 · Discours direct et rapporté (présent et passé)", "PR21 · Questions indirectes : I wonder if/how/why"]
-};
-
+// Compétences partagées
 const COMP_CO = {
   "6ème": ["CO1 · Comprendre des expressions isolées dans des énoncés très simples", "CO2 · Suivre des consignes et instructions habituelles (débit lent)", "CO3 · Comprendre et relier à un titre/thème des expressions simples"],
   "5ème": ["CO3 · Comprendre et relier à un titre/thème des expressions simples", "CO4 · Suivre des consignes en situation prévisible (débit lent)", "CO5 · Repérer des informations simples (diction claire et lente)"],
   "4ème": ["CO6 · Comprendre et relier des expressions isolées", "CO7 · Repérer les informations principales (vocabulaire fréquent)", "CO8 · Identifier nuances, divergences, oppositions"],
   "3ème": ["CO9 · Repérer des informations dans des textes/conversations", "CO10 · Comprendre les points principaux (langue claire et standard)", "CO11 · Comprendre bulletins d'information ou programmes TV", "CO12 · Suivre des films (action et image, langue claire)"]
 };
-
 const COMP_CE = {
   "6ème": ["CE1 · Comprendre des expressions dans des textes très simples", "CE2 · Identifier genres/types de textes (mise en page)", "CE3 · S'appuyer sur mots transparents et familiers"],
   "5ème": ["CE4 · Comprendre un texte court sur des sujets familiers", "CE5 · Identifier la nature du document (indices paratextuels)", "CE6 · Repérer des informations simples (expressions connues)"],
   "4ème": ["CE7 · Identifier les informations principales (document long)", "CE8 · Repérer des articulations logiques simples du discours", "CE9 · S'appuyer sur temps et marqueurs spatiotemporels"],
   "3ème": ["CE10 · Identifier les informations principales (textes factuels)", "CE11 · Suivre l'intrigue de récits, romans, BD", "CE12 · Inférer le sens de mots inconnus (contexte, dérivation)", "CE13 · Indices culturels pour interpréter et problématiser"]
 };
-
 const COMP_PO = {
   "6ème": ["PO1 · Expressions simples pour décrire personnes, lieux, objets", "PO2 · Exprimer ses goûts, raconter brièvement des événements", "PO3 · Décrire brièvement en suivant un modèle connu"],
-  "5ème": ["PO4 · Coordonner et organiser des éléments simples", "PO5 · Décrire activités, personnes, lieux, projets", "PO6 · Dire ce qu'on aime, donner ses impressions"],
+  "5ème": ["PO4 · Coordonner et organiser des éléments simples", "PO5 · Décrire activités, personnes, lieux, projects", "PO6 · Dire ce qu'on aime, donner ses impressions"],
   "4ème": ["PO7 · Décrire avec précision personnes, objets, lieux", "PO8 · Présenter un point de vue et le justifier", "PO9 · Raconter une histoire brève", "PO10 · Comparer et exprimer des préférences"],
   "3ème": ["PO11 · Raconter, décrire et exprimer ses sentiments", "PO12 · Exposé préparé ou description détaillée", "PO13 · Donner des raisons pour justifier un point de vue", "PO14 · Justifier une opinion, comparer, peser le pour/contre"]
 };
-
 const COMP_PE = {
   "6ème": ["PE1 · Écrire sous la dictée des phrases très simples", "PE2 · Prononcer et lire de manière expressive"],
   "5ème": ["PE3 · Écrire un texte court et structuré (sujets familiers)", "PE4 · Écrire/continuer une histoire (avec dictionnaire)", "PE5 · Reformuler des éléments de documents de réception"],
   "4ème": ["PE6 · Texte court et structuré avec connecteurs variés", "PE7 · Articuler et hiérarchiser les informations", "PE8 · Travailler la correction linguistique"],
   "3ème": ["PE9 · Texte structuré avec stratégies variées", "PE10 · Justifier un point de vue (critique de film, livre)", "PE11 · Contrôler sa production de manière autonome"]
 };
-
 const COMP_PEC = {
   "6ème": ["PEC1 · Répondre à des questions simples et en poser", "PEC2 · Réagir à des affirmations, salutation et congé", "PEC3 · Interactions stéréotypées, engager et clore une conversation"],
   "5ème": ["PEC4 · Échange simple sur des sujets familiers", "PEC5 · Communiquer pour une tâche simple", "PEC6 · Échanges sociaux courts (avec aide)", "PEC7 · Transmettre les points principaux"],
@@ -436,10 +496,28 @@ const COMP_PEC = {
 };
 
 const LEVELS = ["6ème", "5ème", "4ème", "3ème"];
+let currentLang = 'en';
 const state = { axe: [], culture: [], grammar: [], lexique: [], phono: [], pragma: [], comp_co: [], comp_ce: [], comp_po: [], comp_pe: [], comp_pec: [] };
 
 const cleanCode = (txt) => txt.replace(/^[A-Z]+\d+\s*·\s*/, '');
 const esc = (s) => s.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
+
+// === GESTION DE LA LANGUE ===
+function setLanguage(lang) {
+  currentLang = lang;
+  
+  // Visuel des drapeaux
+  document.getElementById('flag-en').classList.toggle('active', lang === 'en');
+  document.getElementById('flag-de').classList.toggle('active', lang === 'de');
+  
+  // Textes dynamiques
+  document.getElementById('a4-footer-text').textContent = "Le Séquenceur — " + DB[lang].subtitle;
+  document.getElementById('titre').placeholder = DB[lang].phTitle;
+  document.getElementById('problematique').placeholder = DB[lang].phProb;
+  
+  // On vide le tableau pour forcer la mise à jour propre
+  resetAll();
+}
 
 function toggleTheme() {
   const t = document.body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
@@ -452,10 +530,7 @@ try {
   if (s) document.body.setAttribute('data-theme', s);
 } catch (e) {}
 
-function openModal() {
-  document.getElementById('legalModal').classList.add('active');
-}
-
+function openModal() { document.getElementById('legalModal').classList.add('active'); }
 function closeModal(e) {
   if (!e || e.target.id === 'legalModal' || e.type === 'click') {
     document.getElementById('legalModal').classList.remove('active');
@@ -464,11 +539,13 @@ function closeModal(e) {
 
 function onNiveauChange() {
   const n = document.getElementById('niveau').value;
-  populateAxes(n);
+  const db = DB[currentLang];
+  
+  populateAxes(n, db.axes);
   
   const selectsToPopulate = [
-    ['grammaire', GRAMMAIRE], ['lexique', LEXIQUE], ['phonologie', PHONOLOGIE], 
-    ['pragmatique', PRAGMATIQUE], ['comp_co', COMP_CO], ['comp_ce', COMP_CE], 
+    ['grammaire', db.grammar], ['lexique', db.lexique], ['phonologie', db.phono], 
+    ['pragmatique', db.pragma], ['comp_co', COMP_CO], ['comp_ce', COMP_CE], 
     ['comp_po', COMP_PO], ['comp_pe', COMP_PE], ['comp_pec', COMP_PEC]
   ];
   
@@ -476,22 +553,23 @@ function onNiveauChange() {
   updatePreview();
 }
 
-function populateAxes(n) {
+function populateAxes(n, axesData) {
   const s = document.getElementById('axe');
   s.innerHTML = '<option value="">— Choisir un axe —</option>';
   document.getElementById('objet').innerHTML = '<option value="">— Choisir d\'abord un axe —</option>';
-  if (!n || !AXES[n]) return;
-  Object.keys(AXES[n]).forEach(a => { s.innerHTML += `<option value="${esc(a)}">${a}</option>`; });
+  if (!n || !axesData[n]) return;
+  Object.keys(axesData[n]).forEach(a => { s.innerHTML += `<option value="${esc(a)}">${a}</option>`; });
 }
 
 function onAxeChange() {
   const n = document.getElementById('niveau').value;
   const a = document.getElementById('axe').value;
   const s = document.getElementById('objet');
+  const axesData = DB[currentLang].axes;
   
   s.innerHTML = '<option value="">— Choisir un objet d\'étude —</option>';
-  if (!n || !a || !AXES[n] || !AXES[n][a]) return;
-  AXES[n][a].forEach(o => { s.innerHTML += `<option value="${esc(o)}">${o}</option>`; });
+  if (!n || !a || !axesData[n] || !axesData[n][a]) return;
+  axesData[n][a].forEach(o => { s.innerHTML += `<option value="${esc(o)}">${o}</option>`; });
 }
 
 function populateSelect(id, data, niv) {
@@ -683,6 +761,7 @@ function resetAll() {
   updatePreview();
 }
 
+// Initialisation au lancement
 updatePreview();
 </script>
 </body>

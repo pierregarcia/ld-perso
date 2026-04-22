@@ -4043,16 +4043,25 @@ function exportPDF() {
   const empties = element.querySelectorAll('.a4-empty');
   empties.forEach(el => el.style.display = 'none');
 
+  // --- CORRECTION DU BUG D'ESPACEMENT ---
+  // On repère tous les titres avec un espacement de lettres
+  const spacedElements = element.querySelectorAll('.a4-sec-title, .a4-badge, .a4-sub-title');
+  // On remet l'espacement à zéro juste pour la "photo" du PDF
+  spacedElements.forEach(el => el.style.letterSpacing = 'normal');
+
   const opt = {
     margin:       0,
     filename:     (document.getElementById('titre').value || 'Sequence') + '.pdf',
     image:        { type: 'jpeg', quality: 0.98 },
-    html2canvas:  { scale: 2, useCORS: true, letterRendering: true },
+    html2canvas:  { scale: 2, useCORS: true }, // letterRendering retiré ici
     jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
   };
   
   html2pdf().set(opt).from(element).save().then(() => {
     empties.forEach(el => el.style.display = 'block');
+    // --- FIN DE LA CORRECTION ---
+    // On remet l'espacement esthétique pour l'affichage écran
+    spacedElements.forEach(el => el.style.letterSpacing = '');
   });
 }
 

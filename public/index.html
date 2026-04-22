@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Le Séquenceur — 🇬🇧 🇺🇸 🇪🇸 🇩🇪</title>
+<title>Le Séquenceur — 🇬🇧 🇪🇸 🇩🇪 🇮🇹</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📝</text></svg>">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
@@ -26,38 +26,27 @@
 }
 * { margin:0; padding:0; box-sizing:border-box; }
 
-/* === LAYOUT GLOBAL === */
 body { font-family:'Plus Jakarta Sans',sans-serif; background:var(--bg); color:var(--text); height:100vh; overflow:hidden; display:flex; flex-direction:column; transition:background .3s,color .3s; }
-
 .app-header { background:var(--panel); border-bottom:1px solid var(--border); padding:16px 28px; display:flex; align-items:center; justify-content:center; flex:0 0 auto; z-index:100; transition:background .3s; }
 .logo { display:flex; align-items:center; gap:12px; }
 .logo-icon { width:40px; height:40px; background:linear-gradient(135deg,var(--accent),var(--accent2)); border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:20px; box-shadow:0 4px 16px rgba(62,207,142,0.3); }
 .logo-text { font-family:'Playfair Display',serif; font-size:24px; font-weight:800; background:linear-gradient(135deg,var(--accent),var(--accent4)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; line-height:1.2; padding-bottom:4px; margin-bottom:-4px; }
 .logo-flags { font-size:24px; display:flex; gap:8px; align-items:center; user-select:none; margin-left:12px; }
 
-/* Drapeaux cliquables et inactifs */
 .flag-btn { cursor:pointer; transition:all 0.2s; opacity:0.3; filter:grayscale(80%); }
 .flag-btn:hover { transform:scale(1.1); opacity:0.7; filter:grayscale(20%); }
 .flag-btn.active { opacity:1; filter:grayscale(0%); transform:scale(1.15); text-shadow: 0 4px 12px rgba(0,0,0,0.2); }
-.flag-disabled { position:relative; cursor:help; opacity:0.3; filter:grayscale(80%); display:inline-block; }
-.flag-disabled::after { content:attr(data-tooltip); position:absolute; top:100%; left:50%; transform:translateX(-50%) translateY(8px); background:var(--panel); color:var(--text); padding:6px 12px; border-radius:6px; font-size:11px; font-weight:700; font-family:'Plus Jakarta Sans',sans-serif; white-space:nowrap; opacity:0; visibility:hidden; transition:all 0.2s cubic-bezier(0.4, 0, 0.2, 1); box-shadow:0 4px 12px rgba(0,0,0,0.15); border:1px solid var(--border); z-index:200; pointer-events:none; }
-.flag-disabled::before { content:''; position:absolute; top:100%; left:50%; transform:translateX(-50%); border:5px solid transparent; border-bottom-color:var(--border); opacity:0; visibility:hidden; transition:all 0.2s; z-index:200; pointer-events:none; }
-.flag-disabled:hover::after { opacity:1; visibility:visible; transform:translateX(-50%) translateY(4px); }
-.flag-disabled:hover::before { opacity:1; visibility:visible; transform:translateX(-50%) translateY(-1px); }
 
-/* Panneaux scindés */
 .main-container { display:grid; grid-template-columns:440px 1fr; flex:1 1 auto; overflow:hidden; }
 .editor-panel { background:var(--panel); border-right:1px solid var(--border); padding:20px 22px 100px 22px; overflow-y:auto; transition:background .3s; display:flex; flex-direction:column; }
 .editor-panel::-webkit-scrollbar { width:5px; }
 .editor-panel::-webkit-scrollbar-thumb { background:var(--scrollbar); border-radius:3px; }
 .preview-panel { background:var(--preview-bg); padding:28px 28px 100px 28px; overflow-y:auto; display:flex; justify-content:center; align-items:flex-start; transition:background .3s; }
 
-/* Bouton Mentions légales */
 .legal-link-container { margin-top: auto; padding-top: 30px; text-align: center; }
 .btn-legal { background:none; border:none; color:var(--text-muted); font-size:11px; text-decoration:underline; cursor:pointer; font-family:inherit; transition:color 0.2s; }
 .btn-legal:hover { color:var(--text); }
 
-/* Fenêtre surgissante (Modal) */
 .modal-overlay { position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.6); backdrop-filter:blur(3px); z-index:9999; display:flex; justify-content:center; align-items:center; opacity:0; visibility:hidden; transition:all 0.3s ease; }
 .modal-overlay.active { opacity:1; visibility:visible; }
 .modal-content { background:var(--panel); color:var(--text); width:90%; max-width:600px; max-height:85vh; border-radius:var(--radius); padding:30px; position:relative; overflow-y:auto; box-shadow:0 10px 40px rgba(0,0,0,0.3); border:1px solid var(--border); transform:translateY(20px); transition:transform 0.3s ease; }
@@ -71,7 +60,6 @@ body { font-family:'Plus Jakarta Sans',sans-serif; background:var(--bg); color:v
 .modal-body p { font-size:12px; color:var(--text-muted); line-height:1.6; margin-bottom:8px; }
 .modal-body strong { color:var(--text); }
 
-/* Barre d'action fixe en bas */
 .header-actions { position:fixed; bottom:0; left:0; right:0; background:var(--panel); padding:12px 28px; border-top:1px solid var(--border); box-shadow:0 -4px 24px rgba(0,0,0,0.15); z-index:1000; display:flex; justify-content:center; align-items:center; gap:16px; transition:background .3s; }
 .export-actions { display:flex; gap:12px; }
 .theme-toggle { background:var(--toggle-bg); border:1px solid var(--border); border-radius:20px; width:56px; height:28px; cursor:pointer; position:relative; transition:background .3s; flex-shrink:0; }
@@ -86,7 +74,6 @@ body { font-family:'Plus Jakarta Sans',sans-serif; background:var(--bg); color:v
 .btn-word:hover { box-shadow:0 6px 16px rgba(108,99,255,0.3); }
 .btn-reset:hover { background:rgba(128,128,128,0.2); color:var(--text); transform:none; }
 
-/* === COMPOSANTS ÉDITEUR === */
 .section-label { font-size:10px; font-weight:700; letter-spacing:2.5px; text-transform:uppercase; color:var(--accent); margin-bottom:14px; display:flex; align-items:center; gap:8px; }
 .section-label::before { content:''; width:16px; height:2px; background:var(--accent); border-radius:1px; }
 .section-label.purple { color:var(--accent2); } .section-label.purple::before { background:var(--accent2); }
@@ -127,7 +114,6 @@ body { font-family:'Plus Jakarta Sans',sans-serif; background:var(--bg); color:v
 [data-theme="light"] .tag.p { background:rgba(236,72,153,0.1); color:#be185d; }
 @keyframes tagIn { from{opacity:0;transform:scale(.8)} to{opacity:1;transform:scale(1)} }
 
-/* === FICHE A4 === */
 .a4-sheet { background:#fff; width:100%; max-width:210mm; min-height:297mm; padding:24mm 20mm; box-shadow:var(--shadow-sheet); border-radius:4px; color:#1e293b; position:relative; flex-shrink:0; }
 .a4-badge { position:absolute; top:16mm; right:20mm; background:linear-gradient(135deg,#1e3a5f,#2d5a8e); color:#fff; padding:4px 14px; border-radius:16px; font-size:10px; font-weight:700; letter-spacing:1px; text-transform:uppercase; }
 .a4-title { font-family:'Playfair Display',serif; font-size:24px; font-weight:800; color:#1e293b; text-align:center; margin-bottom:6px; line-height:1.3; padding:0 30px; }
@@ -150,18 +136,13 @@ body { font-family:'Plus Jakarta Sans',sans-serif; background:var(--bg); color:v
 .a4-sub-title { font-size:10px; font-weight:700; color:#64748b; text-transform:uppercase; letter-spacing:.8px; margin-bottom:2px; }
 .a4-footer { position:absolute; bottom:12mm; left:20mm; right:20mm; text-align:center; font-size:8px; color:#cbd5e1; border-top:1px solid #e2e8f0; padding-top:6px; }
 
-/* === RESPONSIVE ÉCRANS === */
-@media print {
-  .app-header, .header-actions, .editor-panel, .modal-overlay { display:none!important; }
-}
-
+@media print { .app-header, .header-actions, .editor-panel, .modal-overlay { display:none!important; } }
 @media (max-width: 1100px) {
   body { height:auto; overflow:auto; display:block; }
   .main-container { display:block; }
   .editor-panel { border-right:none; border-bottom:1px solid var(--border); overflow:visible; padding-bottom:30px; }
   .preview-panel { padding:20px 16px 100px 16px; overflow:visible; }
 }
-
 @media (max-width: 600px) {
   .app-header { padding:12px 16px; }
   .logo-icon { width:34px; height:34px; font-size:16px; }
@@ -185,9 +166,10 @@ body { font-family:'Plus Jakarta Sans',sans-serif; background:var(--bg); color:v
     <div class="logo-icon">📝</div>
     <div class="logo-text">Le Séquenceur</div>
     <div class="logo-flags">
-      <span class="flag-btn active" id="flag-en" onclick="setLanguage('en')" title="Passer en Anglais">🇬🇧 🇺🇸</span>
-      <span class="flag-disabled" data-tooltip="Ça arrive bientôt !">🇪🇸</span>
+      <span class="flag-btn active" id="flag-en" onclick="setLanguage('en')" title="Passer en Anglais">🇬🇧</span>
+      <span class="flag-btn" id="flag-es" onclick="setLanguage('es')" title="Passer en Espagnol">🇪🇸</span>
       <span class="flag-btn" id="flag-de" onclick="setLanguage('de')" title="Passer en Allemand">🇩🇪</span>
+      <span class="flag-btn" id="flag-it" onclick="setLanguage('it')" title="Passer en Italien">🇮🇹</span>
     </div>
   </div>
 </header>
@@ -205,10 +187,16 @@ body { font-family:'Plus Jakarta Sans',sans-serif; background:var(--bg); color:v
           <option value="4ème">4ème</option>
           <option value="3ème">3ème</option>
         </optgroup>
-        <optgroup label="── Lycée ──">
+        <optgroup label="── Lycée (Tronc Commun) ──">
           <option value="Seconde">Seconde</option>
           <option value="Première">Première</option>
           <option value="Terminale">Terminale</option>
+        </optgroup>
+        <optgroup label="── Lycée (Spécialités) ──">
+          <option value="Première_AMC" id="opt-amc1">Première AMC</option>
+          <option value="Terminale_AMC" id="opt-amc2">Terminale AMC</option>
+          <option value="Première_LLCER">Première LLCER</option>
+          <option value="Terminale_LLCER">Terminale LLCER</option>
         </optgroup>
       </select>
     </div>
@@ -338,7 +326,7 @@ body { font-family:'Plus Jakarta Sans',sans-serif; background:var(--bg); color:v
 
 <script>
 // ==========================================
-// COMPÉTENCES PARTAGÉES
+// COMPÉTENCES PARTAGÉES (TOUTES LANGUES)
 // ==========================================
 const COMP = {
   CO: {
@@ -396,6 +384,22 @@ const COMP = {
       "CO3 · B2 Il peut comprendre les principaux points de textes et d'interventions complexes",
       "CO4 · B2 Il peut distinguer faits et points de vue, identifier des détails pertinents",
       "CO5 · B2 Il peut comprendre reportages ou films et identifier ton, humeur, intention"
+    ],
+    "Première_AMC": [
+      "CO1 · B2 Il peut comprendre les principaux points de textes et d'interventions complexes",
+      "CO2 · B2 Il peut distinguer faits et points de vue, identifier des détails pertinents"
+    ],
+    "Terminale_AMC": [
+      "CO1 · C1 Il peut comprendre une grande gamme de documents oraux longs et exigeants",
+      "CO2 · C1 Il peut saisir les significations implicites"
+    ],
+    "Première_LLCER": [
+      "CO1 · B2 Il peut comprendre les principaux points de textes et d'interventions complexes",
+      "CO2 · B2 Il peut distinguer faits et points de vue, identifier des détails pertinents"
+    ],
+    "Terminale_LLCER": [
+      "CO1 · C1 Il peut comprendre une grande gamme de documents oraux longs et exigeants",
+      "CO2 · C1 Il peut saisir les significations implicites"
     ]
   },
   CE: {
@@ -448,6 +452,22 @@ const COMP = {
       "CE2 · B2 Il peut comprendre textes complexes (distinguer faits/points de vue, structuration)",
       "CE3 · B2 Il peut lire de manière autonome une grande variété de textes",
       "CE4 · B2 Il peut parcourir rapidement plusieurs textes pour relever les points pertinents"
+    ],
+    "Première_AMC": [
+      "CE1 · B2 Il peut comprendre textes complexes (distinguer faits/points de vue, structuration)",
+      "CE2 · B2 Il peut parcourir rapidement plusieurs textes pour relever les points pertinents"
+    ],
+    "Terminale_AMC": [
+      "CE1 · C1 Il peut comprendre dans le détail des textes longs et complexes",
+      "CE2 · C1 Il peut apprécier les distinctions de style et le sens implicite"
+    ],
+    "Première_LLCER": [
+      "CE1 · B2 Il peut comprendre textes complexes (distinguer faits/points de vue, structuration)",
+      "CE2 · B2 Il peut lire et analyser des oeuvres littéraires complètes"
+    ],
+    "Terminale_LLCER": [
+      "CE1 · C1 Il peut comprendre dans le détail des textes longs et complexes",
+      "CE2 · C1 Il peut apprécier les distinctions de style, l'ironie et le sens implicite"
     ]
   },
   PO: {
@@ -505,6 +525,22 @@ const COMP = {
       "PO2 · B2 Il peut développer de manière claire et détaillée une gamme étendue de sujets",
       "PO3 · B2 Il peut dire de façon détaillée comment des évènements le touchent",
       "PO4 · B2 Il peut s'écarter spontanément d'un texte préparé pour s'adapter au public"
+    ],
+    "Première_AMC": [
+      "PO1 · B2 Il peut développer de manière claire et détaillée une gamme étendue de sujets",
+      "PO2 · B2 Il peut s'écarter spontanément d'un texte préparé pour s'adapter au public"
+    ],
+    "Terminale_AMC": [
+      "PO1 · C1 Il peut s'exprimer avec aisance et spontanéité",
+      "PO2 · C1 Il peut développer une argumentation complexe de manière fluide"
+    ],
+    "Première_LLCER": [
+      "PO1 · B2 Il peut développer de manière claire et détaillée une gamme étendue de sujets littéraires et culturels",
+      "PO2 · B2 Il peut présenter l'analyse d'une oeuvre de façon argumentée"
+    ],
+    "Terminale_LLCER": [
+      "PO1 · C1 Il peut s'exprimer avec aisance et spontanéité sur des sujets littéraires et culturels",
+      "PO2 · C1 Il peut développer une argumentation complexe et nuancée de manière fluide"
     ]
   },
   PE: {
@@ -550,6 +586,22 @@ const COMP = {
       "PE1 · B1 Il peut donner des raisons simples pour rédiger une critique simple",
       "PE2 · B2 Il peut développer méthodiquement une argumentation",
       "PE3 · B2 Il peut mettre en évidence les points significatifs pour une critique ou synthèse"
+    ],
+    "Première_AMC": [
+      "PE1 · B2 Il peut développer méthodiquement une argumentation",
+      "PE2 · B2 Il peut mettre en évidence les points significatifs pour une critique ou synthèse"
+    ],
+    "Terminale_AMC": [
+      "PE1 · C1 Il peut s'exprimer dans un texte clair, bien structuré et fluide",
+      "PE2 · C1 Il peut souligner les points pertinents et adopter un style adapté au destinataire"
+    ],
+    "Première_LLCER": [
+      "PE1 · B2 Il peut développer méthodiquement une argumentation sur un sujet littéraire/culturel",
+      "PE2 · B2 Il peut rédiger un essai, un commentaire de texte, une synthèse"
+    ],
+    "Terminale_LLCER": [
+      "PE1 · C1 Il peut s'exprimer dans un texte clair, bien structuré et fluide sur des oeuvres complexes",
+      "PE2 · C1 Il peut produire un commentaire ou une analyse stylistique détaillée"
     ]
   },
   PEC: {
@@ -611,12 +663,28 @@ const COMP = {
       "PEC1 · B1 Il peut aborder une conversation, prendre part, résumer, donner consignes",
       "PEC2 · B2 Il peut exposer ses idées, argumenter, réagir de façon convaincante",
       "PEC3 · B2 Il peut conduire un entretien avec efficacité et aisance (s'écarter des questions)"
+    ],
+    "Première_AMC": [
+      "PEC1 · B2 Il peut exposer ses idées, argumenter, réagir de façon convaincante",
+      "PEC2 · B2 Il peut conduire un débat ou entretien avec efficacité et aisance"
+    ],
+    "Terminale_AMC": [
+      "PEC1 · C1 Il peut s'exprimer avec aisance et spontanéité, presque sans effort",
+      "PEC2 · C1 Il peut utiliser la langue de façon souple et efficace pour des relations sociales ou professionnelles"
+    ],
+    "Première_LLCER": [
+      "PEC1 · B2 Il peut débattre d'une oeuvre littéraire, argumenter et réagir",
+      "PEC2 · B2 Il peut conduire un entretien ou une discussion culturelle avec aisance"
+    ],
+    "Terminale_LLCER": [
+      "PEC1 · C1 Il peut s'exprimer avec aisance et spontanéité sur des sujets pointus",
+      "PEC2 · C1 Il peut débattre de façon nuancée et défendre un point de vue complexe"
     ]
   }
 };
 
 // ==========================================
-// BASES DE DONNÉES (ANGLAIS & ALLEMAND)
+// BASES DE DONNÉES (ANGLAIS, ESPAGNOL, ALLEMAND, ITALIEN)
 // ==========================================
 const DB = {
   en: {
@@ -743,7 +811,7 @@ const DB = {
           "Le travail des enfants a-t-il vraiment disparu dans tous les pays de l'aire anglophone ?",
           "L'organisation du travail : les États-Unis, un laboratoire",
           "Dépasser les stéréotypes et les assignations",
-          "Teen jobs : les « petits boulots » adolescents américains hier et aujourd'hui"
+          "Teen jobs : les « petits boulots » des adolescents américains hier et aujourd'hui"
         ],
         "Axe 3. Voyages et migrations": [
           "Migrations internes aux États-Unis",
@@ -882,6 +950,63 @@ const DB = {
           "La BBC, vecteur de soft power britannique ? (conseillé en LVC)",
           "Glasgow et Édimbourg : deux visages de l’Écosse en mutation",
           "L’Irlande du Nord : identités plurielles ?"
+        ]
+      },
+      "Première_AMC": {
+        "Axe 1. Savoirs, Création & Innovation": [
+          "Production & Circulation des Savoirs",
+          "Science & techniques; promesses et défis"
+        ],
+        "Axe 2. Représentations": [
+          "Faire entendre sa voix",
+          "Informer et S’informer",
+          "Representer le Monde et se representer"
+        ]
+      },
+      "Terminale_AMC": {
+        "Axe 1. Faire Société": [
+          "Unité et Pluralité",
+          "Libertés Publiques et Individuels",
+          "Egalités et Inegalités"
+        ],
+        "Axe 2. Environments en Mutation": [
+          "Frontier et espace",
+          "Protection de la Nature",
+          "Repenser la ville"
+        ],
+        "Axe 3. Relation au Monde": [
+          "Puissance et Influence",
+          "Rivalités et Interdependences",
+          "Heritage commun et diversité"
+        ]
+      },
+      "Première_LLCER": {
+        "Axe 1. Imaginaire": [
+          "L’imagination créatrice et visionnaire",
+          "Imaginaires effrayants",
+          "Utopies et dystopies"
+        ],
+        "Axe 2. Rencontres": [
+          "L'amour et l'amitié",
+          "Relation entre l'individu et le groupe",
+          "La confrontation à la différence"
+        ]
+      },
+      "Terminale_LLCER": {
+        "Axe 1. Art et Debat d’idées": [
+          "Art et Contestation",
+          "Art qui fait Debat",
+          "L’Art du Debat"
+        ],
+        "Axe 2. Expression et Construction de Soi": [
+          "Expression des emotions",
+          "Mise en scène de soi",
+          "Initiation, apprentissage"
+        ],
+        "Axe 3. Voyages, Territoires et Frontières": [
+          "Exploration et Aventure",
+          "Ancrage et Heritage",
+          "Migration et Exile"
         ]
       }
     },
@@ -1097,6 +1222,98 @@ const DB = {
         "G18 · Pronoms possessifs (mine, theirs)",
         "G19 · Pronoms réciproques (each other, one another)",
         "G20 · Usage des pronoms relatifs"
+      ],
+      "Première_AMC": [
+        "G1 · Phrasal verbs",
+        "G2 · Temps du passé (prétérit, be+ing, past perfect)",
+        "G3 · Hypothèse (If... will / If... would)",
+        "G4 · Modaux et formes lexicalisées",
+        "G5 · Souhait et regret (wish)",
+        "G6 · Choix entre les temps",
+        "G7 · Voix passive",
+        "G8 · Capacité, obligation (be able to, have to, shall, ought to)",
+        "G9 · Réponses courtes et tags",
+        "G10 · Structures causatives/résultatives",
+        "G11 · Synonymes et antonymes",
+        "G12 · Distributifs (both, either, every, each)",
+        "G13 · Comparatifs et superlatifs",
+        "G14 · Adjectifs composés",
+        "G15 · A few/few, a little/little",
+        "G16 · Gérondif (sujet/objet)",
+        "G17 · Comparatives complexes (twice as much)",
+        "G18 · Groupe nominal complexe (NN, N+N, N of N, N's N)",
+        "G19 · Exceptions des comparatifs (farther/further)",
+        "G20 · Pronoms interrogatifs (How often, How much, How tall)",
+        "G21 · Pronoms réfléchis avec phrasal verbs",
+        "G22 · Nuances des démonstratifs"
+      ],
+      "Terminale_AMC": [
+        "G1 · Phrasal verbs",
+        "G2 · Temps du passé",
+        "G3 · Hypothèse (If... will / If... would)",
+        "G4 · Auxiliaires de modalité",
+        "G5 · Souhait et regret (wish)",
+        "G6 · Voix passive, modaux et phrasal verbs",
+        "G7 · Hypothèse passée (conditionnel passé, past perfect inversé)",
+        "G8 · Modaux dans un contexte passé (may/should/must have + V-EN)",
+        "G9 · Regret (should have, if only)",
+        "G10 · Structures causatives (have, get, make)",
+        "G11 · Habitudes dans le passé (would) et passé révolu (used to)",
+        "G12 · Le subjonctif",
+        "G13 · Valeurs de be+ing",
+        "G14 · Distinction could / was able to",
+        "G15 · Comparatif entre dénombrables et indénombrables (fewer/less)",
+        "G16 · Dérivation, composition, affixation, conversion",
+        "G17 · GN complexe (Mary's daughter's baby)",
+        "G18 · Pronoms possessifs (mine, theirs)",
+        "G19 · Pronoms réciproques (each other, one another)",
+        "G20 · Usage des pronoms relatifs"
+      ],
+      "Première_LLCER": [
+        "G1 · Phrasal verbs",
+        "G2 · Temps du passé (prétérit, be+ing, past perfect)",
+        "G3 · Hypothèse (If... will / If... would)",
+        "G4 · Modaux et formes lexicalisées",
+        "G5 · Souhait et regret (wish)",
+        "G6 · Choix entre les temps",
+        "G7 · Voix passive",
+        "G8 · Capacité, obligation (be able to, have to, shall, ought to)",
+        "G9 · Réponses courtes et tags",
+        "G10 · Structures causatives/résultatives",
+        "G11 · Synonymes et antonymes",
+        "G12 · Distributifs (both, either, every, each)",
+        "G13 · Comparatifs et superlatifs",
+        "G14 · Adjectifs composés",
+        "G15 · A few/few, a little/little",
+        "G16 · Gérondif (sujet/objet)",
+        "G17 · Comparatives complexes (twice as much)",
+        "G18 · Groupe nominal complexe (NN, N+N, N of N, N's N)",
+        "G19 · Exceptions des comparatifs (farther/further)",
+        "G20 · Pronoms interrogatifs (How often, How much, How tall)",
+        "G21 · Pronoms réfléchis avec phrasal verbs",
+        "G22 · Nuances des démonstratifs"
+      ],
+      "Terminale_LLCER": [
+        "G1 · Phrasal verbs",
+        "G2 · Temps du passé",
+        "G3 · Hypothèse (If... will / If... would)",
+        "G4 · Auxiliaires de modalité",
+        "G5 · Souhait et regret (wish)",
+        "G6 · Voix passive, modaux et phrasal verbs",
+        "G7 · Hypothèse passée (conditionnel passé, past perfect inversé)",
+        "G8 · Modaux dans un contexte passé (may/should/must have + V-EN)",
+        "G9 · Regret (should have, if only)",
+        "G10 · Structures causatives (have, get, make)",
+        "G11 · Habitudes dans le passé (would) et passé révolu (used to)",
+        "G12 · Le subjonctif",
+        "G13 · Valeurs de be+ing",
+        "G14 · Distinction could / was able to",
+        "G15 · Comparatif entre dénombrables et indénombrables (fewer/less)",
+        "G16 · Dérivation, composition, affixation, conversion",
+        "G17 · GN complexe (Mary's daughter's baby)",
+        "G18 · Pronoms possessifs (mine, theirs)",
+        "G19 · Pronoms réciproques (each other, one another)",
+        "G20 · Usage des pronoms relatifs"
       ]
     },
     phono: {
@@ -1172,6 +1389,38 @@ const DB = {
         "PH5 · Reconnaissance des accents d'origine"
       ],
       "Terminale_LVC": [
+        "PH1 · Schémas intonatifs systématiques",
+        "PH2 · Lettres muettes, voyelles, diphtongues",
+        "PH3 · Consonnes affriquées et emphase",
+        "PH4 · Règles d'accentuation (composition et nature du mot)",
+        "PH5 · Reconnaissance des accents d'origine"
+      ],
+      "Première_AMC": [
+        "PH1 · Schémas intonatifs",
+        "PH2 · Lettres muettes, /h/, voyelles, diphtongues",
+        "PH3 · Consonnes affriquées",
+        "PH4 · Emphase",
+        "PH5 · Accentuation du mot (règles)",
+        "PH6 · Suffixe -ate",
+        "PH7 · Reconnaissance des accents"
+      ],
+      "Terminale_AMC": [
+        "PH1 · Schémas intonatifs systématiques",
+        "PH2 · Lettres muettes, voyelles, diphtongues",
+        "PH3 · Consonnes affriquées et emphase",
+        "PH4 · Règles d'accentuation (composition et nature du mot)",
+        "PH5 · Reconnaissance des accents d'origine"
+      ],
+      "Première_LLCER": [
+        "PH1 · Schémas intonatifs",
+        "PH2 · Lettres muettes, /h/, voyelles, diphtongues",
+        "PH3 · Consonnes affriquées",
+        "PH4 · Emphase",
+        "PH5 · Accentuation du mot (règles)",
+        "PH6 · Suffixe -ate",
+        "PH7 · Reconnaissance des accents"
+      ],
+      "Terminale_LLCER": [
         "PH1 · Schémas intonatifs systématiques",
         "PH2 · Lettres muettes, voyelles, diphtongues",
         "PH3 · Consonnes affriquées et emphase",
@@ -1272,10 +1521,734 @@ const DB = {
         "PR8 · Inversion sujet/verbe (adverbes restrictifs)",
         "PR9 · Gamme très étendue de connecteurs (subsequently, although)",
         "PR10 · Voix passive avec compléments complexes"
+      ],
+      "Première_AMC": [
+        "PR1 · Adverbes de degré et emphase (I do like)",
+        "PR2 · Connecteurs chronologiques/logiques",
+        "PR3 · Subordonnées relatives et circonstancielles",
+        "PR4 · Structures infinitives (want sb to)",
+        "PR5 · Discours rapporté (say, tell, ask)",
+        "PR6 · Questions indirectes",
+        "PR7 · Hypothèse par inversion (Had she known)",
+        "PR8 · Gamme étendue de connecteurs logiques",
+        "PR9 · Pronoms relatifs complexes (whose, whom)",
+        "PR10 · Phrase exclamative"
+      ],
+      "Terminale_AMC": [
+        "PR1 · Adverbes d'intensité et d'emphase",
+        "PR2 · Marqueurs temporels très étendus (whilst, up to now)",
+        "PR3 · Connecteurs logiques (illustrer, conséquence)",
+        "PR4 · Subordonnées relatives et circonstancielles",
+        "PR5 · Structures infinitives",
+        "PR6 · Discours rapporté et questions indirectes",
+        "PR7 · Interro-négative (Wouldn't it be...?)",
+        "PR8 · Inversion sujet/verbe (adverbes restrictifs)",
+        "PR9 · Gamme très étendue de connecteurs (subsequently, although)",
+        "PR10 · Voix passive avec compléments complexes"
+      ],
+      "Première_LLCER": [
+        "PR1 · Adverbes de degré et emphase (I do like)",
+        "PR2 · Connecteurs chronologiques/logiques",
+        "PR3 · Subordonnées relatives et circonstancielles",
+        "PR4 · Structures infinitives (want sb to)",
+        "PR5 · Discours rapporté (say, tell, ask)",
+        "PR6 · Questions indirectes",
+        "PR7 · Hypothèse par inversion (Had she known)",
+        "PR8 · Gamme étendue de connecteurs logiques",
+        "PR9 · Pronoms relatifs complexes (whose, whom)",
+        "PR10 · Phrase exclamative"
+      ],
+      "Terminale_LLCER": [
+        "PR1 · Adverbes d'intensité et d'emphase",
+        "PR2 · Marqueurs temporels très étendus (whilst, up to now)",
+        "PR3 · Connecteurs logiques (illustrer, conséquence)",
+        "PR4 · Subordonnées relatives et circonstancielles",
+        "PR5 · Structures infinitives",
+        "PR6 · Discours rapporté et questions indirectes",
+        "PR7 · Interro-négative (Wouldn't it be...?)",
+        "PR8 · Inversion sujet/verbe (adverbes restrictifs)",
+        "PR9 · Gamme très étendue de connecteurs (subsequently, although)",
+        "PR10 · Voix passive avec compléments complexes"
       ]
     }
   },
-  de: {
+  es: {
+    subtitle: "Espagnol",
+    phTitle: "Ej : Un viaje a Andalucía",
+    phProb: "Ej : ¿Cómo influye el turismo en la cultura local?",
+    axes: {
+      "6ème": {
+        "Axe 1. Personnes et personnages": [
+          "Se présenter et faire connaissance",
+          "Portraits de famille",
+          "Les héros du quotidien",
+          "Personnages réels ou imaginaires"
+        ],
+        "Axe 2. Le quotidien : vivre, jouer, apprendre": [
+          "L'école en Espagne et en Amérique hispanique",
+          "Jeux et loisirs",
+          "Rythmes de vie et horaires",
+          "Alimentation et habitudes culinaires"
+        ],
+        "Axe 3. Pays et paysages": [
+          "Découverte des pays hispanophones",
+          "Villes et villages",
+          "Géographie et diversité des paysages",
+          "Monuments emblématiques"
+        ],
+        "Axe 4. Imaginaire, contes et légendes": [
+          "Fêtes traditionnelles",
+          "Contes populaires hispaniques",
+          "Mythes et légendes amérindiennes",
+          "Créatures fantastiques"
+        ],
+        "Axe 5. Arts et expression des sentiments": [
+          "Couleurs et émotions",
+          "Chansons et comptines",
+          "Découverte de la peinture (ex: Frida Kahlo, Picasso)",
+          "Les arts pour s'exprimer"
+        ]
+      },
+      "5ème": {
+        "Axe 1. Portrait, autoportrait": [
+          "Y tú, ¿quién eres? Se présenter",
+          "Portraits de familles",
+          "À chacun son style"
+        ],
+        "Axe 2. Le quotidien : lieux, rythmes, saisons": [
+          "Oye, ¿qué hora es? L’Espagne, des horaires à part",
+          "Des espaces géographiques et des rythmes multiples unis par la langue",
+          "Activités humaines : impact sur les paysages naturels et urbains d’Amérique hispanophone et d’Espagne"
+        ],
+        "Axe 3. École et loisirs": [
+          "Le(s) temps de l'école",
+          "Mil y una escuelas. Accès à l'école et variété des conditions d'enseignement",
+          "Loisirs d’ici et d’ailleurs"
+        ],
+        "Axe 4. Le réel et l’imaginaire": [
+          "¿Qué celebramos hoy? Les fêtes traditionnelles",
+          "Ces héros et héroïnes qui nous inspirent",
+          "Les contes et légendes"
+        ],
+        "Axe 5. Des langues, des lieux, des histoires": [
+          "L'espagnol dans le monde",
+          "Une langue aux influences multiples",
+          "Las piedras hablan. Sites et monuments patrimoniaux : les marques de l’histoire"
+        ],
+        "Axe 6. Le Mexique : partons à la découverte de ce pays fascinant !": [
+          "Nature et patrimoine mexicains",
+          "Saveurs du Mexique",
+          "La Fête des Morts"
+        ]
+      },
+      "4ème": {
+        "Axe 1. Sport et société": [
+          "Sport et bien-être : le sport au service d’aptitudes physique et intellectuelles et du lien social",
+          "Les règles du jeu : respecter les règles, porter les couleurs de sa région, se dépasser et gagner loyalement",
+          "Le sport pour tous : des amateurs aux sportifs, valides et handicapés, les plus célèbres"
+        ],
+        "Axe 2. Voyages et exploration": [
+          "L'Espagne, une destination appréciée des jeunes citoyens européens",
+          "Voyager pour se sentir libre",
+          "Machu Picchu, une merveille inca"
+        ],
+        "Axe 3. Villes, villages, quartiers": [
+          "Villes et capitales d'Espagne et d'Amérique hispanophone",
+          "Où habiter ? Diversité des espaces construits",
+          "Préserver son cadre de vie"
+        ],
+        "Axe 4. Inventer, innover, créer": [
+          "La technologie au service de l’homme",
+          "La langue espagnole et l’intelligence artificielle",
+          "Des explorations botaniques en Amérique latine aux biotechnologies aujourd’hui"
+        ],
+        "Axe 5. Langages et messages artistiques": [
+          "Les créations artistiques (Dalí, Kahlo, Gaudí, etc.) : d’étonnantes constructions mentales",
+          "El arte callejero : quand les langages artistiques nous interpellent",
+          "L’artiste témoigne et s’engage pour des causes sociales ou contre des régimes autoritaires"
+        ],
+        "Axe 6. L’Andalousie, terre de merveilles": [
+          "Une terre de musique(s)",
+          "Un regard vers le passé : al-Ándalus",
+          "Une destination touristique pour tous les gouts"
+        ]
+      },
+      "3ème": {
+        "Axe 1. À la rencontre de l’autre": [
+          "La convivialité, tout un art de vivre !",
+          "¿Amigos para siempre? Histoires d'amitiés célèbres, imaginaires ou familières",
+          "Des amours célèbres"
+        ],
+        "Axe 2. Travailler hier, aujourd’hui, demain": [
+          "Travailler hier",
+          "Travailler aujourd’hui",
+          "Travailler demain"
+        ],
+        "Axe 3. Voyages et migrations": [
+          "Partons en voyage !",
+          "Quitter son pays : aventure, émigration économique ou exil politique",
+          "Souvenirs de voyage"
+        ],
+        "Axe 4. Langages et médias": [
+          "Des moyens d'information multiples",
+          "Les médias au service d'une cause, d'un combat ou du pouvoir, de l'autorité",
+          "À la découverte du dessin de presse"
+        ],
+        "Axe 5. Formes de l’engagement": [
+          "Coopérer et aider, c’est aussi s’enrichir",
+          "S’engager pour une cause",
+          "Les artistes engagés contre le pouvoir ?",
+          "Les artistes engagés"
+        ],
+        "Axe 6. 1492, l’année « admirable » ?": [
+          "De la reconquista à una nueva conquista : 1492, une année riche en rebondissements",
+          "La « découverte » de l’Amérique : Christophe Colomb est-il le premier Européen à fouler la terre américaine ?",
+          "Un évènement, deux points de vue : ¿Descubrimiento o despojo?"
+        ]
+      },
+      "Seconde": {
+        "Axe 1. Représentation de soi et rapport à autrui": [
+          "Portraits et autoportraits : traces de l'histoire personnelle et de la société ? (conseillé en LVC)",
+          "Le sentiment d’appartenance",
+          "La langue comme identité"
+        ],
+        "Axe 2. Vivre entre générations": [
+          "L’histoire en héritage",
+          "Famille(s), les liens du sang ? (conseillé en LVC)",
+          "Se tourner vers les autres pour consolider les liens intergénérationnels"
+        ],
+        "Axe 3. Le passé dans le présent": [
+          "Sur les traces du passé : appréhender un héritage culturel",
+          "Les fêtes traditionnelles qui rythment le calendrier du monde hispanique (conseillé en LVC)",
+          "Le récit national : entre célébration, réinterprétation et opposition"
+        ],
+        "Axe 4. Défis et transitions": [
+          "La ville de demain : répondre aux défis environnementaux et sociaux (conseillé en LVC)",
+          "L'engagement de la jeunesse",
+          "Le tourisme, une (r)évolution en marche ? Les différentes facettes du tourisme"
+        ],
+        "Axe 5. Créer et recréer": [
+          "L’art revisité : réinterprétations et détournements d'œuvres connues (conseillé en LVC)",
+          "La mode : à l’image de la société ?",
+          "Contes et légendes d’hier à aujourd’hui"
+        ],
+        "Axe 6. L’Espagne au-delà des clichés": [
+          "Les représentations de la culture espagnole : dépasser les stéréotypes (conseillé en LVC)",
+          "Madrid, une capitale fascinante",
+          "La mer, une ressource de premier ordre"
+        ]
+      },
+      "Première": {
+        "Axe 1. Identités et échanges": [
+          "Voyager pour aller à la rencontre de l’autre (conseillé en LVC)",
+          "Les frontières : lignes de séparation ou de rencontre ?",
+          "La migration comme quête d’une terre d’accueil ou comme fuite"
+        ],
+        "Axe 2. Diversité et inclusion": [
+          "Vivre ensemble avec nos différences (conseillé en LVC)",
+          "Rendre visibles les minorités culturelles",
+          "La pluralité linguistique dans les pays hispanophones"
+        ],
+        "Axe 3. Art et pouvoir": [
+          "L’art au service du pouvoir ou censuré par le pouvoir",
+          "L’artiste engagé",
+          "Le pouvoir de l’art (conseillé en LVC)"
+        ],
+        "Axe 4. Innovations scientifiques et responsabilité": [
+          "Le monde du travail bouleversé à l'heure des innovations scientifiques (conseillé en LVC)",
+          "Santiago Ramón y Cajal : le père des neurosciences",
+          "Chirurgie esthétique… et éthique ?"
+        ],
+        "Axe 5. L’être humain et la nature": [
+          "La nature au cœur de la culture hispanique",
+          "La préservation du milieu naturel (conseillé en LVC)",
+          "Les conséquences de la surexploitation de la nature"
+        ],
+        "Axe 6. L’espace andin, la colonne vertébrale de l’Amérique du sud": [
+          "Les Andes, un espace fascinant qui alimente l'imaginaire collectif (conseillé en LVC)",
+          "Entre diversité géographique et héritage identitaire commun",
+          "Les défis socio-économiques et environnementaux actuels dans les pays andins"
+        ]
+      },
+      "Terminale": {
+        "Axe 1. Espace privé et espace public": [
+          "La place des femmes : revendications d'hier et d'aujourd'hui (conseillé en LVC)",
+          "La ville et les villages comme espaces sociaux",
+          "La frontière entre l’espace public et l’espace privé : les défis à l'heure des réseaux sociaux"
+        ],
+        "Axe 2. Territoire et mémoire": [
+          "La mémoire historique dans les pays hispanophones",
+          "Le paysage remodelé par l'être humain (conseillé en LVC)",
+          "La création artistique pour ne pas oublier"
+        ],
+        "Axe 3. Fictions et réalités": [
+          "Raconter le réel : jusqu'où les représentations artistiques du réel témoignent-elles de l'Histoire ?",
+          "Les mondes imaginaires : des espaces de réflexion sur la vie réelle (conseillé en LVC)",
+          "Fiction et faits historiques : convergences et oppositions"
+        ],
+        "Axe 4. Enjeux et formes de la communication": [
+          "Les formes du discours : évolution au fil des époques",
+          "La publicité : une mécanique de séduction qui repose sur des référentiels culturels précis (conseillé en LVC)",
+          "L’art de la traduction à l'heure du numérique"
+        ],
+        "Axe 5. Citoyenneté et mondes virtuels": [
+          "Citoyens connectés, citoyens engagés ? Le rôle des réseaux sociaux dans les initiatives citoyennes",
+          "Information : entre réalité et manipulation (conseillé en LVC)",
+          "Apprendre et se former grâce au numérique : avantages et limites"
+        ],
+        "Axe 6. La richesse des métissages dans le monde hispanique": [
+          "Une mixité culturelle omniprésente et féconde",
+          "Le syncrétisme religieux en Amérique latine",
+          "La langue espagnole : apports, évolutions, adaptations au fil du temps (conseillé en LVC)"
+        ]
+      },
+      "Première_LLCER": {
+        "Axe : Circulation des hommes et circulation des idées": [
+          "Voyages et exils",
+          "Mémoire(s) : écrire l’histoire, écrire son histoire",
+          "Échanges et transmissions"
+        ],
+        "Axe : Diversité du monde hispanophone": [
+          "Pluralité des espaces, pluralité des langues",
+          "Altérité et convivencia",
+          "Métissages et syncrétisme"
+        ]
+      },
+      "Terminale_LLCER": {
+        "Axe : Représentations culturelles : entre imaginaires et réalités": [
+          "Nature et mythologies",
+          "Les représentations du réel",
+          "Du type au stéréotype : construction et dépassement"
+        ],
+        "Axe : Dominations et insoumissions": [
+          "Oppression, résistances et révoltes",
+          "Révolutions et ruptures",
+          "Culture officielle et émancipations culturelles"
+        ],
+        "Axe : L’Espagne et l'Amérique latine dans le monde : enjeux, perspectives et création": [
+          "Monde globalisé : contacts et influences",
+          "Crises et violences",
+          "La frontière en question"
+        ]
+      }
+    },
+    grammar: {
+      "6ème": [
+        "G1 · Accents écrits : repérage sur les mots courants",
+        "G2 · Accent tonique et le schéma intonatif de la phrase exclamative ou interrogative",
+        "G3 · Accords de genre et de nombre",
+        "G4 · Genre de noms courants (el cuaderno, la pizarra) et le pluriel (los lapices, las tijeras)",
+        "G5 · Absence de déterminant devant les noms de continents, pays et régions",
+        "G6 · Pronoms personnels sujets (pour insister, pour lever un doute sur la personne verbale)",
+        "G7 · Pronoms personnels compléments en position d’enclise (dame, dime, dile, bórralo)",
+        "G8 · Articles définis (el/la/los/las) ; deux formes d’articles indéfinis (un/una, unos/unas)",
+        "G9 · Possessifs (première et deuxième personnes du singulier)",
+        "G10 · Quantificateurs : poco/poca/pocos/pocas, mucho/mucha/muchos/muchas",
+        "G11 · Présent de l'indicatif : des verbes très usuels et réguliers en -ar/-er/-ir",
+        "G12 · Présent de l'indicatif : des verbes à diphtongue courants : poder, empezar, volver",
+        "G13 · Présent de l'indicatif : des verbes à alternance courants : decir, repetir",
+        "G14 · Présent de l'indicatif : des verbes irréguliers : ser, estar, ir, tener",
+        "G15 · Présent de ir pour exprimer un futur proche ou une intention : Vamos a cantar",
+        "G16 · L'impératif : reconnaitre quelques formes courantes, consignes de classe",
+        "G17 · Estar + gérondif",
+        "G18 · L’imparfait : terminaisons verbales -aba et -ía ; era, había",
+        "G19 · Différents types de phrase : interrogative, impérative, injonctive",
+        "G20 · Négation : No tengo hermanos",
+        "G21 · Interrogatifs (quién, dónde, por qué, cuántos, cuántas, qué, cuál, cuáles, cuando)",
+        "G22 · Absence de partitif : ¿Quieres agua?",
+        "G23 · Comparatifs de supériorité et d’infériorité (más/menos alto que yo)",
+        "G24 · Préposition a devant un COD de personne déterminée et futur proche",
+        "G25 · Obligation impersonnelle (hay que)",
+        "G26 · Se + 3e personne (lexicalisé) : Se ve una casa. / Se ven pájaros."
+      ],
+      "5ème": [
+        "G27 · Pronoms personnels compléments en position de double enclise (dámelo, dímelo)",
+        "G28 · Vouvoiement : usted/ustedes",
+        "G29 · Apocope des adjectifs",
+        "G30 · Nombres ordinaux (primero, segundo)",
+        "G31 · Quelques déterminants démonstratifs (este/esta/estos/estas)",
+        "G32 · Présent de l'indicatif : irréguliers (saber, salir, poner, reconocer)",
+        "G33 · Pasarse el tiempo + gérondif",
+        "G34 · L’imparfait : conjugaison de ir, ser et ver"
+      ],
+      "4ème": [
+        "G35 · Diminutifs et suffixes : -ito, -illo",
+        "G36 · Noms de mers, fleuves et montagnes au masculin",
+        "G37 · Mots polysémiques (la muñeca, el piso, el cuarto) et faux-amis",
+        "G38 · Mots proches à ne pas confondre : expresar/exprimir, crear/creer, sentarse/sentirse",
+        "G39 · Adjectif indéfini cualquiera",
+        "G40 · Présent de l'indicatif : verbes à modifications orthographiques (coger)",
+        "G41 · L’enclise : infinitif / gérondif / impératif",
+        "G42 · Le présent du subjonctif : réguliers, modifications, diphtongue, affaiblissement",
+        "G43 · Le présent du subjonctif : verbes irréguliers courants : tener, saber",
+        "G44 · Le gérondif : seguir + gérondif, ir + gérondif",
+        "G45 · Le futur simple : verbes réguliers + quelques irréguliers (tener, poner, hacer)",
+        "G46 · Le passé simple des verbes réguliers et irréguliers courants (tener, ir, ser, estar, hacer)",
+        "G47 · Comparatifs irréguliers (mayor, menor)",
+        "G48 · Prépositions pour se déplacer : a, de, por, hasta, hacia",
+        "G49 · Obligation personnelle (tener que)",
+        "G50 · Itération : volver a + infinitif",
+        "G51 · Voix passive",
+        "G52 · Proposition subordonnée de but : para que",
+        "G53 · Proposition subordonnée temporelle (cuando + subjonctif présent)"
+      ],
+      "3ème": [
+        "G54 · La substantivation de l'adjectif avec lo",
+        "G55 · Présent de l'indicatif : modifications orthographiques (explicar)",
+        "G56 · Le passé composé : auxiliaire haber au présent + participes passés",
+        "G57 · Le subjonctif imparfait : quelques verbes réguliers et irréguliers les plus courants",
+        "G58 · Questions indirectes : quisiera saber si, me pregunto si",
+        "G59 · Simultanéité de l'action : al + infinitif",
+        "G60 · Sujet postposé dans la phrase déclarative. Lo decidieron los Reyes Católicos",
+        "G61 · Tournure emphatique (c’est… qui/que). Fue el 3 de agosto cuando...",
+        "G62 · Superlatif relatif. Esta es la cuestión más preocupante"
+      ],
+      "Seconde_LVAB": [
+        "G1 · Le présent de l’indicatif (réguliers, diphtongue, affaiblissement, alternance)",
+        "G2 · Le présent de l’indicatif (irréguliers et modifications orthographiques)",
+        "G3 · Le présent du subjonctif (réguliers, diphtongue, affaiblissement, alternance, irréguliers)",
+        "G4 · Le futur simple (réguliers et irréguliers)",
+        "G5 · L’impératif (ordre à toutes les personnes et la défense avec no + subjonctif)",
+        "G6 · L’imparfait de l'indicatif",
+        "G7 · Le passé simple (réguliers, modifications orthographiques, alternance, irréguliers)",
+        "G8 · Le passé composé (conjugaison de haber et participes passés irréguliers)",
+        "G9 · Le plus-que-parfait",
+        "G10 · Le subjonctif imparfait",
+        "G11 · Le conditionnel (réguliers et irréguliers)",
+        "G12 · États de l’action (estar/seguir/ir/venir + gérondif, volver a + infinitif)",
+        "G13 · Diminutifs, suffixes, augmentatifs (-ón, -azo) et dérivation (mejor -> mejorar)",
+        "G14 · L'enclise et la double enclise",
+        "G15 · Nuances des démonstratifs liées à la distance (géographique, temporelle, affective)",
+        "G16 · La substantivation de l'adjectif avec lo, cualquiera, apocope",
+        "G17 · Le superlatif absolu",
+        "G18 · Marqueurs temporels (hace tres siglos, dentro de veinte años, antaño, ya)",
+        "G19 · Distinguer sobre/encima de, bajo/debajo de, ante/delante de, tras/detrás de",
+        "G20 · Le sujet postposé dans la phrase déclarative",
+        "G21 · Les comparatifs suivis d’un verbe conjugué (más / menos de lo que)",
+        "G22 · Questions indirectes : Quisiera saber si… / Me pregunto si…",
+        "G23 · Exprimer la volonté : Quiero que… / Te pido que… / Me gustaría que…",
+        "G24 · Exprimer la concession : aunque / si bien / a pesar de que",
+        "G25 · Simultanéité de l'action (al + infinitif) et tournure emphatique"
+      ],
+      "Seconde_LVC": [
+        "G1 · L’accentuation grammaticale et le rôle de l'accent écrit",
+        "G2 · Le présent de l’indicatif (réguliers, diphtongue, alternance, irréguliers)",
+        "G3 · L’imparfait de l’indicatif (terminaisons, verbes très usuels, Érase / había una vez)",
+        "G4 · L’impératif (consignes de classe et expressions courantes)",
+        "G5 · Le déroulement de l’action (Estar + gérondif, pasarse el tiempo + gérondif)",
+        "G6 · Les déterminants articles (définis, indéfinis) et possessifs, démonstratifs",
+        "G7 · L'absence de partitif, la négation, marquage Ø devant les pays",
+        "G8 · Pronoms personnels sujets et compléments en enclise et double enclise",
+        "G9 · Utilisation de usted (vouvoiement)",
+        "G10 · Nombres ordinaux",
+        "G11 · Apocope de l'adjectif",
+        "G12 · Les pronoms interrogatifs (quién, dónde, por qué, cuántos...)",
+        "G13 · Les quantificateurs et leur accord : poco, mucho, muy",
+        "G14 · Les adverbes et prépositions pour situer dans le temps et l'espace",
+        "G15 · Préposition a devant un COD de personne déterminé et dans Vamos a cantar",
+        "G16 · Le comparatif de supériorité et d’infériorité",
+        "G17 · L’obligation impersonnelle (hay que) et personnelle (tener que)",
+        "G18 · Se + 3e personne (lexicalisé, impersonnel)",
+        "G19 · Les mots de liaison (y, o, pero, sino) et connecteurs chronologiques"
+      ],
+      "Première_LVAB": [
+        "G1 · Le présent de l’indicatif (réguliers, diphtongue, affaiblissement, alternance)",
+        "G2 · Le présent de l’indicatif (irréguliers et modifications orthographiques)",
+        "G3 · Le présent du subjonctif (réguliers, diphtongue, affaiblissement, alternance, irréguliers)",
+        "G4 · Le futur simple (réguliers et irréguliers)",
+        "G5 · L’impératif (ordre à toutes les personnes et la défense avec no + subjonctif)",
+        "G6 · L’imparfait de l'indicatif",
+        "G7 · Le passé simple (réguliers, modifications orthographiques, alternance, irréguliers)",
+        "G8 · Le passé composé (conjugaison de haber et participes passés irréguliers)",
+        "G9 · Le plus-que-parfait",
+        "G10 · Le subjonctif imparfait",
+        "G11 · Le conditionnel (réguliers et irréguliers)",
+        "G12 · États de l’action (estar/seguir/ir/venir + gérondif, volver a + infinitif)",
+        "G13 · Diminutifs, suffixes, augmentatifs (-ón, -azo) et dérivation (mejor -> mejorar)",
+        "G14 · L'enclise et la double enclise",
+        "G15 · Nuances des démonstratifs liées à la distance (géographique, temporelle, affective)",
+        "G16 · La substantivation de l'adjectif avec lo, cualquiera, apocope",
+        "G17 · Le superlatif absolu",
+        "G18 · Marqueurs temporels (hace tres siglos, dentro de veinte años, antaño, ya)",
+        "G19 · Distinguer sobre/encima de, bajo/debajo de, ante/delante de, tras/detrás de",
+        "G20 · Le sujet postposé dans la phrase déclarative",
+        "G21 · Les comparatifs suivis d’un verbe conjugué (más / menos de lo que)",
+        "G22 · Questions indirectes : Quisiera saber si… / Me pregunto si…",
+        "G23 · Exprimer la volonté : Quiero que… / Te pido que… / Me gustaría que…",
+        "G24 · Exprimer la concession : aunque / si bien / a pesar de que",
+        "G25 · Simultanéité de l'action (al + infinitif) et tournure emphatique"
+      ],
+      "Première_LVC": [
+        "G1 · L’accentuation grammaticale et le rôle de l'accent écrit",
+        "G2 · Le présent de l’indicatif (réguliers, diphtongue, alternance, irréguliers)",
+        "G3 · L’imparfait de l’indicatif (terminaisons, verbes très usuels, Érase / había una vez)",
+        "G4 · L’impératif (consignes de classe et expressions courantes)",
+        "G5 · Le déroulement de l’action (Estar + gérondif, pasarse el tiempo + gérondif)",
+        "G6 · Les déterminants articles (définis, indéfinis) et possessifs, démonstratifs",
+        "G7 · L'absence de partitif, la négation, marquage Ø devant les pays",
+        "G8 · Pronoms personnels sujets et compléments en enclise et double enclise",
+        "G9 · Utilisation de usted (vouvoiement)",
+        "G10 · Nombres ordinaux",
+        "G11 · Apocope de l'adjectif",
+        "G12 · Les pronoms interrogatifs (quién, dónde, por qué, cuántos...)",
+        "G13 · Les quantificateurs et leur accord : poco, mucho, muy",
+        "G14 · Les adverbes et prépositions pour situer dans le temps et l'espace",
+        "G15 · Préposition a devant un COD de personne déterminé et dans Vamos a cantar",
+        "G16 · Le comparatif de supériorité et d’infériorité",
+        "G17 · L’obligation impersonnelle (hay que) et personnelle (tener que)",
+        "G18 · Se + 3e personne (lexicalisé, impersonnel)",
+        "G19 · Les mots de liaison (y, o, pero, sino) et connecteurs chronologiques"
+      ],
+      "Terminale_LVAB": [
+        "G1 · Le présent de l’indicatif (réguliers, diphtongue, affaiblissement, alternance)",
+        "G2 · Le présent de l’indicatif (irréguliers et modifications orthographiques)",
+        "G3 · Le présent du subjonctif (réguliers, diphtongue, affaiblissement, alternance, irréguliers)",
+        "G4 · Le futur simple (réguliers et irréguliers)",
+        "G5 · L’impératif (ordre à toutes les personnes et la défense avec no + subjonctif)",
+        "G6 · L’imparfait de l'indicatif",
+        "G7 · Le passé simple (réguliers, modifications orthographiques, alternance, irréguliers)",
+        "G8 · Le passé composé (conjugaison de haber et participes passés irréguliers)",
+        "G9 · Le plus-que-parfait",
+        "G10 · Le subjonctif imparfait",
+        "G11 · Le conditionnel (réguliers et irréguliers)",
+        "G12 · États de l’action (estar/seguir/ir/venir + gérondif, volver a + infinitif)",
+        "G13 · Diminutifs, suffixes, augmentatifs (-ón, -azo) et dérivation (mejor -> mejorar)",
+        "G14 · L'enclise et la double enclise",
+        "G15 · Nuances des démonstratifs liées à la distance (géographique, temporelle, affective)",
+        "G16 · La substantivation de l'adjectif avec lo, cualquiera, apocope",
+        "G17 · Le superlatif absolu",
+        "G18 · Marqueurs temporels (hace tres siglos, dentro de veinte años, antaño, ya)",
+        "G19 · Distinguer sobre/encima de, bajo/debajo de, ante/delante de, tras/detrás de",
+        "G20 · Le sujet postposé dans la phrase déclarative",
+        "G21 · Les comparatifs suivis d’un verbe conjugué (más / menos de lo que)",
+        "G22 · Questions indirectes : Quisiera saber si… / Me pregunto si…",
+        "G23 · Exprimer la volonté : Quiero que… / Te pido que… / Me gustaría que…",
+        "G24 · Exprimer la concession : aunque / si bien / a pesar de que",
+        "G25 · Simultanéité de l'action (al + infinitif) et la voie passive (ser + participe passé)"
+      ],
+      "Terminale_LVC": [
+        "G1 · L’accentuation grammaticale et le rôle de l'accent écrit",
+        "G2 · Le présent de l’indicatif (réguliers, diphtongue, alternance, irréguliers)",
+        "G3 · L’imparfait de l’indicatif (terminaisons, verbes très usuels, Érase / había una vez)",
+        "G4 · L’impératif (consignes de classe et expressions courantes)",
+        "G5 · Le déroulement de l’action (Estar + gérondif, pasarse el tiempo + gérondif)",
+        "G6 · Les déterminants articles (définis, indéfinis) et possessifs, démonstratifs",
+        "G7 · L'absence de partitif, la négation, marquage Ø devant les pays",
+        "G8 · Pronoms personnels sujets et compléments en enclise et double enclise",
+        "G9 · Utilisation de usted (vouvoiement)",
+        "G10 · Nombres ordinaux",
+        "G11 · Apocope de l'adjectif",
+        "G12 · Les pronoms interrogatifs (quién, dónde, por qué, cuántos...)",
+        "G13 · Les quantificateurs et leur accord : poco, mucho, muy",
+        "G14 · Les adverbes et prépositions pour situer dans le temps et l'espace",
+        "G15 · Préposition a devant un COD de personne déterminé et dans Vamos a cantar",
+        "G16 · Le comparatif de supériorité et d’infériorité",
+        "G17 · L’obligation impersonnelle (hay que) et personnelle (tener que)",
+        "G18 · Se + 3e personne (lexicalisé, impersonnel)",
+        "G19 · Les mots de liaison (y, o, pero, sino) et connecteurs chronologiques"
+      ],
+      "Première_LLCER": [
+        "G1 · Le présent de l’indicatif (réguliers, diphtongue, affaiblissement, alternance)",
+        "G2 · Le présent du subjonctif (réguliers, diphtongue, affaiblissement, alternance, irréguliers)",
+        "G3 · Le futur simple (réguliers et irréguliers)",
+        "G4 · L’impératif (ordre à toutes les personnes et la défense avec no + subjonctif)",
+        "G5 · L’imparfait de l'indicatif",
+        "G6 · Le passé simple (réguliers, modifications orthographiques, alternance, irréguliers)",
+        "G7 · Le passé composé et le plus-que-parfait",
+        "G8 · Le subjonctif imparfait",
+        "G9 · Le conditionnel (réguliers et irréguliers)",
+        "G10 · États de l’action (estar/seguir/ir/venir + gérondif, volver a + infinitif)",
+        "G11 · Nuances des démonstratifs liées à la distance",
+        "G12 · La substantivation avec lo, le superlatif absolu, l'apocope",
+        "G13 · Distinguer sobre/encima de, bajo/debajo de, ante/delante de, tras/detrás de",
+        "G14 · Le sujet postposé dans la phrase déclarative et tournure emphatique",
+        "G15 · Exprimer la volonté, la concession, la simultanéité de l'action"
+      ],
+      "Terminale_LLCER": [
+        "G1 · Le présent de l’indicatif (réguliers, diphtongue, affaiblissement, alternance)",
+        "G2 · Le présent du subjonctif (réguliers, diphtongue, affaiblissement, alternance, irréguliers)",
+        "G3 · Le futur simple (réguliers et irréguliers)",
+        "G4 · L’impératif (ordre à toutes les personnes et la défense avec no + subjonctif)",
+        "G5 · L’imparfait de l'indicatif",
+        "G6 · Le passé simple (réguliers, modifications orthographiques, alternance, irréguliers)",
+        "G7 · Le passé composé et le plus-que-parfait",
+        "G8 · Le subjonctif imparfait",
+        "G9 · Le conditionnel (réguliers et irréguliers)",
+        "G10 · États de l’action (estar/seguir/ir/venir + gérondif, volver a + infinitif)",
+        "G11 · Nuances des démonstratifs liées à la distance",
+        "G12 · La substantivation avec lo, le superlatif absolu, l'apocope",
+        "G13 · Distinguer sobre/encima de, bajo/debajo de, ante/delante de, tras/detrás de",
+        "G14 · Le sujet postposé dans la phrase déclarative et tournure emphatique",
+        "G15 · Exprimer la volonté, la concession, la voix passive (ser vs estar)"
+      ]
+    },
+    phono: {
+      "6ème": [
+        "PH1 · Prononciation différente du français de certaines voyelles (e, u) et consonnes (j, ñ, r, s, v)",
+        "PH2 · La diphtongaison et la nasalisation",
+        "PH3 · Les signes de ponctuation (exclamation, interrogation, emplacement dans la phrase)",
+        "PH4 · L’accent écrit sur des voyelles",
+        "PH5 · Apparition/disparition de l’accent écrit lors du passage au pluriel : operación → operaciones"
+      ],
+      "5ème": [
+        "PH1 · Reconnaitre le schéma intonatif de la phrase injonctive, exclamative, interrogative",
+        "PH2 · Se familiariser avec l’accent tonique et le respecter",
+        "PH3 · Prononciation des phonèmes spécifiques de l’espagnol (la jota, la ceta, -r-, -rr-, -ll-, ch, etc.)",
+        "PH4 · Les nasales (an/ en / in…) et des diphtongues (ie, ue)"
+      ],
+      "4ème": [
+        "PH1 · Entrainement à la prononciation des phonèmes spécifiques de l’espagnol (jota, ceta, erre, etc.)",
+        "PH2 · Respect strict de l’accent tonique",
+        "PH3 · Éloignement des traits du français pour se rapprocher de la langue espagnole",
+        "PH4 · Schéma intonatif des échanges comprenant des interrogations, des exclamations, des émotions"
+      ],
+      "3ème": [
+        "PH1 · Consolidation des phonèmes spécifiques de l’espagnol (jota, ceta, erre, etc.)",
+        "PH2 · Respect strict de l’accent tonique",
+        "PH3 · Intonation et prosodie des émotions"
+      ],
+      "Seconde_LVAB": [
+        "PH1 · Schéma accentuel de la phrase, mots oxytons, paroxytons, proparoxytons",
+        "PH2 · Liaison phonie/graphie, transcription des phonèmes",
+        "PH3 · Synalèphe (o/u), diérèse, fusion de syllabes, h muet…",
+        "PH4 · Schéma intonatif de la phrase déclarative, exclamative, interrogative, injonctive",
+        "PH5 · Accentuation de la forme enclitique et accent tonique du passé simple",
+        "PH6 · Intonation, segmentation de l’énoncé, débit, découpage"
+      ],
+      "Seconde_LVC": [
+        "PH1 · Schéma accentuel de la phrase",
+        "PH2 · Schéma accentuel des mots oxytons, paroxytons, proparoxytons",
+        "PH3 · Liaison phonie/graphie, prononciation des phonèmes (synalèphe, fusion de syllabes, h muet…)",
+        "PH4 · Schéma intonatif de la phrase déclarative, exclamative, interrogative, injonctive",
+        "PH5 · Segmentation de l’énoncé, débit, découpage"
+      ],
+      "Première_LVAB": [
+        "PH1 · Schéma accentuel de la phrase, mots oxytons, paroxytons, proparoxytons",
+        "PH2 · Liaison phonie/graphie, transcription des phonèmes",
+        "PH3 · Synalèphe (o/u), diérèse, fusion de syllabes, h muet…",
+        "PH4 · Schéma intonatif de la phrase déclarative, exclamative, interrogative, injonctive",
+        "PH5 · Accentuation de la forme enclitique et accent tonique du passé simple",
+        "PH6 · Intonation, segmentation de l’énoncé, débit, découpage"
+      ],
+      "Première_LVC": [
+        "PH1 · La prononciation des phonèmes spécifiques de l’espagnol, des nasales et des diphtongues",
+        "PH2 · Le respect de l’accent tonique"
+      ],
+      "Terminale_LVAB": [
+        "PH1 · Schéma accentuel de la phrase, mots oxytons, paroxytons, proparoxytons",
+        "PH2 · Liaison phonie/graphie, transcription des phonèmes",
+        "PH3 · Synalèphe (o/u), diérèse, fusion de syllabes, h muet…",
+        "PH4 · Schéma intonatif de la phrase déclarative, exclamative, interrogative, injonctive",
+        "PH5 · Accentuation de la forme enclitique et accent tonique du passé simple",
+        "PH6 · Intonation, segmentation de l’énoncé, débit, découpage"
+      ],
+      "Terminale_LVC": [
+        "PH1 · La prononciation des phonèmes spécifiques de l’espagnol, des nasales et des diphtongues",
+        "PH2 · Le respect de l’accent tonique"
+      ],
+      "Première_LLCER": [
+        "PH1 · Schéma accentuel de la phrase, mots oxytons, paroxytons, proparoxytons",
+        "PH2 · Liaison phonie/graphie, transcription des phonèmes",
+        "PH3 · Synalèphe (o/u), diérèse, fusion de syllabes, h muet…",
+        "PH4 · Schéma intonatif de la phrase déclarative, exclamative, interrogative, injonctive",
+        "PH5 · Accentuation de la forme enclitique et accent tonique du passé simple",
+        "PH6 · Intonation, segmentation de l’énoncé, débit, découpage"
+      ],
+      "Terminale_LLCER": [
+        "PH1 · Schéma accentuel de la phrase, mots oxytons, paroxytons, proparoxytons",
+        "PH2 · Liaison phonie/graphie, transcription des phonèmes",
+        "PH3 · Synalèphe (o/u), diérèse, fusion de syllabes, h muet…",
+        "PH4 · Schéma intonatif de la phrase déclarative, exclamative, interrogative, injonctive",
+        "PH5 · Accentuation de la forme enclitique et accent tonique du passé simple",
+        "PH6 · Intonation, segmentation de l’énoncé, débit, découpage"
+      ]
+    },
+    pragma: {
+      "6ème": [
+        "PR1 · Quelques connecteurs chronologiques (entonces, luego)",
+        "PR2 · Connecteurs logiques pour illustrer (por ejemplo, o sea)",
+        "PR3 · Coordination : y, o, pero",
+        "PR4 · Marqueurs spatiaux et temporels : adverbes (aquí, allí, hoy, mañana, después, antes)"
+      ],
+      "5ème": [
+        "PR1 · Quelques connecteurs chronologiques (entonces, luego)",
+        "PR2 · Connecteurs logiques pour illustrer (por ejemplo, o sea)",
+        "PR3 · Coordination : y, o, pero",
+        "PR4 · Marqueurs spatiaux et temporels : adverbes (aquí, allí, hoy, mañana, después, antes)"
+      ],
+      "4ème": [
+        "PR1 · Quelques connecteurs chronologiques (entonces, luego)",
+        "PR2 · Connecteurs logiques pour illustrer (por ejemplo, o sea)",
+        "PR3 · Coordination : y, o, pero",
+        "PR4 · Marqueurs spatiaux et temporels : adverbes (aquí, allí, hoy, mañana, después, antes)"
+      ],
+      "3ème": [
+        "PR1 · Quelques connecteurs chronologiques (entonces, luego)",
+        "PR2 · Connecteurs logiques pour illustrer (por ejemplo, o sea)",
+        "PR3 · Coordination : y, o, pero, sino",
+        "PR4 · Marqueurs spatiaux et temporels : adverbes (aquí, allí, hoy, mañana, después, antes)"
+      ],
+      "Seconde_LVAB": [
+        "PR1 · Quelques connecteurs chronologiques (entonces, luego)",
+        "PR2 · Connecteurs logiques pour illustrer (por ejemplo, o sea)",
+        "PR3 · Locutions temporelles : a continuación, por último, pocas veces, antiguamente, etc.",
+        "PR4 · Exprimer la volonté : Quiero que… / Te pido que… / Me gustaría que…",
+        "PR5 · Exprimer la concession : aunque / si bien / a pesar de que",
+        "PR6 · Utiliser la phrase emphatique (c’est... que/qui)"
+      ],
+      "Seconde_LVC": [
+        "PR1 · Utiliser quelques connecteurs chronologiques (entonces, luego)",
+        "PR2 · Connecteurs logiques pour illustrer (por ejemplo, o sea)",
+        "PR3 · Les mots de liaison : y, o, pero, sino",
+        "PR4 · Les adverbes et prépositions pour situer dans le temps et l'espace"
+      ],
+      "Première_LVAB": [
+        "PR1 · Quelques connecteurs chronologiques (entonces, luego)",
+        "PR2 · Connecteurs logiques pour illustrer (por ejemplo, o sea)",
+        "PR3 · Locutions temporelles : a continuación, por último, pocas veces, antiguamente, etc.",
+        "PR4 · Exprimer la volonté : Quiero que… / Te pido que… / Me gustaría que…",
+        "PR5 · Exprimer la concession : aunque / si bien / a pesar de que",
+        "PR6 · Utiliser la phrase emphatique (c’est... que/qui)"
+      ],
+      "Première_LVC": [
+        "PR1 · Utiliser quelques connecteurs chronologiques (entonces, luego)",
+        "PR2 · Connecteurs logiques pour illustrer (por ejemplo, o sea)",
+        "PR3 · Les mots de liaison : y, o, pero, sino",
+        "PR4 · Les adverbes et prépositions pour situer dans le temps et l'espace"
+      ],
+      "Terminale_LVAB": [
+        "PR1 · Quelques connecteurs chronologiques (entonces, luego)",
+        "PR2 · Connecteurs logiques pour illustrer (por ejemplo, o sea)",
+        "PR3 · Locutions temporelles : a continuación, por último, pocas veces, antiguamente, etc.",
+        "PR4 · Exprimer la volonté : Quiero que… / Te pido que… / Me gustaría que…",
+        "PR5 · Exprimer la concession : aunque / si bien / a pesar de que",
+        "PR6 · Utiliser la phrase emphatique (c’est... que/qui)"
+      ],
+      "Terminale_LVC": [
+        "PR1 · Utiliser quelques connecteurs chronologiques (entonces, luego)",
+        "PR2 · Connecteurs logiques pour illustrer (por ejemplo, o sea)",
+        "PR3 · Les mots de liaison : y, o, pero, sino",
+        "PR4 · Les adverbes et prépositions pour situer dans le temps et l'espace"
+      ],
+      "Première_LLCER": [
+        "PR1 · Quelques connecteurs chronologiques (entonces, luego)",
+        "PR2 · Connecteurs logiques pour illustrer (por ejemplo, o sea)",
+        "PR3 · Locutions temporelles : a continuación, por último, pocas veces, antiguamente, etc.",
+        "PR4 · Exprimer la volonté : Quiero que… / Te pido que… / Me gustaría que…",
+        "PR5 · Exprimer la concession : aunque / si bien / a pesar de que",
+        "PR6 · Utiliser la phrase emphatique (c’est... que/qui)"
+      ],
+      "Terminale_LLCER": [
+        "PR1 · Quelques connecteurs chronologiques (entonces, luego)",
+        "PR2 · Connecteurs logiques pour illustrer (por ejemplo, o sea)",
+        "PR3 · Locutions temporelles : a continuación, por último, pocas veces, antiguamente, etc.",
+        "PR4 · Exprimer la volonté : Quiero que… / Te pido que… / Me gustaría que…",
+        "PR5 · Exprimer la concession : aunque / si bien / a pesar de que",
+        "PR6 · Utiliser la phrase emphatique (c’est... que/qui)"
+      ]
+    }
+  },
+de: {
     subtitle: "Allemand",
     phTitle: "Ex : Eine Reise nach Berlin",
     phProb: "Ex : Inwiefern spiegelt die Stadt die deutsche Geschichte wider?",
@@ -1538,6 +2511,34 @@ const DB = {
           "„Tanzt! Sonst sind wir verloren!“ : les chorégraphes allemands de Pina Bausch à Sasha Waltz",
           "L’Allemagne, un berceau des Lumières et du romantisme"
         ]
+      },
+      "Première_LLCER": {
+        "Axe 1 : Les Imaginaires": [
+          "L’imaginaire populaire allemand",
+          "L'inquiétante étrangeté",
+          "L'imaginaire fantastique"
+        ],
+        "Axe 2 : Représentations et expressions de la mémoire": [
+          "Histoire(s) et territoires",
+          "La construction de la mémoire",
+          "« Erinnerungskultur » (« devoir de mémoire »)"
+        ]
+      },
+      "Terminale_LLCER": {
+        "Axe 1 : Voyages : circulation des hommes et des idées": [
+          "Voyage de découverte et d'exploration",
+          "Exil et migrations"
+        ],
+        "Axe 2 : Formes et fondements des liens sociaux dans l'espace germanophone": [
+          "Construction et organisation des liens sociaux",
+          "Sociabilisation et sociabilité : espaces et enjeux",
+          "Les liens sociaux entre fragilisation et mutation"
+        ],
+        "Axe 3 : L'espace germanophone et ses mythologies": [
+          "La nature source de mythes",
+          "relectures des mythologies",
+          "Mythes historiques et politiques fondateurs"
+        ]
       }
     },
     grammar: {
@@ -1637,142 +2638,217 @@ const DB = {
         "G87 · Subordonnées : temporelle et adversative (während), but (damit)"
       ],
       "Seconde_LVAB": [
-        "G1 · Temps de l’indicatif : présent, parfait, prétérit (forts et faibles irréguliers)",
-        "G2 · Subjonctif II présent (haben, sein, werden, modaux, wissen, es gäbe, er käme, er würde + infinitif)",
-        "G3 · Subjonctif II passé dans l'expression du regret (Wenn ich das gewusst hätte…)",
-        "G4 · Passif présent et prétérit (complément d'agent von, passif impersonnel)",
-        "G5 · Rection casuelle des verbes (jm helfen, jm folgen, jm widersprechen)",
-        "G6 · Rection prépositionnelle des verbes/adjectifs (sprechen über, stolz sein auf, etc.)",
-        "G7 · Sens des préverbes (um/ziehen, erleichtern)",
-        "G8 · Genre et suffixes (règles sémantiques/morphologiques, noms dérivés d'origine étrangère)",
-        "G9 · Types de pluriel (¨-e, -en, ¨-er, -s)",
-        "G10 · Expansions à droite (génitif ou relative au nominatif/accusatif)",
-        "G11 · Groupe relatif en was avec quantificateur ou das comme antécédent",
-        "G12 · Subordonnée relative avec relatif au datif ou précédé d'une préposition",
-        "G13 · Génitif (complément du nom, prépositions wegen, während, trotz)",
-        "G14 · Déclinaison des pronoms personnels (nom, acc, dat)",
-        "G15 · Pronoms interrogatifs composés (wovon, worüber)",
-        "G16 · Pronom en da- pour anaphoriser",
-        "G17 · Conjonctions de subordination (während, damit)",
-        "G18 · Expression du but (um...zu vs damit)",
-        "G19 · Conjonctions : cause (da), temps (bevor, nachdem), conséquence (so dass)",
-        "G20 · Comparaison irréelle (als ob)",
-        "G21 · Corrélation (je...desto)",
-        "G22 · Connecteurs : nämlich, deswegen, dennoch, trotzdem, dagegen",
-        "G23 · Marqueurs de reformulation (das heißt, anders gesagt)"
+        "G1 · maitriser les temps de l’indicatif ; consolider si besoin le présent, le parfait et le prétérit des verbes forts et des verbes faibles irréguliers",
+        "G2 · utiliser le subjonctif II présent, dans ses formes simples pour les verbes les plus courants (haben, sein, werden, les verbes modaux et wissen, ainsi que quelques verbes forts tels que es gäbe, er käme) et dans sa forme composée (er würde + infinitif)",
+        "G3 · utiliser le subjonctif II passé dans l’expression du regret (Wenn ich das gewusst hätte…)",
+        "G4 · employer le passif présent et prétérit en indiquant le complément d’agent en von, y compris le passif impersonnel (In den 60er Jahren wurde viel demonstriert).",
+        "G5 · connaitre certains verbes à rection casuelle d’usage fréquent dans les objets d’étude comme jm helfen, jm folgen jm widersprechen, einem Bündnis bei/treten",
+        "G6 · connaitre certains verbes utiles (et certains adjectifs) avec leur rection prépositionnelle, entre autres : sprechen über + acc., sich erinnern an + acc. Angst haben vor + dat., stolz sein auf + acc., betrachten als + acc., bei/tragen zu + dat., gehören zu + dat., fähig / bereit sein zu + dat., ungeduldig sein auf + acc.",
+        "G7 · connaitre le sens de certains préverbes (um/ziehen, um/denken, erleichtern, erneuern)",
+        "G8 · maitriser le genre des mots les plus courants, retrouver le genre en fonction du suffixe",
+        "G9 · connaitre les principales régularités concernant le genre des noms, les critères sémantiques (par exemple, les phénomènes météorologiques sont masculins) et morphologiques (les suffixes des noms dérivés féminins, la conversion pour das Leben ou das Blau, la dérivation implicite pour der Bau ou der Fortschritt)",
+        "G10 · maitriser le genre des noms dérivés d’origine étrangère (die Nation, der Optimismus, das Klima)",
+        "G11 · repérer les principaux types de pluriel : (¨)-e, -en, (¨)-er, -s",
+        "G12 · construire des expansions à droite de la base nominale : un GN au génitif ou une subordonnée avec pronom relatif au nominatif et à l’accusatif",
+        "G13 · utiliser le groupe relatif en was avec un quantificateur indéfini ou avec le démonstratif das comme antécédent (Er hat alles bekommen, was er sich gewünscht hat. / Das, was er sagt, ist die Wahrheit. / Das ist etwas, was ich schon immer machen wollte.)",
+        "G14 · reconnaitre la subordonnée relative avec un pronom relatif au datif ou un pronom relatif précédé d’une préposition (Viele Ostdeutsche, mit denen ich gesprochen habe, sehnen sich nach der DDR-Zeit.)",
+        "G15 · utiliser le génitif pour marquer le complément du nom et après les prépositions wegen, während et trotz",
+        "G16 · être capable de décliner les déterminants possessifs et démonstratifs aux quatre cas",
+        "G17 · maitriser la déclinaison de l’adjectif épithète avec un article défini, indéfini et sans article",
+        "G18 · employer quelques masculins faibles fréquents (der Franzose, der Mensch, der Student, der Junge)",
+        "G19 · Maitriser les pronoms personnels au nominatif, accusatif, datif et repérer ainsi les différentes désignations d’un même référent",
+        "G20 · Maitriser tous les pronoms interrogatifs et en particulier les composés en wo- : wovon? Worüber?",
+        "G21 · Utiliser le pronom réfléchi au datif pour les verbes trivalents (sich einen film an/sehen)",
+        "G22 · Utiliser le pronom en da- pour anaphoriser un groupe prépositionnel régi : wir warten darauf. / sie sind stolz darauf. / mein interesse daran ist groß.",
+        "G23 · Avoir acquis les principaux marqueurs spatiotemporels (direction, lieu, provenance, datation, fréquence, durée) de natures différentes",
+        "G24 · Maitriser la syntaxe de base de la phrase allemande déclarative et être capable d’attribuer la première place à un autre groupe que le sujet",
+        "G25 · Différencier les conjonctions de coordination et de subordination, et placer le verbe conjugué correctement dans les propositions coordonnées et subordonnées",
+        "G26 · Utiliser les conjonctions de subordination während (adversatif et temporel) et damit (but)",
+        "G27 · Distinguer l’emploi de um… Zu et damit dans l’expression du but",
+        "G28 · Employer les principales conjonctions de subordination pour exprimer la cause (da), les relations temporelles d’antériorité et de postérité (bevor, nachdem), la conséquence (sie sind so stolz darauf, dass…)",
+        "G29 · Utiliser als ob dans la comparaison irréelle (er tut, als ob er hier nicht fremd wäre.)",
+        "G30 · Repérer la relation de corrélation exprimée par je…desto",
+        "G31 · Employer les propositions infinitives anstatt… zu et ohne… zu",
+        "G32 · Utiliser le connecteur de cause nämlich, reconnaitre les connecteurs de conséquence deswegen, darum, daher, infolgedessen",
+        "G33 · Utiliser les connecteurs logiques dennoch, trotzdem, dagegen, les connecteurs qui structurent la phrase (zwar… aber, entweder… oder, weder… noch), les marqueurs de reformulation (das heißt / d.h. À l’écrit, anders gesagt et beziehungsweise / bzw. à l’écrit)",
+        "G34 · Réactiver l’emploi de certains verbes modaux pour modaliser l’énoncé : müssen, mögen au présent (Das mag wahr sein. / It may be true.)"
       ],
       "Seconde_LVC": [
-        "G1 · Présent de l'indicatif (haben, sein, modaux, wissen, faibles/forts courants)",
-        "G2 · Futur proche exprimé avec le présent",
-        "G3 · Impératif (consignes et expressions courantes)",
-        "G4 · Prétérit (sein, haben, modaux courants, es gab)",
-        "G5 · Parfait (verbes faibles et forts courants)",
-        "G6 · Subjonctif II présent (ich möchte, wir könnten/sollten)",
-        "G7 · GN : majuscule, adjectif épithète à gauche",
-        "G8 · Articles (définis, indéfinis, aucun) et négateur kein",
-        "G9 · Déterminants possessifs et génitif saxon",
-        "G10 · Nominatif et Accusatif",
-        "G11 · Intensité de l'adjectif (sehr, so, zu, nicht... genug)",
-        "G12 · Comparatif et formes irrégulières (besser, lieber)",
-        "G13 · Pronoms : nominatif, accusatif, datif (mir/dir)",
-        "G14 · Pronoms interrogatifs (wer, was, wann, wie...)",
-        "G15 · Marqueurs spatiotemporels de base",
-        "G16 · Verbes de position/déplacement + préposition de lieu",
-        "G17 · Syntaxe : place du verbe, du participe 2 et du préverbe",
-        "G18 · Conjonctions de coordination (und, oder)",
-        "G19 · Connecteurs logiques de base (dann, also, aber, denn)",
-        "G20 · Subordonnée complétive (dass)"
+        "G1 · utiliser le présent des verbes haben et sein, des six verbes modaux (können, müssen, wollen, mögen, dürfen, sollen) et wissen, des verbes faibles et forts couramment utilisés",
+        "G2 · exprimer le futur proche avec le présent (Nächstes Jahr fahren wir nach München.)",
+        "G3 · comprendre quelques formes employées dans les consignes de classe (Stell dich bitte vor! / Schlagt das Buch auf!) ou dans des expressions courantes (Warte mal! / Pass auf! / Bleib stehen! / Entschuldigen Sie! / Mach’s gut!)",
+        "G4 · employer sein et haben au prétérit, certains verbes modaux (konnte, sollte, wollte) et le bloc lexicalisé es gab",
+        "G5 · employer le parfait des verbes faibles et des verbes forts courants (Ich bin gekommen. / Ich habe nicht verstanden.)",
+        "G6 · utiliser ich möchte pour exprimer un souhait, wir könnten / wir sollten + infinitif pour exprimer un conseil",
+        "G7 · utiliser la majuscule pour marquer le nom, placer l’adjectif épithète toujours à gauche de la base dans un GN",
+        "G8 · utiliser les articles définis et indéfinis, et le marquage Ø au pluriel, devant les noms de masse et les noms de pays",
+        "G9 · utiliser le déterminant négateur kein (Ich habe keine Zeit.), les déterminants possessifs et le génitif saxon, des quantificateurs courants (viele, wenige)",
+        "G10 · marquer le GN sujet au nominatif et objet à l’accusatif (avec un article défini, indéfini ou un déterminant possessif)",
+        "G11 · Varier le degré d’intensité de l’adjectif à l’aide d’adverbes : Er ist sehr / so / zu / nicht reich genug.",
+        "G12 · Utiliser le comparatif de supériorité, d’égalité et d’infériorité de divers adjectifs (Das finde ich schöner als / (nicht) so schön wie / weniger schön als) et les formes irrégulières besser et lieber pour exprimer une préférence",
+        "G13 · Les utiliser au nominatif et à l’accusatif (für mich), identifier ceux renvoyant à un référent humain dans un texte",
+        "G14 · Utiliser mir / dir dans les rituels de salutation (Wie geht’s dir? Mir geht’s gut.) ou pour exprimer ses gouts (Das gefällt mir sehr.) et ses sensations (Mir ist kalt. Mir ist schlecht.)",
+        "G15 · Comprendre et employer des pronoms interrogatifs diversifiés (wer, was, wann, wie, wie alt, warum, wie viele)",
+        "G16 · Utiliser des marqueurs temporels de différentes natures : des adverbes de temps (heute, morgen, gestern, jetzt, zuerst, dann, schließlich, immer, nie, oft, manchmal), des groupes prépositionnels (am 3. Oktober, am Wochenende, am Nachmittag, im Juni, in den Ferien, um 9 Uhr), des groupes nominaux (letzte / nächste Woche, dieses Jahr)",
+        "G17 · utiliser quelques adverbes de lieu (oben, unten, hier, da, dort, links, rechts)",
+        "G18 · utiliser les verbes de position ou de déplacement avec leur complément prépositionnel de lieu : in der Schule sein / in die Schule gehen, zu Hause sein / nach Hause gehen, in Deutschland wohnen / nach Deutschland fahren, aus Hamburg kommen",
+        "G19 · Bien placer le verbe conjugué dans les différents types de phrase",
+        "G20 · Placer le participe 2 et le préverbe séparable en dernière position de la phrase déclarative (Sie sieht glücklich aus.)",
+        "G21 · Utiliser les conjonctions de coordination (und, oder)",
+        "G22 · Utiliser quelques connecteurs chronologiques (zuerst, dann, cf. marqueurs temporels) ou logiques, pour illustrer son propos (wie, zum beispiel), exprimer la conséquence (also), ajouter un élément (auch), exprimer une opposition ou une concession (aber), la cause (denn)",
+        "G23 · Utiliser la subordonnée complétive en dass et savoir l’employer pour donner son avis : Ich denke / finde / glaube, deutsche Schüler haben mehr Freizeit. / dass deutsche Schüler mehr Freizeit haben."
       ],
       "Première_LVAB": [
-        "G1 · Indicatif (faibles, forts, faibles irréguliers)",
-        "G2 · Subjonctif II présent et passé",
-        "G3 · Passif présent/prétérit (agent von, passif impersonnel, passif + modal)",
-        "G4 · Verbes à rection casuelle (jm danken, jn um etwas bitten)",
-        "G5 · Rection prépositionnelle (Einfluss haben auf, sich auf/lehnen gegen)",
-        "G6 · Sens des préverbes (aus/wandern, sich zurück/halten)",
-        "G7 · Types de pluriel",
-        "G8 · Genre des noms dérivés d'origine étrangère",
-        "G9 · Expansions à droite du GN",
-        "G10 · Groupe relatif en was (etwas was..., das was...)",
-        "G11 · Subordonnée relative avec préposition ou pronom en wo-",
-        "G12 · Génitif (complément du nom, wegen, während, trotz)",
-        "G13 · Déclinaison de l'adjectif épithète",
-        "G14 · Masculins faibles et mixtes (der Mensch, der Name)",
-        "G15 · Déclinaison des pronoms personnels",
-        "G16 · Pronom réfléchi au datif pour verbes trivalents",
-        "G17 · Pronom en da-",
-        "G18 · Concomitance, antériorité, postériorité",
-        "G19 · Place du verbe conjugué (propositions)",
-        "G20 · But (um... zu, damit)",
-        "G21 · Propositions infinitives (anstatt... zu, ohne... zu)",
-        "G22 · Relations de sens complexes (weil, nämlich, bevor, trotzdem, als ob)",
-        "G23 · Marqueurs de reformulation"
+        "G1 · consolider les temps de l’indicatif (des verbes faibles, forts et faibles irréguliers) et du subjonctif II (présent et passé)",
+        "G2 · consolider le passif présent et prétérit en indiquant le complément d’agent en von, y compris le passif impersonnel (Es wurde darüber heftig diskutiert.) et utiliser le passif avec un verbe modal (Es kann noch darüber diskutiert werden).",
+        "G3 · enrichir la liste des verbes à rection casuelle d’usage fréquent (jm helfen, jm danken, jn um etwas bitten), et celle des verbes (et adjectifs) avec leur rection prépositionnelle (Einfluss haben auf + acc., betrachten als + acc., interessiert sein an + dat., sich auf/lehnen gegen + acc., verstoßen gegen + acc., sich etwas (gén.) bewusst sein",
+        "G4 · connaitre le sens de certains préverbes (aus/wandern, aus/leben, sich zurück/halten)",
+        "G5 · utiliser les principaux types de pluriel : (¨)-e, -en, (¨)-er, -s",
+        "G6 · maitriser le genre des noms dérivés d’origine étrangère (die Kooperation, der Motor, das Argument)",
+        "G7 · construire des expansions à droite de la base nominale : un GN au génitif ou une subordonnée avec pronom relatif",
+        "G8 · utiliser le groupe relatif en was avec un quantificateur indéfini (etwas, was…) ou avec le démonstratif das comme antécédent (Das, was er gestern erzählt hat, hat alle überrascht.)",
+        "G9 · reconnaitre la subordonnée relative avec un pronom relatif précédé d’une préposition (Viele Russlanddeutsche, mit denen ich mich unterhalten habe, fühlten sich in ihrer neuen Heimat fremd.)",
+        "G10 · utiliser la subordonnée relative avec un pronom en wo- (Das Thema, wofür wir uns interessieren, ist aktuell.)",
+        "G11 · utiliser le génitif pour marquer le complément du nom et après les prépositions wegen, während et trotz",
+        "G12 · consolider la déclinaison de l’adjectif épithète avec un article défini, indéfini et sans article",
+        "G13 · employer quelques masculins faibles (der Franzose, der Mensch) et mixtes fréquents (der Name, der Glaube)",
+        "G14 · Consolider la déclinaison des pronoms personnels et repérer ainsi les différentes désignations d’un même référent",
+        "G15 · Utiliser le pronom réfléchi au datif pour les verbes trivalents (sich eine Ausstellung an/sehen)",
+        "G16 · Utiliser le pronom en da- pour anaphoriser un groupe prépositionnel régi (Sie haben uns davor gewarnt.)",
+        "G17 · Exprimer la concomitance avec différents marqueurs (während, zugleich, beim + infinitif substantivé)",
+        "G18 · Utiliser différents marqueurs lexicaux pour exprimer l’antériorité (vor, vorher, bevor) et la postériorité (nach, nachher, nachdem)",
+        "G19 · Consolider la syntaxe de base de la phrase allemande déclarative et l’occupation de la première place par un autre groupe que le sujet, en particulier une subordonnée",
+        "G20 · Consolider la place du verbe conjugué dans les propositions subordonnées et coordonnées",
+        "G21 · Distinguer l’emploi de um… zu et damit dans l’expression du but",
+        "G22 · Employer les propositions infinitives anstatt… zu et ohne… zu",
+        "G23 · Comprendre des relations de sens complexes grâce aux conjonctions de subordination et aux connecteurs logiques : la cause (weil, nämlich, da), les relations temporelles, d’antériorité et de postériorité (bevor, nachdem), la conséquence (so + adj, dass, deswegen, darum, daher, infolgedessen, so dass), la concession (auch wenn, trotzdem, zwar…aber…), la comparaison irréelle avec als ob, le but (um…zu, damit), les marqueurs de reformulation (das heißt / d.h. à l’écrit, anders gesagt et en B1+, beziehungsweise / bzw. à l’écrit), la relation de corrélation exprimée par je…desto",
+        "G24 · Réactiver l’emploi de certains verbes modaux pour modaliser l’énoncé : müssen, mögen au présent (Das mag wahr sein. / It may be true.)"
       ],
       "Première_LVC": [
-        "G1 · Présent et prétérit (sein, haben, werden, modaux, faibles/forts)",
-        "G2 · Parfait des verbes courants",
-        "G3 · Subjonctif II présent (forme simple et composée)",
-        "G4 · Subjonctif II passé (Wenn ich es gewusst hätte!)",
-        "G5 · Passif présent et prétérit à la 3e personne",
-        "G6 · Déterminants et quantificateurs",
-        "G7 · Processus de formation lexicale (composition, dérivation)",
-        "G8 · Nominalisation de l'infinitif ou de l'adjectif",
-        "G9 · Nominatif, accusatif et datif",
-        "G10 · Rection casuelle (jm helfen, sprechen über)",
-        "G11 · Superlatif de l'adjectif",
-        "G12 · Pronoms personnels et réfléchis",
-        "G13 · Pronoms interrogatifs avec préposition et composés (Wie groß?)",
-        "G14 · Pronoms indéfinis (niemand, jemand)",
-        "G15 · Marqueurs temporels (während, als, wenn)",
-        "G16 · Prépositions spatiales (acc/dat)",
-        "G17 · Syntaxe : préverbe séparable",
-        "G18 · Phrase déclarative commençant par une subordonnée ou connecteur",
-        "G19 · Proposition infinitive en um... zu",
-        "G20 · Connecteurs structurants (zwar... aber, entweder... oder)"
+        "G1 · Consolider la conjugaison au présent et au prétérit de sein, haben et werden, des verbes modaux, des verbes faibles et forts",
+        "G2 · Utiliser le parfait des verbes faibles et des verbes forts courants",
+        "G3 · Utiliser le prétérit des verbes faibles, de plusieurs verbes forts et faibles irréguliers courants",
+        "G4 · Utiliser le subjonctif II présent dans la forme simple pour haben, sein, werden et pour les verbes modaux, dans sa forme composée pour les verbes faibles et forts (Es würde mir Spaß machen, wenn…)",
+        "G5 · Utiliser le subjonctif II passé (Wenn ich es gewusst hätte!)",
+        "G6 · Utiliser le passif présent et prétérit à la 3e personne (Afrika wurde unter den Kolonialmächten aufgeteilt.)",
+        "G7 · consolider l’emploi des articles définis et indéfinis (dont kein), des déterminants possessifs et démonstratifs",
+        "G8 · connaitre la plupart des quantificateurs (alle, viele, wenige, einige, andere, manche)",
+        "G9 · repérer les différents processus de formation lexicale (composition, dérivation) pour accéder plus facilement au sens, notamment pour la dérivation ; repérer plusieurs affixes modificateurs de sens (zer-, -los, -bar, -frei, un-)",
+        "G10 · utiliser la nominalisation de l’infinitif ou de l’adjectif (das Leben, das Blau)",
+        "G11 · marquer correctement le GN au nominatif, à l’accusatif et, dans des blocs lexicalisés, au datif",
+        "G12 · connaitre certains verbes à rection casuelle indispensables (jm helfen) ; connaitre certains verbes utiles avec leur rection prépositionnelle (sprechen über + acc., Angst haben vor + dat.)",
+        "G13 · construire des expansions à droite de la base nominale avec un groupe prépositionnel en von ou bien avec un groupe prépositionnel régi par le nom ou avec une subordonnée relative (avec un pronom relatif au nominatif)",
+        "G14 · Utiliser le superlatif de l’adjectif épithète (das teuerste Auto) ou de l’adjectif substantivé (Sie war die Berühmteste.)",
+        "G15 · Utiliser les pronoms personnels au nominatif, à l’accusatif et au datif",
+        "G16 · Utiliser les pronoms réfléchis des verbes réfléchis ou pronominaux (sich interessieren für + acc.)",
+        "G17 · Utiliser des pronoms interrogatifs avec préposition (Seit wann? Mit wem?) et de forme composée (Wie groß?)",
+        "G18 · Employer certains pronoms indéfinis (niemand, jemand, alle)",
+        "G19 · Consolider et enrichir les marqueurs spatiotemporels acquis dans le niveau inférieur",
+        "G20 · Utiliser la subordonnée de temps (während) et distinguer l’emploi de als et celui de wenn",
+        "G21 · Connaitre les prépositions spatiales régissant l’accusatif (durch, für, gegen, ohne, um) ou le datif (aus, bei, mit, nach, seit, von, zu)",
+        "G22 · Construire correctement le verbe à préverbe séparable",
+        "G23 · Maitriser la syntaxe de base de la phrase déclarative et être capable de commencer la phrase par une subordonnée temporelle (als, wenn, während), conditionnelle (wenn), adversative (während), de concession (obwohl) ou par un connecteur logique (also, deshalb, doch, dennoch, dagegen)",
+        "G24 · Utiliser la proposition infinitive en um…zu pour exprimer le but",
+        "G25 · Utiliser quelques connecteurs qui structurent la phrase (zwar… aber, entweder… oder, weder… noch) ou les marqueurs de reformulation (das heißt, anders gesagt)",
+        "G26 · Exprimer la modalisation pour indiquer le degré de vraisemblance de l’énoncé (bestimmt, wahrscheinlich)"
       ],
       "Terminale_LVAB": [
-        "G1 · Indicatif et Subjonctif II",
-        "G2 · Passif impersonnel et passif avec verbe modal",
-        "G3 · Repérer le subjonctif I",
-        "G4 · Passif parfait (complément d'agent durch)",
-        "G5 · Double infinitif",
-        "G6 · Genre des noms d'origine étrangère",
-        "G7 · Déclinaison de l'adjectif épithète",
-        "G8 · Masculins faibles et mixtes",
-        "G9 · Subordonnée relative avec préposition ou en wo-",
-        "G10 · Groupe participial épithète avec participe I et II",
-        "G11 · Pronom en da-",
-        "G12 · Pronoms impersonnels (irgendeiner, nirgendwo)",
-        "G13 · Marqueurs lexicaux d'antériorité et postériorité",
-        "G14 · Relations de sens complexes (conjonctions et connecteurs logiques)",
-        "G15 · Modalisation (bestimmt, vermutlich, verbes modaux)",
-        "G16 · Relation de sens avec indem",
-        "G17 · Subordonnée conditionnelle sans wenn",
-        "G18 · Comparaison irréelle sans ob",
-        "G19 · Marqueurs du discours rapporté (laut, nach, sollen + subj I)",
-        "G20 · Particules illocutoires (bloß, wohl, ja)"
+        "G1 · Consolider les conjugaisons à l’indicatif et au subjonctif II",
+        "G2 · Utiliser le passif impersonnel (Es wurde darüber heftig diskutiert.) et le passif avec un verbe modal (Es kann noch darüber diskutiert werden.)",
+        "G3 · Repérer le subjonctif l",
+        "G4 · Utiliser le passif parfait (Das Projekt ist erfolgreich durchgeführt worden.) et le complément d’agent en durch",
+        "G5 · Utiliser le «double infinitif» (Brecht hat die dänische Sprache nicht lernen wollen.)",
+        "G6 · Maitriser le genre des noms dérivés d’origine étrangère (die Kooperation, der Motor, das Argument)",
+        "G7 · Consolider la déclinaison de l’adjectif épithète avec un article défini, indéfini et sans article",
+        "G8 · Employer quelques masculins faibles (der Franzose, der Mensch) et mixtes fréquents (der Name, der Glaube)",
+        "G9 · Reconnaitre la subordonnée relative avec un pronom relatif précédé d’une préposition (Die Choreographin, mit der sie gearbeitet hat, hat sie ermutigt.) et savoir l’employer",
+        "G10 · Reconnaitre la subordonnée relative avec un pronom en wo- (Das Thema, wofür wir uns interessieren, ist aktuell.) et savoir l’employer",
+        "G11 · Délimiter le groupe participial épithète avec participe II (Die von dem nationalsozialistischen Staat verbannten Künstler) et participe I (Die im Frühling blühende Landschaft)",
+        "G12 · Utiliser le pronom en da- pour anaphoriser un groupe prépositionnel en rection (wir waren stolz darauf)",
+        "G13 · Utiliser les pronoms impersonnels irgendeiner, irgendetwas, nirgendwo, niemand",
+        "G14 · Utiliser différents marqueurs lexicaux pour exprimer l’antériorité (vor, vorher, bevor) et la postériorité (nach, nachher, nachdem)",
+        "G15 · Comprendre des relations de sens complexes grâce aux conjonctions de subordination et aux connecteurs logiques : la cause (weil, nämlich, da), les relations temporelles, d’antériorité et de postériorité (bevor, nachdem), la conséquence (so + adj, dass, deswegen, darum, daher, infolgedessen, so dass), la concession (auch wenn, trotzdem, zwar… aber…), la comparaison irréelle avec als ob, le but (um…zu, damit), les marqueurs de reformulation (das heißt / d.h. à l’écrit, anders gesagt et beziehungsweise / bzw. à l’écrit), l’ajout (dazu, außerdem, übrigens, auch, ebenso), la relation de corrélation exprimée par je…desto et les utiliser",
+        "G16 · Comprendre la modalisation exprimée par des modalisateurs (bestimmt, anscheinend, vermutlich, angeblich) ou des verbes modaux (müssen, mögen, können, wollen). Savoir exprimer la modalisation",
+        "G17 · Identifier la relation de sens exprimée par indem (moyen, concomitance, cause)",
+        "G18 · Reconnaitre la subordonnée conditionnelle sans wenn (Hätte er die Nachricht überprüft, hätte er gleich bemerkt, dass es Fake News war.) et la comparaison irréelle sans ob (Er tut, als hätte er nichts davon gewusst.)",
+        "G19 · Repérer les différents marqueurs du discours rapporté (laut, nach, seiner Meinung nach, angeblich, wollen, sollen + subjonctif I)",
+        "G20 · Identifier quelques particules illocutoires (bloß, wohl, ja) afin d’accéder à la compréhension de l’implicite (Seine Reaktion war ja zu erwarten.)"
       ],
       "Terminale_LVC": [
-        "G1 · Indicatif et Subjonctif II",
-        "G2 · Passif impersonnel et passif avec verbe modal",
-        "G3 · Repérer le subjonctif I",
-        "G4 · Passif parfait (complément d'agent durch)",
-        "G5 · Double infinitif",
-        "G6 · Genre des noms d'origine étrangère",
-        "G7 · Déclinaison de l'adjectif épithète",
-        "G8 · Masculins faibles et mixtes",
-        "G9 · Subordonnée relative avec préposition ou en wo-",
-        "G10 · Groupe participial épithète avec participe I et II",
-        "G11 · Pronom en da-",
-        "G12 · Pronoms impersonnels (irgendeiner, nirgendwo)",
-        "G13 · Marqueurs lexicaux d'antériorité et postériorité",
-        "G14 · Relations de sens complexes (conjonctions et connecteurs logiques)",
-        "G15 · Modalisation (bestimmt, vermutlich, verbes modaux)",
-        "G16 · Relation de sens avec indem",
-        "G17 · Subordonnée conditionnelle sans wenn",
-        "G18 · Comparaison irréelle sans ob",
-        "G19 · Marqueurs du discours rapporté (laut, nach, sollen + subj I)",
-        "G20 · Particules illocutoires (bloß, wohl, ja)"
+        "G1 · Consolider la conjugaison au présent et au prétérit de sein, haben et werden, des verbes modaux, des verbes faibles et forts",
+        "G2 · Utiliser le parfait des verbes faibles et des verbes forts courants",
+        "G3 · Utiliser le prétérit des verbes faibles, de plusieurs verbes forts et faibles irréguliers courants",
+        "G4 · Utiliser le subjonctif II présent dans la forme simple pour haben, sein, werden et pour les verbes modaux, dans sa forme composée pour les verbes faibles et forts (Es würde mir Spaß machen, wenn…)",
+        "G5 · Utiliser le subjonctif II passé (Wenn ich es gewusst hätte!)",
+        "G6 · Utiliser le passif présent et prétérit à la 3e personne (Afrika wurde unter den Kolonialmächten aufgeteilt.)",
+        "G7 · consolider l’emploi des articles définis et indéfinis (dont kein), des déterminants possessifs et démonstratifs",
+        "G8 · connaitre la plupart des quantificateurs (alle, viele, wenige, einige, andere, manche)",
+        "G9 · repérer les différents processus de formation lexicale (composition, dérivation) pour accéder plus facilement au sens, notamment pour la dérivation ; repérer plusieurs affixes modificateurs de sens (zer-, -los, -bar, -frei, un-)",
+        "G10 · utiliser la nominalisation de l’infinitif ou de l’adjectif (das Leben, das Blau)",
+        "G11 · marquer correctement le GN au nominatif, à l’accusatif et, dans des blocs lexicalisés, au datif",
+        "G12 · connaitre certains verbes à rection casuelle indispensables (jm helfen) ; connaitre certains verbes utiles avec leur rection prépositionnelle (sprechen über + acc., Angst haben vor + dat.)",
+        "G13 · construire des expansions à droite de la base nominale avec un groupe prépositionnel en von ou bien avec un groupe prépositionnel régi par le nom ou avec une subordonnée relative (avec un pronom relatif au nominatif)",
+        "G14 · Utiliser le superlatif de l’adjectif épithète (das teuerste Auto) ou de l’adjectif substantivé (Sie war die Berühmteste.)",
+        "G15 · Utiliser les pronoms personnels au nominatif, à l’accusatif et au datif",
+        "G16 · Utiliser les pronoms réfléchis des verbes réfléchis ou pronominaux (sich interessieren für + acc.)",
+        "G17 · Utiliser des pronoms interrogatifs avec préposition (Seit wann? Mit wem?) et de forme composée (Wie groß?)",
+        "G18 · Employer certains pronoms indéfinis (niemand, jemand, alle)",
+        "G19 · Consolider et enrichir les marqueurs spatiotemporels acquis dans le niveau inférieur",
+        "G20 · Utiliser la subordonnée de temps (während) et distinguer l’emploi de als et celui de wenn",
+        "G21 · Connaitre les prépositions spatiales régissant l’accusatif (durch, für, gegen, ohne, um) ou le datif (aus, bei, mit, nach, seit, von, zu)",
+        "G22 · Construire correctement le verbe à préverbe séparable",
+        "G23 · Maitriser la syntaxe de base de la phrase déclarative et être capable de commencer la phrase par une subordonnée temporelle (als, wenn, während), conditionnelle (wenn), adversative (während), de concession (obwohl) ou par un connecteur logique (also, deshalb, doch, dennoch, dagegen)",
+        "G24 · Utiliser la proposition infinitive en um…zu pour exprimer le but",
+        "G25 · Utiliser quelques connecteurs qui structurent la phrase (zwar… aber, entweder… oder, weder… noch) ou les marqueurs de reformulation (das heißt, anders gesagt)",
+        "G26 · Exprimer la modalisation pour indiquer le degré de vraisemblance de l’énoncé (bestimmt, wahrscheinlich)"
+      ],
+      "Première_LLCER": [
+        "G1 · consolider les temps de l’indicatif (des verbes faibles, forts et faibles irréguliers) et du subjonctif II (présent et passé)",
+        "G2 · consolider le passif présent et prétérit en indiquant le complément d’agent en von, y compris le passif impersonnel (Es wurde darüber heftig diskutiert.) et utiliser le passif avec un verbe modal (Es kann noch darüber diskutiert werden).",
+        "G3 · enrichir la liste des verbes à rection casuelle d’usage fréquent (jm helfen, jm danken, jn um etwas bitten), et celle des verbes (et adjectifs) avec leur rection prépositionnelle (Einfluss haben auf + acc., betrachten als + acc., interessiert sein an + dat., sich auf/lehnen gegen + acc., verstoßen gegen + acc., sich etwas (gén.) bewusst sein",
+        "G4 · connaitre le sens de certains préverbes (aus/wandern, aus/leben, sich zurück/halten)",
+        "G5 · utiliser les principaux types de pluriel : (¨)-e, -en, (¨)-er, -s",
+        "G6 · maitriser le genre des noms dérivés d’origine étrangère (die Kooperation, der Motor, das Argument)",
+        "G7 · construire des expansions à droite de la base nominale : un GN au génitif ou une subordonnée avec pronom relatif",
+        "G8 · utiliser le groupe relatif en was avec un quantificateur indéfini (etwas, was…) ou avec le démonstratif das comme antécédent (Das, was er gestern erzählt hat, hat alle überrascht.)",
+        "G9 · reconnaitre la subordonnée relative avec un pronom relatif précédé d’une préposition (Viele Russlanddeutsche, mit denen ich mich unterhalten habe, fühlten sich in ihrer neuen Heimat fremd.)",
+        "G10 · utiliser la subordonnée relative avec un pronom en wo- (Das Thema, wofür wir uns interessieren, ist aktuell.)",
+        "G11 · utiliser le génitif pour marquer le complément du nom et après les prépositions wegen, während et trotz",
+        "G12 · consolider la déclinaison de l’adjectif épithète avec un article défini, indéfini et sans article",
+        "G13 · employer quelques masculins faibles (der Franzose, der Mensch) et mixtes fréquents (der Name, der Glaube)",
+        "G14 · Consolider la déclinaison des pronoms personnels et repérer ainsi les différentes désignations d’un même référent",
+        "G15 · Utiliser le pronom réfléchi au datif pour les verbes trivalents (sich eine Ausstellung an/sehen)",
+        "G16 · Utiliser le pronom en da- pour anaphoriser un groupe prépositionnel régi (Sie haben uns davor gewarnt.)",
+        "G17 · Exprimer la concomitance avec différents marqueurs (während, zugleich, beim + infinitif substantivé)",
+        "G18 · Utiliser différents marqueurs lexicaux pour exprimer l’antériorité (vor, vorher, bevor) et la postériorité (nach, nachher, nachdem)",
+        "G19 · Consolider la syntaxe de base de la phrase allemande déclarative et l’occupation de la première place par un autre groupe que le sujet, en particulier une subordonnée",
+        "G20 · Consolider la place du verbe conjugué dans les propositions subordonnées et coordonnées",
+        "G21 · Distinguer l’emploi de um… zu et damit dans l’expression du but",
+        "G22 · Employer les propositions infinitives anstatt… zu et ohne… zu",
+        "G23 · Comprendre des relations de sens complexes grâce aux conjonctions de subordination et aux connecteurs logiques : la cause (weil, nämlich, da), les relations temporelles, d’antériorité et de postériorité (bevor, nachdem), la conséquence (so + adj, dass, deswegen, darum, daher, infolgedessen, so dass), la concession (auch wenn, trotzdem, zwar…aber…), la comparaison irréelle avec als ob, le but (um…zu, damit), les marqueurs de reformulation (das heißt / d.h. à l’écrit, anders gesagt et en B1+, beziehungsweise / bzw. à l’écrit), la relation de corrélation exprimée par je…desto",
+        "G24 · Réactiver l’emploi de certains verbes modaux pour modaliser l’énoncé : müssen, mögen au présent (Das mag wahr sein. / It may be true.)"
+      ],
+      "Terminale_LLCER": [
+        "G1 · Consolider les conjugaisons à l’indicatif et au subjonctif II",
+        "G2 · Utiliser le passif impersonnel (Es wurde darüber heftig diskutiert.) et le passif avec un verbe modal (Es kann noch darüber diskutiert werden.)",
+        "G3 · Repérer le subjonctif l",
+        "G4 · Utiliser le passif parfait (Das Projekt ist erfolgreich durchgeführt worden.) et le complément d’agent en durch",
+        "G5 · Utiliser le «double infinitif» (Brecht hat die dänische Sprache nicht lernen wollen.)",
+        "G6 · Maitriser le genre des noms dérivés d’origine étrangère (die Kooperation, der Motor, das Argument)",
+        "G7 · Consolider la déclinaison de l’adjectif épithète avec un article défini, indéfini et sans article",
+        "G8 · Employer quelques masculins faibles (der Franzose, der Mensch) et mixtes fréquents (der Name, der Glaube)",
+        "G9 · Reconnaitre la subordonnée relative avec un pronom relatif précédé d’une préposition (Die Choreographin, mit der sie gearbeitet hat, hat sie ermutigt.) et savoir l’employer",
+        "G10 · Reconnaitre la subordonnée relative avec un pronom en wo- (Das Thema, wofür wir uns interessieren, ist aktuell.) et savoir l’employer",
+        "G11 · Délimiter le groupe participial épithète avec participe II (Die von dem nationalsozialistischen Staat verbannten Künstler) et participe I (Die im Frühling blühende Landschaft)",
+        "G12 · Utiliser le pronom en da- pour anaphoriser un groupe prépositionnel en rection (wir waren stolz darauf)",
+        "G13 · Utiliser les pronoms impersonnels irgendeiner, irgendetwas, nirgendwo, niemand",
+        "G14 · Utiliser différents marqueurs lexicaux pour exprimer l’antériorité (vor, vorher, bevor) et la postériorité (nach, nachher, nachdem)",
+        "G15 · Comprendre des relations de sens complexes grâce aux conjonctions de subordination et aux connecteurs logiques : la cause (weil, nämlich, da), les relations temporelles, d’antériorité et de postériorité (bevor, nachdem), la conséquence (so + adj, dass, deswegen, darum, daher, infolgedessen, so dass), la concession (auch wenn, trotzdem, zwar… aber…), la comparaison irréelle avec als ob, le but (um…zu, damit), les marqueurs de reformulation (das heißt / d.h. à l’écrit, anders gesagt et beziehungsweise / bzw. à l’écrit), l’ajout (dazu, außerdem, übrigens, auch, ebenso), la relation de corrélation exprimée par je…desto et les utiliser",
+        "G16 · Comprendre la modalisation exprimée par des modalisateurs (bestimmt, anscheinend, vermutlich, angeblich) ou des verbes modaux (müssen, mögen, können, wollen). Savoir exprimer la modalisation",
+        "G17 · Identifier la relation de sens exprimée par indem (moyen, concomitance, cause)",
+        "G18 · Reconnaitre la subordonnée conditionnelle sans wenn (Hätte er die Nachricht überprüft, hätte er gleich bemerkt, dass es Fake News war.) et la comparaison irréelle sans ob (Er tut, als hätte er nichts davon gewusst.)",
+        "G19 · Repérer les différents marqueurs du discours rapporté (laut, nach, seiner Meinung nach, angeblich, wollen, sollen + subjonctif I)",
+        "G20 · Identifier quelques particules illocutoires (bloß, wohl, ja) afin d’accéder à la compréhension de l’implicite (Seine Reaktion war ja zu erwarten.)"
       ]
     },
     phono: {
@@ -1823,49 +2899,75 @@ const DB = {
         "PH38 · Prononciation et accentuation des mots (sur)composés"
       ],
       "Seconde_LVAB": [
-        "PH1 · Prononciation du v ([f] à l'initiale) vs w",
-        "PH2 · Prononciation des finales ([d], [t], [er])",
-        "PH3 · Accentuation des abréviations (EU, DDR)",
-        "PH4 · Accentuation des noms dérivés de verbes (Nachteil)",
-        "PH5 · Fluidité et expressivité des énoncés"
+        "PH1 · Consolider la prononciation du v ([f] à l’initiale) vs. w : Vertrag, verlassen, WG",
+        "PH2 · Consolider la prononciation des finales, notamment [d], [t] et [er] (aber)",
+        "PH3 · Accentuer les abréviations : EU, DDR, U-Bahn",
+        "PH4 · Accentuer correctement les noms dérivés de verbes : Nachteil, Zuwachs, Umweltverschmutzung",
+        "PH5 · Exprimer des énoncés de façon plus authentique, plus fluide et surtout plus expressive"
       ],
       "Seconde_LVC": [
-        "PH1 · Les voyelles infléchies : ä, ö, ü",
-        "PH2 · Les diphtongues : [aɪ], [aʊ], [ɔɪ]",
-        "PH3 · L'intonation ascendante et descendante",
-        "PH4 · Le h aspiré vs l'attaque dure",
-        "PH5 · Le graphème ch ([x] ou [ç])",
-        "PH6 · Accentuer les préverbes séparables"
+        "PH1 · Le graphème ch : [x] (Ach-Laut) ou [ç] (Ich-Laut)",
+        "PH2 · Les voyelles infléchies : ä, ö, ü",
+        "PH3 · Les diphtongues : [aɪ], [aʊ], [ɔɪ]",
+        "PH4 · [ʃt]/[ʃp] à l’initiale, [v]/[f] à l’initiale",
+        "PH5 · Le h aspiré vs l'attaque dure",
+        "PH6 · Z [ts]",
+        "PH7 · La nasale vélaire [ŋ]",
+        "PH8 · Voyelles ouvertes/fermées et longues/brèves",
+        "PH9 · Vocaliser le -r en finale [ɐ], prononcer le -e final [ə]",
+        "PH10 · Accent de mot et syllabes non accentuées",
+        "PH11 · Intonation ascendante/descendante",
+        "PH12 · Brèves avant double consonne, longues devant ß et h",
+        "PH13 · Prononcer correctement -ig",
+        "PH14 · Accentuer les préverbes séparables"
       ],
       "Première_LVAB": [
-        "PH1 · Prononciations du y (Symbol, Physik)",
-        "PH2 · Prononciation du h à l'intérieur du mot",
-        "PH3 · Accentuation des noms (sur)composés et dérivés",
-        "PH4 · Prononciation et accentuation des emprunts",
-        "PH5 · Prononciation des graphèmes sz (Szene)",
-        "PH6 · Fluidité et expressivité des énoncés"
+        "PH1 · Consolider les prononciations du y : Symbol, Physik, Curry-Wurst",
+        "PH2 · Consolider la prononciation du h à l’intérieur du mot : Behörde, Freiheit vs. zahlen",
+        "PH3 · Consolider l’accentuation des noms (sur)composés (Schifffahrtsgesellschaft) et dérivés (Wissenschaftlerin)",
+        "PH4 · Consolider la prononciation et l’accentuation des noms d’origine étrangère : Girokonto, Gender, Initiative",
+        "PH5 · Consolider la prononciation des graphèmes sz : Szene",
+        "PH6 · Prononcer des énoncés de façon plus fluide et plus expressive"
       ],
       "Première_LVC": [
-        "PH1 · Consonnes b, d, g en position finale",
-        "PH2 · Le schwa dans les préfixes",
-        "PH3 · Le coup de glotte sur les voyelles",
-        "PH4 · Accent de mot d'un nom composé",
-        "PH5 · Accent contrastif",
-        "PH6 · Voyelles longues et courtes"
+        "PH1 · Consonnes b, d, g en position finale (ab, Tag, Abend)",
+        "PH2 · Le schwa dans les préfixes (bekommen, bewundern)",
+        "PH3 · Le coup de glotte sur les voyelles (und / Hund)",
+        "PH4 · Accent de mot d’un nom composé",
+        "PH5 · Accentuer les préverbes séparables composés (herein-, zurück-)",
+        "PH6 · Accent contrastif pour répondre à une question"
       ],
       "Terminale_LVAB": [
-        "PH1 · Prononciation/accentuation noms d'origine étrangère (Persiflage)",
-        "PH2 · Fluidité et expressivité des énoncés",
-        "PH3 · Accentuation, intonation et rythme pour appuyer le message",
-        "PH4 · Repérer l'origine nationale/régionale d'un accent"
+        "PH1 · Consolider la prononciation et l’accentuation des noms d’origine étrangère : Persiflage, gendergerecht",
+        "PH2 · Former des énoncés plus fluides et plus expressifs",
+        "PH3 · Repérer l’origine nationale de quelques accents",
+        "PH4 · Savoir utiliser l’accentuation, l’intonation et le rythme pour appuyer le message que l’élève veut transmettre",
+        "PH5 · Repérer l’origine nationale et régionale d’un accent"
       ],
       "Terminale_LVC": [
         "PH1 · Consonnes b, d, g, s en fin de mot",
         "PH2 · Prononciation du s, z",
-        "PH3 · Accentuation des verbes en -ieren",
-        "PH4 · Accentuation et prononciation des emprunts",
-        "PH5 · Diphtongue [aɪ] par opposition au [i:] long",
-        "PH6 · Mots (sur)composés"
+        "PH3 · Le e, en en position finale",
+        "PH4 · La nasale vélaire [ŋ]",
+        "PH5 · Accentuation des verbes en -ieren",
+        "PH6 · Accentuation et prononciation des emprunts",
+        "PH7 · Diphtongue [aɪ] par opposition au [i:] long",
+        "PH8 · Prononciation et accentuation des mots (sur)composés"
+      ],
+      "Première_LLCER": [
+        "PH1 · Consolider les prononciations du y : Symbol, Physik, Curry-Wurst",
+        "PH2 · Consolider la prononciation du h à l’intérieur du mot : Behörde, Freiheit vs. zahlen",
+        "PH3 · Consolider l’accentuation des noms (sur)composés (Schifffahrtsgesellschaft) et dérivés (Wissenschaftlerin)",
+        "PH4 · Consolider la prononciation et l’accentuation des noms d’origine étrangère : Girokonto, Gender, Initiative",
+        "PH5 · Consolider la prononciation des graphèmes sz : Szene",
+        "PH6 · Prononcer des énoncés de façon plus fluide et plus expressive"
+      ],
+      "Terminale_LLCER": [
+        "PH1 · Consolider la prononciation et l’accentuation des noms d’origine étrangère : Persiflage, gendergerecht",
+        "PH2 · Former des énoncés plus fluides et plus expressifs",
+        "PH3 · Repérer l’origine nationale de quelques accents",
+        "PH4 · Savoir utiliser l’accentuation, l’intonation et le rythme pour appuyer le message que l’élève veut transmettre",
+        "PH5 · Repérer l’origine nationale et régionale d’un accent"
       ]
     },
     pragma: {
@@ -1893,70 +2995,754 @@ const DB = {
         "PR15 · Modalisation : wahrscheinlich, müssen/mögen au présent"
       ],
       "Seconde_LVAB": [
-        "PR1 · Différencier coordination et subordination",
-        "PR2 · Conjonctions : während, damit, um...zu",
-        "PR3 · Cause (da), postériorité/antériorité",
-        "PR4 · Conséquence (so dass, deswegen, darum)",
-        "PR5 · Concession (obwohl, auch wenn, trotzdem)",
-        "PR6 · Connecteurs : nämlich, dennoch, dagegen",
-        "PR7 · Restructuration : zwar... aber, weder... noch",
-        "PR8 · Reformulation : d.h., anders gesagt",
-        "PR9 · Modalisation (müssen, mögen)"
+        "PR1 · Différencier les conjonctions de coordination et de subordination",
+        "PR2 · Utiliser les conjonctions de subordination während (adversatif et temporel) et damit (but)",
+        "PR3 · Employer les principales conjonctions de subordination pour exprimer la cause (da), les relations temporelles d’antériorité et de postérité (bevor, nachdem), la conséquence (sie sind so stolz darauf, dass…)",
+        "PR4 · Utiliser le connecteur de cause nämlich, reconnaitre les connecteurs de conséquence deswegen, darum, daher, infolgedessen",
+        "PR5 · Utiliser les connecteurs logiques dennoch, trotzdem, dagegen, les connecteurs qui structurent la phrase (zwar… aber, entweder… oder, weder… noch), les marqueurs de reformulation (das heißt / d.h. À l’écrit, anders gesagt et beziehungsweise / bzw. à l’écrit)",
+        "PR6 · Réactiver l’emploi de certains verbes modaux pour modaliser l’énoncé : müssen, mögen au présent"
       ],
       "Seconde_LVC": [
-        "PR1 · Conjonctions de coordination (und, oder)",
-        "PR2 · Connecteurs chronologiques (zuerst, dann)",
-        "PR3 · Illustrer (wie, zum Beispiel)",
-        "PR4 · Conséquence (also) et ajout (auch)",
-        "PR5 · Opposition/concession (aber)",
-        "PR6 · Cause (denn)",
-        "PR7 · Donner son avis (Ich denke, dass...)"
+        "PR1 · Utiliser les conjonctions de coordination (und, oder)",
+        "PR2 · Utiliser quelques connecteurs chronologiques (zuerst, dann, cf. marqueurs temporels) ou logiques, pour illustrer son propos (wie, zum beispiel), exprimer la conséquence (also), ajouter un élément (auch), exprimer une opposition ou une concession (aber), la cause (denn)",
+        "PR3 · Utiliser la subordonnée complétive en dass et savoir l’employer pour donner son avis : Ich denke / finde / glaube, deutsche Schüler haben mehr Freizeit. / dass deutsche Schüler mehr Freizeit haben."
       ],
       "Première_LVAB": [
-        "PR1 · Conjonctions : während, damit, um...zu",
-        "PR2 · Cause (weil, da, nämlich)",
-        "PR3 · Temporel (bevor, nachdem)",
-        "PR4 · Conséquence (so dass, deswegen, darum)",
-        "PR5 · Concession (trotzdem, zwar...aber)",
-        "PR6 · Comparaison irréelle (als ob)",
-        "PR7 · Reformulation (d.h., beziehungsweise)",
-        "PR8 · Modalisation (müssen, mögen)"
+        "PR1 · Comprendre des relations de sens complexes grâce aux conjonctions de subordination et aux connecteurs logiques : la cause (weil, nämlich, da), les relations temporelles, d’antériorité et de postériorité (bevor, nachdem), la conséquence (so + adj, dass, deswegen, darum, daher, infolgedessen, so dass), la concession (auch wenn, trotzdem, zwar…aber…), la comparaison irréelle avec als ob, le but (um…zu, damit), les marqueurs de reformulation (das heißt / d.h. à l’écrit, anders gesagt et en B1+, beziehungsweise / bzw. à l’écrit), la relation de corrélation exprimée par je…desto",
+        "PR2 · Réactiver l’emploi de certains verbes modaux pour modaliser l’énoncé : müssen, mögen au présent (Das mag wahr sein. / It may be true.)"
       ],
       "Première_LVC": [
-        "PR1 · Connecteurs logiques et chronologiques",
-        "PR2 · Cause (weil, da)",
-        "PR3 · Conséquence (also, deshalb)",
-        "PR4 · Concession/Opposition (doch, dennoch, dagegen, obwohl)",
-        "PR5 · Structurer la phrase (zwar... aber, entweder... oder)",
-        "PR6 · Reformulation (das heißt)",
-        "PR7 · Modalisation (bestimmt, wahrscheinlich)"
+        "PR1 · Utiliser la subordonnée de temps (während) et distinguer l’emploi de als et celui de wenn",
+        "PR2 · Maitriser la syntaxe de base de la phrase déclarative et être capable de commencer la phrase par une subordonnée temporelle (als, wenn, während), conditionnelle (wenn), adversative (während), de concession (obwohl) ou par un connecteur logique (also, deshalb, doch, dennoch, dagegen)",
+        "PR3 · Utiliser quelques connecteurs qui structurent la phrase (zwar… aber, entweder… oder, weder… noch) ou les marqueurs de reformulation (das heißt, anders gesagt)",
+        "PR4 · Exprimer la modalisation pour indiquer le degré de vraisemblance de l’énoncé (bestimmt, wahrscheinlich)"
       ],
       "Terminale_LVAB": [
-        "PR1 · Relations de sens complexes (cause, temps, conséquence, concession)",
-        "PR2 · Comparaison irréelle (als ob, ou sans ob)",
-        "PR3 · Reformulation et ajout (dazu, außerdem)",
-        "PR4 · Corrélation (je...desto)",
-        "PR5 · Modalisation (anscheinend, vermutlich, angeblich)",
-        "PR6 · Relation de sens avec indem",
-        "PR7 · Conditionnelle sans wenn",
-        "PR8 · Marqueurs du discours rapporté (laut, nach, angeblich)",
-        "PR9 · Particules illocutoires (bloß, wohl, ja)"
+        "PR1 · Comprendre des relations de sens complexes grâce aux conjonctions de subordination et aux connecteurs logiques : la cause (weil, nämlich, da), les relations temporelles, d’antériorité et de postériorité (bevor, nachdem), la conséquence (so + adj, dass, deswegen, darum, daher, infolgedessen, so dass), la concession (auch wenn, trotzdem, zwar… aber…), la comparaison irréelle avec als ob, le but (um…zu, damit), les marqueurs de reformulation (das heißt / d.h. à l’écrit, anders gesagt et beziehungsweise / bzw. à l’écrit), l’ajout (dazu, außerdem, übrigens, auch, ebenso), la relation de corrélation exprimée par je…desto et les utiliser",
+        "PR2 · Comprendre la modalisation exprimée par des modalisateurs (bestimmt, anscheinend, vermutlich, angeblich) ou des verbes modaux (müssen, mögen, können, wollen). Savoir exprimer la modalisation",
+        "PR3 · Identifier la relation de sens exprimée par indem (moyen, concomitance, cause)",
+        "PR4 · Reconnaitre la subordonnée conditionnelle sans wenn (Hätte er die Nachricht überprüft, hätte er gleich bemerkt, dass es Fake News war.) et la comparaison irréelle sans ob (Er tut, als hätte er nichts davon gewusst.)",
+        "PR5 · Repérer les différents marqueurs du discours rapporté (laut, nach, seiner Meinung nach, angeblich, wollen, sollen + subjonctif I)",
+        "PR6 · Identifier quelques particules illocutoires (bloß, wohl, ja) afin d’accéder à la compréhension de l’implicite (Seine Reaktion war ja zu erwarten.)"
       ],
       "Terminale_LVC": [
-        "PR1 · Relations de sens complexes (cause, temps, conséquence, concession)",
-        "PR2 · Comparaison irréelle (als ob)",
-        "PR3 · Reformulation et ajout (dazu, außerdem)",
-        "PR4 · Corrélation (je...desto)",
-        "PR5 · Modalisation (anscheinend, vermutlich, angeblich)",
-        "PR6 · Conditionnelle avec wenn",
-        "PR7 · Marqueurs du discours rapporté (laut, nach)"
+        "PR1 · Utiliser la subordonnée de temps (während) et distinguer l’emploi de als et celui de wenn",
+        "PR2 · Maitriser la syntaxe de base de la phrase déclarative et être capable de commencer la phrase par une subordonnée temporelle (als, wenn, während), conditionnelle (wenn), adversative (während), de concession (obwohl) ou par un connecteur logique (also, deshalb, doch, dennoch, dagegen)",
+        "PR3 · Utiliser quelques connecteurs qui structurent la phrase (zwar… aber, entweder… oder, weder… noch) ou les marqueurs de reformulation (das heißt, anders gesagt)",
+        "PR4 · Exprimer la modalisation pour indiquer le degré de vraisemblance de l’énoncé (bestimmt, wahrscheinlich)"
+      ],
+      "Première_LLCER": [
+        "PR1 · Comprendre des relations de sens complexes grâce aux conjonctions de subordination et aux connecteurs logiques : la cause (weil, nämlich, da), les relations temporelles, d’antériorité et de postériorité (bevor, nachdem), la conséquence (so + adj, dass, deswegen, darum, daher, infolgedessen, so dass), la concession (auch wenn, trotzdem, zwar…aber…), la comparaison irréelle avec als ob, le but (um…zu, damit), les marqueurs de reformulation (das heißt / d.h. à l’écrit, anders gesagt et en B1+, beziehungsweise / bzw. à l’écrit), la relation de corrélation exprimée par je…desto",
+        "PR2 · Réactiver l’emploi de certains verbes modaux pour modaliser l’énoncé : müssen, mögen au présent (Das mag wahr sein. / It may be true.)"
+      ],
+      "Terminale_LLCER": [
+        "PR1 · Comprendre des relations de sens complexes grâce aux conjonctions de subordination et aux connecteurs logiques : la cause (weil, nämlich, da), les relations temporelles, d’antériorité et de postériorité (bevor, nachdem), la conséquence (so + adj, dass, deswegen, darum, daher, infolgedessen, so dass), la concession (auch wenn, trotzdem, zwar… aber…), la comparaison irréelle avec als ob, le but (um…zu, damit), les marqueurs de reformulation (das heißt / d.h. à l’écrit, anders gesagt et beziehungsweise / bzw. à l’écrit), l’ajout (dazu, außerdem, übrigens, auch, ebenso), la relation de corrélation exprimée par je…desto et les utiliser",
+        "PR2 · Comprendre la modalisation exprimée par des modalisateurs (bestimmt, anscheinend, vermutlich, angeblich) ou des verbes modaux (müssen, mögen, können, wollen). Savoir exprimer la modalisation",
+        "PR3 · Identifier la relation de sens exprimée par indem (moyen, concomitance, cause)",
+        "PR4 · Reconnaitre la subordonnée conditionnelle sans wenn (Hätte er die Nachricht überprüft, hätte er gleich bemerkt, dass es Fake News war.) et la comparaison irréelle sans ob (Er tut, als hätte er nichts davon gewusst.)",
+        "PR5 · Repérer les différents marqueurs du discours rapporté (laut, nach, seiner Meinung nach, angeblich, wollen, sollen + subjonctif I)",
+        "PR6 · Identifier quelques particules illocutoires (bloß, wohl, ja) afin d’accéder à la compréhension de l’implicite (Seine Reaktion war ja zu erwarten.)"
+      ]
+    }
+  },
+  it: {
+    subtitle: "Italien",
+    phTitle: "Es : Viaggio a Roma",
+    phProb: "Es : In che modo la città riflette la storia italiana?",
+    axes: {
+      "6ème": {
+        "Axe 1. Personnes et personnages": [
+          "Se présenter et se représenter",
+          "L’album de famille",
+          "Enfants d’Europe et du monde",
+          "La rencontre de l’autre"
+        ],
+        "Axe 2. Le quotidien : vivre, jouer, apprendre": [
+          "De la maison à l’école",
+          "Jeux d’hier et d’aujourd’hui",
+          "Manger à l’italienne !",
+          "Rythmes de vie"
+        ],
+        "Axe 3. Pays et paysages": [
+          "L’Italie : pays d’Europe et du monde",
+          "La réalité physique de l’Italie : un pays d’iles, de mers, de montagnes et de volcans",
+          "Emblèmes et symboles de l’Italie",
+          "L’Italie, un pays aux régions contrastées"
+        ],
+        "Axe 4. Imaginaire, contes et légendes": [
+          "Les fêtes calendaires",
+          "Les héros populaires de la culture italienne",
+          "Le mythe fondateur de Rome",
+          "Les origines mythologiques et légendaires du territoire italien"
+        ],
+        "Axe 5. Arts et expression des sentiments": [
+          "Les représentations artistiques des sentiments",
+          "Les sentiments ressentis face à une œuvre d’art",
+          "Les arts comme moyen d’expression des sentiments",
+          "Les arts porteurs d’un sentiment collectif italien"
+        ]
+      },
+      "5ème": {
+        "Axe 1. Portrait, autoportrait": [
+          "Portrait physique et moral de soi ou d’autrui",
+          "L’autoportrait dans les arts",
+          "Le masque pour s’identifier ou se cacher",
+          "La caricature comme exagération du trait"
+        ],
+        "Axe 2. Le quotidien : lieux, rythmes et saisons": [
+          "Le rythme d’une journée",
+          "Cadres de la vie quotidienne ou cadres de vie atypiques",
+          "Le quartier et la place, cadre de vie sociale",
+          "Vivre les saisons dans les régions italiennes"
+        ],
+        "Axe 3. École et loisirs": [
+          "Systèmes scolaires",
+          "Mens sana in corpore sano : une tête bien faite dans un corps bien fait",
+          "Le sport comme école de la vie",
+          "Apprendre en s’amusant"
+        ],
+        "Axe 4. Le réel et l’imaginaire": [
+          "Les grands découvreurs italiens",
+          "La ville idéale",
+          "Le design pour embellir le quotidien",
+          "Connaitre une civilisation perdue à partir de ses vestiges"
+        ],
+        "Axe 5. Des langues, des lieux, des histoires": [
+          "Une ville, une famille",
+          "Un lieu, une légende",
+          "La naissance de la langue italienne"
+        ],
+        "Axe 6. Rome": [
+          "Vacances romaines",
+          "Un imaginaire romain foisonnant et accueillant",
+          "La capitale italienne"
+        ]
+      },
+      "4ème": {
+        "Axe 1. Sport et société": [
+          "Santé et bien-être",
+          "Vivre le sport à l’italienne",
+          "Le sport vecteur de valeurs, entre inclusion et discrimination",
+          "Les représentations du sport dans la société italienne"
+        ],
+        "Axe 2. Voyages et exploration": [
+          "Le patrimoine touristique italien",
+          "Le voyage scolaire",
+          "L’Italie, terre de voyages",
+          "Les grands explorateurs"
+        ],
+        "Axe 3. Villes, villages, quartiers": [
+          "Vivre sa ville et son quartier",
+          "Les différents types de lieux et de vie en Italie",
+          "La réalité urbaine italienne : la notion du paese",
+          "La ville-État italienne"
+        ],
+        "Axe 4. Inventer, innover, créer": [
+          "Le made in Italy",
+          "Les grandes inventions italiennes",
+          "Les superhéros de la culture italienne"
+        ],
+        "Axe 5. Langages et messages artistiques": [
+          "L’art urbain, un langage artistique pour tous",
+          "Langages et messages de la Renaissance italienne",
+          "L’art et l’artiste engagé au fil de l'histoire",
+          "Appréhender le monde par le langage des arts"
+        ],
+        "Axe 6. Florence": [
+          "Vivre Florence au quotidien",
+          "Une capitale de la création",
+          "Un rayonnement entre passé et présent"
+        ]
+      },
+      "3ème": {
+        "Axe 1. À la rencontre de l’autre": [
+          "L’hospitalité italienne",
+          "L’amour, l’amitié dans les arts",
+          "Les Italies dans la péninsule",
+          "Les lieux de rencontre"
+        ],
+        "Axe 2. Travailler hier, aujourd’hui, demain": [
+          "Les univers professionnels",
+          "Le choix du métier entre vocation, rêve et représentation sociale",
+          "Les métiers spécifiques qui font l’Italie",
+          "Les figures pionnières : pédagogie, lutte contre la mafia, agriturismo, etc."
+        ],
+        "Axe 3. Voyages et migrations": [
+          "La migration des Italiens : entre espoir et désillusion",
+          "Les représentations artistiques des migrations",
+          "Le mythe du Nouveau Monde",
+          "Le voyage imaginaire"
+        ],
+        "Axe 4. Langages et médias": [
+          "Communiquer et se représenter à travers les réseaux sociaux",
+          "S’informer et se former au langage des médias",
+          "Le plurilinguisme en Italie",
+          "Le double langage de la publicité : vendre ou défendre ?"
+        ],
+        "Axe 5. Formes de l’engagement": [
+          "Le slow food versus le fast food",
+          "Écotourisme versus tourisme de masse",
+          "Engagement civique de la jeunesse : écologie, lutte contre la mafia, bénévolat associatif",
+          "Protection de l’environnement et du patrimoine"
+        ],
+        "Axe 6. Milan": [
+          "Milan, autre capitale de l’Italie ?",
+          "Une ville innovante",
+          "Un espace urbain en mutation"
+        ]
+      },
+      "Seconde": {
+        "Axe 1. Représentation de soi et rapport à autrui": [
+          "L’individu dans le groupe (conseillé en LVC)",
+          "Modes et styles vestimentaires, entre affirmation de l’individualité et conformisme",
+          "Contrôler son image",
+          "Le droit d’être différent"
+        ],
+        "Axe 2. Vivre entre generations": [
+          "La famille, espace de solidarité entre générations (conseillé en LVC)",
+          "L’Italie est-elle encore un pays pour les jeunes ?",
+          "Les défis du vieillissement",
+          "Nouvelles formes de famille (conseillé en LVC)"
+        ],
+        "Axe 3. Le passé dans le présent": [
+          "Faire vivre les traditions populaires",
+          "Comment l’Italie fait-elle vivre le riche passé de ses città d’arte ? (conseillé en LVC)",
+          "Rapport au passé et construction d’une identité",
+          "Les objets et lieux de mémoire"
+        ],
+        "Axe 4. Défis et transitions": [
+          "Les changements liés au « miracle économique »",
+          "L’Italie face au tourisme de masse (conseillé en LVC)",
+          "L’Italie dans la transition écologique",
+          "L’Italie face aux défis du numérique"
+        ],
+        "Axe 5. Créer et recréer": [
+          "Le processus créatif",
+          "L’évolution des mythes",
+          "Création et innovation (conseillé en LVC)",
+          "Réécriture dans les arts"
+        ],
+        "Axe 6. La Renaissance": [
+          "L’héritage de l’Antiquité (conseillé en LVC)",
+          "Création, révolution et perspectives visionnaires à la Renaissance",
+          "L’humanisme",
+          "Le rayonnement de la Renaissance dans le monde"
+        ]
+      },
+      "Première": {
+        "Axe 1. Identités et échanges": [
+          "L’Italie entre émigration et immigration (conseillé en LVC)",
+          "La culture italienne et la mondialisation",
+          "Frontières invisibles de la nation italienne",
+          "L’Italie comme creuset culturel (conseillé en LVC)"
+        ],
+        "Axe 2. Diversité et inclusion": [
+          "L’évolution de la place des femmes dans la société italienne",
+          "Une société italienne multilingue",
+          "Exister en dehors des normes (conseillé en LVC)",
+          "Italiens d’ici et d’ailleurs (conseillé en LVC)"
+        ],
+        "Axe 3. Art et pouvoir": [
+          "Une vision esthétique du monde",
+          "L’art comme instrument du pouvoir politique (conseillé en LVC)",
+          "L’art est-il un contrepouvoir ?",
+          "Pouvoir de l’humour, art de la satire"
+        ],
+        "Axe 4. Innovations scientifiques et responsabilité": [
+          "L’Italie et ses contributions scientifiques (conseillé en LVC)",
+          "Science et innovation : devoirs et limites",
+          "Progrès scientifique, technologique et contestation citoyenne",
+          "Science, vulgarisation et fausses informations"
+        ],
+        "Axe 5. L’être humain et la nature": [
+          "Protection du patrimoine naturel italien (conseillé en LVC)",
+          "De la péninsule à l’insularité",
+          "Vivre avec le risque naturel",
+          "Arts et paysage"
+        ],
+        "Axe 6. Construction de l’Italie et avènement des Italiens": [
+          "L’Italie n’est pas qu’une réalité récente",
+          "La construction unitaire (conseillé en LVC)",
+          "Fare gli Italiani : création de l’Unité italienne",
+          "Quelle Italie pour demain ?"
+        ]
+      },
+      "Terminale": {
+        "Axe 1. Espace privé et espace public": [
+          "L’appropriation de l’espace public par les Italiens",
+          "De l’engagement personnel à l’engagement collectif (conseillé en LVC)",
+          "Les femmes entre vie privée et participation à la vie publique (conseillé en LVC)",
+          "Antimafia : la zone grise entre complicité et participation passive"
+        ],
+        "Axe 2. Territoire et mémoire": [
+          "Le devoir de mémoire pour faire nation (conseillé en LVC)",
+          "Les mémoires difficiles",
+          "La ville-musée, une mémoire à préserver (conseillé en LVC)",
+          "Un territoire façonné par le fait religieux"
+        ],
+        "Axe 3. Fictions et réalités": [
+          "Des mythes sans cesse revisités",
+          "Des visions à déconstruire (conseillé en LVC)",
+          "De la réalité à la fiction, de la fiction à la réalité",
+          "Visions d’avenir (conseillé en LVC)"
+        ],
+        "Axe 4. Enjeux et formes de la communication": [
+          "La télévision italienne entre information et manipulation",
+          "Le cinéma italien, de la propagande politique fasciste au rayonnement international (conseillé en LVC)",
+          "L’écriture comme engagement politique",
+          "La presse italienne, en liberté sous caution"
+        ],
+        "Axe 5. Citoyenneté et mondes virtuels": [
+          "Nouvelles relations sociales dans un monde ultra connecté (conseillé en LVC)",
+          "Initiatives citoyennes et nouvelles technologies",
+          "Utilisations du numérique et démocratie (conseillé en LVC)"
+        ],
+        "Axe 6. De la République à l’Europe": [
+          "L’Italie, membre fondateur de l’Europe : une République fondée sur l'antifascisme au lendemain de la Seconde Guerre mondiale (conseillé en LVC)",
+          "L’Italie dans les échanges européens",
+          "L’Italie et la citoyenneté européenne (conseillé en LVC)",
+          "L’Italie face aux nouvelles visions d’Europe"
+        ]
+      },
+      "Première_LLCER": {
+        "Axe « Imaginaires »": [
+          "Espaces imaginés",
+          "Re-présenter le réel",
+          "Le beau, une histoire d'imagination",
+          "Du passé imaginaire au futur imaginé"
+        ],
+        "Axe « Pouvoirs et contre-pouvoirs »": [
+          "Incarnations du pouvoir",
+          "Pouvoirs symboliques",
+          "Les formes d'engagement de la société civile",
+          "Désobéissances et résistances"
+        ]
+      },
+      "Terminale_LLCER": {
+        "Axe « Voyages »": [
+          "Terra incognita",
+          "Mare nostrum",
+          "L’Italie en voyage(s)"
+        ],
+        "Axe « L'art du contraste »": [
+          "Identité et identités",
+          "Le sacré et le profane",
+          "Le rire et le drame"
+        ],
+        "Axe « Laboratorio italiano »": [
+          "Cité et territoire",
+          "Moyen Âge, Humanisme et Renaissance",
+          "Découvrir, construire, inventer"
+        ]
+      }
+    },
+    grammar: {
+      "6ème": [
+        "G1 · Le nom et l’adjectif : le genre des noms et des adjectifs ; le pluriel des noms et des adjectifs (+ quelques pluriels irréguliers : parties du corps, nombres, etc.)",
+        "G2 · Les déterminants : les articles définis et indéfinis, le déterminant possessif, le déterminant démonstratif",
+        "G3 · Le verbe : radical et désinences, le présent de l’indicatif des auxiliaires, des trois groupes réguliers, de quelques irréguliers (andare, stare, fare, potere, volere, dovere), les verbes pronominaux",
+        "G4 · En repérage, quelques formes de l’imparfait (c’era) et de quelques participes passés irréguliers (scritto, nato, letto, fatto, etc.)",
+        "G5 · Les pronoms personnels sujets et réfléchis",
+        "G6 · Quelques adverbes et locutions adverbiales de lieu, de temps",
+        "G7 · Les prépositions a, di, in et su",
+        "G8 · Les interrogatifs : dove, che cosa, come, quando, quanto/i, quale/i, perché",
+        "G9 · Traduction de « il y a » (c’è / ci sono); « j’aime » (mi piace / mi piacciono)",
+        "G10 · Quelques conjonctions de coordination et de subordination : e, ma, o, perché",
+        "G11 · La phrase simple",
+        "G12 · Les types de phrases : déclarative, interrogative",
+        "G13 · La forme affirmative et négative"
+      ],
+      "5ème": [
+        "G14 · Le nom et l’adjectif : le genre des noms et des adjectifs ; le pluriel des noms et des adjectifs (+ quelques pluriels irréguliers : parties du corps, nombres, les masculins en -a, les mots invariables…)",
+        "G15 · Les déterminants : les articles définis et indéfinis, quelques déterminants possessifs, le déterminant démonstratif",
+        "G16 · Le verbe : radical et désinences, le présent de l’indicatif des auxiliaires, des trois groupes réguliers, de quelques verbes irréguliers (andare, stare, fare, potere, volere, dovere, venire, bere, uscire, dire)",
+        "G17 · Les verbes pronominaux ; en repérage, quelques formes de l’imparfait (c’era, ero, erano) et de quelques participes passés irréguliers (scritto, nato, letto, fatto, detto, venuto…)",
+        "G18 · Les pronoms personnels sujets et réfléchis",
+        "G19 · Le superlatif : le superlatif relatif et le superlatif absolu",
+        "G20 · Quelques adverbes et locutions adverbiales : de lieu, de temps",
+        "G21 · Quelques adverbes de quantité : poco, molto et troppo",
+        "G22 · Les prépositions : a, di, in et su + leur contraction avec les articles",
+        "G23 · Les interrogatifs : dove, che cosa, come, quando, quanto/i, quale/i, perché",
+        "G24 · Traduction de « il y a » (c’è / ci sono); « j’aime » (mi piace / mi piacciono) ; « il faut » (occorre / occorrono)",
+        "G25 · Quelques conjonctions de coordination et de subordination : e, ma, o, perché",
+        "G26 · La phrase simple",
+        "G27 · Les types de phrases : déclarative, interrogative, exclamative",
+        "G28 · La forme affirmative et négative"
+      ],
+      "4ème": [
+        "G29 · Le nom et l’adjectif : consolidation du pluriel des noms et des adjectifs ; le pluriel des déterminants possessifs et démonstratifs, le pluriel des mots se terminant par -co ou – go",
+        "G30 · Les déterminants : les articles définis et indéfinis, quelques contractions d’articles définis avec une préposition, la totalité des déterminants possessifs, le déterminant démonstratif questo et quello",
+        "G31 · Le verbe : consolidation du présent de l’indicatif des auxiliaires, des trois groupes réguliers, de quelques irréguliers (andare, stare, fare, potere, volere, dovere, bere, uscire, dire, venire), les verbes pronominaux",
+        "G32 · Le passé composé (formation et règles d’accord), l’imparfait, le futur simple",
+        "G33 · Le mode impératif : formes simples (affirmatives et négatives)",
+        "G34 · Les pronoms personnels sujets et réfléchis, les pronoms COD",
+        "G35 · Quelques adverbes et locutions adverbiales de lieu, de temps, d’opposition",
+        "G36 · Les adjectifs et adverbes de quantité ou d’intensité (poco, molto, troppo, tanto)",
+        "G37 · La formation des adverbes en –mente",
+        "G38 · L’expression du temps avec fa et tra",
+        "G39 · Les prépositions a, di, in, su et da + leur contraction avec les articles",
+        "G40 · Les locutions, les adverbes et les adjectifs interrogatifs : dove, che cosa, come, quando, quanto/i, quale/i, perché",
+        "G41 · Traduction de « il y a » (c’è/ci sono) ; piacere (mi, ti, ci, vi, a + prénom) ; « il faut » (occorre/occorrono / bisogna) ; « suffire » (basta/bastano)",
+        "G42 · Quelques conjonctions de coordination et de subordination : e, ma, o, perché",
+        "G43 · La phrase simple et la proposition subordonnée relative simple introduite par che",
+        "G44 · Les types de phrases : déclarative, interrogative, exclamative",
+        "G45 · La forme affirmative et négative",
+        "G46 · Quelques formes figées du conditionnel comme vorrei, mi piacerebbe, sarebbe + adjectif"
+      ],
+      "3ème": [
+        "G47 · Le nom et l’adjectif : consolidation du pluriel des noms et des adjectifs ; le pluriel des déterminants possessifs et démonstratifs, le pluriel des mots se terminant par -co ou – go ; approfondissement des pluriels irréguliers",
+        "G48 · Les déterminants : les articles définis et indéfinis, le déterminant démonstratif questo et quello",
+        "G49 · Le verbe : radical et désinences, le présent de l’indicatif des auxiliaires, des trois groupes réguliers, de verbes irréguliers (andare, stare, fare, potere, volere, dovere, bere, uscire, dire, venire, scegliere), les verbes pronominaux",
+        "G50 · Le passé composé (formation et règles d’accord), l’imparfait, le futur simple, le conditionnel présent",
+        "G51 · La forme de politesse (pronom Lei, adjectifs possessifs)",
+        "G52 · Le mode impératif : formes simples (affirmatives et négatives), tu, noi, voi et quelques formes figées de l’impératif de politesse (scusi, dica…) ; l’impératif de politesse",
+        "G53 · La formation du gérondif et quelques gérondifs irréguliers",
+        "G54 · La forme progressive stare + gérondif",
+        "G55 · La forme impersonnelle avec si",
+        "G56 · Les pronoms personnels sujets et réfléchis, les pronoms COD et COI",
+        "G57 · L’enclise avec l’impératif et l’infinitif",
+        "G58 · Quelques adverbes et locutions adverbiales de lieu, de temps, d’opposition",
+        "G59 · Les adjectifs et adverbes de quantité ou d’intensité (poco, molto, troppo, tanto)",
+        "G60 · Les prépositions a, di, in, su et da + leur contraction avec les articles définis",
+        "G61 · Les locutions, les adverbes et les adjectifs interrogatifs : dove, che cosa, come, quando, quanto/i, quale/i, perché",
+        "G62 · Traduction de « il y a » (c’è / ci sono) ; « aimer » (piacere avec mi, ti, ci, vi, a + prénom) ; « il faut » (occorre / occorrono / bisogna / ci vuole / ci vogliono) ; « suffire » (basta / bastano)",
+        "G63 · Quelques conjonctions de coordination et de subordination – e, ma, o, perché – et connecteurs logiques : dapprima, quindi, inoltre, invece, infine, etc.",
+        "G64 · La phrase simple et la proposition subordonnée relative simple introduite par che",
+        "G65 · Les conjonctions de subordination composées avec cui",
+        "G66 · Les types de phrases : déclarative, interrogative, exclamative",
+        "G67 · La forme affirmative et négative"
+      ],
+      "Seconde_LVAB": [
+        "G1 · Le nom et l’adjectif : consolidation du pluriel des noms et des adjectifs ; le pluriel des déterminants possessifs et démonstratifs, le pluriel des mots se terminant par -co ou – go ; approfondissement des pluriels irréguliers",
+        "G2 · Les déterminants : les articles définis et indéfinis, le déterminant démonstratif questo et quello",
+        "G3 · Le verbe : radical et désinences, le présent de l’indicatif des auxiliaires, des trois groupes réguliers, de verbes irréguliers (andare, stare, fare, potere, volere, dovere, bere, uscire, dire, venire, scegliere), les verbes pronominaux",
+        "G4 · Le passé composé (formation et règles d’accord), l’imparfait, le futur simple, le conditionnel présent",
+        "G5 · La forme de politesse (pronom Lei, adjectifs possessifs)",
+        "G6 · Le mode impératif : formes simples (affirmatives et négatives), tu, noi, voi et quelques formes figées de l’impératif de politesse (scusi, dica…) ; l’impératif de politesse",
+        "G7 · La formation du gérondif et quelques gérondifs irréguliers",
+        "G8 · La forme progressive stare + gérondif",
+        "G9 · La forme impersonnelle avec si",
+        "G10 · Les pronoms personnels sujets et réfléchis, les pronoms COD et COI",
+        "G11 · L’enclise avec l’impératif et l’infinitif",
+        "G12 · Quelques adverbes et locutions adverbiales de lieu, de temps, d’opposition",
+        "G13 · Les adjectifs et les adverbes de quantité ou d’intensité (poco, molto, troppo, tanto)",
+        "G14 · Les prépositions a, di, in, su et da + leur contraction avec les articles définis",
+        "G15 · Les locutions, les adverbes et les adjectifs interrogatifs : dove, che cosa, come, quando, quanto/i, quale/i, perché",
+        "G16 · Traduction de « il y a » (c’è / ci sono) ; « aimer » (piacere avec mi, ti, ci, vi, a, gli/le, loro + prénom) ; « il faut » (occorre / occorrono / bisogna / ci vuole / ci vogliono) ; « suffire » (basta / bastano)",
+        "G17 · Quelques conjonctions de coordination et de subordination – e, ma, o, perché – et connecteurs logiques : dapprima, quindi, inoltre, invece, infine, etc.",
+        "G18 · La phrase simple et la proposition subordonnée relative simple introduite par che",
+        "G19 · Les pronoms relatifs composés avec cui",
+        "G20 · Les types de phrases : déclarative, interrogative, exclamative",
+        "G21 · La forme affirmative et négative"
+      ],
+      "Seconde_LVC": [
+        "G1 · Le nom et l’adjectif : le pluriel des noms et des adjectifs ; le pluriel des déterminants possessifs et démonstratifs",
+        "G2 · Les déterminants : les articles définis et indéfinis, les déterminants possessifs",
+        "G3 · Le verbe : le présent de l’indicatif des auxiliaires, des trois groupes réguliers, de quelques irréguliers (andare, stare, fare, potere, volere, dovere, bere, uscire, dire, venire), les verbes pronominaux",
+        "G4 · Le passé composé (formation et règles d’accord) ; l’imparfait ; le futur simple",
+        "G5 · La forme affirmative et négative",
+        "G6 · Le mode impératif : formes simples (affirmatives et négatives)",
+        "G7 · Les pronoms personnels sujets et réfléchis, quelques pronoms COD",
+        "G8 · Quelques adverbes et locutions adverbiales de lieu, de temps, d’opposition",
+        "G9 · Les adjectifs et les adverbes de quantité ou d’intensité (poco, molto, troppo, tanto)",
+        "G10 · Les prépositions a, di, in, su et da + leur contraction avec les articles",
+        "G11 · Les locutions, les adverbes et les adjectifs interrogatifs : dove, che cosa, come, quando, quanto/i, quale/i, perché",
+        "G12 · Traduction de « il y a » (c’è / ci sono) ; « piacere » (mi, ti, ci, vi, a + prénom) ; « il faut » (occorre / occorrono / bisogna) ; « suffire » (basta / bastano)",
+        "G13 · Quelques conjonctions de coordination et de subordination : e, ma, o, perché",
+        "G14 · La phrase simple et la proposition subordonnée relative simple introduite par che",
+        "G15 · Les types de phrases : déclarative, interrogative, exclamative"
+      ],
+      "Première_LVAB": [
+        "G1 · Les connecteurs logiques",
+        "G2 · Quelques conjonctions de subordination marquant l’opposition (invece, ma, però), la conséquence (dunque, quindi, difatti, perciò, in modo che), la condition (se, anche se, a patto che)",
+        "G3 · Les indéfinis qualche, alcuni/alcune, qualunque/qualsiasi",
+        "G4 · Les suffixes (diminutifs, augmentatifs, dépréciatifs)",
+        "G5 · Les pronoms personnels compléments d’objet direct et indirect (dont forme de politesse) et les pronoms personnels groupés",
+        "G6 · Les pronoms relatifs composés avec cui (di cui, a cui, con cui…) et leur usage",
+        "G7 · Les différentes formes du comparatif (égalité, supériorité, infériorité)",
+        "G8 · La tournure impersonnelle è + adjectif qualificatif + infinitif à tous les temps (era, sarà, sarebbe)",
+        "G9 · La forme progressive et ses déclinaisons à l’imparfait de l’indicatif et au futur",
+        "G10 · Le verbe : le conditionnel présent, conjugaison des auxiliaires, des trois groupes réguliers, de verbes irréguliers (andare, stare, fare, potere, volere, dovere, venire)",
+        "G11 · Le passé proche avec appena, ora/adesso",
+        "G12 · Le futur proche avec stare per",
+        "G13 · La voix passive avec venire",
+        "G14 · Le subjonctif présent des auxiliaires, des verbes réguliers et des principaux verbes irréguliers après les verbes d’opinion ou « bisogna che »",
+        "G15 · L’emploi du subjonctif comme impératif de politesse ; l’emploi du subjonctif après quelques conjonctions (benché, a patto che, perché, etc.)",
+        "G16 · Le passé simple (repérage)",
+        "G17 · La place de niente et nessuno par rapport au verbe"
+      ],
+      "Première_LVC": [
+        "G1 · Les déterminants : les contractions d’articles définis avec une préposition a, da, di, in, su",
+        "G2 · Les verbes irréguliers au présent de l’indicatif, les participes passés irréguliers",
+        "G3 · Les verbes irréguliers au futur simple",
+        "G4 · Le subjonctif présent pour exprimer une opinion (pensare/credere che)",
+        "G5 · Le passé simple en repérage",
+        "G6 · L’expression du souhait au conditionnel (vorrei, mi piacerebbe)",
+        "G7 · La forme de politesse",
+        "G8 · L’expression de la temporalité avec fa et fra",
+        "G9 · L’expression des siècles",
+        "G10 · Les pronoms personnels COI, quelques pronoms groupés",
+        "G11 · L’enclise des pronoms simples et de quelques pronoms groupés",
+        "G12 · Quelques conjonctions de coordination et de subordination : siccome, inoltre, tuttavia, quindi, prima, poi, dopo, infine, tutto sommato, comunque",
+        "G13 · La phrase complexe et la proposition subordonnée relative (la traduction de « dont »)",
+        "G14 · La forme impersonnelle avec si",
+        "G15 · La traduction de « il faut que » + subjonctif (Bisogna che)",
+        "G16 · La traduction de « quelques » avec qualche/alcuni, alcune"
+      ],
+      "Terminale_LVAB": [
+        "G1 · Les indéfinis qualche, alcuni/alcune, qualunque/qualsiasi",
+        "G2 · Les suffixes augmentatifs, diminutifs, dépréciatifs, laudatifs",
+        "G3 · Les connecteurs logiques",
+        "G4 · Verbes de mouvement – andare, venire, uscire, tornare, etc. – et préposition a",
+        "G5 · Approfondissement des emplois de la préposition da",
+        "G6 · Les pronoms relatifs composés avec cui et leur usage",
+        "G7 · La tournure impersonnelle è + adjectif qualificatif + infinitif à tous les temps (era, sarà, sarebbe)",
+        "G8 · Les différentes formes du comparatif",
+        "G9 · Les conjonctions de subordination marquant l’opposition, la conséquence, la raison, la condition",
+        "G10 · Les pronoms personnels compléments d’objet direct et indirect (dont forme de politesse) et les pronoms personnels groupés",
+        "G11 · L’enclise des pronoms groupés",
+        "G12 · La forme progressive et ses déclinaisons à l’imparfait de l’indicatif et au futur",
+        "G13 · Le conditionnel passé",
+        "G14 · Le subjonctif imparfait, conjugaisons des auxiliaires, des trois groupes réguliers et des principaux verbes irréguliers",
+        "G15 · La subordonnée hypothétique introduite par se",
+        "G16 · Le passé simple (repérage et utilisation de quelques formules figées)",
+        "G17 · Andare et venire comme auxiliaires",
+        "G18 · Différence entre le si impersonnel et le si passivante"
+      ],
+      "Terminale_LVC": [
+        "G1 · Les déterminants : les contractions d’articles définis avec une préposition a, da, di, in, su",
+        "G2 · Les verbes irréguliers au présent de l’indicatif, les participes passés irréguliers",
+        "G3 · Les verbes irréguliers au futur simple",
+        "G4 · Le subjonctif présent pour exprimer une opinion (pensare/credere che)",
+        "G5 · Le passé simple en repérage",
+        "G6 · L’expression du souhait au conditionnel (vorrei, mi piacerebbe)",
+        "G7 · La forme de politesse",
+        "G8 · L’expression de la temporalité avec fa et fra",
+        "G9 · L’expression des siècles",
+        "G10 · Les pronoms personnels COI, quelques pronoms groupés",
+        "G11 · L’enclise des pronoms simples et de quelques pronoms groupés",
+        "G12 · Quelques conjonctions de coordination et de subordination : siccome, inoltre, tuttavia, quindi, prima, poi, dopo, infine, tutto sommato, comunque",
+        "G13 · La phrase complexe et la proposition subordonnée relative (la traduction de « dont »)",
+        "G14 · La forme impersonnelle avec si",
+        "G15 · La traduction de « il faut que » + subjonctif (Bisogna che)",
+        "G16 · La traduction de « quelques » avec qualche/alcuni, alcune"
+      ],
+      "Première_LLCER": [
+        "G1 · Les connecteurs logiques",
+        "G2 · Quelques conjonctions de subordination marquant l’opposition (invece, ma, però), la conséquence (dunque, quindi, difatti, perciò, in modo che), la condition (se, anche se, a patto che)",
+        "G3 · Les indéfinis qualche, alcuni/alcune, qualunque/qualsiasi",
+        "G4 · Les suffixes (diminutifs, augmentatifs, dépréciatifs)",
+        "G5 · Les pronoms personnels compléments d’objet direct et indirect (dont forme de politesse) et les pronoms personnels groupés",
+        "G6 · Les pronoms relatifs composés avec cui (di cui, a cui, con cui…) et leur usage",
+        "G7 · Les différentes formes du comparatif (égalité, supériorité, infériorité)",
+        "G8 · La tournure impersonnelle è + adjectif qualificatif + infinitif à tous les temps (era, sarà, sarebbe)",
+        "G9 · La forme progressive et ses déclinaisons à l’imparfait de l’indicatif et au futur",
+        "G10 · Le verbe : le conditionnel présent, conjugaison des auxiliaires, des trois groupes réguliers, de verbes irréguliers (andare, stare, fare, potere, volere, dovere, venire)",
+        "G11 · Le passé proche avec appena, ora/adesso",
+        "G12 · Le futur proche avec stare per",
+        "G13 · La voix passive avec venire",
+        "G14 · Le subjonctif présent des auxiliaires, des verbes réguliers et des principaux verbes irréguliers après les verbes d’opinion ou « bisogna che »",
+        "G15 · L’emploi du subjonctif comme impératif de politesse ; l’emploi du subjonctif après quelques conjonctions (benché, a patto che, perché, etc.)",
+        "G16 · Le passé simple (repérage)",
+        "G17 · La place de niente et nessuno par rapport au verbe"
+      ],
+      "Terminale_LLCER": [
+        "G1 · Les indéfinis qualche, alcuni/alcune, qualunque/qualsiasi",
+        "G2 · Les suffixes augmentatifs, diminutifs, dépréciatifs, laudatifs",
+        "G3 · Les connecteurs logiques",
+        "G4 · Verbes de mouvement – andare, venire, uscire, tornare, etc. – et préposition a",
+        "G5 · Approfondissement des emplois de la préposition da",
+        "G6 · Les pronoms relatifs composés avec cui et leur usage",
+        "G7 · La tournure impersonnelle è + adjectif qualificatif + infinitif à tous les temps (era, sarà, sarebbe)",
+        "G8 · Les différentes formes du comparatif",
+        "G9 · Les conjonctions de subordination marquant l’opposition, la conséquence, la raison, la condition",
+        "G10 · Les pronoms personnels compléments d’objet direct et indirect (dont forme de politesse) et les pronoms personnels groupés",
+        "G11 · L’enclise des pronoms groupés",
+        "G12 · La forme progressive et ses déclinaisons à l’imparfait de l’indicatif et au futur",
+        "G13 · Le conditionnel passé",
+        "G14 · Le subjonctif imparfait, conjugaisons des auxiliaires, des trois groupes réguliers et des principaux verbes irréguliers",
+        "G15 · La subordonnée hypothétique introduite par se",
+        "G16 · Le passé simple (repérage et utilisation de quelques formules figées)",
+        "G17 · Andare et venire comme auxiliaires",
+        "G18 · Différence entre le si impersonnel et le si passivante"
+      ]
+    },
+    phono: {
+      "6ème": [
+        "PH1 · Connaitre les spécificités phonologiques de l’italien : absence de nasales, prononciation de toutes les voyelles, la lettre « z » ([dz] ou[ts]), la lettre « c » et les sons [k] et [tʃ ] selon la voyelle qui suit, les lettres « sc » et le son [ ʃ ] devant le « i » et le « e », la lettre « g » et les sons [g] ou [dʒ] selon la voyelle qui suit, la prononciation des doubles consonnes.",
+        "PH2 · Reconnaitre la place de l’accent tonique.",
+        "PH3 · Prononcer correctement des mots isolés et mémorisés dans certains champs lexicaux connus."
+      ],
+      "5ème": [
+        "PH1 · Connaitre les spécificités phonologiques de l’italien : absence de nasales, prononciation de toutes les voyelles, la lettre « z » ([dz] ou [ts]), la lettre « c » et les sons [k] et [tʃ ] selon la voyelle qui suit, les lettres « sc » et le son [ ʃ ] devant le « i » et le « e », la lettre « g » et les sons [g] ou [dʒ] selon la voyelle qui suit, la prononciation des doubles consonnes.",
+        "PH2 · Reconnaitre la place de l’accent tonique et identifier les mots selon leur accentuation.",
+        "PH3 · Prononcer correctement des mots isolés et mémorisés dans certains champs lexicaux connus.",
+        "PH4 · Lire ou prononcer correctement des phrases simples ou un court paragraphe.",
+        "PH5 · Réciter ou mettre en voix des textes courts ou des poésies.",
+        "PH6 · Jouer ou réciter des dialogues."
+      ],
+      "4ème": [
+        "PH1 · Mettre le ton en travaillant sur l’intonation et le rythme (prosodie de la phrase : interrogative, exclamative/tons et accents – parole tronche, piane, et sdrucciole).",
+        "PH2 · L’accentuation correcte de mots courants, composés ou longs, comme automaticamente, principalmente, Il Rinascimento, il pescivendolo, il marciapiede, etc.",
+        "PH3 · La prononciation des consonnes géminées dites doppie comme dritto, bizzarro, drammatico, coppia, organizzazione, etc.",
+        "PH4 · La maitrise des voyelles + « n » ou « m » comme dans bambino, simpatico, emblematico, antipatico, arancione, etc.",
+        "PH5 · La prononciation de la lettre « g » suivie ou non de la lettre « h » comme dans spaghetti, gennaio, i Ghibellini, Giotto, etc.",
+        "PH6 · Accompagner d’un geste, d’un mouvement du corps la lecture ou la mise en scène d’un texte bref (lecture, récitation, jeu théâtral).",
+        "PH7 · Être capable de s’exprimer à partir de quelques mots-clés.",
+        "PH8 · Accepter les hésitations et les faux démarrages propres à la communication orale."
+      ],
+      "3ème": [
+        "PH1 · Mettre le ton en travaillant sur l’intonation et le rythme (prosodie de la phrase : interrogative, exclamative/tons et accents – parole tronche, piane, et sdrucciole).",
+        "PH2 · Repérer les accents toniques sur les mots longs et toponymes courants (volentieri, dimenticare, Genova, Veneto), sur certaines conjugaisons (3e personne du pluriel du présent de l’indicatif et de l’imparfait), certains accents sdruccioli liés à des suffixes (les noms et adjectifs en -abile, -ibile, -evole, -ico), etc.",
+        "PH3 · Les consonnes géminées dites doppie de babbo, macchina, freddo, mamma, etc.",
+        "PH4 · Restituer fidèlement les séquences voyelle + « n » ou « m » comme dans Valentino, Empoli, etc.",
+        "PH5 · Accompagner d’un geste, d’un mouvement du corps, la lecture ou la mise en scène d’un texte bref (lecture, récitation, jeu théâtral).",
+        "PH6 · Se dégager en grande partie de notes écrites lors d’une prise de parole en continu ou en interaction.",
+        "PH7 · Accepter les hésitations et les faux démarrages propres à la communication orale, en développant des techniques pour reformuler."
+      ],
+      "Seconde_LVAB": [
+        "PH1 · Mettre le ton en travaillant sur l’intonation et le rythme (prosodie de la phrase : interrogative, exclamative/tons et accents – parole tronche, piane, et sdrucciole).",
+        "PH2 · Repérer les accents toniques sur les mots longs et toponymes courants (volentieri, dimenticare, Genova, Veneto), sur certaines conjugaisons (3e personne du pluriel du présent de l’indicatif et de l’imparfait), certains accents sdruccioli liés à des suffixes (les noms et adjectifs en -abile, -ibile, -evole, -ico…), etc.",
+        "PH3 · Les consonnes géminées dites doppie de babbo, macchina, freddo, mamma, etc.",
+        "PH4 · Restituer fidèlement les séquences voyelle + « n » ou « m » comme dans Valentino, Empoli, etc.",
+        "PH5 · Accompagner d’un geste, d’un mouvement du corps la lecture ou la mise en scène d’un texte bref (lecture, récitation, jeu théâtral).",
+        "PH6 · Se dégager en grande partie de notes écrites lors d’une prise de parole en continu ou en interaction.",
+        "PH7 · Accepter les hésitations et les faux démarrages propres à la communication orale, en développant des techniques pour reformuler."
+      ],
+      "Seconde_LVC": [
+        "PH1 · Connaitre les spécificités phonologiques de l’italien : absence de nasales, prononciation de toutes les voyelles, la lettre « z » ([dz] ou [ts]), la lettre « c » et les sons [k] et [tʃ ] selon la voyelle qui suit, les lettres « sc » et le son [ ʃ ] devant le « i » et le « e », la lettre « g » et les sons [g] ou [dʒ] selon la voyelle qui suit, la prononciation des doubles consonnes.",
+        "PH2 · Reconnaitre la place de l’accent tonique.",
+        "PH3 · Prononcer correctement des mots isolés et mémorisés dans certains champs lexicaux connus"
+      ],
+      "Première_LVAB": [
+        "PH1 · Jouer ou réciter des dialogues.",
+        "PH2 · Lire, réciter ou mettre en voix de courts textes avec une relative aisance et spontanéité en mobilisant à bon escient ses connaissances phonologiques (accent tonique, diphtongues, consonnes géminées …).",
+        "PH3 · S’exprimer de manière spontanée en enchainant plusieurs phrases simples.",
+        "PH4 · S’exprimer de manière intelligible malgré l’influence d’autres langues.",
+        "PH5 · S’exprimer sans que l’accent n’entrave l’intelligibilité."
+      ],
+      "Première_LVC": [
+        "PH1 · Connaitre les spécificités phonologiques de l’italien : absence de nasales, prononciation de toutes les voyelles, la lettre « z » ([dz] ou [ts]), la lettre « c » et les sons [k] et [tʃ ] selon la voyelle qui suit, les lettres « sc » et le son [ ʃ ] devant le « i » et le « e », la lettre « g » et les sons [g] ou [dʒ] selon la voyelle qui suit, la prononciation des doubles consonnes.",
+        "PH2 · Reconnaitre la place de l’accent tonique et prononcer les mots selon leur accentuation – parole tronche, piane et sdrucciole.",
+        "PH3 · L’accentuation correcte de mots courants, composés ou longs, comme dans automaticamente, principalmente, Il Rinascimento, il pescivendolo, il marciapiede, etc.",
+        "PH4 · La prononciation des consonnes géminées dites doppie comme dans dritto, drammatico, coppia, organizzazione, etc.",
+        "PH5 · La maitrise des voyelles + « n » ou « m » comme dans bambino, simpatico, emblematico, antipatico, arancione, etc.",
+        "PH6 · La prononciation de la lettre « g » suivie ou non de la lettre « h » comme dans spaghetti, gennaio, i Ghibellini, Giotto, etc.",
+        "PH7 · Lire ou prononcer correctement un court paragraphe en travaillant sur l’intonation et le rythme (prosodie de la phrase : interrogative, exclamative, tons et accents).",
+        "PH8 · Réciter ou mettre en voix des poésies, des répliques de dialogues.",
+        "PH9 · Être capable de s’exprimer à partir de quelques mots-clés.",
+        "PH10 · Accepter les hésitations et les faux démarrages propres à la communication orale."
+      ],
+      "Terminale_LVAB": [
+        "PH1 · Lire, réciter ou mettre en voix des textes de nature et de longueur variée avec une relative aisance et spontanéité en mobilisant à bon escient ses connaissances phonologiques (accent tonique, diphtongues, consonnes géminées, nasales, etc.).",
+        "PH2 · S’exprimer de manière spontanée en enchainant plusieurs phrases simples et complexes.",
+        "PH3 · S’exprimer sans que l’accent n’entrave l’intelligibilité."
+      ],
+      "Terminale_LVC": [
+        "PH1 · Connaitre les spécificités phonologiques de l’italien : absence de nasales, prononciation de toutes les voyelles, la lettre « z » ([dz] ou [ts]), la lettre « c » et les sons [k] et [tʃ ] selon la voyelle qui suit, les lettres « sc » et le son [ ʃ ] devant le « i » et le « e », la lettre « g » et les sons [g] ou [dʒ] selon la voyelle qui suit, la prononciation des doubles consonnes.",
+        "PH2 · Reconnaitre la place de l’accent tonique et prononcer les mots selon leur accentuation – parole tronche, piane et sdrucciole.",
+        "PH3 · L’accentuation correcte de mots courants, composés ou longs, comme dans automaticamente, principalmente, Il Rinascimento, il pescivendolo, il marciapiede, etc.",
+        "PH4 · La prononciation des consonnes géminées dites doppie comme dans dritto, drammatico, coppia, organizzazione, etc.",
+        "PH5 · La maitrise des voyelles + « n » ou « m » comme dans bambino, simpatico, emblematico, antipatico, arancione, etc.",
+        "PH6 · La prononciation de la lettre « g » suivie ou non de la lettre « h » comme dans spaghetti, gennaio, i Ghibellini, Giotto, etc.",
+        "PH7 · Lire ou prononcer correctement un court paragraphe en travaillant sur l’intonation et le rythme (prosodie de la phrase : interrogative, exclamative, tons et accents).",
+        "PH8 · Réciter ou mettre en voix des poésies, des répliques de dialogues.",
+        "PH9 · Être capable de s’exprimer à partir de quelques mots-clés.",
+        "PH10 · Accepter les hésitations et les faux démarrages propres à la communication orale."
+      ],
+      "Première_LLCER": [
+        "PH1 · Jouer ou réciter des dialogues.",
+        "PH2 · Lire, réciter ou mettre en voix de courts textes avec une relative aisance et spontanéité en mobilisant à bon escient ses connaissances phonologiques (accent tonique, diphtongues, consonnes géminées …).",
+        "PH3 · S’exprimer de manière spontanée en enchainant plusieurs phrases simples.",
+        "PH4 · S’exprimer de manière intelligible malgré l’influence d’autres langues.",
+        "PH5 · S’exprimer sans que l’accent n’entrave l’intelligibilité."
+      ],
+      "Terminale_LLCER": [
+        "PH1 · Lire, réciter ou mettre en voix des textes de nature et de longueur variée avec une relative aisance et spontanéité en mobilisant à bon escient ses connaissances phonologiques (accent tonique, diphtongues, consonnes géminées, nasales, etc.).",
+        "PH2 · S’exprimer de manière spontanée en enchainant plusieurs phrases simples et complexes.",
+        "PH3 · S’exprimer sans que l’accent n’entrave l’intelligibilité."
+      ]
+    },
+    pragma: {
+      "6ème": [
+        "PR1 · Quelques adverbes et locutions adverbiales de lieu, de temps",
+        "PR2 · Les prépositions a, di, in et su",
+        "PR3 · Les interrogatifs : dove, che cosa, come, quando, quanto/i, quale/i, perché",
+        "PR4 · Quelques conjonctions de coordination et de subordination : e, ma, o, perché"
+      ],
+      "5ème": [
+        "PR1 · Quelques adverbes et locutions adverbiales : de lieu, de temps",
+        "PR2 · Les prépositions : a, di, in et su + leur contraction avec les articles",
+        "PR3 · Les interrogatifs : dove, che cosa, come, quando, quanto/i, quale/i, perché",
+        "PR4 · Quelques conjonctions de coordination et de subordination : e, ma, o, perché"
+      ],
+      "4ème": [
+        "PR1 · Quelques adverbes et locutions adverbiales de lieu, de temps, d’opposition",
+        "PR2 · L’expression du temps avec fa et tra",
+        "PR3 · Les prépositions a, di, in, su et da + leur contraction avec les articles",
+        "PR4 · Les locutions, les adverbes et les adjectifs interrogatifs : dove, che cosa, come, quando, quanto/i, quale/i, perché",
+        "PR5 · Quelques conjonctions de coordination et de subordination : e, ma, o, perché"
+      ],
+      "3ème": [
+        "PR1 · Quelques adverbes et locutions adverbiales de lieu, de temps, d’opposition",
+        "PR2 · Les prépositions a, di, in, su et da + leur contraction avec les articles définis",
+        "PR3 · Les locutions, les adverbes et les adjectifs interrogatifs : dove, che cosa, come, quando, quanto/i, quale/i, perché",
+        "PR4 · Quelques conjonctions de coordination et de subordination – e, ma, o, perché – et connecteurs logiques : dapprima, quindi, inoltre, invece, infine, etc.",
+        "PR5 · Les conjonctions de subordination composées avec cui"
+      ],
+      "Seconde_LVAB": [
+        "PR1 · Quelques adverbes et locutions adverbiales de lieu, de temps, d’opposition",
+        "PR2 · Les prépositions a, di, in, su et da + leur contraction avec les articles définis",
+        "PR3 · Les locutions, les adverbes et les adjectifs interrogatifs : dove, che cosa, come, quando, quanto/i, quale/i, perché",
+        "PR4 · Quelques conjonctions de coordination et de subordination – e, ma, o, perché – et connecteurs logiques : dapprima, quindi, inoltre, invece, infine, etc.",
+        "PR5 · Les pronoms relatifs composés avec cui"
+      ],
+      "Seconde_LVC": [
+        "PR1 · Quelques adverbes et locutions adverbiales de lieu, de temps, d’opposition",
+        "PR2 · Les prépositions a, di, in, su et da + leur contraction avec les articles",
+        "PR3 · Les locutions, les adverbes et les adjectifs interrogatifs : dove, che cosa, come, quando, quanto/i, quale/i, perché",
+        "PR4 · Quelques conjonctions de coordination et de subordination : e, ma, o, perché"
+      ],
+      "Première_LVAB": [
+        "PR1 · Les connecteurs logiques",
+        "PR2 · Quelques conjonctions de subordination marquant l’opposition (invece, ma, però), la conséquence (dunque, quindi, difatti, perciò, in modo che), la condition (se, anche se, a patto che)",
+        "PR3 · Les pronoms relatifs composés avec cui (di cui, a cui, con cui…) et leur usage"
+      ],
+      "Première_LVC": [
+        "PR1 · L’expression de la temporalité avec fa et fra",
+        "PR2 · L’expression des siècles",
+        "PR3 · Quelques conjonctions de coordination et de subordination : siccome, inoltre, tuttavia, quindi, prima, poi, dopo, infine, tutto sommato, comunque"
+      ],
+      "Terminale_LVAB": [
+        "PR1 · Les connecteurs logiques",
+        "PR2 · Verbes de mouvement – andare, venire, uscire, tornare, etc. – et préposition a",
+        "PR3 · Approfondissement des emplois de la préposition da",
+        "PR4 · Les pronoms relatifs composés avec cui et leur usage",
+        "PR5 · Les conjonctions de subordination marquant l’opposition, la conséquence, la raison, la condition"
+      ],
+      "Terminale_LVC": [
+        "PR1 · L’expression de la temporalité avec fa et fra",
+        "PR2 · L’expression des siècles",
+        "PR3 · Quelques conjonctions de coordination et de subordination : siccome, inoltre, tuttavia, quindi, prima, poi, dopo, infine, tutto sommato, comunque"
+      ],
+      "Première_LLCER": [
+        "PR1 · Les connecteurs logiques",
+        "PR2 · Quelques conjonctions de subordination marquant l’opposition (invece, ma, però), la conséquence (dunque, quindi, difatti, perciò, in modo che), la condition (se, anche se, a patto che)",
+        "PR3 · Les pronoms relatifs composés avec cui (di cui, a cui, con cui…) et leur usage"
+      ],
+      "Terminale_LLCER": [
+        "PR1 · Les connecteurs logiques",
+        "PR2 · Verbes de mouvement – andare, venire, uscire, tornare, etc. – et préposition a",
+        "PR3 · Approfondissement des emplois de la préposition da",
+        "PR4 · Les pronoms relatifs composés avec cui et leur usage",
+        "PR5 · Les conjonctions de subordination marquant l’opposition, la conséquence, la raison, la condition"
       ]
     }
   }
 };
 
 // ==========================================
-// LOGIQUE DE L'APPLICATION
+// LOGIQUE JAVASCRIPT DE L'APPLICATION
 // ==========================================
 
 let currentLang = 'en';
@@ -1969,11 +3755,26 @@ function setLanguage(lang) {
   currentLang = lang;
   
   document.getElementById('flag-en').classList.toggle('active', lang === 'en');
+  document.getElementById('flag-es').classList.toggle('active', lang === 'es');
   document.getElementById('flag-de').classList.toggle('active', lang === 'de');
+  document.getElementById('flag-it').classList.toggle('active', lang === 'it');
   
   document.getElementById('a4-footer-text').textContent = "Le Séquenceur — " + DB[lang].subtitle;
   document.getElementById('titre').placeholder = DB[lang].phTitle;
   document.getElementById('problematique').placeholder = DB[lang].phProb;
+  
+  // Gestion de l'option AMC (Uniquement pour l'Anglais)
+  const amc1 = document.getElementById('opt-amc1');
+  const amc2 = document.getElementById('opt-amc2');
+  if (lang === 'en') {
+    amc1.hidden = false; amc1.disabled = false;
+    amc2.hidden = false; amc2.disabled = false;
+  } else {
+    amc1.hidden = true; amc1.disabled = true;
+    amc2.hidden = true; amc2.disabled = true;
+    const n = document.getElementById('niveau').value;
+    if (n.includes('AMC')) document.getElementById('niveau').value = '';
+  }
   
   resetAll();
 }
@@ -2067,10 +3868,12 @@ function populateSelect(id, data, key) {
   if (!key || !data[key]) return;
   
   const isCollege = !key.includes('_');
+  const isSpecialite = key.includes('AMC') || key.includes('LLCER');
   const baseNiveau = isCollege ? key : key.split('_')[0];
   
   const collegeLevels = ["6ème", "5ème", "4ème", "3ème"];
   const lyceeLevels = ["Seconde", "Première", "Terminale"];
+  const speLevels = ["Première_AMC", "Terminale_AMC", "Première_LLCER", "Terminale_LLCER"];
   
   if (isCollege) {
     const g = document.createElement('optgroup');
@@ -2089,6 +3892,24 @@ function populateSelect(id, data, key) {
       });
       s.appendChild(gOther);
     });
+  } else if (isSpecialite) {
+    const g = document.createElement('optgroup');
+    g.label = `── ${key.replace('_', ' ')} ──`;
+    data[key].forEach(i => { 
+      const o = document.createElement('option'); o.value = cleanCode(i); o.textContent = cleanCode(i); g.appendChild(o); 
+    });
+    s.appendChild(g);
+    
+    speLevels.forEach(l => {
+      if (l === key || !data[l]) return;
+      const gOther = document.createElement('optgroup');
+      gOther.label = `── ${l.replace('_', ' ')} ──`;
+      data[l].forEach(i => { 
+        const o = document.createElement('option'); o.value = cleanCode(i); o.textContent = cleanCode(i); gOther.appendChild(o); 
+      });
+      s.appendChild(gOther);
+    });
+
   } else {
     const lvSuffix = '_' + key.split('_')[1];
     const displaySuffix = lvSuffix === '_LVAB' ? ' (LV A/B)' : ' (LV C)';
@@ -2162,8 +3983,12 @@ function updatePreview() {
   
   const badge = document.getElementById('a4-badge');
   if (n) { 
+    let displayNiveau = n.replace('_', ' ');
+    if (['Seconde', 'Première', 'Terminale'].includes(n) && lv) {
+      displayNiveau += ` (${lv.replace('LVAB', 'LV A/B').replace('LVC', 'LV C')})`;
+    }
     badge.style.display = 'block'; 
-    badge.textContent = n + (lv ? ` (${lv.replace('LVAB', 'LV A/B').replace('LVC', 'LV C')})` : ''); 
+    badge.textContent = displayNiveau;
   } else { 
     badge.style.display = 'none'; 
   }
@@ -2257,10 +4082,8 @@ function exportWord() {
   `;
 
   const html = "<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'><title>Export</title>" + wordCSS + "</head><body>" + clone.innerHTML + "</body></html>";
-  
   const blob = new Blob(['\ufeff', html], { type: 'application/msword' });
   const url = 'data:application/vnd.ms-word;charset=utf-8,' + encodeURIComponent(html);
-  
   const downloadLink = document.createElement("a");
   document.body.appendChild(downloadLink);
   downloadLink.href = url;

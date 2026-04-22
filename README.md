@@ -1,61 +1,52 @@
-Modele HTML   Modèle de site HTML/CSS  
+Le Séquenceur
+Organisez vos séquences de langues au collège et au lycée en quelques clics 
 
-Ce projet est un modèle de site web simple en HTML et CSS, hébergé sur La Forge des Communs Numériques Éducatifs.
+À propos
+Le Séquenceur est un outil d'ingénierie pédagogique conçu pour les enseignants de langues vivantes du second degré. Il permet de construire la fiche de bord d'une séquence (titre, problématique, ancrage culturel et objectifs linguistiques) via une interface "SaaS" intuitive et de générer instantanément un document A4 propre et professionnel.
 
-🔧 Comment l'utiliser
+Le principe est simple : vous configurez votre séquence à gauche, et l'aperçu se met à jour en temps réel à droite. Une fois terminée, la fiche est prête à être exportée en PDF pour votre cahier de bord ou vos préparations.
 
+Licence : GNU AGPL v3
+Auteure
+Charlie ROLLO Professeur d'anglais · Formateur académique (Drane de Versailles / INSPE)
 
-Créez une bifurcation (fork) de ce projet dans votre espace.
-Le dossier public contient le site web qui sera publié. Donc :
+Académie de Versailles
 
-Modifiez le fichier public/index.html, ajoutez à ce dossier d'autres pages HTML, des images, du CSS, ou encore du JavaScript.
-Ne modifiez pas le fichier .gitlab-ci.yml — il est nécessaire au bon fonctionnement de l’hébergement.
+Contact : charlie.rollo@ac-versailles.fr
 
+Principe de fonctionnement
+Le Séquenceur est un fichier HTML autonome (aucune dépendance externe, aucune installation). Il s'ouvre directement dans un navigateur et permet de structurer une séquence autour de quatre piliers :
 
+1 — Identification et Problématique
+L'enseignant saisit le titre de la séquence et sa problématique. Le choix du niveau (6ème à terminale) adapte dynamiquement les menus suivants pour respecter les cycles 3 et 4 ainsi que le niveau lycée.
 
+2 — Ancrage Culturel (Menus en cascade)
+L'outil intègre l'ensemble des Axes et des Objets d'étude officiels. Le choix de l'Axe filtre automatiquement les Objets d'étude correspondants pour éviter toute erreur de référentiel.
 
-📁 Contenu du projet
+3 — Objectifs Linguistiques (Grammaire & Phono)
+Grammaire : Une base de données exhaustive des points de grammaire du Bulletin Officiel, classée par niveau. L'outil propose par défaut les points du niveau sélectionné, suivis des points des niveaux précédents pour faciliter la différenciation et les révisions.
 
+Phonologie : Sélection des compétences clés (intonation, accentuation, prononciation des terminaisons -s/-ed, etc.).
 
+4 — Aperçu et Export
+Chaque élément ajouté (via le bouton "+") apparaît instantanément sur la fiche A4 virtuelle. Les éléments peuvent être retirés d'un simple clic en cas d'erreur. Le bouton "Exporter en PDF" utilise une feuille de style optimisée pour l'impression (propre, sans les menus d'édition).
 
-readme.md : fichier qui présente votre projet sur le dépôt
+Points forts de l'outil
+Conformité : Utilise strictement les intitulés officiels des programmes.
 
-.gitlab-ci.yml : configuration pour GitLab Pages (à conserver tel quel)
+Zéro Code : Aucune compétence technique requise, tout se fait à la souris.
 
-public/ (dossier)
+Confidentialité : Aucune donnée n'est envoyée sur un serveur ; tout est traité localement dans votre navigateur.
 
+Design Moderne : Interface fluide avec ombres douces, coins arrondis et typographie soignée (style SaaS).
 
-index.html : page principale du site
+Légèreté : Le fichier pèse quelques kilo-octets et fonctionne même sans connexion internet.
 
-style.css : fichier de styles modifiable
+Hébergement et Utilisation
+Utilisation directe : Le Séquenceur sur Apps Éducation
 
-images/ : dossier d’exemples d’images (vous pouvez le supprimer ou le remplacer)
+Hébergement : Forge Apps Éducation — hébergement gratuit via Git.
 
-
-
-
-🧰 Pour aller plus loin
-
-Vous pouvez ajouter :
-
-Un fichier public/script.js pour des interactions JavaScript
-D'autres pages HTML (public/page2.html, public/contact.html...)
-Des ressources comme des polices, des icônes, etc.
-
-Au sujet du .gitlab-ci (⚠️ pour les curieux du code ⚠️)
-
-
-Dans le .gitlab-ci de cette vidéo, le job pages déplace manuellement les fichiers dans un dossier public via une suite de commandes (mkdir, cp, rm, mv). Il définit aussi explicitement un stage et l’environnement.
-Dans celui de ce modèle, aucune manipulation de fichiers : on suppose que le dossier public est déjà présent dans le dépôt. Le script se limite à un message, et l’essentiel est que public soit publié en artefact.
-
-Pourquoi celui de ce modèle est préférable :
-
-Plus simple, lisible et maintenable.
-Respecte davantage la philosophie GitLab Pages : ne pas copier tout le dépôt, mais uniquement ce qui doit être publié.
-Réduit les risques d’erreurs et le temps d’exécution.
-Évite la duplication inutile de fichiers, ce qui économise de l’espace et accélère les pipelines.
-
-
-📄 Licence
-
-Ce projet est sous licence Creative Commons Zero v1.0 Universal — vous pouvez le réutiliser, le modifier et le partager en citant l’auteur.
+Code source
+forge.apps.education.fr/rollocharlie/le-sequenceur
+https://forge.apps.education.fr/rollocharlie/le-sequenceur

@@ -1,0 +1,48 @@
+# Changelog - Le Séquenceur 📝
+
+Toutes les modifications notables apportées au projet "Le Séquenceur" seront documentées dans ce fichier.
+
+## [1.5.0] - 2026-04-24
+### Ajouté
+- **Pied de page institutionnel** : Ajout d'un footer complet avec le nom de l'auteur (Charlie ROLLO).
+- **Liens Forge** : Intégration de boutons menant vers le code source sur la Forge des Communs Numériques Éducatifs, le gestionnaire de Tickets (Issues), et le Changelog.
+### Corrigé
+- **Mise en page** : Correction du CSS pour empêcher les liens du pied de page de s'afficher de manière brute.
+
+## [1.4.0] - 2026-04-24
+### Ajouté
+- **Tutoriel de bienvenue** : Apparition d'une fenêtre surgissante (modale) au premier lancement pour guider les enseignants. Réouvrable à volonté via une nouvelle icône (ℹ️).
+- **Mémorisation de la langue (UX)** : L'application sauvegarde désormais la dernière langue utilisée via le *localStorage* du navigateur.
+- **Champs libres** : Ajout de zones de saisie manuelle pour les rubriques "Phonologie" et "Pragmatique", avec le même système d'ajout (bouton `+`) que la grammaire.
+- **Différenciation pédagogique** : Les professeurs de Lycée (Tronc commun et Spécialités) ont désormais accès aux compétences de niveau Collège (A1/A2) directement à la fin de leurs menus déroulants pour faciliter l'adaptation.
+### Corrigé
+- **Export PDF** : Résolution du bug d'espacement des lettres (`letter-spacing`) lors de la génération du PDF, causé par un conflit entre `html2canvas` et le rendu des émojis. Les émojis sont désormais isolés dans des balises `<span>` dédiées.
+
+## [1.3.0] - 2026-04-23
+### Ajouté
+- **Italien 🇮🇹** : Intégration complète de la langue italienne (Axes, Objets d'étude, Grammaire, Phonologie, Pragmatique), du Collège à la Terminale, incluant la spécialité LLCER.
+### Modifié
+- **Fidélité institutionnelle** : Restauration intégrale et exacte des textes officiels de l'Éducation Nationale (Axes, Objets d'étude, points de grammaire) sans aucun raccourcissement abusif, pour garantir une rigueur totale sur les fiches de séquence.
+
+## [1.2.0] - 2026-04-22
+### Ajouté
+- **Espagnol 🇪🇸** : Intégration complète de la langue espagnole (Axes, Grammaire, Phono, Pragmatique).
+### Modifié
+- **Mutualisation des compétences** : Les 5 activités langagières (CO, CE, PO, PE, PEC) étant identiques d'une langue à l'autre, elles ont été fusionnées en une base de données unique pour optimiser le code.
+### Corrigé
+- **Logique des spécialités** : La spécialité AMC (Anglais Monde Contemporain) a été restreinte et n'apparaît désormais que lorsque la langue Anglaise est sélectionnée.
+### Supprimé
+- **Lexique** : Retrait définitif de la catégorie "Lexique" de l'interface et de la base de données.
+
+## [1.1.0] - 2026-04-20
+### Ajouté
+- **Spécialités Lycée** : Intégration des spécialités AMC (Première, Terminale) et LLCER (Première, Terminale) avec leurs axes et objets d'étude spécifiques.
+### Modifié
+- **Ergonomie des menus** : Masquage intelligent du choix "LV A/B ou LV C" lorsque l'utilisateur sélectionne un niveau de Spécialité ou de Collège.
+
+## [1.0.0] - Lancement initial
+### Ajouté
+- **Interface web** : Création de la structure "Single-Page Application" (HTML/CSS/JS) fonctionnant 100 % en local sans base de données tierce, pour une conformité totale au RGPD.
+- **Bases de données** : Intégration des programmes d'Anglais 🇬🇧 et d'Allemand 🇩🇪 (Collège et Lycée tronc commun).
+- **Générateur** : Système de tags interactifs et prévisualisation en direct de la fiche A4.
+- **Export** : Ajout des fonctionnalités de téléchargement au format PDF et au format Word (.doc) modifiable.

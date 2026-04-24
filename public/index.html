@@ -179,6 +179,34 @@ body { font-family:'Plus Jakarta Sans',sans-serif; background:var(--bg); color:v
   .a4-footer { position:relative; bottom:auto; left:auto; right:auto; margin-top:30px; }
   .modal-content { width:95%; padding:20px; }
 }
+/* --- CORRECTIONS MOBILE (Titre + Pied de page) --- */
+.logo-text { white-space: nowrap; } /* Empêche le titre de passer à la ligne */
+
+@media (max-width: 1100px) {
+  /* On prépare l'espace en bas de page pour accueillir le footer */
+  body { padding-bottom: 60px; } 
+  .main-container { position: relative; padding-bottom: 160px; } 
+  .preview-panel { padding-bottom: 20px; }
+  
+  /* On détache le footer des objectifs pragmatiques pour le coller tout en bas */
+  .app-footer { 
+    position: absolute; 
+    bottom: 0; 
+    left: 0; 
+    right: 0; 
+    margin-top: 0; 
+  }
+}
+
+@media (max-width: 600px) {
+  /* On réduit légèrement les marges et les tailles pour que tout rentre sur 1 ligne */
+  .app-header { padding: 12px 8px; }
+  .logo { gap: 6px; }
+  .logo-icon { width: 26px; height: 26px; font-size: 13px; }
+  .logo-text { font-size: 16px; letter-spacing: -0.5px; }
+  .logo-flags { font-size: 16px; gap: 4px; margin-left: 4px; }
+  .info-btn { font-size: 16px; margin-left: 4px; }
+}
 </style>
 </head>
 <body data-theme="light">

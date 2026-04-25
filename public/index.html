@@ -15,7 +15,7 @@
   --text:#e2e8f0; --text-muted:#8892b0; --preview-bg:#111827;
   --glow:rgba(62,207,142,0.15); --shadow-sheet:0 8px 48px rgba(0,0,0,0.5);
   --scrollbar:rgba(255,255,255,0.12); --toggle-bg:#232e50;
-  --accent:#3ecf8e; --accent2:#6c63ff; --accent3:#f97316; --accent4:#06b6d4; --accent5:#ec4899;
+  --accent:#3ecf8e; --accent2:#6c63ff; --accent3:#f97316; --accent4:#06b6d4; --accent5:#ec4899; --accent-y:#facc15; --accent-r:#ef4444; --accent-i:#8b5cf6;
   --radius:12px; --radius-sm:8px;
 }
 [data-theme="light"] {
@@ -54,12 +54,20 @@ body { font-family:'Plus Jakarta Sans',sans-serif; background:var(--bg); color:v
 .modal-content::-webkit-scrollbar-thumb { background:var(--scrollbar); border-radius:3px; }
 .modal-close { position:absolute; top:15px; right:20px; background:none; border:none; font-size:20px; color:var(--text-muted); cursor:pointer; transition:color 0.2s; }
 .modal-close:hover { color:var(--accent5); }
-.modal-header { font-family:'Playfair Display',serif; font-size:22px; font-weight:800; margin-bottom:15px; color:var(--text); border-bottom:1px solid var(--border); padding-bottom:10px; }
+.modal-header { font-family:'Playfair Display',serif; font-size:22px; font-weight:800; margin-bottom:15px; color:var(--text); border-bottom:1px solid var(--border); padding-bottom:10px; text-align:center; }
+.modal-body { text-align: center; }
 .modal-body h4 { font-size:12px; color:var(--accent2); margin:16px 0 6px 0; text-transform:uppercase; letter-spacing:0.5px; }
-.modal-body p { font-size:13px; color:var(--text-muted); line-height:1.6; margin-bottom:8px; }
+.modal-body p { font-size:14px; color:var(--text-muted); line-height:1.6; margin-bottom:15px; }
 .modal-body strong { color:var(--text); }
 
-.tutorial-list { list-style:none; padding:10px 0; margin:0; }
+/* Onboarding Langues */
+.lang-selector { display:flex; justify-content:center; gap:20px; margin:25px 0; }
+.lang-option { display:flex; flex-direction:column; align-items:center; gap:10px; cursor:pointer; padding:15px; border-radius:12px; border:2px solid transparent; transition:all 0.2s; background:var(--card); }
+.lang-option:hover { transform:translateY(-5px); border-color:var(--accent); background:rgba(62,207,142,0.1); }
+.lang-option span.flag { font-size:40px; line-height:1; }
+.lang-option span.label { font-size:14px; font-weight:700; color:var(--text); }
+
+.tutorial-list { list-style:none; padding:10px 0; margin:0; text-align:left; }
 .tutorial-list li { margin-bottom:16px; font-size:13px; line-height:1.5; color:var(--text); display:flex; align-items:flex-start; gap:10px; }
 .tutorial-list li span.step { background:var(--accent); color:#fff; font-weight:bold; border-radius:50%; min-width:24px; height:24px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
 .tutorial-list strong { color:var(--accent); }
@@ -98,6 +106,7 @@ body { font-family:'Plus Jakarta Sans',sans-serif; background:var(--bg); color:v
 .section-label.orange { color:var(--accent3); } .section-label.orange::before { background:var(--accent3); }
 .section-label.cyan { color:var(--accent4); } .section-label.cyan::before { background:var(--accent4); }
 .section-label.pink { color:var(--accent5); } .section-label.pink::before { background:var(--accent5); }
+.section-label.red { color:var(--accent-r); } .section-label.red::before { background:var(--accent-r); }
 
 .field-group { margin-bottom:14px; }
 .field-label { font-size:11px; font-weight:600; color:var(--text-muted); margin-bottom:5px; display:block; }
@@ -113,6 +122,9 @@ body { font-family:'Plus Jakarta Sans',sans-serif; background:var(--bg); color:v
 .btn-add.o { background:linear-gradient(135deg,var(--accent3),#e8590c); box-shadow:0 2px 10px rgba(249,115,22,0.3); }
 .btn-add.c { background:linear-gradient(135deg,var(--accent4),#0891b2); box-shadow:0 2px 10px rgba(6,182,212,0.3); }
 .btn-add.p { background:linear-gradient(135deg,var(--accent5),#be185d); box-shadow:0 2px 10px rgba(236,72,153,0.3); }
+.btn-add.y { background:linear-gradient(135deg,var(--accent-y),#ca8a04); box-shadow:0 2px 10px rgba(234,179,8,0.3); }
+.btn-add.r { background:linear-gradient(135deg,var(--accent-r),#dc2626); box-shadow:0 2px 10px rgba(239,68,68,0.3); }
+.btn-add.i { background:linear-gradient(135deg,var(--accent-i),#7c3aed); box-shadow:0 2px 10px rgba(139,92,246,0.3); }
 .divider { height:1px; background:var(--border); margin:18px 0; }
 
 .added-tags { display:flex; flex-wrap:wrap; gap:5px; margin-top:6px; }
@@ -125,11 +137,18 @@ body { font-family:'Plus Jakarta Sans',sans-serif; background:var(--bg); color:v
 .tag.o { background:rgba(249,115,22,0.15); color:#fdba74; }
 .tag.c { background:rgba(6,182,212,0.15); color:#67e8f9; }
 .tag.p { background:rgba(236,72,153,0.15); color:#f9a8d4; }
+.tag.y { background:rgba(234,179,8,0.15); color:#fde047; }
+.tag.r { background:rgba(239,68,68,0.15); color:#fca5a5; }
+.tag.i { background:rgba(139,92,246,0.15); color:#c4b5fd; }
+
 [data-theme="light"] .tag.v { background:rgba(108,99,255,0.1); color:#4f46e5; }
 [data-theme="light"] .tag.g { background:rgba(62,207,142,0.1); color:#059669; }
 [data-theme="light"] .tag.o { background:rgba(249,115,22,0.1); color:#c2410c; }
 [data-theme="light"] .tag.c { background:rgba(6,182,212,0.1); color:#0e7490; }
 [data-theme="light"] .tag.p { background:rgba(236,72,153,0.1); color:#be185d; }
+[data-theme="light"] .tag.y { background:rgba(234,179,8,0.1); color:#a16207; }
+[data-theme="light"] .tag.r { background:rgba(239,68,68,0.1); color:#b91c1c; }
+[data-theme="light"] .tag.i { background:rgba(139,92,246,0.1); color:#6d28d9; }
 @keyframes tagIn { from{opacity:0;transform:scale(.8)} to{opacity:1;transform:scale(1)} }
 
 /* Fiche A4 */
@@ -140,16 +159,20 @@ body { font-family:'Plus Jakarta Sans',sans-serif; background:var(--bg); color:v
 .a4-sec { margin-bottom:14px; }
 .a4-sec-title { font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:1.5px; padding:6px 12px; border-radius:5px; margin-bottom:8px; display:flex; align-items:center; gap:6px; }
 .a4-sec-title.culture { background:linear-gradient(135deg,#ede9fe,#e0e7ff); color:#4338ca; }
+.a4-sec-title.task { background:linear-gradient(135deg,#fee2e2,#fecaca); color:#991b1b; }
+.a4-sec-title.inter { background:linear-gradient(135deg,#ede9fe,#ddd6fe); color:#5b21b6; }
 .a4-sec-title.grammar { background:linear-gradient(135deg,#d1fae5,#ccfbf1); color:#065f46; }
-.a4-sec-title.phono { background:linear-gradient(135deg,#fee2e2,#fef3c7); color:#b45309; }
+.a4-sec-title.lexique { background:linear-gradient(135deg,#fef08a,#fde047); color:#854d0e; }
+.a4-sec-title.phono { background:linear-gradient(135deg,#ffedd5,#fef3c7); color:#b45309; }
 .a4-sec-title.pragma { background:linear-gradient(135deg,#fce7f3,#fae8ff); color:#9333ea; }
 .a4-sec-title.comp { background:linear-gradient(135deg,#ecfdf5,#f0fdf4); color:#166534; }
 .a4-list { list-style:none; padding:0; }
 .a4-list li { font-size:11px; color:#334155; padding:3px 0 3px 16px; position:relative; line-height:1.5; }
 .a4-list li::before { content:'▸'; position:absolute; left:3px; font-weight:bold; }
-.a4-list.v li::before { color:#6c63ff; } .a4-list.g li::before { color:#10b981; }
+.a4-list.v li::before { color:#6c63ff; } .a4-list.g li::before { color:#10b981; } .a4-list.y li::before { color:#eab308; }
 .a4-list.b li::before { color:#3b82f6; } .a4-list.o li::before { color:#f59e0b; }
 .a4-list.p li::before { color:#a855f7; } .a4-list.t li::before { color:#06b6d4; }
+.a4-list.r li::before { color:#ef4444; } .a4-list.i li::before { color:#8b5cf6; }
 .a4-empty { color:#94a3b8; font-style:italic; font-size:11px; padding:6px 0; text-align:center; }
 .a4-sub { margin-bottom:6px; padding-left:4px; }
 .a4-sub-title { font-size:10px; font-weight:700; color:#64748b; text-transform:uppercase; letter-spacing:.8px; margin-bottom:2px; }
@@ -194,10 +217,10 @@ body { font-family:'Plus Jakarta Sans',sans-serif; background:var(--bg); color:v
     <div class="logo-icon">📝</div>
     <div class="logo-text">Le Séquenceur</div>
     <div class="logo-flags">
-      <span class="flag-btn active" id="flag-en" onclick="setLanguage('en')" title="Passer en Anglais">🇬🇧</span>
-      <span class="flag-btn" id="flag-es" onclick="setLanguage('es')" title="Passer en Espagnol">🇪🇸</span>
-      <span class="flag-btn" id="flag-de" onclick="setLanguage('de')" title="Passer en Allemand">🇩🇪</span>
-      <span class="flag-btn" id="flag-it" onclick="setLanguage('it')" title="Passer en Italien">🇮🇹</span>
+      <span class="flag-btn active" id="flag-en" onclick="changeLangFromFlag('en')" title="Passer en Anglais">🇬🇧</span>
+      <span class="flag-btn" id="flag-es" onclick="changeLangFromFlag('es')" title="Passer en Espagnol">🇪🇸</span>
+      <span class="flag-btn" id="flag-de" onclick="changeLangFromFlag('de')" title="Passer en Allemand">🇩🇪</span>
+      <span class="flag-btn" id="flag-it" onclick="changeLangFromFlag('it')" title="Passer en Italien">🇮🇹</span>
       <span class="info-btn" onclick="openTutorial()" title="Comment ça marche ?">ℹ️</span>
     </div>
   </div>
@@ -205,7 +228,8 @@ body { font-family:'Plus Jakarta Sans',sans-serif; background:var(--bg); color:v
 
 <div class="main-container">
   <div class="editor-panel">
-    <div class="section-label">Configuration</div>
+    <div class="section-label purple">Ancrage Culturel</div>
+    
     <div class="field-group">
       <label class="field-label" id="label-niveau">Niveau</label>
       <select class="field-select" id="niveau" onchange="onNiveauChange()">
@@ -239,11 +263,6 @@ body { font-family:'Plus Jakarta Sans',sans-serif; background:var(--bg); color:v
       </select>
     </div>
 
-    <div class="field-group"><label class="field-label">Titre de la séquence</label><input class="field-input" id="titre" placeholder="Ex : My Home, My Castle" oninput="updatePreview()"></div>
-    <div class="field-group"><label class="field-label">Problématique</label><textarea class="field-textarea" id="problematique" placeholder="Ex : How do homes reflect culture and identity?" oninput="updatePreview()"></textarea></div>
-
-    <div class="divider"></div>
-    <div class="section-label purple">Ancrage Culturel</div>
     <div class="field-group">
       <label class="field-label">Axe culturel</label>
       <div class="select-with-add">
@@ -252,25 +271,55 @@ body { font-family:'Plus Jakarta Sans',sans-serif; background:var(--bg); color:v
       </div>
       <div class="added-tags" id="tags-axe"></div>
     </div>
+    
     <div class="field-group">
       <label class="field-label">Objet d'étude</label>
-      <div class="select-with-add">
+      <div class="select-with-add" style="margin-bottom:6px;">
         <select class="field-select" id="objet"><option value="">— Choisir d'abord un axe —</option></select>
         <button class="btn-add v" onclick="addItem('objet','culture','v')">+</button>
+      </div>
+      <div class="select-with-add">
+        <input type="text" class="field-input" id="objet-custom" placeholder="...ou ajoutez un objet libre">
+        <button class="btn-add v" onclick="addCustomItem('objet-custom','culture','v')">+</button>
       </div>
       <div class="added-tags" id="tags-culture"></div>
     </div>
 
     <div class="divider"></div>
-    <div class="section-label cyan">Compétences Langagières</div>
-    <div class="field-group"><label class="field-label">Compréhension orale (CO)</label><div class="select-with-add"><select class="field-select" id="comp_co"><option value="">— Choisir le niveau en haut —</option></select><button class="btn-add c" onclick="addItem('comp_co','comp_co','c')">+</button></div><div class="added-tags" id="tags-comp_co"></div></div>
-    <div class="field-group"><label class="field-label">Compréhension écrite (CE)</label><div class="select-with-add"><select class="field-select" id="comp_ce"><option value="">— Choisir le niveau en haut —</option></select><button class="btn-add c" onclick="addItem('comp_ce','comp_ce','c')">+</button></div><div class="added-tags" id="tags-comp_ce"></div></div>
-    <div class="field-group"><label class="field-label">Production orale (PO)</label><div class="select-with-add"><select class="field-select" id="comp_po"><option value="">— Choisir le niveau en haut —</option></select><button class="btn-add c" onclick="addItem('comp_po','comp_po','c')">+</button></div><div class="added-tags" id="tags-comp_po"></div></div>
-    <div class="field-group"><label class="field-label">Production écrite (PE)</label><div class="select-with-add"><select class="field-select" id="comp_pe"><option value="">— Choisir le niveau en haut —</option></select><button class="btn-add c" onclick="addItem('comp_pe','comp_pe','c')">+</button></div><div class="added-tags" id="tags-comp_pe"></div></div>
-    <div class="field-group"><label class="field-label">Interaction orale (PEC)</label><div class="select-with-add"><select class="field-select" id="comp_pec"><option value="">— Choisir le niveau en haut —</option></select><button class="btn-add c" onclick="addItem('comp_pec','comp_pec','c')">+</button></div><div class="added-tags" id="tags-comp_pec"></div></div>
+    <div class="section-label">Projet & Thème</div>
+    
+    <div class="field-group"><label class="field-label">Titre de la séquence</label><input class="field-input" id="titre" placeholder="Ex : My Home, My Castle" oninput="updatePreview()"></div>
+    <div class="field-group"><label class="field-label">Problématique</label><textarea class="field-textarea" id="problematique" placeholder="Ex : How do homes reflect culture and identity?" oninput="updatePreview()"></textarea></div>
+
+    <div class="field-group">
+      <label class="field-label" style="color: var(--accent-r);">Projet final (Tâche finale)</label>
+      <div class="select-with-add">
+        <input type="text" class="field-input" id="task-custom" placeholder="Ex : Créer un guide touristique audio...">
+        <button class="btn-add r" onclick="addCustomItem('task-custom','task','r')">+</button>
+      </div>
+      <div class="added-tags" id="tags-task"></div>
+    </div>
+
+    <div class="field-group">
+      <label class="field-label" style="color: var(--accent-i);">Tâches intermédiaires</label>
+      <div class="select-with-add">
+        <input type="text" class="field-input" id="inter-custom" placeholder="Ex : Rédiger le script, interviewer un élève...">
+        <button class="btn-add i" onclick="addCustomItem('inter-custom','inter','i')">+</button>
+      </div>
+      <div class="added-tags" id="tags-inter"></div>
+    </div>
 
     <div class="divider"></div>
-    <div class="section-label">Objectifs Linguistiques</div>
+    <div class="section-label cyan">Objectifs Linguistiques</div>
+
+    <div class="field-group">
+      <label class="field-label" style="color: var(--accent-y);">Lexique</label>
+      <div class="select-with-add">
+        <input type="text" class="field-input" id="lexique-custom" placeholder="Ex : Vocabulaire de la maison, émotions...">
+        <button class="btn-add y" onclick="addCustomItem('lexique-custom','lexique','y')">+</button>
+      </div>
+      <div class="added-tags" id="tags-lexique"></div>
+    </div>
     
     <div class="field-group">
       <label class="field-label">Grammaire</label>
@@ -285,9 +334,8 @@ body { font-family:'Plus Jakarta Sans',sans-serif; background:var(--bg); color:v
       <div class="added-tags" id="tags-grammar"></div>
     </div>
 
-    <div class="divider"></div>
-    <div class="section-label orange">Phonologie</div>
     <div class="field-group">
+      <label class="field-label" style="color: var(--accent3);">Phonologie</label>
       <div class="select-with-add" style="margin-bottom:6px;">
         <select class="field-select" id="phonologie"><option value="">— Choisir le niveau en haut —</option></select>
         <button class="btn-add o" onclick="addItem('phonologie','phono','o')">+</button>
@@ -299,9 +347,8 @@ body { font-family:'Plus Jakarta Sans',sans-serif; background:var(--bg); color:v
       <div class="added-tags" id="tags-phono"></div>
     </div>
 
-    <div class="divider"></div>
-    <div class="section-label pink">Pragmatique</div>
     <div class="field-group">
+      <label class="field-label" style="color: var(--accent5);">Pragmatique</label>
       <div class="select-with-add" style="margin-bottom:6px;">
         <select class="field-select" id="pragmatique"><option value="">— Choisir le niveau en haut —</option></select>
         <button class="btn-add p" onclick="addItem('pragmatique','pragma','p')">+</button>
@@ -312,6 +359,14 @@ body { font-family:'Plus Jakarta Sans',sans-serif; background:var(--bg); color:v
       </div>
       <div class="added-tags" id="tags-pragma"></div>
     </div>
+
+    <div class="divider"></div>
+    <div class="section-label">Compétences Langagières</div>
+    <div class="field-group"><label class="field-label">Compréhension orale (CO)</label><div class="select-with-add"><select class="field-select" id="comp_co"><option value="">— Choisir le niveau en haut —</option></select><button class="btn-add c" onclick="addItem('comp_co','comp_co','c')">+</button></div><div class="added-tags" id="tags-comp_co"></div></div>
+    <div class="field-group"><label class="field-label">Compréhension écrite (CE)</label><div class="select-with-add"><select class="field-select" id="comp_ce"><option value="">— Choisir le niveau en haut —</option></select><button class="btn-add c" onclick="addItem('comp_ce','comp_ce','c')">+</button></div><div class="added-tags" id="tags-comp_ce"></div></div>
+    <div class="field-group"><label class="field-label">Production orale (PO)</label><div class="select-with-add"><select class="field-select" id="comp_po"><option value="">— Choisir le niveau en haut —</option></select><button class="btn-add c" onclick="addItem('comp_po','comp_po','c')">+</button></div><div class="added-tags" id="tags-comp_po"></div></div>
+    <div class="field-group"><label class="field-label">Production écrite (PE)</label><div class="select-with-add"><select class="field-select" id="comp_pe"><option value="">— Choisir le niveau en haut —</option></select><button class="btn-add c" onclick="addItem('comp_pe','comp_pe','c')">+</button></div><div class="added-tags" id="tags-comp_pe"></div></div>
+    <div class="field-group"><label class="field-label">Interaction orale (PEC)</label><div class="select-with-add"><select class="field-select" id="comp_pec"><option value="">— Choisir le niveau en haut —</option></select><button class="btn-add c" onclick="addItem('comp_pec','comp_pec','c')">+</button></div><div class="added-tags" id="tags-comp_pec"></div></div>
 
     <footer class="app-footer">
       <div class="footer-brand">
@@ -342,10 +397,22 @@ body { font-family:'Plus Jakarta Sans',sans-serif; background:var(--bg); color:v
         <div id="a4-axe"></div>
         <div id="a4-culture"><div class="a4-empty">Ajoutez des axes ou objets d'étude</div></div>
       </div>
-      <div class="a4-sec"><div class="a4-sec-title comp"><span class="emoji-fix">🎧</span> Compétences Langagières</div><div id="a4-comp"><div class="a4-empty">Ajoutez des compétences</div></div></div>
+      
+      <div class="a4-sec" id="sec-task" style="display:none;">
+        <div class="a4-sec-title task"><span class="emoji-fix">🎯</span> Projet Final</div>
+        <div id="a4-task"></div>
+      </div>
+
+      <div class="a4-sec" id="sec-inter" style="display:none;">
+        <div class="a4-sec-title inter"><span class="emoji-fix">🏹</span> Tâches Intermédiaires</div>
+        <div id="a4-inter"></div>
+      </div>
+
+      <div class="a4-sec"><div class="a4-sec-title lexique"><span class="emoji-fix">📖</span> Lexique</div><div id="a4-lexique"><div class="a4-empty">Ajoutez du lexique</div></div></div>
       <div class="a4-sec"><div class="a4-sec-title grammar"><span class="emoji-fix">📝</span> Grammaire</div><div id="a4-grammar"><div class="a4-empty">Ajoutez des points de grammaire</div></div></div>
       <div class="a4-sec"><div class="a4-sec-title phono"><span class="emoji-fix">🔊</span> Phonologie</div><div id="a4-phono"><div class="a4-empty">Ajoutez des objectifs phonologiques</div></div></div>
       <div class="a4-sec"><div class="a4-sec-title pragma"><span class="emoji-fix">💬</span> Pragmatique</div><div id="a4-pragma"><div class="a4-empty">Ajoutez des éléments pragmatiques</div></div></div>
+      <div class="a4-sec"><div class="a4-sec-title comp"><span class="emoji-fix">🎧</span> Compétences Langagières</div><div id="a4-comp"><div class="a4-empty">Ajoutez des compétences</div></div></div>
       
       <div class="a4-footer" id="a4-footer-text">Le Séquenceur — Anglais</div>
     </div>
@@ -361,12 +428,28 @@ body { font-family:'Plus Jakarta Sans',sans-serif; background:var(--bg); color:v
   </div>
 </div>
 
+<div id="welcomeModal" class="modal-overlay" onclick="event.stopPropagation()">
+  <div class="modal-content" onclick="event.stopPropagation()">
+    <div class="modal-header">Bienvenue sur Le Séquenceur ! 🚀</div>
+    <div class="modal-body">
+      <p>Créez vos fiches de séquence en quelques clics à partir des programmes officiels.</p>
+      <h4>Pour commencer, choisissez votre langue :</h4>
+      <div class="lang-selector">
+        <div class="lang-option" onclick="initApp('en')"><span class="flag">🇬🇧</span><span class="label">Anglais</span></div>
+        <div class="lang-option" onclick="initApp('es')"><span class="flag">🇪🇸</span><span class="label">Espagnol</span></div>
+        <div class="lang-option" onclick="initApp('de')"><span class="flag">🇩🇪</span><span class="label">Allemand</span></div>
+        <div class="lang-option" onclick="initApp('it')"><span class="flag">🇮🇹</span><span class="label">Italien</span></div>
+      </div>
+      <p style="font-size: 11px; margin-top:20px;">Ce choix sera mémorisé pour vos prochaines visites.<br>Vous pourrez le modifier à tout moment via les drapeaux en haut de l'écran.</p>
+    </div>
+  </div>
+</div>
+
 <div id="tutorialModal" class="modal-overlay" onclick="closeTutorial(event)">
   <div class="modal-content" onclick="event.stopPropagation()">
     <button class="modal-close" onclick="closeTutorial()">✕</button>
-    <div class="modal-header">Bienvenue sur Le Séquenceur ! 🚀</div>
+    <div class="modal-header">Comment ça marche ?</div>
     <div class="modal-body">
-      <p>Créez vos fiches de séquence pour vos classes de langues en quelques clics. L'outil génère automatiquement le document à partir des programmes officiels.</p>
       <ul class="tutorial-list">
         <li><span class="step">1</span> <div><strong>Choisissez la langue :</strong> Cliquez sur le drapeau correspondant dans l'en-tête (🇬🇧, 🇪🇸, 🇩🇪, 🇮🇹).</div></li>
         <li><span class="step">2</span> <div><strong>Sélectionnez le niveau :</strong> Collège, Lycée ou Spécialités. Les menus s'adapteront automatiquement !</div></li>
@@ -397,7 +480,6 @@ body { font-family:'Plus Jakarta Sans',sans-serif; background:var(--bg); color:v
     </div>
   </div>
 </div>
-
 <script>
 const COMP = {
   CO: {
@@ -456,7 +538,7 @@ const COMP = {
     "Seconde_LVAB": ["PE1 · B1+ Il peut rédiger une critique ou compte rendu structuré (film, livre, série)", "PE2 · B1+ Il peut utiliser une large gamme de structures adaptées et vocabulaire étendu"],
     "Seconde_LVC": ["PE1 · A1+ Il peut paraphraser, imiter et reprendre des phrases simples (avec aide)"],
     "Première_LVAB": ["PE1 · B1 Il peut justifier un point de vue ou rédiger une critique simple (vocabulaire peu étendu)", "PE2 · B1+ Il peut rédiger une critique ou un compte rendu structuré (vocabulaire assez étendu)"],
-    "Première_LVC": ["PE1 · A2 Il peut écrire le début d'une histoire ou en continuer une (avec dictionnaire)"],
+    "Première_LVC": ["PE1 · A2 Il peut écrire le début d'histoire ou en continuer une (avec dictionnaire)"],
     "Terminale_LVAB": ["PE1 · B1 Il peut donner des raisons simples pour rédiger une critique simple", "PE2 · B2 Il peut développer méthodiquement une argumentation", "PE3 · B2 Il peut mettre en évidence les points significatifs pour une critique ou synthèse"],
     "Terminale_LVC": ["PE1 · B1 Il peut donner des raisons simples pour rédiger une critique simple", "PE2 · B2 Il peut développer méthodiquement une argumentation", "PE3 · B2 Il peut mettre en évidence les points significatifs pour une critique ou synthèse"],
     "Première_AMC": ["PE1 · B2 Il peut développer méthodiquement une argumentation", "PE2 · B2 Il peut mettre en évidence les points significatifs pour une critique ou synthèse"],
@@ -465,7 +547,7 @@ const COMP = {
     "Terminale_LLCER": ["PE1 · C1 Il peut s'exprimer dans un texte clair, bien structuré et fluide sur des oeuvres complexes", "PE2 · C1 Il peut produire un commentaire ou une analyse stylistique détaillée"]
   },
   PEC: {
-    "6ème": ["PEC1 · Répondre à des questions simples et en poser", "PEC2 · Réagir à des affirmations, salutation et congé", "PEC3 · Interactions stéréotypées, engager et clore une conversation"],
+    "6ème": ["PEC1 · Répondre à des questions simple et en poser", "PEC2 · Réagir à des affirmations, salutation et congé", "PEC3 · Interactions stéréotypées, engager et clore une conversation"],
     "5ème": ["PEC4 · Échange simple sur des sujets familiers", "PEC5 · Communiquer pour une tâche simple", "PEC6 · Échanges sociaux courts (avec aide)", "PEC7 · Transmettre les points principaux"],
     "4ème": ["PEC8 · Exprimer accord/désaccord de manière variée", "PEC9 · Interagir dans des situations prévisibles", "PEC10 · Poser des questions, échanger des idées", "PEC11 · Relater des informations de textes informatifs"],
     "3ème": ["PEC12 · Conversation en langue standard", "PEC13 · Conversations prolongées avec initiatives", "PEC14 · Résumer l'information et les arguments", "PEC15 · Consignes claires, questions pour clarifier", "PEC16 · Accord/désaccord avec nuance, reformuler"],
@@ -723,12 +805,12 @@ const DB = {
       "Terminale_LLCER": ["PR1 · Quelques connecteurs chronologiques (entonces, luego)", "PR2 · Connecteurs logiques pour illustrer (por ejemplo, o sea)", "PR3 · Locutions temporelles : a continuación, por último, pocas veces, antiguamente, etc.", "PR4 · Exprimer la volonté : Quiero que… / Te pido que… / Me gustaría que…", "PR5 · Exprimer la concession : aunque / si bien / a pesar de que", "PR6 · Utiliser la phrase emphatique (c’est... que/qui)"]
     }
   },
-  de: {
+de: {
     subtitle: "Allemand", phTitle: "Ex : Eine Reise nach Berlin", phProb: "Ex : Inwiefern spiegelt die Stadt die deutsche Geschichte wider?",
     axes: {
       "6ème": { "Axe 1. Personnes et personnages": ["Je suis un personnage", "Esprit de famille", "Animaux et hommes", "Enfants impertinents"], "Axe 2. Le quotidien": ["Cuisine allemande", "Apprendre en jouant", "Espaces de loisirs", "Avent et Noël"], "Axe 3. Pays et paysages": ["Diversité de paysages", "Suisse et Autriche", "Le Rhin", "Baltique ou Mer du Nord ?"], "Axe 4. Imaginaire et contes": ["Allemagne, terre de légendes", "Enfants dans les contes", "Mythes et monstres", "Fantasy"], "Axe 5. Arts et sentiments": ["Exprimer ses émotions", "Poésies et chansons", "Les couleurs c’est la vie"] },
       "5ème": { "Axe 1. Portrait": ["Galerie de portraits", "L’autoportrait", "Frère et sœur", "L’amitié en Allemagne"], "Axe 2. Le quotidien": ["Tag für Tag", "Mer ou montagne ?", "Kaffeekuchen", "Carnaval"], "Axe 3. École et loisirs": ["Nos écoles", "Vereinskultur", "L’école hors la classe", "L’école d’hier/demain"], "Axe 4. Réel et imaginaire": ["Neuschwanstein", "Cadeaux", "Hokus Pokus", "Sacré Charlemagne"], "Axe 5. Langues et lieux": ["Jeu allemand", "Mots transparents", "Dialectes", "Langue accueillante"], "Axe 6. 16 nuances d’Allemagne": ["Unité allemande", "Symboles", "Le fédéralisme", "1/16e d’Allemagne"] },
-      "4ème": { "Axe 1. Sport et société": ["Le foot", "Wanderlust", "Sport et intégration", "1936 vs. 2006"], "Axe 2. Voyages": ["Die Reiselust", "Échanges franco-allemands", "Explorateurs allemands", "Allemands dans l’espace"], "Axe 3. Villes et quartiers": ["Fribourg/Zurich", "Traditions villageoises", "Vienne", "Le village dans la ville"], "Axe 4. Inventer": ["Habiter le futur", "Le vélo", "Jeunesse innovante", "Inventions allemandes"], "Axe 5. Langages artistiques": ["Scènes musicales", "Musique classique", "Comment lit-on aujourd’hui ?", "Poetry-Slam"], "Axe 6. Suisse et Autriche": ["Sisi", "Pays de gourmets", "Tradition musicale alpine", "La Suisse, un État-Nation ?"] },
+      "4ème": { "Axe 1. Sport et society": ["Le foot", "Wanderlust", "Sport et intégration", "1936 vs. 2006"], "Axe 2. Voyages": ["Die Reiselust", "Échanges franco-allemands", "Explorateurs allemands", "Allemands dans l’espace"], "Axe 3. Villes et quartiers": ["Fribourg/Zurich", "Traditions villageoises", "Vienne", "Le village dans la ville"], "Axe 4. Inventer": ["Habiter le futur", "Le vélo", "Jeunesse innovante", "Inventions allemandes"], "Axe 5. Langages artistiques": ["Scènes musicales", "Musique classique", "Comment lit-on aujourd’hui ?", "Poetry-Slam"], "Axe 6. Suisse et Autriche": ["Sisi", "Pays de gourmets", "Tradition musicale alpine", "La Suisse, un État-Nation ?"] },
       "3ème": { "Axe 1. Rencontre de l’autre": ["Histoires de retrouvailles", "Amour contre conventions", "Ossis und Wessis", "Jeux de société"], "Axe 2. Travailler": ["Gesellen und Azubis", "Mittelstand", "Jobs", "Kinder, Küche et Karriere?"], "Axe 3. Voyages et migrations": ["Voltaire/Sauzay", "Vertriebenen", "Gast- und Vertragsarbeiter", "Wir schaffen das… wieder!"], "Axe 4. Langages et médias": ["Dialectes", "Street art (Berlin)", "Séries et BD", "Évolution de l'allemand"], "Axe 5. Engagement": ["L’Allemagne verte ?", "Consommer responsable", "L’école, lieu d’engagement", "Jusqu’où s’engager ?"], "Axe 6. Le monde franco-allemand": ["Amitié franco-allemande", "Coopération transfrontalière", "Entreprises", "Franco-Allemands d’hier/aujourd’hui"] },
       "Seconde": { "Axe 1. Représentation de soi et rapport à autrui": ["De Dürer à Schiele", "Le Tracht", "Emblèmes nationaux", "Zweite Heimat"], "Axe 2. Vivre entre générations": ["Senioren-WGs", "Dynastie d’artistes", "Conflits intergénérationnels", "1968"], "Axe 3. Le passé dans le présent": ["Abiball/Maturaball", "Friches industrielles", "Ostromane", "Aufarbeitung der Vergangenheit"], "Axe 4. Défis et transitions": ["Stations de ski", "Crise démographique", "Éducation à la démocratie", "Energiewende"], "Axe 5. Créer et recréer": ["Siegfried & Cie", "La Loreley", "Grimm / Dark", "La figure du Faust"], "Axe 6. L'Europe": ["Couple franco-allemand", "Pays de l’Est", "La Hanse", "Allemagne, locomotive de l’UE ?"] },
       "Première": { "Axe 1. Identités et échanges": ["Gastronomie", "Rhein, Donau, Oder, Elbe", "Willkommenskultur", "Geld regiert die Welt"], "Axe 2. Diversité et inclusion": ["Alternativ leben", "Personnes porteuses de handicap", "Solidarité à l’allemande", "Droit des minorités"], "Axe 3. Art et pouvoir": ["Artiste au service du pouvoir", "Literatur & Politik", "Café-théâtre contestation", "Artistes en exil"], "Axe 4. Innovations": ["Inventions au service de l'humanité", "Das Auto", "Femmes dans la science", "Koch vs. Pasteur"], "Axe 5. Être humain et nature": ["Nature dans la ville", "Parcs naturels", "Die Grünen", "Freie Körperkultur"], "Axe 6. L’Allemagne dans le monde": ["Émigration germanophone", "Die deutsche Soft Power", "Colonialisme allemand", "Politique étrangère de l’Allemagne"] },
@@ -754,7 +836,7 @@ const DB = {
       "6ème": ["PH1 · Absence de nasales", "PH2 · Prononciation voyelles", "PH3 · Lettre z [dz]/[ts]", "PH4 · Lettre c", "PH5 · sc [ʃ]", "PH6 · Lettre g", "PH7 · Doubles consonnes", "PH8 · Accent tonique"],
       "5ème": ["PH1 · Nasales/voyelles", "PH2 · Lettres c, sc, g, z", "PH3 · Doubles consonnes", "PH4 · Accent tonique", "PH5 · Fluidité", "PH6 · Récitation"],
       "4ème": ["PH1 · Intonation/rythme", "PH2 · Parole tronche/piane", "PH3 · Mots longs", "PH4 · Consonnes géminées (doppie)", "PH5 · Voyelle + n/m", "PH6 · Lettre g + h"],
-      "3ème": ["PH1 · Intonation", "PH2 · Accent tonique (mots longs/toponymes)", "PH3 · Suffixes", "PH4 · Consonnes géminées", "PH5 · Séquences voyelle + n/m"],
+      "3ème": ["PH1 · Intonation", "PH2 · Accent tonique (toponymes)", "PH3 · Suffixes", "PH4 · Consonnes géminées", "PH5 · Voyelle + n/m"],
       "Seconde_LVAB": ["PH1 · Intonation/rythme", "PH2 · Accent tonique mots longs", "PH3 · Accents terminaisons", "PH4 · Suffixes", "PH5 · Géminées", "PH6 · Séquences n/m"],
       "Seconde_LVC": ["PH1 · Absence nasales", "PH2 · Lettres c, sc, g, z", "PH3 · Doubles consonnes", "PH4 · Accent tonique", "PH5 · Fluidité", "PH6 · Récitation"],
       "Première_LVAB": ["PH1 · Jouer dialogues", "PH2 · Intelligibilité/débit", "PH3 · Géminées/diphtongues", "PH4 · Aperture vocalique"],
@@ -836,39 +918,46 @@ const DB = {
     }
   }
 };
-// ==========================================
-// LOGIQUE JAVASCRIPT DE L'APPLICATION
-// ==========================================
 
 let currentLang = 'en';
-const state = { axe: [], culture: [], grammar: [], phono: [], pragma: [], comp_co: [], comp_ce: [], comp_po: [], comp_pe: [], comp_pec: [] };
+const state = { axe: [], culture: [], task: [], inter: [], lexique: [], grammar: [], phono: [], pragma: [], comp_co: [], comp_ce: [], comp_po: [], comp_pe: [], comp_pec: [] };
 
 const cleanCode = (txt) => txt.replace(/^[A-Z]+\d+\s*·\s*/, '');
 const esc = (s) => s.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
 
-// TUTORIEL
+// --- GESTION INITIALISATION ET ONBOARDING ---
 function openTutorial() { document.getElementById('tutorialModal').classList.add('active'); }
 function closeTutorial(e) {
   if (!e || e.target.id === 'tutorialModal' || e.type === 'click') {
     document.getElementById('tutorialModal').classList.remove('active');
-    try { localStorage.setItem('seq-tuto-seen', 'true'); } catch(err) {}
   }
 }
 
-// RESTAURATION LANGUE + TUTORIEL
+function initApp(lang) {
+  document.getElementById('welcomeModal').classList.remove('active');
+  setLanguage(lang);
+  try { localStorage.setItem('seq-tuto-seen', 'true'); } catch(err) {}
+  setTimeout(openTutorial, 400); // Ouvre le tutoriel juste après le choix de langue
+}
+
+function changeLangFromFlag(lang) {
+  setLanguage(lang);
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   try {
-    if (!localStorage.getItem('seq-tuto-seen')) {
-      setTimeout(openTutorial, 500);
-    }
+    const hasSeenTuto = localStorage.getItem('seq-tuto-seen');
     const savedLang = localStorage.getItem('seq-lang');
-    if (savedLang && DB[savedLang]) {
-      setLanguage(savedLang);
+    
+    if (!hasSeenTuto || !savedLang) {
+      // Première visite : on affiche la modale de choix de langue
+      document.getElementById('welcomeModal').classList.add('active');
     } else {
-      setLanguage('en');
+      // Déjà visité : on charge la langue et on n'affiche pas la modale
+      setLanguage(savedLang);
     }
   } catch(e) {
-    setLanguage('en');
+    document.getElementById('welcomeModal').classList.add('active');
   }
 });
 
@@ -991,28 +1080,24 @@ function populateSelect(id, data, key) {
   const speLevels = ["Première_AMC", "Terminale_AMC", "Première_LLCER", "Terminale_LLCER"];
   
   if (isCollege) {
-    const g = document.createElement('optgroup');
-    g.label = `── ${key} ──`;
+    const g = document.createElement('optgroup'); g.label = `── ${key} ──`;
     data[key].forEach(i => { const o = document.createElement('option'); o.value = cleanCode(i); o.textContent = cleanCode(i); g.appendChild(o); });
     s.appendChild(g);
     
     collegeLevels.forEach(l => {
       if (l === key || !data[l]) return;
-      const gOther = document.createElement('optgroup');
-      gOther.label = `── ${l} ──`;
+      const gOther = document.createElement('optgroup'); gOther.label = `── ${l} ──`;
       data[l].forEach(i => { const o = document.createElement('option'); o.value = cleanCode(i); o.textContent = cleanCode(i); gOther.appendChild(o); });
       s.appendChild(gOther);
     });
   } else if (isSpecialite) {
-    const g = document.createElement('optgroup');
-    g.label = `── ${key.replace('_', ' ')} ──`;
+    const g = document.createElement('optgroup'); g.label = `── ${key.replace('_', ' ')} ──`;
     data[key].forEach(i => { const o = document.createElement('option'); o.value = cleanCode(i); o.textContent = cleanCode(i); g.appendChild(o); });
     s.appendChild(g);
     
     speLevels.forEach(l => {
       if (l === key || !data[l]) return;
-      const gOther = document.createElement('optgroup');
-      gOther.label = `── ${l.replace('_', ' ')} ──`;
+      const gOther = document.createElement('optgroup'); gOther.label = `── ${l.replace('_', ' ')} ──`;
       data[l].forEach(i => { const o = document.createElement('option'); o.value = cleanCode(i); o.textContent = cleanCode(i); gOther.appendChild(o); });
       s.appendChild(gOther);
     });
@@ -1020,11 +1105,8 @@ function populateSelect(id, data, key) {
     if (id.startsWith('comp_')) {
        collegeLevels.forEach(l => {
          if (!data[l]) return;
-         const gCol = document.createElement('optgroup');
-         gCol.label = `── ${l} (A1/A2) ──`;
-         data[l].forEach(i => {
-           const o = document.createElement('option'); o.value = cleanCode(i); o.textContent = cleanCode(i); gCol.appendChild(o);
-         });
+         const gCol = document.createElement('optgroup'); gCol.label = `── ${l} (A1/A2) ──`;
+         data[l].forEach(i => { const o = document.createElement('option'); o.value = cleanCode(i); o.textContent = cleanCode(i); gCol.appendChild(o); });
          s.appendChild(gCol);
        });
     }
@@ -1032,8 +1114,7 @@ function populateSelect(id, data, key) {
     const lvSuffix = '_' + key.split('_')[1];
     const displaySuffix = lvSuffix === '_LVAB' ? ' (LV A/B)' : ' (LV C)';
     
-    const g = document.createElement('optgroup');
-    g.label = `── ${baseNiveau}${displaySuffix} ──`;
+    const g = document.createElement('optgroup'); g.label = `── ${baseNiveau}${displaySuffix} ──`;
     data[key].forEach(i => { const o = document.createElement('option'); o.value = cleanCode(i); o.textContent = cleanCode(i); g.appendChild(o); });
     s.appendChild(g);
     
@@ -1041,8 +1122,7 @@ function populateSelect(id, data, key) {
       if (l === baseNiveau) return;
       const lKey = l + lvSuffix;
       if (data[lKey]) {
-        const gOther = document.createElement('optgroup');
-        gOther.label = `── ${l}${displaySuffix} ──`;
+        const gOther = document.createElement('optgroup'); gOther.label = `── ${l}${displaySuffix} ──`;
         data[lKey].forEach(i => { const o = document.createElement('option'); o.value = cleanCode(i); o.textContent = cleanCode(i); gOther.appendChild(o); });
         s.appendChild(gOther);
       }
@@ -1051,11 +1131,8 @@ function populateSelect(id, data, key) {
     if (id.startsWith('comp_')) {
        collegeLevels.forEach(l => {
          if (!data[l]) return;
-         const gCol = document.createElement('optgroup');
-         gCol.label = `── ${l} (A1/A2) ──`;
-         data[l].forEach(i => {
-           const o = document.createElement('option'); o.value = cleanCode(i); o.textContent = cleanCode(i); gCol.appendChild(o);
-         });
+         const gCol = document.createElement('optgroup'); gCol.label = `── ${l} (A1/A2) ──`;
+         data[l].forEach(i => { const o = document.createElement('option'); o.value = cleanCode(i); o.textContent = cleanCode(i); gCol.appendChild(o); });
          s.appendChild(gCol);
        });
     }
@@ -1125,6 +1202,25 @@ function updatePreview() {
   renderA4List('a4-axe', state.axe, 'v', '');
   renderA4List('a4-culture', state.culture, 'v', state.axe.length ? 'Ajoutez des objets d\'étude' : 'Ajoutez des axes ou objets d\'étude');
 
+  // Affichage Projet & Tâches
+  const secTask = document.getElementById('sec-task');
+  const secInter = document.getElementById('sec-inter');
+  
+  if (state.task.length > 0) {
+    secTask.style.display = 'block';
+    renderA4List('a4-task', state.task, 'r', '');
+  } else { secTask.style.display = 'none'; }
+
+  if (state.inter.length > 0) {
+    secInter.style.display = 'block';
+    renderA4List('a4-inter', state.inter, 'i', '');
+  } else { secInter.style.display = 'none'; }
+
+  renderA4List('a4-lexique', state.lexique, 'y', 'Ajoutez du lexique');
+  renderA4List('a4-grammar', state.grammar, 'g', 'Ajoutez des points de grammaire');
+  renderA4List('a4-phono', state.phono, 'o', 'Ajoutez des objectifs phonologiques');
+  renderA4List('a4-pragma', state.pragma, 'p', 'Ajoutez des éléments pragmatiques');
+
   const allC = [
     { l: 'CO', items: state.comp_co }, { l: 'CE', items: state.comp_ce }, 
     { l: 'PO', items: state.comp_po }, { l: 'PE', items: state.comp_pe }, 
@@ -1144,10 +1240,6 @@ function updatePreview() {
     });
     cd.innerHTML = h;
   }
-
-  renderA4List('a4-grammar', state.grammar, 'g', 'Ajoutez des points de grammaire');
-  renderA4List('a4-phono', state.phono, 'o', 'Ajoutez des objectifs phonologiques');
-  renderA4List('a4-pragma', state.pragma, 'p', 'Ajoutez des éléments pragmatiques');
 }
 
 function renderA4List(id, items, cls, emptyMessage) {
@@ -1163,7 +1255,14 @@ function renderA4List(id, items, cls, emptyMessage) {
 }
 
 function exportPDF() {
+  window.scrollTo(0, 0); // Hack iOS/Mobile
   const element = document.getElementById('a4');
+  const container = document.querySelector('.main-container');
+  
+  // Sauvegarde style pour contrer le clipping mobile
+  const prevOverflow = container.style.overflow;
+  container.style.overflow = 'visible';
+
   const empties = element.querySelectorAll('.a4-empty');
   empties.forEach(el => el.style.display = 'none');
 
@@ -1173,13 +1272,14 @@ function exportPDF() {
     margin:       0,
     filename:     (document.getElementById('titre').value || 'Sequence') + '.pdf',
     image:        { type: 'jpeg', quality: 0.98 },
-    html2canvas:  { scale: 2, useCORS: true },
+    html2canvas:  { scale: 2, useCORS: true, windowWidth: 800, scrollY: 0 },
     jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
   };
   
   html2pdf().set(opt).from(element).save().then(() => {
     empties.forEach(el => el.style.display = 'block');
     element.classList.remove('pdf-export-mode');
+    container.style.overflow = prevOverflow;
   });
 }
 
@@ -1196,10 +1296,13 @@ function exportWord() {
       .a4-prob { text-align: center; font-style: italic; color: #475569; font-size: 11pt; padding: 10pt; background-color: #f8fafc; border-left: 3pt solid #6c63ff; border-right: 3pt solid #6c63ff; margin-bottom: 20pt; }
       .a4-sec-title { font-size: 11pt; font-weight: bold; text-transform: uppercase; padding: 6pt 10pt; margin-bottom: 8pt; border-radius: 4pt; }
       .culture { background-color: #ede9fe; color: #4338ca; }
-      .comp { background-color: #ecfdf5; color: #166534; }
+      .task { background-color: #fee2e2; color: #991b1b; }
+      .inter { background-color: #ede9fe; color: #5b21b6; }
+      .lexique { background-color: #fef08a; color: #854d0e; }
       .grammar { background-color: #ccfbf1; color: #065f46; }
-      .phono { background-color: #fef3c7; color: #b45309; }
+      .phono { background-color: #ffedd5; color: #b45309; }
       .pragma { background-color: #fae8ff; color: #9333ea; }
+      .comp { background-color: #ecfdf5; color: #166534; }
       .a4-list { margin: 0 0 12pt 0; padding: 0; list-style-type: none; }
       .a4-list li { font-size: 11pt; color: #334155; margin-bottom: 4pt; padding-left: 12pt; }
       .a4-sub-title { font-size: 10pt; font-weight: bold; color: #64748b; text-transform: uppercase; margin-top: 8pt; margin-bottom: 2pt; }
@@ -1231,6 +1334,10 @@ function resetAll() {
   const selectsToReset = ['grammaire', 'phonologie', 'pragmatique', 'comp_co', 'comp_ce', 'comp_po', 'comp_pe', 'comp_pec'];
   selectsToReset.forEach(id => { document.getElementById(id).innerHTML = '<option value="">— Choisir le niveau en haut —</option>'; });
   
+  document.getElementById('objet-custom').value = ''; 
+  document.getElementById('task-custom').value = ''; 
+  document.getElementById('inter-custom').value = ''; 
+  document.getElementById('lexique-custom').value = ''; 
   document.getElementById('grammaire-custom').value = ''; 
   document.getElementById('phonologie-custom').value = ''; 
   document.getElementById('pragmatique-custom').value = ''; 
@@ -1240,8 +1347,6 @@ function resetAll() {
   
   updatePreview();
 }
-
-// L'initialisation est désormais gérée par le DOMContentLoaded
 </script>
 </body>
 </html>

@@ -30,7 +30,7 @@ body { font-family:'Plus Jakarta Sans',sans-serif; background:var(--bg); color:v
 .app-header { background:var(--panel); border-bottom:1px solid var(--border); padding:16px 28px; display:flex; align-items:center; justify-content:center; flex:0 0 auto; z-index:100; transition:background .3s; }
 .logo { display:flex; align-items:center; gap:12px; }
 .logo-icon { width:40px; height:40px; background:linear-gradient(135deg,var(--accent),var(--accent2)); border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:20px; box-shadow:0 4px 16px rgba(62,207,142,0.3); }
-.logo-text { font-family:'Playfair Display',serif; font-size:24px; font-weight:800; background:linear-gradient(135deg,var(--accent),var(--accent4)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; line-height:1.2; padding-bottom:4px; margin-bottom:-4px; }
+.logo-text { font-family:'Playfair Display',serif; font-size:24px; font-weight:800; background:linear-gradient(135deg,var(--accent),var(--accent4)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; line-height:1.2; padding-bottom:4px; margin-bottom:-4px; white-space:nowrap; }
 .logo-flags { font-size:24px; display:flex; gap:8px; align-items:center; user-select:none; margin-left:12px; }
 
 .flag-btn { cursor:pointer; transition:all 0.2s; opacity:0.3; filter:grayscale(80%); }
@@ -45,7 +45,7 @@ body { font-family:'Plus Jakarta Sans',sans-serif; background:var(--bg); color:v
 .editor-panel::-webkit-scrollbar-thumb { background:var(--scrollbar); border-radius:3px; }
 .preview-panel { background:var(--preview-bg); padding:28px 28px 100px 28px; overflow-y:auto; display:flex; justify-content:center; align-items:flex-start; transition:background .3s; }
 
-/* Modal & Tutoriel */
+/* Modales */
 .modal-overlay { position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.6); backdrop-filter:blur(3px); z-index:9999; display:flex; justify-content:center; align-items:center; opacity:0; visibility:hidden; transition:all 0.3s ease; }
 .modal-overlay.active { opacity:1; visibility:visible; }
 .modal-content { background:var(--panel); color:var(--text); width:90%; max-width:600px; max-height:85vh; border-radius:var(--radius); padding:30px; position:relative; overflow-y:auto; box-shadow:0 10px 40px rgba(0,0,0,0.3); border:1px solid var(--border); transform:translateY(20px); transition:transform 0.3s ease; }
@@ -65,7 +65,7 @@ body { font-family:'Plus Jakarta Sans',sans-serif; background:var(--bg); color:v
 .tutorial-list strong { color:var(--accent); }
 [data-theme="light"] .tutorial-list li { color:var(--text); }
 
-/* Pied de page et Actions */
+/* Actions */
 .header-actions { position:fixed; bottom:0; left:0; right:0; background:var(--panel); padding:12px 28px; border-top:1px solid var(--border); box-shadow:0 -4px 24px rgba(0,0,0,0.15); z-index:1000; display:flex; justify-content:center; align-items:center; gap:16px; transition:background .3s; }
 .export-actions { display:flex; gap:12px; }
 .theme-toggle { background:var(--toggle-bg); border:1px solid var(--border); border-radius:20px; width:56px; height:28px; cursor:pointer; position:relative; transition:background .3s; flex-shrink:0; }
@@ -80,6 +80,7 @@ body { font-family:'Plus Jakarta Sans',sans-serif; background:var(--bg); color:v
 .btn-word:hover { box-shadow:0 6px 16px rgba(108,99,255,0.3); }
 .btn-reset:hover { background:rgba(128,128,128,0.2); color:var(--text); transform:none; }
 
+/* Pied de page Forge */
 .app-footer { margin-top: auto; padding: 20px 0; border-top: 1px solid var(--border); display: flex; flex-direction: column; align-items: center; gap: 12px; }
 .footer-brand { display: flex; align-items: center; gap: 8px; font-size: 13px; }
 .footer-brand a { color: var(--accent); text-decoration: none; font-weight: 700; }
@@ -159,17 +160,22 @@ body { font-family:'Plus Jakarta Sans',sans-serif; background:var(--bg); color:v
 .emoji-fix { display: inline-block; margin-right: 4px; }
 
 @media print { .app-header, .header-actions, .editor-panel, .modal-overlay { display:none!important; } }
+
+/* --- CORRECTIONS MOBILE --- */
 @media (max-width: 1100px) {
-  body { height:auto; overflow:auto; display:block; }
-  .main-container { display:block; }
+  body { height:auto; overflow:auto; display:block; padding-bottom: 60px; }
+  .main-container { display:block; position: relative; padding-bottom: 160px; }
   .editor-panel { border-right:none; border-bottom:1px solid var(--border); overflow:visible; padding-bottom:30px; }
-  .preview-panel { padding:20px 16px 100px 16px; overflow:visible; }
+  .preview-panel { padding:20px 16px 20px 16px; overflow:visible; }
+  .app-footer { position: absolute; bottom: 0; left: 0; right: 0; margin-top: 0; }
 }
 @media (max-width: 600px) {
-  .app-header { padding:12px 16px; }
-  .logo-icon { width:34px; height:34px; font-size:16px; }
-  .logo-text { font-size:20px; }
-  .logo-flags { font-size:18px; }
+  .app-header { padding: 12px 8px; }
+  .logo { gap: 6px; }
+  .logo-icon { width: 26px; height: 26px; font-size: 13px; }
+  .logo-text { font-size: 16px; letter-spacing: -0.5px; }
+  .logo-flags { font-size: 16px; gap: 4px; margin-left: 4px; }
+  .info-btn { font-size: 16px; margin-left: 4px; }
   .header-actions { padding:10px 12px; justify-content:space-between; gap:8px; }
   .export-actions { flex:1; gap:6px; }
   .btn { padding:8px 10px; font-size:11px; width:100%; }
@@ -178,34 +184,6 @@ body { font-family:'Plus Jakarta Sans',sans-serif; background:var(--bg); color:v
   .a4-badge { top:10px; right:10px; }
   .a4-footer { position:relative; bottom:auto; left:auto; right:auto; margin-top:30px; }
   .modal-content { width:95%; padding:20px; }
-}
-/* --- CORRECTIONS MOBILE (Titre + Pied de page) --- */
-.logo-text { white-space: nowrap; } /* Empêche le titre de passer à la ligne */
-
-@media (max-width: 1100px) {
-  /* On prépare l'espace en bas de page pour accueillir le footer */
-  body { padding-bottom: 60px; } 
-  .main-container { position: relative; padding-bottom: 160px; } 
-  .preview-panel { padding-bottom: 20px; }
-  
-  /* On détache le footer des objectifs pragmatiques pour le coller tout en bas */
-  .app-footer { 
-    position: absolute; 
-    bottom: 0; 
-    left: 0; 
-    right: 0; 
-    margin-top: 0; 
-  }
-}
-
-@media (max-width: 600px) {
-  /* On réduit légèrement les marges et les tailles pour que tout rentre sur 1 ligne */
-  .app-header { padding: 12px 8px; }
-  .logo { gap: 6px; }
-  .logo-icon { width: 26px; height: 26px; font-size: 13px; }
-  .logo-text { font-size: 16px; letter-spacing: -0.5px; }
-  .logo-flags { font-size: 16px; gap: 4px; margin-left: 4px; }
-  .info-btn { font-size: 16px; margin-left: 4px; }
 }
 </style>
 </head>
@@ -419,6 +397,7 @@ body { font-family:'Plus Jakarta Sans',sans-serif; background:var(--bg); color:v
     </div>
   </div>
 </div>
+
 <script>
 const COMP = {
   CO: {
@@ -743,8 +722,123 @@ const DB = {
       "Première_LLCER": ["PR1 · Quelques connecteurs chronologiques (entonces, luego)", "PR2 · Connecteurs logiques pour illustrer (por ejemplo, o sea)", "PR3 · Locutions temporelles : a continuación, por último, pocas veces, antiguamente, etc.", "PR4 · Exprimer la volonté : Quiero que… / Te pido que… / Me gustaría que…", "PR5 · Exprimer la concession : aunque / si bien / a pesar de que", "PR6 · Utiliser la phrase emphatique (c’est... que/qui)"],
       "Terminale_LLCER": ["PR1 · Quelques connecteurs chronologiques (entonces, luego)", "PR2 · Connecteurs logiques pour illustrer (por ejemplo, o sea)", "PR3 · Locutions temporelles : a continuación, por último, pocas veces, antiguamente, etc.", "PR4 · Exprimer la volonté : Quiero que… / Te pido que… / Me gustaría que…", "PR5 · Exprimer la concession : aunque / si bien / a pesar de que", "PR6 · Utiliser la phrase emphatique (c’est... que/qui)"]
     }
+  },
+  de: {
+    subtitle: "Allemand", phTitle: "Ex : Eine Reise nach Berlin", phProb: "Ex : Inwiefern spiegelt die Stadt die deutsche Geschichte wider?",
+    axes: {
+      "6ème": { "Axe 1. Personnes et personnages": ["Je suis un personnage", "Esprit de famille", "Animaux et hommes", "Enfants impertinents"], "Axe 2. Le quotidien": ["Cuisine allemande", "Apprendre en jouant", "Espaces de loisirs", "Avent et Noël"], "Axe 3. Pays et paysages": ["Diversité de paysages", "Suisse et Autriche", "Le Rhin", "Baltique ou Mer du Nord ?"], "Axe 4. Imaginaire et contes": ["Allemagne, terre de légendes", "Enfants dans les contes", "Mythes et monstres", "Fantasy"], "Axe 5. Arts et sentiments": ["Exprimer ses émotions", "Poésies et chansons", "Les couleurs c’est la vie"] },
+      "5ème": { "Axe 1. Portrait": ["Galerie de portraits", "L’autoportrait", "Frère et sœur", "L’amitié en Allemagne"], "Axe 2. Le quotidien": ["Tag für Tag", "Mer ou montagne ?", "Kaffeekuchen", "Carnaval"], "Axe 3. École et loisirs": ["Nos écoles", "Vereinskultur", "L’école hors la classe", "L’école d’hier/demain"], "Axe 4. Réel et imaginaire": ["Neuschwanstein", "Cadeaux", "Hokus Pokus", "Sacré Charlemagne"], "Axe 5. Langues et lieux": ["Jeu allemand", "Mots transparents", "Dialectes", "Langue accueillante"], "Axe 6. 16 nuances d’Allemagne": ["Unité allemande", "Symboles", "Le fédéralisme", "1/16e d’Allemagne"] },
+      "4ème": { "Axe 1. Sport et société": ["Le foot", "Wanderlust", "Sport et intégration", "1936 vs. 2006"], "Axe 2. Voyages": ["Die Reiselust", "Échanges franco-allemands", "Explorateurs allemands", "Allemands dans l’espace"], "Axe 3. Villes et quartiers": ["Fribourg/Zurich", "Traditions villageoises", "Vienne", "Le village dans la ville"], "Axe 4. Inventer": ["Habiter le futur", "Le vélo", "Jeunesse innovante", "Inventions allemandes"], "Axe 5. Langages artistiques": ["Scènes musicales", "Musique classique", "Comment lit-on aujourd’hui ?", "Poetry-Slam"], "Axe 6. Suisse et Autriche": ["Sisi", "Pays de gourmets", "Tradition musicale alpine", "La Suisse, un État-Nation ?"] },
+      "3ème": { "Axe 1. Rencontre de l’autre": ["Histoires de retrouvailles", "Amour contre conventions", "Ossis und Wessis", "Jeux de société"], "Axe 2. Travailler": ["Gesellen und Azubis", "Mittelstand", "Jobs", "Kinder, Küche et Karriere?"], "Axe 3. Voyages et migrations": ["Voltaire/Sauzay", "Vertriebenen", "Gast- und Vertragsarbeiter", "Wir schaffen das… wieder!"], "Axe 4. Langages et médias": ["Dialectes", "Street art (Berlin)", "Séries et BD", "Évolution de l'allemand"], "Axe 5. Engagement": ["L’Allemagne verte ?", "Consommer responsable", "L’école, lieu d’engagement", "Jusqu’où s’engager ?"], "Axe 6. Le monde franco-allemand": ["Amitié franco-allemande", "Coopération transfrontalière", "Entreprises", "Franco-Allemands d’hier/aujourd’hui"] },
+      "Seconde": { "Axe 1. Représentation de soi et rapport à autrui": ["De Dürer à Schiele", "Le Tracht", "Emblèmes nationaux", "Zweite Heimat"], "Axe 2. Vivre entre générations": ["Senioren-WGs", "Dynastie d’artistes", "Conflits intergénérationnels", "1968"], "Axe 3. Le passé dans le présent": ["Abiball/Maturaball", "Friches industrielles", "Ostromane", "Aufarbeitung der Vergangenheit"], "Axe 4. Défis et transitions": ["Stations de ski", "Crise démographique", "Éducation à la démocratie", "Energiewende"], "Axe 5. Créer et recréer": ["Siegfried & Cie", "La Loreley", "Grimm / Dark", "La figure du Faust"], "Axe 6. L'Europe": ["Couple franco-allemand", "Pays de l’Est", "La Hanse", "Allemagne, locomotive de l’UE ?"] },
+      "Première": { "Axe 1. Identités et échanges": ["Gastronomie", "Rhein, Donau, Oder, Elbe", "Willkommenskultur", "Geld regiert die Welt"], "Axe 2. Diversité et inclusion": ["Alternativ leben", "Personnes porteuses de handicap", "Solidarité à l’allemande", "Droit des minorités"], "Axe 3. Art et pouvoir": ["Artiste au service du pouvoir", "Literatur & Politik", "Café-théâtre contestation", "Artistes en exil"], "Axe 4. Innovations": ["Inventions au service de l'humanité", "Das Auto", "Femmes dans la science", "Koch vs. Pasteur"], "Axe 5. Être humain et nature": ["Nature dans la ville", "Parcs naturels", "Die Grünen", "Freie Körperkultur"], "Axe 6. L’Allemagne dans le monde": ["Émigration germanophone", "Die deutsche Soft Power", "Colonialisme allemand", "Politique étrangère de l’Allemagne"] },
+      "Terminale": { "Axe 1. Espace privé et public": ["Émancipation des femmes", "Datenschutz", "HJ, FDJ", "Les Églises"], "Axe 2. Territoire et mémoire": ["Mur de Berlin", "Erinnerungsorte", "Prora, Nischel", "Minorités germaniques en Europe de l’Est"], "Axe 3. Fictions et réalités": ["Wirtschaftswunder", "1989", "Sophie Scholl vs. Hitlerjunge Quex", "Roman historique"], "Axe 4. Communication": ["Humour germanophone", "Langue de slogans", "Blühende Landschaften", "Die vierte Gewalt"], "Axe 5. Citoyenneté et virtuel": ["Réseaux sociaux", "Hashtagaktivismus", "Spiegel-Affären", "Intelligence artificielle"], "Axe 6. Dichter, Denker": ["Der Deutsche Film", "Theater als ‚Hammer‘", "Chorégraphes allemands", "Berceau des Lumières et du romantisme"] },
+      "Première_LLCER": { "Axe 1. Les Imaginaires": ["L’imaginaire populaire allemand", "L'inquiétante étrangeté", "L'imaginaire fantastique"], "Axe 2. Représentations et mémoire": ["Histoire(s) et territoires", "La construction de la mémoire", "« Erinnerungskultur »"] },
+      "Terminale_LLCER": { "Axe 1. Voyages": ["Voyage de découverte", "Exil et migrations"], "Axe 2. Formes des liens sociaux": ["Construction et organisation", "Sociabilisation", "Mutation des liens sociaux"], "Axe 3. Mythologies": ["Nature source de mythes", "Relectures des mythologies", "Mythes fondateurs"] }
+    },
+    grammar: {
+      "6ème": ["G1 · Présent indicatif", "G2 · Présent (futur)", "G3 · Impératif", "G4 · Prétérit", "G5 · Parfait", "G6 · Subjonctif II présent", "G7 · Majuscule pour le nom", "G8 · GN sujet/objet", "G9 · Articles et kein", "G10 · Possessifs et génitif saxon", "G11 · Genre/pluriel, composés", "G12 · Adjectif épithète à gauche", "G13 · Pronoms nominatif", "G14 · Pronoms impersonnels", "G15 · Interrogatifs", "G16 · Marqueurs temporels", "G17 · Verbes position/déplacement", "G18 · Constructions attributives", "G19 · Syntaxe (V2, pince verbale)"],
+      "5ème": ["G20 · Présent indicatif", "G21 · Impératif", "G22 · Prétérit", "G23 · Parfait", "G24 · Futur en werden", "G25 · Subjonctif II", "G26 · GN : kein, possessifs", "G27 · Quantificateurs courants", "G28 · Noms : genre, dérivés", "G29 · Cas : Nom, Acc, Dat", "G30 · Adjectifs déclinés", "G31 · Comparatifs, superlatifs", "G32 · Pronoms acc/dat", "G33 · Pronoms interrogatifs", "G34 · Marqueurs spatiotemporels", "G35 · Verbes position", "G36 · Prépositions mixtes", "G37 · Syntaxe (inversion)", "G38 · Complétive (dass)", "G39 · Temps, cause", "G40 · Relative", "G41 · Infinitive"],
+      "4ème": ["G42 · Présent et Impératif", "G43 · Futur werden", "G44 · Prétérit", "G45 · Parfait", "G46 · Subjonctif II", "G47 · Changement d'état", "G48 · GN : articles", "G49 · Quantificateurs", "G50 · Noms composés/dérivés", "G51 · Accusatif", "G52 · Datif", "G53 · Adjectifs déclinés", "G54 · Comparatif et Superlatif", "G55 · Participe 1/2", "G56 · Pronoms acc/dat", "G57 · Interrogatifs préposition", "G58 · Indéfinis", "G59 · Syntaxe (Inversion)", "G60 · Subordonnées", "G61 · Relative", "G62 · Infinitive (um...zu)"],
+      "3ème": ["G63 · Prétérit", "G64 · Parfait", "G65 · Plus-que-parfait", "G66 · Subjonctif II", "G67 · Passif", "G68 · Quantificateurs déclinaison", "G69 · Nominalisation", "G70 · Réduction lexicale", "G71 · Pluriels", "G72 · Déclinaison complète", "G73 · Génitif", "G74 · Rection des verbes", "G75 · Masculin faible", "G76 · Expansions du nom", "G77 · Relative", "G78 · Superlatif", "G79 · Pronom en da-", "G80 · Interrogatifs", "G81 · Simultanéité (während)", "G82 · Subordonnée en P1", "G83 · Subordonnées"],
+      "Seconde_LVAB": ["G1 · Indicatif : présent, parfait, prétérit", "G2 · Subjonctif II présent", "G3 · Subjonctif II passé", "G4 · Passif", "G5 · Rection casuelle", "G6 · Sens des préverbes", "G7 · Genre et suffixes", "G8 · Types de pluriel", "G9 · Expansions", "G10 · Groupe relatif en was", "G11 · Relative au datif", "G12 · Génitif", "G13 · Déclinaison pronoms", "G14 · Interrogatifs composés", "G15 · Pronom en da-", "G16 · Subordination", "G17 · But (um...zu vs damit)", "G18 · Cause, temps, conséquence", "G19 · Comparaison irréelle (als ob)", "G20 · Corrélation (je...desto)", "G21 · Connecteurs", "G22 · Marqueurs reformulation"],
+      "Seconde_LVC": ["G1 · Présent indicatif", "G2 · Futur proche", "G3 · Impératif", "G4 · Prétérit", "G5 · Parfait", "G6 · Subjonctif II présent", "G7 · GN", "G8 · Articles et kein", "G9 · Possessifs et génitif saxon", "G10 · Nominatif et Accusatif", "G11 · Intensité adjectif", "G12 · Comparatif", "G13 · Pronoms", "G14 · Interrogatifs", "G15 · Marqueurs spatiotemporels", "G16 · Verbes position", "G17 · Syntaxe (V2, P2)", "G18 · Coordination", "G19 · Connecteurs logiques", "G20 · Complétive (dass)"],
+      "Première_LVAB": ["G1 · Indicatif", "G2 · Subjonctif II", "G3 · Passif", "G4 · Rection casuelle", "G5 · Rection prépositionnelle", "G6 · Sens préverbes", "G7 · Pluriel", "G8 · Genre noms dérivés", "G9 · Expansions GN", "G10 · Relatif en was", "G11 · Relative préposition / wo-", "G12 · Génitif", "G13 · Déclinaison épithète", "G14 · Masculins faibles/mixtes", "G15 · Déclinaison pronoms", "G16 · Réfléchi au datif", "G17 · Pronom da-", "G18 · Concomitance", "G19 · Place verbe", "G20 · But (um...zu, damit)", "G21 · Infinitives", "G22 · Relations de sens", "G23 · Reformulation"],
+      "Première_LVC": ["G1 · Présent et prétérit", "G2 · Parfait", "G3 · Subjonctif II", "G4 · Subjonctif II passé", "G5 · Passif 3e personne", "G6 · Déterminants/quantificateurs", "G7 · Formation lexicale", "G8 · Nominalisation", "G9 · Nominatif, accusatif, datif", "G10 · Rection casuelle", "G11 · Superlatif", "G12 · Pronoms personnels/réfléchis", "G13 · Interrogatifs préposition", "G14 · Indéfinis", "G15 · Marqueurs temporels", "G16 · Prépositions spatiales", "G17 · Préverbe séparable", "G18 · Phrase avec subordonnée en P1", "G19 · Infinitive (um...zu)", "G20 · Connecteurs structurants"],
+      "Terminale_LVAB": ["G1 · Indicatif et Subj II", "G2 · Passif impersonnel/modal", "G3 · Repérer Subjonctif I", "G4 · Passif parfait (durch)", "G5 · Double infinitif", "G6 · Genre noms", "G7 · Déclinaison épithète", "G8 · Masculins faibles", "G9 · Relative préposition/wo-", "G10 · Groupe participial", "G11 · Pronom en da-", "G12 · Pronoms impersonnels", "G13 · Marqueurs lexicaux", "G14 · Relations de sens complexes", "G15 · Modalisation", "G16 · Relation avec indem", "G17 · Conditionnelle sans wenn", "G18 · Comparaison irréelle sans ob", "G19 · Discours rapporté (laut, sollen)", "G20 · Particules illocutoires"],
+      "Terminale_LVC": ["G1 · Indicatif et Subj II", "G2 · Passif", "G3 · Subjonctif I", "G4 · Passif parfait", "G5 · Double infinitif", "G6 · Genre noms", "G7 · Déclinaison épithète", "G8 · Masculins faibles", "G9 · Relative", "G10 · Participial", "G11 · Pronom da-", "G12 · Impersonnels", "G13 · Marqueurs lexicaux", "G14 · Relations complexes", "G15 · Modalisation", "G16 · Indem", "G17 · Sans wenn", "G18 · Sans ob", "G19 · Discours rapporté", "G20 · Particules illocutoires"],
+      "Première_LLCER": ["G1 · Indicatif", "G2 · Subjonctif II présent/passé", "G3 · Passif", "G4 · Rection casuelle", "G5 · Rection prépositionnelle", "G6 · Sens préverbes", "G7 · Pluriel", "G8 · Genre noms dérivés", "G9 · Expansions GN", "G10 · Relatif en was", "G11 · Relative préposition / wo-", "G12 · Génitif", "G13 · Déclinaison épithète", "G14 · Masculins faibles/mixtes", "G15 · Déclinaison pronoms", "G16 · Réfléchi au datif", "G17 · Pronom da-", "G18 · Concomitance", "G19 · Place verbe", "G20 · But (um...zu, damit)", "G21 · Infinitives", "G22 · Relations de sens", "G23 · Reformulation"],
+      "Terminale_LLCER": ["G1 · Indicatif et Subj II", "G2 · Passif impersonnel/modal", "G3 · Repérer Subjonctif I", "G4 · Passif parfait (durch)", "G5 · Double infinitif", "G6 · Genre noms", "G7 · Déclinaison épithète", "G8 · Masculins faibles", "G9 · Relative préposition/wo-", "G10 · Groupe participial", "G11 · Pronom en da-", "G12 · Pronoms impersonnels", "G13 · Marqueurs lexicaux", "G14 · Relations de sens complexes", "G15 · Modalisation", "G16 · Relation avec indem", "G17 · Conditionnelle sans wenn", "G18 · Comparaison irréelle sans ob", "G19 · Discours rapporté (laut, sollen)", "G20 · Particules illocutoires"]
+    },
+    phono: {
+      "6ème": ["PH1 · Absence de nasales", "PH2 · Prononciation voyelles", "PH3 · Lettre z [dz]/[ts]", "PH4 · Lettre c", "PH5 · sc [ʃ]", "PH6 · Lettre g", "PH7 · Doubles consonnes", "PH8 · Accent tonique"],
+      "5ème": ["PH1 · Nasales/voyelles", "PH2 · Lettres c, sc, g, z", "PH3 · Doubles consonnes", "PH4 · Accent tonique", "PH5 · Fluidité", "PH6 · Récitation"],
+      "4ème": ["PH1 · Intonation/rythme", "PH2 · Parole tronche/piane", "PH3 · Mots longs", "PH4 · Consonnes géminées (doppie)", "PH5 · Voyelle + n/m", "PH6 · Lettre g + h"],
+      "3ème": ["PH1 · Intonation", "PH2 · Accent tonique (mots longs/toponymes)", "PH3 · Suffixes", "PH4 · Consonnes géminées", "PH5 · Séquences voyelle + n/m"],
+      "Seconde_LVAB": ["PH1 · Intonation/rythme", "PH2 · Accent tonique mots longs", "PH3 · Accents terminaisons", "PH4 · Suffixes", "PH5 · Géminées", "PH6 · Séquences n/m"],
+      "Seconde_LVC": ["PH1 · Absence nasales", "PH2 · Lettres c, sc, g, z", "PH3 · Doubles consonnes", "PH4 · Accent tonique", "PH5 · Fluidité", "PH6 · Récitation"],
+      "Première_LVAB": ["PH1 · Jouer dialogues", "PH2 · Intelligibilité/débit", "PH3 · Géminées/diphtongues", "PH4 · Aperture vocalique"],
+      "Première_LVC": ["PH1 · Absence nasales", "PH2 · z, c, sc, g", "PH3 · Doubles consonnes", "PH4 · Accentuation", "PH5 · Mots longs", "PH6 · Consonnes géminées", "PH7 · Voyelle + n/m"],
+      "Terminale_LVAB": ["PH1 · Jouer dialogues", "PH2 · Intelligibilité/débit", "PH3 · Géminées/diphtongues/nasales", "PH4 · Aperture vocalique/fluidité"],
+      "Terminale_LVC": ["PH1 · Absence nasales", "PH2 · z, c, sc, g", "PH3 · Doubles consonnes", "PH4 · Accentuation", "PH5 · Mots longs", "PH6 · Consonnes géminées", "PH7 · Voyelle + n/m"],
+      "Première_LLCER": ["PH1 · Jouer dialogues", "PH2 · Intelligibilité/débit", "PH3 · Géminées/diphtongues", "PH4 · Aperture vocalique"],
+      "Terminale_LLCER": ["PH1 · Jouer dialogues", "PH2 · Intelligibilité/débit", "PH3 · Géminées/diphtongues/nasales", "PH4 · Aperture vocalique/fluidité"]
+    },
+    pragma: {
+      "6ème": ["PR1 · Conjonctions (e, ma, o, perché)", "PR2 · Locutions lieu/temps"],
+      "5ème": ["PR1 · Conjonctions (e, ma, o, perché)"],
+      "4ème": ["PR1 · Adverbes lieu/temps", "PR2 · Conjonctions"],
+      "3ème": ["PR1 · Subordination (invece, ma, però)", "PR2 · Conséquence", "PR3 · Condition", "PR4 · Connecteurs logiques"],
+      "Seconde_LVAB": ["PR1 · Connecteurs (dapprima, quindi)", "PR2 · Conjonctions", "PR3 · Locutions"],
+      "Seconde_LVC": ["PR1 · Conjonctions"],
+      "Première_LVAB": ["PR1 · Cause (weil, da)", "PR2 · Antériorité/postériorité", "PR3 · Conséquence", "PR4 · Concession", "PR5 · But", "PR6 · Reformulation", "PR7 · Comparaison irréelle", "PR8 · Corrélation"],
+      "Première_LVC": ["PR1 · Conjonctions (siccome...)", "PR2 · Chronologiques", "PR3 · Conclusion"],
+      "Terminale_LVAB": ["PR1 · Relations complexes", "PR2 · Comparaison irréelle", "PR3 · Reformulation", "PR4 · Ajout", "PR5 · Modalisation", "PR6 · Relation avec indem", "PR7 · Discours rapporté", "PR8 · Particules illocutoires"],
+      "Terminale_LVC": ["PR1 · Conjonctions", "PR2 · Chronologiques", "PR3 · Conclusion"],
+      "Première_LLCER": ["PR1 · Cause (weil, da)", "PR2 · Antériorité/postériorité", "PR3 · Conséquence", "PR4 · Concession", "PR5 · But", "PR6 · Reformulation", "PR7 · Comparaison irréelle", "PR8 · Corrélation"],
+      "Terminale_LLCER": ["PR1 · Relations complexes", "PR2 · Comparaison irréelle", "PR3 · Reformulation", "PR4 · Ajout", "PR5 · Modalisation", "PR6 · Relation avec indem", "PR7 · Discours rapporté", "PR8 · Particules illocutoires"]
+    }
+  },
+  it: {
+    subtitle: "Italien", phTitle: "Es : Viaggio a Roma", phProb: "Es : In che modo la città riflette la storia italiana?",
+    axes: {
+      "6ème": { "Axe 1. Personnes et personnages": ["Se présenter", "Album de famille", "Enfants d’Europe", "Rencontre"], "Axe 2. Le quotidien": ["Maison à l’école", "Jeux", "Manger à l’italienne", "Rythmes de vie"], "Axe 3. Pays et paysages": ["Italie en Europe", "Réalité physique", "Emblèmes", "Régions contrastées"], "Axe 4. Imaginaire et contes": ["Fêtes calendaires", "Héros populaires", "Mythe de Rome", "Origines mythologiques"], "Axe 5. Arts et sentiments": ["Représentations artistiques", "Face à une œuvre", "Moyen d’expression", "Sentiment collectif"] },
+      "5ème": { "Axe 1. Portrait": ["Portrait physique/moral", "Autoportrait", "Le masque", "La caricature"], "Axe 2. Le quotidien": ["Rythme journée", "Cadres de vie", "Quartier/place", "Les saisons"], "Axe 3. École et loisirs": ["Systèmes scolaires", "Mens sana in corpore sano", "Sport école de la vie", "Apprendre en s’amusant"], "Axe 4. Réel et imaginaire": ["Découvreurs italiens", "Ville idéale", "Design", "Civilisation perdue"], "Axe 5. Langues et lieux": ["Une ville, une famille", "Lieu/légende", "Naissance langue italienne"], "Axe 6. Rome": ["Vacances romaines", "Imaginaire romain", "La capitale"] },
+      "4ème": { "Axe 1. Sport et société": ["Santé/bien-être", "Sport à l’italienne", "Valeurs/inclusion", "Représentations du sport"], "Axe 2. Voyages": ["Patrimoine", "Voyage scolaire", "Italie terre de voyages", "Explorateurs"], "Axe 3. Villes et quartiers": ["Vivre sa ville", "Différents types de lieux", "Réalité urbaine", "Ville-État"], "Axe 4. Inventer": ["Made in Italy", "Grandes inventions", "Superhéros culturels"], "Axe 5. Langages artistiques": ["Art urbain", "Renaissance", "Artiste engagé", "Langage des arts"], "Axe 6. Florence": ["Florence au quotidien", "Capitale création", "Rayonnement"] },
+      "3ème": { "Axe 1. Rencontre de l’autre": ["Hospitalité", "Amour/amitié arts", "Les Italies", "Lieux de rencontre"], "Axe 2. Travailler": ["Univers professionnels", "Choix du métier", "Métiers spécifiques", "Figures pionnières"], "Axe 3. Voyages et migrations": ["Migration des Italiens", "Représentations migrations", "Nouveau Monde", "Voyage imaginaire"], "Axe 4. Langages et médias": ["Réseaux sociaux", "S’informer", "Plurilinguisme", "Publicité"], "Axe 5. Engagement": ["Slow food", "Écotourisme", "Engagement civique", "Protection environnement"], "Axe 6. Milan": ["Autre capitale", "Ville innovante", "Espace urbain mutation"] },
+      "Seconde": { "Axe 1. Soi et autrui": ["Individu dans le groupe", "Modes/styles", "Contrôler image", "Droit d’être différent"], "Axe 2. Générations": ["Solidarité générations", "Pays pour les jeunes", "Défis vieillissement", "Nouvelles formes famille"], "Axe 3. Passé dans le présent": ["Traditions populaires", "Riche passé", "Identité", "Objets de mémoire"], "Axe 4. Défis et transitions": ["Miracle économique", "Tourisme de masse", "Transition écologique", "Défis numérique"], "Axe 5. Créer et recréer": ["Processus créatif", "Mythes", "Création et innovation", "Réécriture dans les arts"], "Axe 6. Renaissance": ["Héritage Antiquité", "Création/révolution", "Humanisme", "Rayonnement Renaissance"] },
+      "Première": { "Axe 1. Identités et échanges": ["Émigration/immigration", "Mondialisation", "Frontières invisibles", "Creuset culturel"], "Axe 2. Diversité et inclusion": ["Place des femmes", "Multilingue", "En dehors normes", "Italiens d’ici et d’ailleurs"], "Axe 3. Art et pouvoir": ["Vision esthétique", "Instrument pouvoir", "Contrepouvoir", "Humour/satire"], "Axe 4. Innovations": ["Contributions scientifiques", "Devoirs et limites", "Progrès/contestation", "Vulgarisation/fausses infos"], "Axe 5. Être humain et nature": ["Patrimoine naturel", "Insularité", "Risque naturel", "Arts et paysage"], "Axe 6. Construction Italie": ["Réalité récente", "Construction unitaire", "Création Unité", "Quelle Italie pour demain"] },
+      "Terminale": { "Axe 1. Espace privé et public": ["Espace public", "Engagement", "Femmes", "Antimafia"], "Axe 2. Territoire et mémoire": ["Devoir de mémoire", "Mémoires difficiles", "Ville-musée", "Fait religieux"], "Axe 3. Fictions et réalités": ["Mythes revisités", "Visions à déconstruire", "Réalité à fiction", "Visions d’avenir"], "Axe 4. Communication": ["Télévision", "Cinéma", "Écriture engagement", "Presse italienne"], "Axe 5. Citoyenneté et virtuel": ["Relations ultra connecté", "Initiatives citoyennes", "Utilisations numérique"], "Axe 6. République à l’Europe": ["Membre fondateur", "Échanges européens", "Citoyenneté européenne", "Nouvelles visions Europe"] },
+      "Première_LLCER": { "Axe 1. Imaginaires": ["Espaces imaginés", "Re-présenter le réel", "Le beau", "Du passé imaginaire au futur imaginé"], "Axe 2. Pouvoirs et contre-pouvoirs": ["Incarnations du pouvoir", "Pouvoirs symboliques", "Engagement société civile", "Désobéissances/résistances"] },
+      "Terminale_LLCER": { "Axe 1. Voyages": ["Terra incognita", "Mare nostrum", "L’Italie en voyage(s)"], "Axe 2. L'art du contraste": ["Identité", "Sacré/profane", "Rire/drame"], "Axe 3. Laboratorio italiano": ["Cité/territoire", "Moyen Âge/Humanisme", "Découvrir/inventer"] }
+    },
+    grammar: {
+      "6ème": ["G1 · Genre et pluriel noms/adjectifs", "G2 · Articles", "G3 · Possessifs/démonstratifs", "G4 · Présent (andare, stare...)", "G5 · Verbes pronominaux", "G6 · Imparfait (c'era)", "G7 · Participes passés irréguliers", "G8 · Pronoms sujets/réfléchis", "G9 · Adverbes lieu/temps", "G10 · Prépositions (a, di, in, su)", "G11 · Mots interrogatifs", "G12 · c'è/ci sono, mi piace", "G13 · Conjonctions (e, ma, o, perché)", "G14 · Phrases déclarative/interrogative"],
+      "5ème": ["G15 · Pluriel masculins en -a", "G16 · Présent (venire, bere...)", "G17 · Imparfait (ero)", "G18 · Superlatif", "G19 · Adverbes quantité", "G20 · Contraction prépositions/articles", "G21 · occorre/occorrono", "G22 · Phrase exclamative"],
+      "4ème": ["G23 · Pluriel mots en -co/-go", "G24 · Pluriel possessifs/démonstratifs", "G25 · Démonstratif (quello)", "G26 · Passé composé", "G27 · Futur simple", "G28 · Impératif (formes simples)", "G29 · Pronoms COD", "G30 · Adverbes en -mente", "G31 · Expression du temps (fa, tra)", "G32 · Préposition (da)", "G33 · Piacere (ti, ci...)", "G34 · Relative (che)", "G35 · Conditionnel (vorrei)"],
+      "3ème": ["G36 · Pronoms COI", "G37 · Conditionnel présent", "G38 · Forme de politesse", "G39 · Gérondif", "G40 · Stare + gérondif", "G41 · Forme impersonnelle (si)", "G42 · Enclise", "G43 · Connecteurs logiques", "G44 · Pronoms relatifs (cui)"],
+      "Seconde_LVAB": ["G1 · Pluriels irréguliers", "G2 · Démonstratifs", "G3 · Présent de l'indicatif", "G4 · Passé composé, Imparfait, Futur, Conditionnel", "G5 · Forme de politesse", "G6 · Impératif (scusi/dica)", "G7 · Gérondif / stare + gérondif", "G8 · Forme impersonnelle (si)", "G9 · Pronoms COD, COI, réfléchis", "G10 · Enclise", "G11 · Adverbes", "G12 · Contractions", "G13 · Piacere", "G14 · Traductions (c'è, occorre, bisogna)", "G15 · Connecteurs logiques", "G16 · Relative (che, cui)"],
+      "Seconde_LVC": ["G1 · Pluriel", "G2 · Présent de l'indicatif", "G3 · Verbes pronominaux", "G4 · Passé composé", "G5 · Imparfait et Futur", "G6 · Impératif", "G7 · Pronoms sujets/réfléchis/COD", "G8 · Adverbes", "G9 · Prépositions/contractions", "G10 · Interrogatifs", "G11 · Traductions (c'è, mi piace)", "G12 · Conjonctions", "G13 · Relative (che)"],
+      "Première_LVAB": ["G1 · Connecteurs logiques", "G2 · Conjonctions subordination", "G3 · Condition (se, anche se)", "G4 · Indéfinis", "G5 · Suffixes", "G6 · Pronoms COD/COI, groupés", "G7 · Relatifs (di cui)", "G8 · Comparatifs", "G9 · Tournure impersonnelle (è + adj + inf)", "G10 · Forme progressive", "G11 · Conditionnel présent", "G12 · Passé proche (appena)", "G13 · Futur proche (stare per)", "G14 · Voix passive (venire)", "G15 · Subjonctif présent", "G16 · Passé simple (repérage)", "G17 · Place niente/nessuno"],
+      "Première_LVC": ["G1 · Contractions", "G2 · Présent/participes irréguliers", "G3 · Futur simple irrégulier", "G4 · Subjonctif présent (opinion)", "G5 · Passé simple (repérage)", "G6 · Souhait au conditionnel", "G7 · Forme de politesse", "G8 · Temporalité (fa, fra, siècles)", "G9 · Pronoms COI/groupés", "G10 · Conjonctions (siccome)", "G11 · Relative ('dont')", "G12 · Forme impersonnelle (si)", "G13 · 'il faut que' (bisogna che)", "G14 · 'quelques' (qualche)"],
+      "Terminale_LVAB": ["G1 · Indéfinis", "G2 · Suffixes (laudatifs)", "G3 · Connecteurs logiques", "G4 · Verbes mouvement + a", "G5 · Préposition da", "G6 · Relatifs composés (cui)", "G7 · Tournure impersonnelle", "G8 · Comparatifs", "G9 · Subordination", "G10 · Pronoms groupés (enclise)", "G11 · Forme progressive", "G12 · Conditionnel passé", "G13 · Subjonctif imparfait", "G14 · Hypothétique (se)", "G15 · Passé simple (formules)", "G16 · Andare/venire auxiliaires", "G17 · si impersonnel / si passivante"],
+      "Terminale_LVC": ["G1 · Contractions", "G2 · Présent/participes irréguliers", "G3 · Futur simple irrégulier", "G4 · Subjonctif présent (opinion)", "G5 · Passé simple (repérage)", "G6 · Souhait au conditionnel", "G7 · Forme de politesse", "G8 · Temporalité (fa, fra, siècles)", "G9 · Pronoms COI/groupés", "G10 · Conjonctions (siccome)", "G11 · Relative ('dont')", "G12 · Forme impersonnelle (si)", "G13 · 'il faut que' (bisogna che)", "G14 · 'quelques' (qualche)"],
+      "Première_LLCER": ["G1 · Connecteurs logiques", "G2 · Conjonctions subordination", "G3 · Condition (se, anche se)", "G4 · Indéfinis", "G5 · Suffixes", "G6 · Pronoms COD/COI, groupés", "G7 · Relatifs (di cui)", "G8 · Comparatifs", "G9 · Tournure impersonnelle (è + adj + inf)", "G10 · Forme progressive", "G11 · Conditionnel présent", "G12 · Passé proche (appena)", "G13 · Futur proche (stare per)", "G14 · Voix passive (venire)", "G15 · Subjonctif présent", "G16 · Passé simple (repérage)", "G17 · Place niente/nessuno"],
+      "Terminale_LLCER": ["G1 · Indéfinis", "G2 · Suffixes (laudatifs)", "G3 · Connecteurs logiques", "G4 · Verbes mouvement + a", "G5 · Préposition da", "G6 · Relatifs composés (cui)", "G7 · Tournure impersonnelle", "G8 · Comparatifs", "G9 · Subordination", "G10 · Pronoms groupés (enclise)", "G11 · Forme progressive", "G12 · Conditionnel passé", "G13 · Subjonctif imparfait", "G14 · Hypothétique (se)", "G15 · Passé simple (formules)", "G16 · Andare/venire auxiliaires", "G17 · Différence entre si impersonnel et si passivante"]
+    },
+    phono: {
+      "6ème": ["PH1 · Absence de nasales", "PH2 · Prononciation voyelles", "PH3 · Lettre z [dz]/[ts]", "PH4 · Lettre c", "PH5 · sc [ʃ]", "PH6 · Lettre g", "PH7 · Doubles consonnes", "PH8 · Accent tonique"],
+      "5ème": ["PH1 · Nasales/voyelles", "PH2 · Lettres c, sc, g, z", "PH3 · Doubles consonnes", "PH4 · Accent tonique", "PH5 · Fluidité", "PH6 · Récitation"],
+      "4ème": ["PH1 · Intonation/rythme", "PH2 · Parole tronche/piane", "PH3 · Mots longs", "PH4 · Consonnes géminées (doppie)", "PH5 · Voyelle + n/m", "PH6 · Lettre g + h"],
+      "3ème": ["PH1 · Intonation", "PH2 · Accent tonique (toponymes)", "PH3 · Suffixes", "PH4 · Consonnes géminées", "PH5 · Voyelle + n/m"],
+      "Seconde_LVAB": ["PH1 · Intonation/rythme", "PH2 · Accent tonique mots longs", "PH3 · Accents terminaisons", "PH4 · Suffixes", "PH5 · Géminées", "PH6 · Séquences n/m"],
+      "Seconde_LVC": ["PH1 · Absence nasales", "PH2 · Lettres c, sc, g, z", "PH3 · Doubles consonnes", "PH4 · Accent tonique", "PH5 · Fluidité", "PH6 · Récitation"],
+      "Première_LVAB": ["PH1 · Jouer dialogues", "PH2 · Intelligibilité/débit", "PH3 · Géminées/diphtongues", "PH4 · Aperture vocalique"],
+      "Première_LVC": ["PH1 · Absence nasales", "PH2 · z, c, sc, g", "PH3 · Doubles consonnes", "PH4 · Accentuation", "PH5 · Mots longs", "PH6 · Consonnes géminées", "PH7 · Voyelle + n/m"],
+      "Terminale_LVAB": ["PH1 · Jouer dialogues", "PH2 · Intelligibilité/débit", "PH3 · Géminées/diphtongues/nasales", "PH4 · Aperture vocalique/fluidité"],
+      "Terminale_LVC": ["PH1 · Absence nasales", "PH2 · z, c, sc, g", "PH3 · Doubles consonnes", "PH4 · Accentuation", "PH5 · Mots longs", "PH6 · Consonnes géminées", "PH7 · Voyelle + n/m"],
+      "Première_LLCER": ["PH1 · Jouer dialogues", "PH2 · Intelligibilité/débit", "PH3 · Géminées/diphtongues", "PH4 · Aperture vocalique"],
+      "Terminale_LLCER": ["PH1 · Jouer dialogues", "PH2 · Intelligibilité/débit", "PH3 · Géminées/diphtongues/nasales", "PH4 · Aperture vocalique/fluidité"]
+    },
+    pragma: {
+      "6ème": ["PR1 · Conjonctions (e, ma, o, perché)", "PR2 · Locutions lieu/temps"],
+      "5ème": ["PR1 · Conjonctions (e, ma, o, perché)"],
+      "4ème": ["PR1 · Adverbes lieu/temps", "PR2 · Conjonctions"],
+      "3ème": ["PR1 · Subordination (invece, ma, però)", "PR2 · Conséquence", "PR3 · Condition", "PR4 · Connecteurs logiques"],
+      "Seconde_LVAB": ["PR1 · Connecteurs (dapprima, quindi)", "PR2 · Conjonctions", "PR3 · Locutions"],
+      "Seconde_LVC": ["PR1 · Conjonctions"],
+      "Première_LVAB": ["PR1 · Cause (weil, da)", "PR2 · Antériorité/postériorité", "PR3 · Conséquence", "PR4 · Concession", "PR5 · But", "PR6 · Reformulation", "PR7 · Comparaison irréelle", "PR8 · Corrélation"],
+      "Première_LVC": ["PR1 · Conjonctions (siccome...)", "PR2 · Chronologiques", "PR3 · Conclusion"],
+      "Terminale_LVAB": ["PR1 · Relations complexes", "PR2 · Comparaison irréelle", "PR3 · Reformulation", "PR4 · Ajout", "PR5 · Modalisation", "PR6 · Relation avec indem", "PR7 · Discours rapporté", "PR8 · Particules illocutoires"],
+      "Terminale_LVC": ["PR1 · Conjonctions", "PR2 · Chronologiques", "PR3 · Conclusion"],
+      "Première_LLCER": ["PR1 · Cause (weil, da)", "PR2 · Antériorité/postériorité", "PR3 · Conséquence", "PR4 · Concession", "PR5 · But", "PR6 · Reformulation", "PR7 · Comparaison irréelle", "PR8 · Corrélation"],
+      "Terminale_LLCER": ["PR1 · Relations complexes", "PR2 · Comparaison irréelle", "PR3 · Reformulation", "PR4 · Ajout", "PR5 · Modalisation", "PR6 · Relation avec indem", "PR7 · Discours rapporté", "PR8 · Particules illocutoires"]
+    }
   }
 };
+// ==========================================
+// LOGIQUE JAVASCRIPT DE L'APPLICATION
+// ==========================================
 
 let currentLang = 'en';
 const state = { axe: [], culture: [], grammar: [], phono: [], pragma: [], comp_co: [], comp_ce: [], comp_po: [], comp_pe: [], comp_pec: [] };
@@ -752,6 +846,7 @@ const state = { axe: [], culture: [], grammar: [], phono: [], pragma: [], comp_c
 const cleanCode = (txt) => txt.replace(/^[A-Z]+\d+\s*·\s*/, '');
 const esc = (s) => s.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
 
+// TUTORIEL
 function openTutorial() { document.getElementById('tutorialModal').classList.add('active'); }
 function closeTutorial(e) {
   if (!e || e.target.id === 'tutorialModal' || e.type === 'click') {
@@ -760,13 +855,21 @@ function closeTutorial(e) {
   }
 }
 
+// RESTAURATION LANGUE + TUTORIEL
 document.addEventListener('DOMContentLoaded', () => {
   try {
-    if (!localStorage.getItem('seq-tuto-seen')) { setTimeout(openTutorial, 500); }
+    if (!localStorage.getItem('seq-tuto-seen')) {
+      setTimeout(openTutorial, 500);
+    }
     const savedLang = localStorage.getItem('seq-lang');
-    if (savedLang && DB[savedLang]) { setLanguage(savedLang); } 
-    else { setLanguage('en'); }
-  } catch(e) { setLanguage('en'); }
+    if (savedLang && DB[savedLang]) {
+      setLanguage(savedLang);
+    } else {
+      setLanguage('en');
+    }
+  } catch(e) {
+    setLanguage('en');
+  }
 });
 
 function setLanguage(lang) {
@@ -793,6 +896,7 @@ function setLanguage(lang) {
     const n = document.getElementById('niveau').value;
     if (n && n.includes('AMC')) document.getElementById('niveau').value = '';
   }
+  
   resetAll();
 }
 
@@ -818,8 +922,14 @@ function onNiveauChange() {
   const n = document.getElementById('niveau').value;
   const lvContainer = document.getElementById('lycee-lv-container');
   const lvSelect = document.getElementById('lycee-lv');
-  if (['Seconde', 'Première', 'Terminale'].includes(n)) { lvContainer.style.display = 'block'; } 
-  else { lvContainer.style.display = 'none'; lvSelect.value = ''; }
+  
+  if (['Seconde', 'Première', 'Terminale'].includes(n)) {
+    lvContainer.style.display = 'block';
+  } else {
+    lvContainer.style.display = 'none';
+    lvSelect.value = '';
+  }
+  
   updateDataLists();
 }
 
@@ -843,6 +953,7 @@ function updateDataLists() {
     ['pragmatique', db.pragma], ['comp_co', COMP.CO], ['comp_ce', COMP.CE], 
     ['comp_po', COMP.PO], ['comp_pe', COMP.PE], ['comp_pec', COMP.PEC]
   ];
+  
   selectsToPopulate.forEach(([id, data]) => populateSelect(id, data, key));
   updatePreview();
 }
@@ -880,53 +991,71 @@ function populateSelect(id, data, key) {
   const speLevels = ["Première_AMC", "Terminale_AMC", "Première_LLCER", "Terminale_LLCER"];
   
   if (isCollege) {
-    const g = document.createElement('optgroup'); g.label = `── ${key} ──`;
+    const g = document.createElement('optgroup');
+    g.label = `── ${key} ──`;
     data[key].forEach(i => { const o = document.createElement('option'); o.value = cleanCode(i); o.textContent = cleanCode(i); g.appendChild(o); });
     s.appendChild(g);
+    
     collegeLevels.forEach(l => {
       if (l === key || !data[l]) return;
-      const gOther = document.createElement('optgroup'); gOther.label = `── ${l} ──`;
+      const gOther = document.createElement('optgroup');
+      gOther.label = `── ${l} ──`;
       data[l].forEach(i => { const o = document.createElement('option'); o.value = cleanCode(i); o.textContent = cleanCode(i); gOther.appendChild(o); });
       s.appendChild(gOther);
     });
   } else if (isSpecialite) {
-    const g = document.createElement('optgroup'); g.label = `── ${key.replace('_', ' ')} ──`;
+    const g = document.createElement('optgroup');
+    g.label = `── ${key.replace('_', ' ')} ──`;
     data[key].forEach(i => { const o = document.createElement('option'); o.value = cleanCode(i); o.textContent = cleanCode(i); g.appendChild(o); });
     s.appendChild(g);
+    
     speLevels.forEach(l => {
       if (l === key || !data[l]) return;
-      const gOther = document.createElement('optgroup'); gOther.label = `── ${l.replace('_', ' ')} ──`;
+      const gOther = document.createElement('optgroup');
+      gOther.label = `── ${l.replace('_', ' ')} ──`;
       data[l].forEach(i => { const o = document.createElement('option'); o.value = cleanCode(i); o.textContent = cleanCode(i); gOther.appendChild(o); });
       s.appendChild(gOther);
     });
+
     if (id.startsWith('comp_')) {
        collegeLevels.forEach(l => {
          if (!data[l]) return;
-         const gCol = document.createElement('optgroup'); gCol.label = `── ${l} (A1/A2) ──`;
-         data[l].forEach(i => { const o = document.createElement('option'); o.value = cleanCode(i); o.textContent = cleanCode(i); gCol.appendChild(o); });
+         const gCol = document.createElement('optgroup');
+         gCol.label = `── ${l} (A1/A2) ──`;
+         data[l].forEach(i => {
+           const o = document.createElement('option'); o.value = cleanCode(i); o.textContent = cleanCode(i); gCol.appendChild(o);
+         });
          s.appendChild(gCol);
        });
     }
   } else {
     const lvSuffix = '_' + key.split('_')[1];
     const displaySuffix = lvSuffix === '_LVAB' ? ' (LV A/B)' : ' (LV C)';
-    const g = document.createElement('optgroup'); g.label = `── ${baseNiveau}${displaySuffix} ──`;
+    
+    const g = document.createElement('optgroup');
+    g.label = `── ${baseNiveau}${displaySuffix} ──`;
     data[key].forEach(i => { const o = document.createElement('option'); o.value = cleanCode(i); o.textContent = cleanCode(i); g.appendChild(o); });
     s.appendChild(g);
+    
     lyceeLevels.forEach(l => {
       if (l === baseNiveau) return;
       const lKey = l + lvSuffix;
       if (data[lKey]) {
-        const gOther = document.createElement('optgroup'); gOther.label = `── ${l}${displaySuffix} ──`;
+        const gOther = document.createElement('optgroup');
+        gOther.label = `── ${l}${displaySuffix} ──`;
         data[lKey].forEach(i => { const o = document.createElement('option'); o.value = cleanCode(i); o.textContent = cleanCode(i); gOther.appendChild(o); });
         s.appendChild(gOther);
       }
     });
+
     if (id.startsWith('comp_')) {
        collegeLevels.forEach(l => {
          if (!data[l]) return;
-         const gCol = document.createElement('optgroup'); gCol.label = `── ${l} (A1/A2) ──`;
-         data[l].forEach(i => { const o = document.createElement('option'); o.value = cleanCode(i); o.textContent = cleanCode(i); gCol.appendChild(o); });
+         const gCol = document.createElement('optgroup');
+         gCol.label = `── ${l} (A1/A2) ──`;
+         data[l].forEach(i => {
+           const o = document.createElement('option'); o.value = cleanCode(i); o.textContent = cleanCode(i); gCol.appendChild(o);
+         });
          s.appendChild(gCol);
        });
     }
@@ -1111,6 +1240,8 @@ function resetAll() {
   
   updatePreview();
 }
+
+// L'initialisation est désormais gérée par le DOMContentLoaded
 </script>
 </body>
 </html>

@@ -2,27 +2,39 @@
 
 Toutes les modifications notables apportées au projet "Le Séquenceur" seront documentées dans ce fichier.
 
+## [1.6.0] - 2026-04-25
+### Ajouté
+- **Approche actionnelle** : Ajout des rubriques "Projet final" (Tâche finale) et "Tâches intermédiaires" sous forme de champs libres pour définir l'action au cœur de la séquence.
+- **Lexique** : Réintégration de la catégorie "Lexique" dans les objectifs linguistiques via un champ libre dédié.
+- **Objet d'étude libre** : Ajout d'un champ libre pour créer un objet d'étude personnalisé non listé dans les programmes.
+- **Onboarding (Accueil)** : Nouvel écran de bienvenue lors de la première visite invitant l'utilisateur à configurer sa langue par défaut.
+### Modifié
+- **Restructuration pédagogique** : L'ordre des rubriques a été revu pour coller à la logique de la perspective actionnelle : Ancrage culturel > Projet & Thème > Objectifs linguistiques > Compétences langagières.
+### Corrigé
+- **Export sur Mobile** : Résolution du bug de page blanche / rognée lors de l'export PDF ou Word sur smartphone (dépliage virtuel de l'interface avant la capture).
+- **Responsive Design** : Le titre principal reste désormais sur une seule ligne sur les petits écrans, et le pied de page est épinglé tout en bas de la fenêtre.
+
 ## [1.5.0] - 2026-04-24
 ### Ajouté
-- **Pied de page institutionnel** : Ajout d'un footer complet avec le nom de l'auteur (Charlie ROLLO).
+- **Pied de page institutionnel** : Ajout d'un footer complet avec mention de l'auteur (Charlie ROLLO).
 - **Liens Forge** : Intégration de boutons menant vers le code source sur la Forge des Communs Numériques Éducatifs, le gestionnaire de Tickets (Issues), et le Changelog.
 ### Corrigé
-- **Mise en page** : Correction du CSS pour empêcher les liens du pied de page de s'afficher de manière brute.
+- **Mise en page** : Correction du CSS pour empêcher les liens du pied de page de s'afficher de manière brute en bas de colonne.
 
 ## [1.4.0] - 2026-04-24
 ### Ajouté
-- **Tutoriel de bienvenue** : Apparition d'une fenêtre surgissante (modale) au premier lancement pour guider les enseignants. Réouvrable à volonté via une nouvelle icône (ℹ️).
-- **Mémorisation de la langue (UX)** : L'application sauvegarde désormais la dernière langue utilisée via le *localStorage* du navigateur.
-- **Champs libres** : Ajout de zones de saisie manuelle pour les rubriques "Phonologie" et "Pragmatique", avec le même système d'ajout (bouton `+`) que la grammaire.
+- **Tutoriel de bienvenue** : Apparition d'une fenêtre de tutoriel pour guider les enseignants. Réouvrable à volonté via l'icône (ℹ️).
+- **Mémorisation de la langue (UX)** : L'application sauvegarde la dernière langue utilisée via le *localStorage* du navigateur.
+- **Champs libres** : Ajout de zones de saisie manuelle pour les rubriques "Phonologie" et "Pragmatique".
 - **Différenciation pédagogique** : Les professeurs de Lycée (Tronc commun et Spécialités) ont désormais accès aux compétences de niveau Collège (A1/A2) directement à la fin de leurs menus déroulants pour faciliter l'adaptation.
 ### Corrigé
-- **Export PDF** : Résolution du bug d'espacement des lettres (`letter-spacing`) lors de la génération du PDF, causé par un conflit entre `html2canvas` et le rendu des émojis. Les émojis sont désormais isolés dans des balises `<span>` dédiées.
+- **Export PDF** : Résolution du bug de décalage des lettres (`letter-spacing`) lors de la génération du PDF, causé par un conflit de rendu avec les émojis.
 
 ## [1.3.0] - 2026-04-23
 ### Ajouté
 - **Italien 🇮🇹** : Intégration complète de la langue italienne (Axes, Objets d'étude, Grammaire, Phonologie, Pragmatique), du Collège à la Terminale, incluant la spécialité LLCER.
 ### Modifié
-- **Fidélité institutionnelle** : Restauration intégrale et exacte des textes officiels de l'Éducation Nationale (Axes, Objets d'étude, points de grammaire) sans aucun raccourcissement abusif, pour garantir une rigueur totale sur les fiches de séquence.
+- **Fidélité institutionnelle** : Restauration intégrale et exacte des textes officiels de l'Éducation Nationale sans aucun raccourcissement abusif, garantissant la rigueur des fiches générées.
 
 ## [1.2.0] - 2026-04-22
 ### Ajouté
@@ -31,8 +43,6 @@ Toutes les modifications notables apportées au projet "Le Séquenceur" seront d
 - **Mutualisation des compétences** : Les 5 activités langagières (CO, CE, PO, PE, PEC) étant identiques d'une langue à l'autre, elles ont été fusionnées en une base de données unique pour optimiser le code.
 ### Corrigé
 - **Logique des spécialités** : La spécialité AMC (Anglais Monde Contemporain) a été restreinte et n'apparaît désormais que lorsque la langue Anglaise est sélectionnée.
-### Supprimé
-- **Lexique** : Retrait définitif de la catégorie "Lexique" de l'interface et de la base de données.
 
 ## [1.1.0] - 2026-04-20
 ### Ajouté

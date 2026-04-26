@@ -3983,7 +3983,10 @@ function renderA4List(id, items, cls, emptyMessage) {
 }
 
 function exportPDF() {
+  const originalTitle = document.title;
+  document.title = 'Séquence - ' + (document.getElementById('titre').value || 'Sans titre');
   window.print();
+  document.title = originalTitle;
 }
 
 function exportWord() {
@@ -4031,7 +4034,7 @@ function exportWord() {
   const downloadLink = document.createElement("a");
   document.body.appendChild(downloadLink);
   downloadLink.href = url;
-  downloadLink.download = (document.getElementById('titre').value || 'Sequence') + '.doc';
+  downloadLink.download = 'Séquence - ' + (document.getElementById('titre').value || 'Sans titre') + '.doc';
   downloadLink.click();
   document.body.removeChild(downloadLink);
 }

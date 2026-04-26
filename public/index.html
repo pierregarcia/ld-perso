@@ -3972,29 +3972,51 @@ function renderA4List(id, items, cls, emptyMessage) {
 }
 
 function exportPDF() {
-  window.scrollTo(0, 0); // Hack iOS/Mobile pour éviter le cropping vertical
-  const element = document.getElementById('a4');
-  const container = document.querySelector('.main-container');
+  // 1. Remonter tout en haut pour éviter les décalages de capture
+  window.scrollTo(0, 0); 
   
-  // Sauvegarde style pour contrer le clipping mobile
-  const prevOverflow = container.style.overflow;
-  container.style.overflow = 'visible';
+  const element = document.getElementById('a4');
+  const body = document.body;
+  const container = document.querySelector('.main-container');
+  const preview = document.querySelector('.preview-panel');
+  
+  // 2. Sauvegarde des styles d'origine
+  const origBodyOverflow = body.style.overflow;
+  const origContainerOverflow = container.style.overflow;
+  const origPreviewOverflow = preview.style.overflow;
 
+  // 3. Désactivation stricte des barres de défilement (LA solution pour éviter le rognage)
+  body.style.overflow = 'visible';
+  container.style.overflow = 'visible';
+  preview.style.overflow = 'visible';
+
+  const empties = element.querySelectorAll('.a4-empty');
+  empties.forEach(el => el.style.display = 'none');
   element.classList.add('pdf-export-mode');
 
+  // 4. Options de pagination intelligentes
   const opt = {
-    margin:       10, // Marge pour la pagination
+    margin:       [10, 0, 15, 0], // Marges en mm : [Haut, Droite, Bas, Gauche]
     filename:     (document.getElementById('titre').value || 'Sequence') + '.pdf',
     image:        { type: 'jpeg', quality: 0.98 },
-    // Configuration intelligente de la pagination pour éviter les coupes
-    pagebreak:    { mode: ['avoid-all', 'css', 'legacy'] },
-    html2canvas:  { scale: 2, useCORS: true, windowWidth: 800, scrollY: 0 },
+    pagebreak:    { mode: ['css', 'legacy'], avoid: ['.a4-sec', 'li', '.a4-title', '.a4-prob'] }, // Évite de couper un bloc en plein milieu
+    html2canvas:  { 
+      scale: 2, 
+      useCORS: true, 
+      scrollY: 0,
+      windowWidth: 800 // Force le moteur à "voir" une page format ordinateur, même sur téléphone
+    },
     jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
   };
   
   html2pdf().set(opt).from(element).save().then(() => {
+    // 5. Nettoyage et restauration de l'interface
+    empties.forEach(el => el.style.display = 'block');
     element.classList.remove('pdf-export-mode');
-    container.style.overflow = prevOverflow;
+    
+    body.style.overflow = origBodyOverflow;
+    container.style.overflow = origContainerOverflow;
+    preview.style.overflow = origPreviewOverflow;
   });
 }
 

@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Le Séquenceur — 🇬🇧 🇪🇸 🇩🇪 🇮🇹</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📝</text></svg>">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Playfair+Display:wght@700;800&display=swap');
@@ -184,7 +183,19 @@ body { font-family:'Plus Jakarta Sans',sans-serif; background:var(--bg); color:v
 .pdf-export-mode .a4-sec-title, .pdf-export-mode .a4-badge, .pdf-export-mode .a4-sub-title { letter-spacing: 0 !important; }
 .emoji-fix { display: inline-block; margin-right: 4px; }
 
-@media print { .app-header, .header-actions, .editor-panel, .modal-overlay { display:none!important; } }
+@media print {
+  .app-header, .header-actions, .editor-panel, .modal-overlay, .app-footer { display:none!important; }
+  body { background:#fff!important; overflow:visible!important; height:auto!important; display:block!important; }
+  .main-container { display:block!important; overflow:visible!important; }
+  .preview-panel { display:block!important; background:#fff!important; padding:0!important; overflow:visible!important; max-height:none!important; }
+  .a4-sheet { box-shadow:none!important; border-radius:0!important; margin:0!important; padding:20mm 18mm!important; width:100%!important; max-width:none!important; min-height:auto!important; }
+  .a4-badge { -webkit-print-color-adjust:exact!important; print-color-adjust:exact!important; }
+  .a4-sec-title, .a4-prob { -webkit-print-color-adjust:exact!important; print-color-adjust:exact!important; }
+  .a4-footer { display:block!important; position:relative!important; bottom:auto!important; margin-top:30px!important; }
+  .a4-sec { page-break-inside:avoid!important; break-inside:avoid!important; }
+  .a4-empty { display:none!important; }
+  @page { size:A4 portrait; margin:0; }
+}
 
 /* --- CORRECTIONS MOBILE --- */
 @media (max-width: 1100px) {
@@ -341,7 +352,7 @@ body { font-family:'Plus Jakarta Sans',sans-serif; background:var(--bg); color:v
     </div>
 
     <div class="field-group">
-      <label class="field-label" style="color: var(--accent5);">Pragmatique</label>
+      <label class="field-label" style="color: var(--accent5);">Pragmatique (Champ libre)</label>
       <div class="select-with-add">
         <input type="text" class="field-input" id="pragmatique-custom" placeholder="Ex : Exprimer l'opinion, l'opposition...">
         <button class="btn-add p" onclick="addCustomItem('pragmatique-custom','pragma','p')">+</button>
@@ -439,7 +450,7 @@ body { font-family:'Plus Jakarta Sans',sans-serif; background:var(--bg); color:v
         <li><span class="step">1</span> <div><strong>Choisissez la langue :</strong> Cliquez sur le drapeau correspondant dans l'en-tête (🇬🇧, 🇪🇸, 🇩🇪, 🇮🇹).</div></li>
         <li><span class="step">2</span> <div><strong>Sélectionnez le niveau :</strong> Collège, Lycée ou Spécialités. Les menus s'adapteront automatiquement !</div></li>
         <li><span class="step">3</span> <div><strong>Utilisez le bouton ➕ :</strong> À côté de chaque menu déroulant ou champ libre, cliquez sur ce petit bouton magique pour l'ajouter à votre séquence.</div></li>
-        <li><span class="step">4</span> <div><strong>Exportez :</strong> Cliquez en bas à droite pour télécharger votre travail au format PDF ou Word.</div></li>
+        <li><span class="step">4</span> <div><strong>Exportez :</strong> Cliquez en bas à droite pour télécharger votre travail au 📄 Imprimer / PDF ou Word.</div></li>
       </ul>
     </div>
   </div>
@@ -3972,52 +3983,7 @@ function renderA4List(id, items, cls, emptyMessage) {
 }
 
 function exportPDF() {
-  // 1. Remonter tout en haut pour éviter les décalages de capture
-  window.scrollTo(0, 0); 
-  
-  const element = document.getElementById('a4');
-  const body = document.body;
-  const container = document.querySelector('.main-container');
-  const preview = document.querySelector('.preview-panel');
-  
-  // 2. Sauvegarde des styles d'origine
-  const origBodyOverflow = body.style.overflow;
-  const origContainerOverflow = container.style.overflow;
-  const origPreviewOverflow = preview.style.overflow;
-
-  // 3. Désactivation stricte des barres de défilement (LA solution pour éviter le rognage)
-  body.style.overflow = 'visible';
-  container.style.overflow = 'visible';
-  preview.style.overflow = 'visible';
-
-  const empties = element.querySelectorAll('.a4-empty');
-  empties.forEach(el => el.style.display = 'none');
-  element.classList.add('pdf-export-mode');
-
-  // 4. Options de pagination intelligentes
-  const opt = {
-    margin:       [10, 0, 15, 0], // Marges en mm : [Haut, Droite, Bas, Gauche]
-    filename:     (document.getElementById('titre').value || 'Sequence') + '.pdf',
-    image:        { type: 'jpeg', quality: 0.98 },
-    pagebreak:    { mode: ['css', 'legacy'], avoid: ['.a4-sec', 'li', '.a4-title', '.a4-prob'] }, // Évite de couper un bloc en plein milieu
-    html2canvas:  { 
-      scale: 2, 
-      useCORS: true, 
-      scrollY: 0,
-      windowWidth: 800 // Force le moteur à "voir" une page format ordinateur, même sur téléphone
-    },
-    jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
-  };
-  
-  html2pdf().set(opt).from(element).save().then(() => {
-    // 5. Nettoyage et restauration de l'interface
-    empties.forEach(el => el.style.display = 'block');
-    element.classList.remove('pdf-export-mode');
-    
-    body.style.overflow = origBodyOverflow;
-    container.style.overflow = origContainerOverflow;
-    preview.style.overflow = origPreviewOverflow;
-  });
+  window.print();
 }
 
 function exportWord() {
@@ -4025,8 +3991,17 @@ function exportWord() {
   
   // On supprime les éléments vides spécifiquement ignorés pour l'export
   clone.querySelectorAll('[data-html2canvas-ignore]').forEach(el => el.remove());
-  clone.querySelectorAll('li').forEach(li => { li.innerHTML = '&#9656; ' + li.innerHTML; });
-
+  clone.querySelectorAll('ul.a4-list').forEach(ul => {
+    const wrapper = document.createElement('div');
+    wrapper.style.cssText = 'margin:0 0 12pt 0; padding:0;';
+    ul.querySelectorAll('li').forEach(li => {
+      const div = document.createElement('div');
+      div.style.cssText = 'font-size:11pt; color:#334155; margin-bottom:4pt; padding-left:16pt; text-indent:-12pt; margin-left:12pt;';
+      div.innerHTML = '▸ ' + li.innerHTML;
+      wrapper.appendChild(div);
+    });
+    ul.replaceWith(wrapper);
+  });
   const wordCSS = `
     <style>
       @page { size: A4 portrait; margin: 2cm; }

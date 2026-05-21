@@ -10816,39 +10816,49 @@ function calIsHoliday(d, schoolYear) {
   return list.find(h => dateToISO(h.date) === iso);
 }
 
-// Construit le libellé exact attendu par l'API pour le champ "zones"
-// Métropole : "Zone A", "Zone B", "Zone C"
-// Corse + DROM-COM : utilisés tels que le dataset les nomme (vérifiés sur data.education.gouv.fr)
-function calZoneApiLabel(zone) {
+// Pour métropole (Zone A/B/C), on filtre sur le champ `zones`.
+// Pour la Corse et les DROM-COM, on filtre sur le champ `location` (= académie).
+// C'est crucial : le filtre `zones` ne contient QUE Zone A/B/C, donc une recherche
+// `zones:"Mayotte"` renvoie 0 résultats. Source : data.education.gouv.fr.
+function calZoneApiField(zone) {
+  if (zone === 'A' || zone === 'B' || zone === 'C') return 'zones';
+  return 'location';
+}
+
+// Construit la VALEUR exacte attendue par l'API pour le champ choisi.
+function calZoneApiValue(zone) {
   if (!zone) return '';
   if (zone === 'A' || zone === 'B' || zone === 'C') return 'Zone ' + zone;
-  // Cas particuliers : le dataset n'utilise pas tous les tirets
+  // Cas particuliers d'orthographe dans le champ location
   if (zone === 'Nouvelle-Calédonie') return 'Nouvelle Calédonie';
   if (zone === 'Wallis-et-Futuna') return 'Wallis et Futuna';
-  // Saint-Barthélemy et Saint-Martin ne sont pas dans le dataset (rattachés à la Guadeloupe pour les vacances)
+  // Saint-Barthélemy et Saint-Martin ne sont pas dans le dataset → on retombe sur Guadeloupe
   if (zone === 'Saint-Barthélemy' || zone === 'Saint-Martin') return 'Guadeloupe';
   return zone;
 }
+
+// Alias legacy pour ne rien casser ailleurs dans le code
+function calZoneApiLabel(zone) { return calZoneApiValue(zone); }
 
 async function calLoadVacations(schoolYear) {
   if (!calApp.zone) return [];
   if (calApp.vacationsByYear[schoolYear]) return calApp.vacationsByYear[schoolYear];
   try {
-    const zoneStr = calZoneApiLabel(calApp.zone);
-    // refine : zone + année scolaire. On ne filtre PAS par population car certaines zones
-    // DROM-COM n'ont des entrées qu'avec population="Élèves" ou "-" suivant les années.
-    // Au lieu d'un seul refine restrictif, on récupère tout et on déduplique côté client.
+    const field = calZoneApiField(calApp.zone);
+    const value = calZoneApiValue(calApp.zone);
+    const effectiveField = (calApp.zone === 'Corse') ? 'location' : field;
+    const safeValue = String(value).replace(/'/g, "\\'");
+    const whereClause = `${effectiveField}="${safeValue}" AND annee_scolaire="${schoolYear}"`;
     const params = new URLSearchParams({
       'limit': '100',
       'lang': 'fr',
       'timezone': 'Europe/Paris',
+      'where': whereClause,
     });
-    let url = `https://data.education.gouv.fr/api/explore/v2.1/catalog/datasets/fr-en-calendrier-scolaire/records?${params.toString()}`
-            + `&refine=zones%3A%22${encodeURIComponent(zoneStr)}%22`
-            + `&refine=annee_scolaire%3A%22${schoolYear}%22`;
-    const res = await fetch(url);
-    if (!res.ok) throw new Error('HTTP ' + res.status);
-    const data = await res.json();
+    const apiUrl = `https://data.education.gouv.fr/api/explore/v2.1/catalog/datasets/fr-en-calendrier-scolaire/records?${params.toString()}`;
+    // Stratégie : essayer en direct, puis via un proxy CORS si l'accès direct échoue
+    // (utile quand le site est servi avec une CSP qui bloque les requêtes cross-origin)
+    const data = await calFetchWithProxyFallback(apiUrl);
     // Déduplication : on garde les vacances uniques (par nom + date de début)
     const seen = new Set();
     const vacs = (data.results || [])
@@ -10857,13 +10867,10 @@ async function calLoadVacations(schoolYear) {
         name: r.description || 'Vacances',
         start: r.start_date ? r.start_date.slice(0,10) : null,
         end: r.end_date ? r.end_date.slice(0,10) : null,
-        zone: r.zones,
-        population: r.population || '',
+        zone: r.zones || r.location || '',
       }))
       .filter(v => v.start && v.end)
       .filter(v => {
-        // Dédoublonner par (nom + date début) — l'API peut retourner plusieurs lignes
-        // pour la même période (population "Élèves" + "Enseignants" + "-")
         const k = v.name + '|' + v.start;
         if (seen.has(k)) return false;
         seen.add(k);
@@ -10871,12 +10878,50 @@ async function calLoadVacations(schoolYear) {
       });
     calApp.vacationsByYear[schoolYear] = vacs;
     calSave();
-    console.log(`[Calendrier] ${vacs.length} période${vacs.length>1?'s':''} de vacances chargée${vacs.length>1?'s':''} pour "${zoneStr}" ${schoolYear}`);
+    console.log(`[Calendrier] ${vacs.length} période(s) de vacances chargée(s) pour ${effectiveField}="${value}" ${schoolYear}`);
     return vacs;
   } catch (e) {
     console.warn('[Calendrier] Échec chargement vacances :', e);
     calApp.vacationsByYear[schoolYear] = [];
     return [];
+  }
+}
+
+// Tente le fetch direct, et bascule sur un proxy CORS public en cas d'échec réseau.
+// Certains hébergeurs (Apps Éducation par ex.) imposent une CSP qui bloque les fetch cross-origin
+// vers data.education.gouv.fr alors même que cette API accepterait le CORS.
+async function calFetchWithProxyFallback(url) {
+  // 1) Tentative directe
+  try {
+    const res = await fetch(url);
+    if (res.ok) return await res.json();
+    throw new Error('HTTP ' + res.status);
+  } catch (e1) {
+    console.warn('[Calendrier] Fetch direct échoué, tentative via proxy CORS…', e1.message);
+    // 2) Repli sur corsproxy.io (proxy public, simple, sans clé API requise)
+    try {
+      const proxyUrl = 'https://corsproxy.io/?' + encodeURIComponent(url);
+      const res = await fetch(proxyUrl);
+      if (res.ok) {
+        console.log('[Calendrier] ✓ Réponse obtenue via le proxy CORS');
+        return await res.json();
+      }
+      throw new Error('Proxy HTTP ' + res.status);
+    } catch (e2) {
+      // 3) Dernier recours : allorigins
+      try {
+        const altUrl = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(url);
+        const res = await fetch(altUrl);
+        if (res.ok) {
+          console.log('[Calendrier] ✓ Réponse obtenue via allorigins');
+          return await res.json();
+        }
+        throw new Error('Allorigins HTTP ' + res.status);
+      } catch (e3) {
+        // Tout a échoué — on remonte l'erreur d'origine
+        throw e1;
+      }
+    }
   }
 }
 

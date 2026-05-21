@@ -1472,26 +1472,41 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 
 <!-- Modal : Choix de zone vacances (calendrier) -->
 <div id="m-cal-zone" class="modal-bg" onclick="closeModal('m-cal-zone')">
-  <div class="modal" onclick="event.stopPropagation()" style="max-width:480px">
+  <div class="modal" onclick="event.stopPropagation()" style="max-width:520px;width:92vw">
     <button class="modal-x" onclick="closeModal('m-cal-zone')">✕</button>
     <h2>📍 Votre zone de vacances</h2>
     <p style="font-size:12px;color:var(--text-muted);text-align:center;margin-bottom:18px;line-height:1.6">
       Choisissez votre zone pour afficher vos vacances scolaires officielles.<br>
       Modifiable à tout moment via le bouton ⚙️ Zone du calendrier.
     </p>
-    <div style="display:flex;flex-direction:column;gap:8px">
-      <button class="btn btn-blue" style="padding:13px;font-size:13px;text-align:left" onclick="calSetZone('A')">
-        <b>Zone A</b><br>
-        <span style="font-size:11px;opacity:.85;font-weight:400">Besançon, Bordeaux, Clermont, Dijon,...</span>
+    <div style="font-size:10px;font-weight:800;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin:4px 0 8px">Métropole</div>
+    <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:14px">
+      <button class="btn btn-blue" style="padding:11px;font-size:12px;text-align:left" onclick="calSetZone('A')">
+        <b>Zone A</b> <span style="font-size:10px;opacity:.85;font-weight:400">— Besançon, Bordeaux, Clermont, Dijon, Grenoble, Limoges, Lyon, Poitiers</span>
       </button>
-      <button class="btn btn-violet" style="padding:13px;font-size:13px;text-align:left" onclick="calSetZone('B')">
-        <b>Zone B</b><br>
-        <span style="font-size:11px;opacity:.85;font-weight:400">Aix-Marseille, Amiens, Caen, Lille, Nancy-Metz, Nantes,...</span>
+      <button class="btn btn-violet" style="padding:11px;font-size:12px;text-align:left" onclick="calSetZone('B')">
+        <b>Zone B</b> <span style="font-size:10px;opacity:.85;font-weight:400">— Aix-Marseille, Amiens, Caen, Lille, Nancy-Metz, Nantes, Nice, Orléans-Tours, Reims, Rennes, Rouen, Strasbourg</span>
       </button>
-      <button class="btn btn-pink" style="padding:13px;font-size:13px;text-align:left" onclick="calSetZone('C')">
-        <b>Zone C</b><br>
-        <span style="font-size:11px;opacity:.85;font-weight:400">Créteil, Montpellier, Paris, Toulouse, Versailles</span>
+      <button class="btn btn-pink" style="padding:11px;font-size:12px;text-align:left" onclick="calSetZone('C')">
+        <b>Zone C</b> <span style="font-size:10px;opacity:.85;font-weight:400">— Créteil, Montpellier, Paris, Toulouse, Versailles</span>
       </button>
+      <button class="btn btn-ghost" style="padding:11px;font-size:12px;text-align:left;background:rgba(108,99,255,0.08)" onclick="calSetZone('Corse')">
+        <b>Corse</b>
+      </button>
+    </div>
+    <div style="font-size:10px;font-weight:800;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin:4px 0 8px">Outre-mer (DROM-COM)</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:6px">
+      <button class="btn btn-ghost" style="padding:10px;font-size:11px;background:rgba(34,197,94,0.08)" onclick="calSetZone('Guadeloupe')">🇬🇵 Guadeloupe</button>
+      <button class="btn btn-ghost" style="padding:10px;font-size:11px;background:rgba(34,197,94,0.08)" onclick="calSetZone('Martinique')">🇲🇶 Martinique</button>
+      <button class="btn btn-ghost" style="padding:10px;font-size:11px;background:rgba(34,197,94,0.08)" onclick="calSetZone('Guyane')">🇬🇫 Guyane</button>
+      <button class="btn btn-ghost" style="padding:10px;font-size:11px;background:rgba(34,197,94,0.08)" onclick="calSetZone('La Réunion')">🇷🇪 La Réunion</button>
+      <button class="btn btn-ghost" style="padding:10px;font-size:11px;background:rgba(34,197,94,0.08)" onclick="calSetZone('Mayotte')">🇾🇹 Mayotte</button>
+      <button class="btn btn-ghost" style="padding:10px;font-size:11px;background:rgba(20,184,166,0.08)" onclick="calSetZone('Nouvelle-Calédonie')">🇳🇨 Nouvelle-Calédonie</button>
+      <button class="btn btn-ghost" style="padding:10px;font-size:11px;background:rgba(20,184,166,0.08)" onclick="calSetZone('Polynésie')">🇵🇫 Polynésie</button>
+      <button class="btn btn-ghost" style="padding:10px;font-size:11px;background:rgba(20,184,166,0.08)" onclick="calSetZone('Wallis-et-Futuna')">🇼🇫 Wallis-et-Futuna</button>
+      <button class="btn btn-ghost" style="padding:10px;font-size:11px;background:rgba(245,158,11,0.08)" onclick="calSetZone('Saint-Pierre-et-Miquelon')">🇵🇲 Saint-Pierre-et-Miquelon</button>
+      <button class="btn btn-ghost" style="padding:10px;font-size:11px;background:rgba(245,158,11,0.08)" onclick="calSetZone('Saint-Barthélemy')">🇧🇱 Saint-Barthélemy</button>
+      <button class="btn btn-ghost" style="padding:10px;font-size:11px;background:rgba(245,158,11,0.08)" onclick="calSetZone('Saint-Martin')">🇲🇫 Saint-Martin</button>
     </div>
   </div>
 </div>
@@ -10601,8 +10616,8 @@ function calOpen() {
   }
   // Init bouton vue actif (défaut : mois, mémorisé entre sessions)
   calSetView(calApp.view || 'month', true);
-  // Afficher la zone actuelle
-  const z = $('cal-current-zone'); if (z) z.textContent = calApp.zone;
+  // Afficher la zone actuelle (libellé court)
+  const z = $('cal-current-zone'); if (z) z.textContent = calZoneShortLabel(calApp.zone);
   // Remplir le select des niveaux
   calRebuildFilters();
   // Le rendu se charge de charger les vacances (basé sur visibleMonth)
@@ -10610,11 +10625,29 @@ function calOpen() {
 }
 
 // ── Choix de la zone ──
+// Pour l'affichage compact dans le bouton de la barre du calendrier
+function calZoneShortLabel(zone) {
+  if (!zone) return '—';
+  if (zone === 'A' || zone === 'B' || zone === 'C') return zone;
+  // Abréger les noms longs des DROM-COM dans la barre
+  const SHORT = {
+    'Corse': 'Corse',
+    'Guadeloupe': 'Guadeloupe', 'Martinique': 'Martinique', 'Guyane': 'Guyane',
+    'La Réunion': 'Réunion', 'Mayotte': 'Mayotte',
+    'Nouvelle-Calédonie': 'Nouvelle-Calédonie',
+    'Polynésie': 'Polynésie',
+    'Wallis-et-Futuna': 'Wallis',
+    'Saint-Pierre-et-Miquelon': 'St-Pierre-et-Miquelon',
+    'Saint-Barthélemy': 'St-Barthélemy',
+    'Saint-Martin': 'St-Martin',
+  };
+  return SHORT[zone] || zone;
+}
 function calSetZone(zone) {
   calApp.zone = zone;
   calSave();
   closeModal('m-cal-zone');
-  $('cal-current-zone').textContent = zone;
+  $('cal-current-zone').textContent = calZoneShortLabel(zone);
   // Vider le cache pour recharger les vacances de la nouvelle zone
   calApp.vacationsByYear = {};
   calSave();
@@ -10703,10 +10736,71 @@ function calGetHolidays(year) {
   ];
 }
 
+// Jours fériés supplémentaires propres à certains territoires d'Outre-mer.
+// Source : code du travail (art. L3422-2) + arrêtés préfectoraux.
+// On ne couvre ici que les dates fixes ; les fêtes mobiles musulmanes de Mayotte
+// (Aïd el-Kébir, Maoulida, Aïd el-Fitr, Miradji) sont déterminées chaque année par
+// arrêté préfectoral et ne sont pas calculables automatiquement.
+function calGetLocalHolidays(year, zone) {
+  if (!zone) return [];
+  switch (zone) {
+    case 'Guadeloupe':
+      return [
+        { name: "Abolition de l'esclavage (Guadeloupe)", date: new Date(year, 4, 27) }, // 27 mai
+        { name: 'Victor Schoelcher', date: new Date(year, 6, 21) }, // 21 juillet
+      ];
+    case 'Martinique':
+      return [
+        { name: "Abolition de l'esclavage (Martinique)", date: new Date(year, 4, 22) }, // 22 mai
+        { name: 'Victor Schoelcher', date: new Date(year, 6, 21) }, // 21 juillet
+      ];
+    case 'Guyane':
+      return [
+        { name: "Abolition de l'esclavage (Guyane)", date: new Date(year, 5, 10) }, // 10 juin
+      ];
+    case 'La Réunion':
+      return [
+        { name: "Abolition de l'esclavage (Réunion)", date: new Date(year, 11, 20) }, // 20 décembre
+      ];
+    case 'Mayotte':
+      return [
+        { name: "Abolition de l'esclavage (Mayotte)", date: new Date(year, 3, 27) }, // 27 avril
+      ];
+    case 'Saint-Barthélemy':
+      return [
+        { name: "Abolition de l'esclavage (Saint-Barthélemy)", date: new Date(year, 9, 9) }, // 9 octobre
+      ];
+    case 'Saint-Martin':
+      return [
+        { name: "Abolition de l'esclavage (Saint-Martin)", date: new Date(year, 4, 28) }, // 28 mai
+      ];
+    case 'Nouvelle-Calédonie':
+      return [
+        { name: 'Fête de la citoyenneté', date: new Date(year, 8, 24) }, // 24 septembre
+      ];
+    case 'Polynésie':
+      return [
+        { name: 'Arrivée de l\'Évangile', date: new Date(year, 2, 5) }, // 5 mars
+        { name: 'Fête de l\'autonomie', date: new Date(year, 5, 29) }, // 29 juin
+      ];
+    case 'Wallis-et-Futuna':
+      return [
+        { name: 'Saint-Pierre-Chanel', date: new Date(year, 3, 28) }, // 28 avril
+      ];
+    default:
+      return [];
+  }
+}
+
 // Récupère tous les jours fériés qui touchent une année scolaire donnée
+// Inclut les fêtes nationales + les fêtes locales propres à la zone active (DROM-COM)
 function calGetHolidaysForSchoolYear(schoolYear) {
   const [y1, y2] = schoolYear.split('-').map(Number);
-  return [...calGetHolidays(y1), ...calGetHolidays(y2)].filter(h => {
+  const all = [
+    ...calGetHolidays(y1), ...calGetHolidays(y2),
+    ...calGetLocalHolidays(y1, calApp.zone), ...calGetLocalHolidays(y2, calApp.zone),
+  ];
+  return all.filter(h => {
     return h.date >= schoolYearStart(schoolYear) && h.date <= schoolYearEnd(schoolYear);
   });
 }
@@ -10718,12 +10812,20 @@ function calIsHoliday(d, schoolYear) {
   return list.find(h => dateToISO(h.date) === iso);
 }
 
+// Construit le libellé exact attendu par l'API pour le champ "zones"
+// Métropole : "Zone A", "Zone B", "Zone C"
+// Corse + DROM-COM : utilisés tels quels (ex : "Guadeloupe", "La Réunion")
+function calZoneApiLabel(zone) {
+  if (!zone) return '';
+  if (zone === 'A' || zone === 'B' || zone === 'C') return 'Zone ' + zone;
+  return zone;
+}
+
 async function calLoadVacations(schoolYear) {
   if (!calApp.zone) return [];
   if (calApp.vacationsByYear[schoolYear]) return calApp.vacationsByYear[schoolYear];
   try {
-    // Format API : annee_scolaire = "2024-2025", zones = "Zone A"
-    const zoneStr = `Zone ${calApp.zone}`;
+    const zoneStr = calZoneApiLabel(calApp.zone);
     // refine est plus simple que where, et population=Élèves évite les doublons enseignants
     const params = new URLSearchParams({
       'limit': '50',

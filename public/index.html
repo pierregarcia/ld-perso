@@ -1470,41 +1470,6 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
   </div>
 </div>
 
-<!-- Modal : Nouveautés -->
-<div id="m-news" class="modal-bg" onclick="closeModal('m-news')">
-  <div class="modal" onclick="event.stopPropagation()" style="max-width:560px;width:92vw">
-    <button class="modal-x" onclick="closeModal('m-news')">✕</button>
-    <h2>✨ Nouveautés</h2>
-    <p style="font-size:12px;color:var(--text-muted);text-align:center;margin-bottom:18px">
-      Le Séquenceur s'enrichit ! Voici ce qui change :
-    </p>
-    <div style="display:flex;flex-direction:column;gap:14px;font-size:13px;line-height:1.55">
-      <div style="padding:14px;border-left:3px solid var(--accent);background:rgba(62,207,142,0.08);border-radius:6px">
-        <div style="font-weight:800;margin-bottom:4px">📅 Nouvel onglet Séances</div>
-        <div style="color:var(--text-muted)">
-          Vous pouvez désormais créer des <b>séances détaillées</b> à l'intérieur de chaque séquence : titre, objectifs, activités chronométrées, supports et devoirs.
-        </div>
-      </div>
-      <div style="padding:14px;border-left:3px solid #f59e0b;background:rgba(245,158,11,0.08);border-radius:6px">
-        <div style="font-weight:800;margin-bottom:4px">🔗 Communication Séquences ↔ Progressions</div>
-        <div style="color:var(--text-muted)">
-          Quand vous ajoutez une séquence dans une progression, elle apparaît automatiquement dans <b>Mes Séquences</b> (avec niveau et année hérités), prête à être complétée. Les modifications se propagent dans les deux sens.
-        </div>
-      </div>
-      <div style="padding:14px;border-left:3px solid #ec4899;background:rgba(236,72,153,0.08);border-radius:6px">
-        <div style="font-weight:800;margin-bottom:4px">📱 Adaptation mobile</div>
-        <div style="color:var(--text-muted)">
-          L'interface est désormais conçue pour les <b>téléphones et tablettes</b> : éditeur fixe en haut avec scroll interne, aperçu final juste en dessous.
-        </div>
-      </div>
-    </div>
-    <button class="btn btn-green" style="width:100%;padding:13px;font-size:13px;margin-top:18px" onclick="closeModal('m-news');markNewsSeen()">
-      👍 J'ai compris
-    </button>
-  </div>
-</div>
-
-
 <!-- Modal : Choix de zone vacances (calendrier) -->
 <div id="m-cal-zone" class="modal-bg" onclick="closeModal('m-cal-zone')">
   <div class="modal" onclick="event.stopPropagation()" style="max-width:480px">
@@ -1517,11 +1482,11 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
     <div style="display:flex;flex-direction:column;gap:8px">
       <button class="btn btn-blue" style="padding:13px;font-size:13px;text-align:left" onclick="calSetZone('A')">
         <b>Zone A</b><br>
-        <span style="font-size:11px;opacity:.85;font-weight:400">Besançon, Bordeaux, Clermont, Dijon, Grenoble, Limoges, Lyon, Poitiers</span>
+        <span style="font-size:11px;opacity:.85;font-weight:400">Besançon, Bordeaux, Clermont, Dijon,...</span>
       </button>
       <button class="btn btn-violet" style="padding:13px;font-size:13px;text-align:left" onclick="calSetZone('B')">
         <b>Zone B</b><br>
-        <span style="font-size:11px;opacity:.85;font-weight:400">Aix-Marseille, Amiens, Caen, Lille, Nancy-Metz, Nantes, Nice, Orléans-Tours, Reims, Rennes, Rouen, Strasbourg</span>
+        <span style="font-size:11px;opacity:.85;font-weight:400">Aix-Marseille, Amiens, Caen, Lille, Nancy-Metz, Nantes,...</span>
       </button>
       <button class="btn btn-pink" style="padding:13px;font-size:13px;text-align:left" onclick="calSetZone('C')">
         <b>Zone C</b><br>
@@ -6565,9 +6530,14 @@ function welcomeSelectLang(l) {
 function initFromWelcome() {
   setGlobalLang(welcomeLang);
   closeModal('m-welcome');
-  // Marquer les nouveautés comme vues (premier visiteur n'a pas besoin de les voir)
-  markNewsSeen();
   libRenderHome();
+  // Première connexion : on lance la visite guidée après un délai
+  // pour que la page soit bien rendue. Le flag est posé en fin de visite.
+  try {
+    if (!localStorage.getItem('sq7-tour-seen')) {
+      setTimeout(() => tourStart(), 500);
+    }
+  } catch(e){}
 }
 
 // Alias pour compatibilité
@@ -7788,17 +7758,6 @@ function progImportSeqFromLib(libId) {
   progRenderAll();
   closeModal('m-import-from-lib');
   showToast('✓ Séquence importée');
-}
-
-// ── Modale "Nouveautés" ──
-function markNewsSeen() {
-  try { localStorage.setItem('sq7-news-seen', '3'); } catch(e){}
-}
-function maybeShowNews() {
-  try {
-    const seen = localStorage.getItem('sq7-news-seen');
-    if (seen !== '3') openModal('m-news');
-  } catch(e){}
 }
 
 // ── Export PDF ──
@@ -11932,10 +11891,6 @@ progRenderDash();
 // Affiche la home du séquenceur par défaut
 seqShowSubview('home');
 libRenderHome();
-// Modale "Nouveautés" pour les utilisateurs existants (pas pour première visite)
-if (!_firstVisit) {
-  setTimeout(() => maybeShowNews(), 300);
-}
 
 // ================================================================
 // VISITE GUIDÉE (onboarding spotlight)
@@ -12177,19 +12132,10 @@ function tourPositionBubble(targetEl, pos) {
   bubble.style.setProperty('--arrow-offset', arrowOffset + 'px');
 }
 
-// Déclenchement automatique à la première visite
-function maybeShowTour() {
-  try {
-    const seen = localStorage.getItem('sq7-tour-seen');
-    if (!seen) {
-      // Délai pour que la page soit complètement rendue
-      setTimeout(() => tourStart(), 800);
-    }
-  } catch(e){}
-}
+// La visite guidée se lance désormais uniquement après la modale de bienvenue
+// (cf. initFromWelcome). Pour les visiteurs existants, la visite reste accessible
+// via le bouton 🎓 dans l'en-tête.
 
-// Lancer si première visite (et qu'on n'est pas en train de monter une langue inconnue)
-maybeShowTour();
 </script>
 </body>
 </html>

@@ -1,7 +1,66 @@
 # Changelog - Le Séquenceur 📝
 
 Toutes les modifications notables apportées au projet "Le Séquenceur" seront documentées dans ce fichier.
-
+## [3.5.0] - 2026-05-21
+### Ajouté
+- **Couleur personnalisable des sorties/voyages** : 8 couleurs disponibles (orange, rouge, violet, bleu, turquoise, vert, rose, gris) sélectionnables via une palette de pastilles dans la modale de création/édition. La couleur choisie s'affiche immédiatement dans le calendrier.
+- **Travailler le samedi** : Nouveau toggle dans la barre du calendrier. Par défaut, le samedi n'est pas un jour ouvré pour les séquences ; l'enseignant peut l'activer s'il travaille le samedi. Les sorties et voyages scolaires restent libres de tomber n'importe quel jour.
+- **Jours non-ouvrés dans le picker calendrier** : Le dimanche (toujours) et le samedi (sauf option) sont désormais hachurés et non cliquables dans la mini-calendrier de placement des séquences, avec un message explicatif en toast.
+### Modifié
+- **Couleurs du calendrier** : Les séquences s'affichent désormais avec un fond vif (couleur principale) et un texte blanc, comme les étiquettes de chevauchement. Le numéro du jour est explicitement coloré en blanc sur fond coloré.
+- **Vraie modale de confirmation** : Les boîtes de dialogue natives du navigateur (`confirm()`) sont remplacées par une modale intégrée au design du site (`confirmAsync`), appliquée à toutes les suppressions (séquence, séance, progression, retrait du calendrier, sortie/voyage). La modale de confirmation passe toujours au-dessus des autres modales grâce à un z-index supérieur.
+- **Export depuis le dashboard** : Nouveau bouton 📤 sur chaque tuile de séquence et de séance. Pour une séquence, choix entre exporter la fiche seule ou la séquence avec toutes ses séances (PDF, Word/ODT ou Markdown). Les exports multi s'enchaînent avec un délai pour éviter les conflits d'impression.
+- **Attendus officiels Anglais** : Grammaire et phonologie des 4 niveaux collège (6e, 5e, 4e, 3e) entièrement réécrits selon les programmes officiels. Numérotation locale par niveau (G01…, PH01…), niveaux CECRL entre parenthèses, exemples raccourcis.
+- **Attendus officiels Espagnol** : Idem pour l'espagnol, 4 niveaux collège (6e A1/A1+, 5e A1+/A2, 4e A2+, 3e A2/B1). Phonologie espagnol 3e en pioche libre (tous les items disponibles).
+### Corrigé
+- **Bug majeur calendrier (fond blanc)** : Les séquences posées dans le calendrier n'affichaient aucune couleur ni titre — les chiffres flottaient dans le vide. Cause : un doublon d'attribut `style` dans le HTML généré (un `style="cursor:pointer"` dans la variable `clickAction` et un second `style="background:..."` juste après). Le navigateur gardait uniquement le premier, ignorant le fond, la hauteur et la mise en page. Corrigé en fusionnant tout dans un seul attribut `style`.
+- **Couleurs des sorties/voyages** : La fonction `calOffColorForKind` ne recevait pas l'objet événement complet, rendant impossible l'utilisation d'une couleur personnalisée. Corrigée pour propager `colorIdx` de l'événement jusqu'au rendu de la cellule.
+- **Robustesse `calColorFor`** : La fonction retournait une erreur silencieuse si `libApp.seqs` n'était pas encore chargé. Ajout d'un `try/catch` et d'un fallback déterministe par hash de l'ID.
+---
+ 
+## [3.4.0] - 2026-05-20
+### Ajouté
+- **Image d'illustration** : Bloc dépliable 🖼️ dans l'éditeur de séquence et de séance. L'enseignant colle l'URL d'une image (conseil intégré : clic droit → copier l'adresse). Deux formes : bannière (rectangle, max 180 px) ou ronde (cercle 110 px). Aperçu live dans l'éditeur. L'image s'affiche dans l'aperçu A4 au-dessus du titre.
+- **Trace écrite attendue** : Nouvelle section ✏️ dans l'éditeur de séance, juste avant les devoirs. Champ texte en police Patrick Hand (cursive scolaire). S'affiche dans l'aperçu A4 entre Activités et Devoirs, masquée si vide.
+- **Police personnalisée (Bunny Fonts)** : Bloc dépliable ✒️ dans les éditeurs séquence, séance et progression. 17 polices disponibles (Inter, Playfair Display, Caveat, Patrick Hand, JetBrains Mono…) chargées à la demande via Bunny Fonts (CDN RGPD-compliant). Chaque option du select s'affiche dans sa propre police.
+- **Taille du texte des sections** : Curseur de 85 % à 150 % dans le bloc Police. Affecte uniquement les contenus saisis (items lexique/grammaire, activités, trace, devoirs, tags) — pas le titre ni la problématique. Bouton ↺ pour réinitialiser à 100 %.
+- **Anneau de complétion** : Indicateur SVG circulaire sur chaque tuile de séquence montrant le taux de remplissage des 13 rubriques. Couleurs rouge/orange/vert selon le niveau de complétude. Tooltip listant les rubriques manquantes.
+- **Export depuis les tuiles** : Bouton 📤 sur chaque tuile du dashboard (séquence et séance) pour exporter sans ouvrir l'éditeur.
+### Modifié
+- **Refonte de la vue Mois du calendrier** : Cases de 90 px minimum avec contenu lisible directement (nom du jour férié 🎉, nom des vacances 🏖️, nom de la sortie 🚌, titre de la séquence). Fin des barres horizontales flottantes au profit d'un fond coloré par case. Grille en `minmax(0,1fr)` pour éviter tout débordement. Noms des jours en entier (Lundi, Mardi…).
+- **Calendrier : suppression du filtre « année »** : Le filtre par année scolaire a été retiré du calendrier (source de bugs). L'année est maintenant déduite automatiquement du mois affiché.
+### Corrigé
+- **Visite guidée (tour)** : Le bug de régression entre les étapes 2 et 3 est résolu. Cause : un `setTimeout(() => tourShowStep(idx), 400)` déclenché après un `scrollIntoView` smooth permettait à un second clic "Suivant" de s'intercaler, puis le timeout rappelait l'étape précédente. Remplacé par un scroll instantané (`behavior: 'auto'`). L'overlay est maintenant en `pointer-events:none` sauf quand actif, et `tourEnd()` nettoie agressivement tous les éléments résiduels.
+- **Calendrier : cases dépassent du panel** : Le `max-width:720px` autour du rendu mensuel étouffait les cases avec la nouvelle hauteur de 90 px. Retiré au profit de colonnes en `minmax(0,1fr)` et `overflow:hidden` sur le conteneur.
+---
+ 
+## [3.3.0] - 2026-05-19
+### Ajouté
+- **Attendus officiels intégrés** : Les listes déroulantes Grammaire et Phonologie de l'éditeur de séquence sont alimentées par les programmes officiels EN (6e→3e) et ES (6e→3e), avec numérotation locale et niveaux CECRL.
+- **Palette de couleurs pour les séquences** : Chaque séquence peut recevoir une couleur personnalisée dans le calendrier via une palette circulaire de 12 teintes (bleue, verte, rose…).
+- **Vue Année du calendrier** : 12 mini-mois avec navigation entre années scolaires. Clic sur un mini-mois → bascule en vue Mois. Bandes colorées par séquence sur les mini-calendriers.
+- **Sorties et voyages scolaires** : Ajout d'événements personnalisés (sortie au musée, voyage à l'étranger) dans le calendrier, filtrables par niveau. Icône 🚌 dédiée.
+- **Modale de confirmation** : Remplacement progressif des `confirm()` natifs par une modale intégrée.
+### Modifié
+- **Nuage désactivé** : L'intégration WebDAV avec Nuage Apps Éducation a été retirée (blocage CORS confirmé entre sous-domaines `.apps.education.fr`). Supprimé proprement sans laisser de boutons ni de code mort.
+---
+ 
+## [3.2.0] - 2026-05-18
+### Ajouté
+- **Séances** : Nouvel onglet ✏️ dédié à la création de séances pour chaque séquence. Éditeur complet : titre, objectif, supports, activités (avec durée individuelle), devoirs. Aperçu A4 synchrone. Duplication et réorganisation par glisser-déposer.
+- **Export séance** : PDF, Word/ODT et Markdown pour chaque fiche de séance.
+- **Dashboard séances** : Tuiles séances sur la page d'accueil, groupées par séquence parente. Compteur de séances par séquence.
+### Modifié
+- **Sauvegarde unifiée** : Les séances sont stockées dans une clé localStorage séparée (`sq7-sea`) pour ne pas alourdir la clé principale.
+---
+ 
+## [3.1.0] - 2026-05-17
+### Ajouté
+- **Calendrier scolaire** : Nouvel onglet 📆. Placement visuel des séquences sur un calendrier mensuel avec gestion des vacances scolaires (API officielle, zones A/B/C), des jours fériés calculés et des week-ends.
+- **Picker de dates** : Modale de sélection de dates avec mini-calendrier, détection des vacances et du weekend.
+- **Bouton 📍 Aujourd'hui** : Revenir au mois courant en un clic dans la vue calendrier.
+### Modifié
+- **Import/Export ZIP** : L'import en fusion intelligente ne fait qu'ajouter les éléments absents, sans jamais écraser les données existantes. Le changelog indique précisément le nombre d'éléments ajoutés et ignorés.
 ## [1.6.0] - 2026-04-25
 ### Ajouté
 - **Approche actionnelle** : Ajout des rubriques "Projet final" (Tâche finale) et "Tâches intermédiaires" sous forme de champs libres pour définir l'action au cœur de la séquence.

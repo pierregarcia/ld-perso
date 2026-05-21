@@ -10818,37 +10818,56 @@ function calIsHoliday(d, schoolYear) {
 
 // Pour métropole (Zone A/B/C), on filtre sur le champ `zones`.
 // Pour la Corse et les DROM-COM, on filtre sur le champ `location` (= académie).
-// C'est crucial : le filtre `zones` ne contient QUE Zone A/B/C, donc une recherche
-// `zones:"Mayotte"` renvoie 0 résultats. Source : data.education.gouv.fr.
+// IMPORTANT : les noms d'académie dans le dataset ne suivent pas un format standard.
+// Par exemple : "Réunion" (pas "La Réunion"), "Nouvelle Calédonie" (sans tiret).
+// On utilise donc un `LIKE` (match partiel) plus tolérant aux variations d'orthographe.
 function calZoneApiField(zone) {
   if (zone === 'A' || zone === 'B' || zone === 'C') return 'zones';
   return 'location';
 }
 
-// Construit la VALEUR exacte attendue par l'API pour le champ choisi.
-function calZoneApiValue(zone) {
+// Mot-clé robuste à rechercher dans le champ location pour chaque zone.
+// On vise le mot le plus distinctif et qui correspondra quelle que soit la variante exacte
+// d'écriture dans le dataset (avec/sans accent, avec/sans "La", avec/sans tiret).
+function calZoneSearchKeyword(zone) {
   if (!zone) return '';
   if (zone === 'A' || zone === 'B' || zone === 'C') return 'Zone ' + zone;
-  // Cas particuliers d'orthographe dans le champ location
-  if (zone === 'Nouvelle-Calédonie') return 'Nouvelle Calédonie';
-  if (zone === 'Wallis-et-Futuna') return 'Wallis et Futuna';
-  // Saint-Barthélemy et Saint-Martin ne sont pas dans le dataset → on retombe sur Guadeloupe
+  if (zone === 'Corse') return 'Corse';
+  if (zone === 'Guadeloupe') return 'Guadeloupe';
+  if (zone === 'Martinique') return 'Martinique';
+  if (zone === 'Guyane') return 'Guyane';
+  if (zone === 'La Réunion') return 'Réunion';
+  if (zone === 'Mayotte') return 'Mayotte';
+  if (zone === 'Nouvelle-Calédonie') return 'Calédonie';
+  if (zone === 'Polynésie') return 'Polynésie';
+  if (zone === 'Wallis-et-Futuna') return 'Wallis';
+  if (zone === 'Saint-Pierre-et-Miquelon') return 'Miquelon';
   if (zone === 'Saint-Barthélemy' || zone === 'Saint-Martin') return 'Guadeloupe';
   return zone;
 }
 
-// Alias legacy pour ne rien casser ailleurs dans le code
-function calZoneApiLabel(zone) { return calZoneApiValue(zone); }
+// Garde-le pour compatibilité (utilisé ailleurs dans le code)
+function calZoneApiValue(zone) { return calZoneSearchKeyword(zone); }
+function calZoneApiLabel(zone) { return calZoneSearchKeyword(zone); }
 
 async function calLoadVacations(schoolYear) {
   if (!calApp.zone) return [];
   if (calApp.vacationsByYear[schoolYear]) return calApp.vacationsByYear[schoolYear];
   try {
     const field = calZoneApiField(calApp.zone);
-    const value = calZoneApiValue(calApp.zone);
+    const keyword = calZoneSearchKeyword(calApp.zone);
     const effectiveField = (calApp.zone === 'Corse') ? 'location' : field;
-    const safeValue = String(value).replace(/'/g, "\\'");
-    const whereClause = `${effectiveField}="${safeValue}" AND annee_scolaire="${schoolYear}"`;
+    // Pour les métropoles : match exact sur "Zone X"
+    // Pour le reste : match partiel (LIKE) pour s'accommoder des variantes orthographiques
+    // exactes du dataset (Réunion vs La Réunion, Nouvelle Calédonie vs Nouvelle-Calédonie…)
+    let whereClause;
+    if (field === 'zones') {
+      whereClause = `zones="${keyword}" AND annee_scolaire="${schoolYear}"`;
+    } else {
+      // ODSQL : LIKE accepte "*motif*" pour un match partiel insensible à la casse
+      const safeKeyword = String(keyword).replace(/"/g, '\\"');
+      whereClause = `${effectiveField} LIKE "*${safeKeyword}*" AND annee_scolaire="${schoolYear}"`;
+    }
     const params = new URLSearchParams({
       'limit': '100',
       'lang': 'fr',
@@ -10856,8 +10875,7 @@ async function calLoadVacations(schoolYear) {
       'where': whereClause,
     });
     const apiUrl = `https://data.education.gouv.fr/api/explore/v2.1/catalog/datasets/fr-en-calendrier-scolaire/records?${params.toString()}`;
-    // Stratégie : essayer en direct, puis via un proxy CORS si l'accès direct échoue
-    // (utile quand le site est servi avec une CSP qui bloque les requêtes cross-origin)
+    console.log('[Calendrier] Requête API :', apiUrl);
     const data = await calFetchWithProxyFallback(apiUrl);
     // Déduplication : on garde les vacances uniques (par nom + date de début)
     const seen = new Set();
@@ -10878,7 +10896,7 @@ async function calLoadVacations(schoolYear) {
       });
     calApp.vacationsByYear[schoolYear] = vacs;
     calSave();
-    console.log(`[Calendrier] ${vacs.length} période(s) de vacances chargée(s) pour ${effectiveField}="${value}" ${schoolYear}`);
+    console.log(`[Calendrier] ${vacs.length} période(s) de vacances chargée(s) pour ${effectiveField} LIKE "${keyword}" ${schoolYear}`);
     return vacs;
   } catch (e) {
     console.warn('[Calendrier] Échec chargement vacances :', e);

@@ -1505,8 +1505,11 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
       <button class="btn btn-ghost" style="padding:10px;font-size:11px;background:rgba(20,184,166,0.08)" onclick="calSetZone('Polynésie')">🇵🇫 Polynésie</button>
       <button class="btn btn-ghost" style="padding:10px;font-size:11px;background:rgba(20,184,166,0.08)" onclick="calSetZone('Wallis-et-Futuna')">🇼🇫 Wallis-et-Futuna</button>
       <button class="btn btn-ghost" style="padding:10px;font-size:11px;background:rgba(245,158,11,0.08)" onclick="calSetZone('Saint-Pierre-et-Miquelon')">🇵🇲 Saint-Pierre-et-Miquelon</button>
-      <button class="btn btn-ghost" style="padding:10px;font-size:11px;background:rgba(245,158,11,0.08)" onclick="calSetZone('Saint-Barthélemy')">🇧🇱 Saint-Barthélemy</button>
-      <button class="btn btn-ghost" style="padding:10px;font-size:11px;background:rgba(245,158,11,0.08)" onclick="calSetZone('Saint-Martin')">🇲🇫 Saint-Martin</button>
+      <button class="btn btn-ghost" style="padding:10px;font-size:11px;background:rgba(245,158,11,0.08)" onclick="calSetZone('Saint-Barthélemy')" title="Calendrier scolaire identique à celui de la Guadeloupe">🇧🇱 Saint-Barthélemy</button>
+      <button class="btn btn-ghost" style="padding:10px;font-size:11px;background:rgba(245,158,11,0.08)" onclick="calSetZone('Saint-Martin')" title="Calendrier scolaire identique à celui de la Guadeloupe">🇲🇫 Saint-Martin</button>
+    </div>
+    <div style="font-size:10px;color:var(--text-muted);margin-top:12px;line-height:1.5;padding:8px 12px;background:var(--card);border-radius:6px">
+      ℹ️ <b>Saint-Barthélemy</b> et <b>Saint-Martin</b> suivent le calendrier scolaire de la Guadeloupe (les jours fériés locaux propres restent affichés).
     </div>
   </div>
 </div>
@@ -10814,10 +10817,15 @@ function calIsHoliday(d, schoolYear) {
 
 // Construit le libellé exact attendu par l'API pour le champ "zones"
 // Métropole : "Zone A", "Zone B", "Zone C"
-// Corse + DROM-COM : utilisés tels quels (ex : "Guadeloupe", "La Réunion")
+// Corse + DROM-COM : utilisés tels que le dataset les nomme (vérifiés sur data.education.gouv.fr)
 function calZoneApiLabel(zone) {
   if (!zone) return '';
   if (zone === 'A' || zone === 'B' || zone === 'C') return 'Zone ' + zone;
+  // Cas particuliers : le dataset n'utilise pas tous les tirets
+  if (zone === 'Nouvelle-Calédonie') return 'Nouvelle Calédonie';
+  if (zone === 'Wallis-et-Futuna') return 'Wallis et Futuna';
+  // Saint-Barthélemy et Saint-Martin ne sont pas dans le dataset (rattachés à la Guadeloupe pour les vacances)
+  if (zone === 'Saint-Barthélemy' || zone === 'Saint-Martin') return 'Guadeloupe';
   return zone;
 }
 
@@ -10826,18 +10834,22 @@ async function calLoadVacations(schoolYear) {
   if (calApp.vacationsByYear[schoolYear]) return calApp.vacationsByYear[schoolYear];
   try {
     const zoneStr = calZoneApiLabel(calApp.zone);
-    // refine est plus simple que where, et population=Élèves évite les doublons enseignants
+    // refine : zone + année scolaire. On ne filtre PAS par population car certaines zones
+    // DROM-COM n'ont des entrées qu'avec population="Élèves" ou "-" suivant les années.
+    // Au lieu d'un seul refine restrictif, on récupère tout et on déduplique côté client.
     const params = new URLSearchParams({
-      'limit': '50',
-      'refine': `zones:"${zoneStr}"`,
+      'limit': '100',
       'lang': 'fr',
       'timezone': 'Europe/Paris',
     });
-    // refine multiple : on doit le concaténer manuellement
-    let url = `https://data.education.gouv.fr/api/explore/v2.1/catalog/datasets/fr-en-calendrier-scolaire/records?${params.toString()}&refine=annee_scolaire%3A%22${schoolYear}%22&refine=population%3A%22-%22`;
+    let url = `https://data.education.gouv.fr/api/explore/v2.1/catalog/datasets/fr-en-calendrier-scolaire/records?${params.toString()}`
+            + `&refine=zones%3A%22${encodeURIComponent(zoneStr)}%22`
+            + `&refine=annee_scolaire%3A%22${schoolYear}%22`;
     const res = await fetch(url);
     if (!res.ok) throw new Error('HTTP ' + res.status);
     const data = await res.json();
+    // Déduplication : on garde les vacances uniques (par nom + date de début)
+    const seen = new Set();
     const vacs = (data.results || [])
       .filter(r => /vacances/i.test(r.description||''))
       .map(r => ({
@@ -10845,10 +10857,20 @@ async function calLoadVacations(schoolYear) {
         start: r.start_date ? r.start_date.slice(0,10) : null,
         end: r.end_date ? r.end_date.slice(0,10) : null,
         zone: r.zones,
+        population: r.population || '',
       }))
-      .filter(v => v.start && v.end);
+      .filter(v => v.start && v.end)
+      .filter(v => {
+        // Dédoublonner par (nom + date début) — l'API peut retourner plusieurs lignes
+        // pour la même période (population "Élèves" + "Enseignants" + "-")
+        const k = v.name + '|' + v.start;
+        if (seen.has(k)) return false;
+        seen.add(k);
+        return true;
+      });
     calApp.vacationsByYear[schoolYear] = vacs;
     calSave();
+    console.log(`[Calendrier] ${vacs.length} période${vacs.length>1?'s':''} de vacances chargée${vacs.length>1?'s':''} pour "${zoneStr}" ${schoolYear}`);
     return vacs;
   } catch (e) {
     console.warn('[Calendrier] Échec chargement vacances :', e);

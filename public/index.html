@@ -195,6 +195,35 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 .pcard-new:hover{border-color:var(--accent2);background:rgba(108,99,255,0.03)}
 .pcard-new-ico{font-size:26px;background:var(--card);width:50px;height:50px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--accent)}
 
+/* Poignée de glisser-déposer */
+.dnd-handle{position:absolute;top:10px;left:10px;color:var(--text-muted);font-size:15px;line-height:1;cursor:grab;user-select:none;opacity:.4;transition:opacity .2s;letter-spacing:-2px;touch-action:none}
+.pcard:hover .dnd-handle{opacity:.85}
+.dnd-handle:active{cursor:grabbing}
+.pcard[data-dnd-id]{padding-left:30px}
+.pcard.pcard-compact[data-dnd-id]{padding-left:28px}
+/* Élément en cours de déplacement : l'élément lui-même bouge dans le DOM.
+   On réduit son opacité et on l'aplatit légèrement pour le distinguer. */
+.pcard.dragging,.sc.dragging{
+  opacity:.55;
+  background:rgba(108,99,255,0.06);
+  border:2px dashed var(--accent2)!important;
+  box-shadow:0 8px 24px rgba(108,99,255,0.18)!important;
+  cursor:grabbing;
+  transform:none!important;       /* annule le translateY du :hover */
+}
+/* Empêche l'effet de survol de rester collé pendant le glissement */
+.pcard.dragging:hover,.sc.dragging:hover{
+  transform:none!important;
+  border-color:var(--accent2)!important;
+  box-shadow:0 8px 24px rgba(108,99,255,0.18)!important;
+}
+.pcard.dragging *,.sc.dragging *{pointer-events:none}
+/* Indicateur d'insertion : ligne en pointillés (n'occupe pas de cellule grille) */
+.dnd-indicator{position:absolute;z-index:200;pointer-events:none;animation:dnd-ind 0.9s ease-in-out infinite}
+.dnd-indicator-v{width:0;border-left:3px dashed var(--accent2)}
+.dnd-indicator-h{height:0;border-top:3px dashed var(--accent2)}
+@keyframes dnd-ind{0%,100%{opacity:.55}50%{opacity:1}}
+
 /* Tracker */
 .trk-title{font-size:9px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--accent2);border-bottom:1px solid var(--border);padding-bottom:6px;margin-bottom:8px}
 .prog-wrap{background:var(--card);border-radius:20px;height:7px;overflow:hidden;margin:6px 0}
@@ -211,6 +240,10 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 
 /* Séquence cards (Progression) */
 .sc{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);padding:18px 20px;margin-bottom:14px;position:relative;transition:all .2s;animation:cin .3s ease}
+.sc[data-dnd-id]{padding-left:34px}
+.dnd-handle-sc{position:absolute;top:50%;left:10px;transform:translateY(-50%);color:var(--text-muted);font-size:16px;line-height:1;cursor:grab;user-select:none;opacity:.35;transition:opacity .2s;letter-spacing:-2px;touch-action:none}
+.sc[data-dnd-id]:hover .dnd-handle-sc{opacity:.8}
+.dnd-handle-sc:active{cursor:grabbing}
 @keyframes cin{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 .sc:hover{border-color:rgba(108,99,255,0.2)}
 .sc.editing{border-color:var(--accent);box-shadow:0 0 0 3px var(--glow)}
@@ -472,6 +505,12 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
   .pcard-dup{top:6px;right:42px}
   .pcard-exp{top:6px;right:78px}
   .pcard-title{padding-right:115px!important}
+  /* Poignées de glisser-déposer : bande verticale pleine hauteur sur le bord gauche.
+     Grande zone tappable, ne chevauche aucun texte. */
+  .dnd-handle{font-size:20px;opacity:.7;top:0;left:0;width:34px;height:100%;display:flex;align-items:center;justify-content:center;background:rgba(108,99,255,0.07);border-top-left-radius:16px;border-bottom-left-radius:16px;border-right:1px solid var(--border)}
+  .pcard[data-dnd-id]{padding-left:46px!important}
+  .dnd-handle-sc{font-size:22px;opacity:.7;left:0;top:0;transform:none;width:34px;height:100%;display:flex;align-items:center;justify-content:center;background:rgba(108,99,255,0.07);border-top-left-radius:var(--radius);border-bottom-left-radius:var(--radius);border-right:1px solid var(--border)}
+  .sc[data-dnd-id]{padding-left:46px!important}
 
   /* ─── PICKER CALENDRIER (modale) : grille plus compacte ─── */
   #cal-picker-grid [style*="padding:8px 0"]{padding:6px 0!important;font-size:12px!important}
@@ -507,6 +546,8 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 
   /* Tuiles plus compactes */
   .pcard{padding:10px!important}
+  /* …mais conserver l'espace à gauche pour la poignée de drag */
+  .pcard[data-dnd-id]{padding-left:44px!important}
   .pcard-title{padding-right:100px!important;font-size:14px!important}
 
   /* Modale confirmation : encore plus large */
@@ -865,18 +906,30 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 <!-- ══════════════════════════════════════ -->
 <div id="view-sea" class="app-view">
 
-  <!-- Sous-vue 1 : Accueil — tuiles de séquences -->
+  <!-- Sous-vue 1 : Accueil — tuiles de niveaux -->
   <div id="sea-home" style="width:100%;overflow-y:auto">
     <div class="dash">
       <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;margin-bottom:24px">
         <div>
           <h1 class="dash-title">Mes Séances</h1>
-          <p class="dash-sub">Choisissez une séquence pour y créer ou consulter ses séances.</p>
+          <p class="dash-sub">Choisissez un niveau pour accéder à ses séquences.</p>
         </div>
         <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
           <div id="sea-home-flags" style="display:flex;gap:6px;flex-wrap:wrap"></div>
         </div>
       </div>
+      <div class="grid" id="sea-niv-grid"></div>
+    </div>
+  </div>
+
+  <!-- Sous-vue 1bis : Séquences d'un niveau -->
+  <div id="sea-seqs" style="display:none;width:100%;overflow-y:auto">
+    <div class="dash">
+      <div style="display:flex;gap:12px;align-items:center;margin-bottom:8px;flex-wrap:wrap">
+        <button class="btn btn-ghost btn-sm" onclick="seaBackToNiveaux()">← Niveaux</button>
+        <h1 class="dash-title" id="sea-seqs-title" style="margin-bottom:0">Séquences</h1>
+      </div>
+      <p class="dash-sub" id="sea-seqs-sub">Choisissez une séquence pour gérer ses séances.</p>
       <div class="grid" id="sea-seqs-grid"></div>
     </div>
   </div>
@@ -885,11 +938,13 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
   <div id="sea-list" style="display:none;width:100%;overflow-y:auto">
     <div class="dash">
       <div style="display:flex;gap:12px;align-items:center;margin-bottom:8px;flex-wrap:wrap">
-        <button class="btn btn-ghost btn-sm" onclick="seaBackToHome()">← Retour</button>
+        <button class="btn btn-ghost btn-sm" onclick="seaBackToSeqs()">← Séquences</button>
         <h1 class="dash-title" id="sea-list-title" style="margin-bottom:0">Séances</h1>
       </div>
       <p class="dash-sub" id="sea-list-sub">Toutes les séances de cette séquence.</p>
       <div class="grid" id="sea-cards-grid"></div>
+      <!-- Tuile "Créer" hors du container drag pour qu'elle reste toujours en dernière position -->
+      <div class="grid" id="sea-cards-new" style="margin-top:0"></div>
     </div>
   </div>
 
@@ -5244,9 +5299,9 @@ en: {
       "5ème": [
         "PH01 · (A1+) Intonation des énoncés affirmatifs et interrogatifs",
         "PH02 · (A1+) Prononciation du -s : 3e pers./génitif/pluriel (/s/, /z/, /ɪz/) ; du -ed (/d/, /ɪd/, /t/)",
-        "PH03 · (A1+) Accentuation des polysyllabiques (comfortable /ˈkʌmftəbəl/, interesting, ˈɪntərɛstɪŋ/,...); formes faibles : of, to, at, from",
+        "PH03 · (A1+) Accentuation des polysyllabiques ; formes faibles : of, to, at, from",
         "PH04 · (A2) Schémas intonatifs : montante (questions fermées, étonnement) et descendante (questions ouvertes, exclamations, ordres)",
-        "PH05 · (A2) Rythme de la phrase  (les mots accentués porteurs de sens) et du mot (place de l’accent tonique).",
+        "PH05 · (A2) Rythme de la phrase et accent tonique",
         "PH06 · (A2) Formes contractées",
         "PH07 · (A2) Voyelles longues et courtes : sheep /ɪː/ vs ship /ɪ/ ; /æ/ vs /ɑː/,…",
         "PH08 · (A2) /ðɪː/ the devant voyelle",
@@ -6534,6 +6589,9 @@ function setGlobalLang(l) {
   // Si on est sur la home des séances, la re-rendre aussi
   const seaHomeVisible = $('sea-home') && $('sea-home').style.display !== 'none';
   if (seaHomeVisible) seaRenderHome();
+  // Si on est sur la liste des séquences d'un niveau, revenir à l'accueil (le niveau peut être vide dans la nouvelle langue)
+  const seaSeqsVisible = $('sea-seqs') && $('sea-seqs').style.display !== 'none';
+  if (seaSeqsVisible) seaBackToHome();
   const seaListVisible = $('sea-list') && $('sea-list').style.display !== 'none';
   if (seaListVisible) {
     // La séquence parente peut ne plus matcher la nouvelle langue : on revient à l'accueil
@@ -7948,6 +8006,7 @@ ${compHtml()}
 let seaApp = { seas: [] };
 let seaCurrentId = null;     // ID de la séance en cours d'édition
 let seaCurrentSeqId = null;  // ID de la séquence (libApp) parente à laquelle on est attaché
+let seaCurrentNiveau = null; // Niveau sélectionné dans la vue Séances (ex : '6ème')
 let seaSilent = false;       // bloque la sauvegarde auto pendant les chargements
 
 function seaLoad() {
@@ -7960,7 +8019,7 @@ function seaSave() {
 
 // ── Sous-vues de l'onglet Séances ──
 function seaShowSubview(name) {
-  ['home','list','editor'].forEach(v => {
+  ['home','seqs','list','editor'].forEach(v => {
     const el = $('sea-' + v);
     if (el) el.style.display = (v === name) ? '' : 'none';
   });
@@ -8000,24 +8059,362 @@ function seaCountForSeq(seqId) {
   return seaApp.seas.filter(s => s.seqId === seqId).length;
 }
 
-// ── Page d'accueil : tuiles de séquences ──
-function seaRenderHome() {
-  // Drapeaux
-  const fl = $('sea-home-flags');
-  if (fl) {
-    fl.innerHTML = Object.keys(FL).map(l => {
-      const active = (l === seqLang);
-      const isImg = FL[l].startsWith('<img');
-      const flagHtml = isImg
-        ? FL[l].replace('style="', `style="opacity:${active?'1':'.45'};filter:${active?'none':'grayscale(70%)'};`)
-        : `<span style="font-size:22px;opacity:${active?'1':'.45'};filter:${active?'none':'grayscale(70%)'}">${FL[l]}</span>`;
-      return `<button data-lang="${l}" onclick="setGlobalLang('${l}')" title="${FL_NAMES[l]}"
-        style="cursor:pointer;transition:all .2s;padding:4px 6px;border:none;background:${active?'rgba(62,207,142,0.12)':'transparent'};border-radius:8px;display:inline-flex;align-items:center">${flagHtml}</button>`;
-    }).join('');
+// ════════════════════════════════════════════════════════════════════
+// Helper générique de réorganisation par glisser-déposer (drag & drop)
+// ────────────────────────────────────────────────────────────────────
+// Approche WYSIWYG : l'élément saisi EST l'élément qui se déplace dans le
+// DOM (pas de placeholder ni de clone). Les autres tuiles se décalent
+// instantanément autour de lui via insertBefore().
+//
+// container  : l'élément parent qui contient les tuiles déplaçables
+// itemSel    : sélecteur CSS des tuiles déplaçables (ex : '.pcard[data-dnd-id]')
+// onReorder  : callback(orderedIds[]) appelé quand l'ordre change
+//
+// Chaque tuile déplaçable doit porter un attribut data-dnd-id="<id>".
+// Souris : HTML5 Drag & Drop natif. Tactile : pointer events équivalents.
+// ════════════════════════════════════════════════════════════════════
+function enableDragSort(container, itemSel, onReorder) {
+  if (!container) return;
+  let dragEl = null;
+  let indicator = null;       // barre indicatrice d'insertion
+  let targetBefore = null;    // élément devant lequel on insérera (null = à la fin)
+
+  function getItems() {
+    return Array.from(container.querySelectorAll(itemSel));
   }
 
-  const grid = $('sea-seqs-grid');
-  // Filtrer les séquences par langue active
+  function commitOrder() {
+    const ids = getItems().map(el => el.getAttribute('data-dnd-id'));
+    if (typeof onReorder === 'function') onReorder(ids);
+  }
+
+  // Crée (une fois) la barre indiquant où la tuile va se poser.
+  // Elle est positionnée en absolu pour ne PAS consommer de cellule dans la grille.
+  function ensureIndicator() {
+    if (indicator) return indicator;
+    indicator = document.createElement('div');
+    indicator.className = 'dnd-indicator';
+    // S'assure que le container peut servir de référent de position
+    const pos = getComputedStyle(container).position;
+    if (pos === 'static') container.style.position = 'relative';
+    return indicator;
+  }
+
+  function removeIndicator() {
+    if (indicator && indicator.parentNode) indicator.parentNode.removeChild(indicator);
+  }
+
+  // La grille est-elle multi-colonnes ? (séances) ou liste verticale ? (séquences)
+  // Méthode robuste : si une tuile occupe presque toute la largeur du container,
+  // c'est une liste (1 colonne) ; sinon c'est une grille multi-colonnes.
+  function isGrid() {
+    const items = getItems().filter(el => el !== dragEl);
+    if (items.length < 2) return false;
+    const cW = container.clientWidth || container.getBoundingClientRect().width;
+    if (!cW) return false;
+    const iW = items[0].getBoundingClientRect().width;
+    if (!iW) return false;
+    // Une tuile qui fait moins de 70% de la largeur du container ⇒ plusieurs colonnes
+    return iW < cW * 0.7;
+  }
+
+  // Détermine l'élément cible (devant lequel insérer) selon la position curseur.
+  // - En liste : comparaison sur Y (centre vertical).
+  // - En grille : on cherche l'élément le plus proche en 2D ; si le curseur est
+  //   à gauche de son centre on insère avant, sinon après.
+  function computeTarget(x, y) {
+    const items = getItems().filter(el => el !== dragEl);
+    if (!items.length) return null;
+
+    if (!isGrid()) {
+      // Liste verticale
+      for (const el of items) {
+        const box = el.getBoundingClientRect();
+        if (y < box.top + box.height / 2) return el;
+      }
+      return null; // après le dernier
+    }
+
+    // Grille : trouver l'élément dont le centre est le plus proche du curseur
+    let closest = null, closestDist = Infinity, insertAfter = false;
+    for (const el of items) {
+      const box = el.getBoundingClientRect();
+      const cx = box.left + box.width / 2;
+      const cy = box.top + box.height / 2;
+      const dist = Math.hypot(x - cx, y - cy);
+      if (dist < closestDist) {
+        closestDist = dist;
+        closest = el;
+        insertAfter = (x > cx); // à droite du centre → insérer après
+      }
+    }
+    if (!closest) return null;
+    if (insertAfter) {
+      // insérer avant l'élément suivant (ou à la fin)
+      let next = closest.nextElementSibling;
+      while (next && (next === dragEl || !next.matches(itemSel))) next = next.nextElementSibling;
+      return next || null;
+    }
+    return closest;
+  }
+
+  // L'insertion "avant `before`" laisserait-elle dragEl exactement où il est déjà ?
+  // (cible == dragEl lui-même, ou == l'élément juste après dragEl, ou fin alors que
+  //  dragEl est déjà le dernier). Dans ce cas, aucun mouvement → on cache l'indicateur.
+  function isNoOpTarget(before) {
+    if (before === dragEl) return true;
+    if (before == null) {
+      // "en fin" : no-op si dragEl est déjà le dernier item réel
+      const items = getItems();
+      return items[items.length - 1] === dragEl;
+    }
+    // no-op si before suit immédiatement dragEl
+    let prev = before.previousElementSibling;
+    while (prev && !prev.matches(itemSel)) prev = prev.previousElementSibling;
+    return prev === dragEl;
+  }
+
+  // Place la barre indicatrice (en absolu) avant `before` (ou en fin si null)
+  function showIndicator(before) {
+    const ind = ensureIndicator();
+    targetBefore = before;
+    if (ind.parentNode !== container) container.appendChild(ind);
+
+    // Si déposer ici ne déplacerait rien, on n'affiche pas de barre
+    if (isNoOpTarget(before)) { ind.style.display = 'none'; return; }
+
+    const cRect = container.getBoundingClientRect();
+    const grid = isGrid();
+    ind.classList.toggle('dnd-indicator-v', grid);
+    ind.classList.toggle('dnd-indicator-h', !grid);
+
+    if (grid) {
+      // Barre VERTICALE : à gauche de la tuile cible (ou à droite de la dernière)
+      let refRect, leftPos, top, height;
+      if (before) {
+        refRect = before.getBoundingClientRect();
+        leftPos = refRect.left - cRect.left + container.scrollLeft - 5;
+        top = refRect.top - cRect.top + container.scrollTop;
+        height = refRect.height;
+      } else {
+        // en fin : à droite du dernier item réel
+        const items = getItems().filter(el => el !== dragEl);
+        const last = items[items.length - 1];
+        if (!last) { ind.style.display = 'none'; return; }
+        refRect = last.getBoundingClientRect();
+        leftPos = refRect.right - cRect.left + container.scrollLeft + 1;
+        top = refRect.top - cRect.top + container.scrollTop;
+        height = refRect.height;
+      }
+      ind.style.display = 'block';
+      ind.style.left = leftPos + 'px';
+      ind.style.top = top + 'px';
+      ind.style.height = height + 'px';
+      ind.style.width = '';
+    } else {
+      // Barre HORIZONTALE : dans le GAP au-dessus de la tuile cible (ou sous la dernière)
+      let topPos;
+      if (before) {
+        const refRect = before.getBoundingClientRect();
+        topPos = refRect.top - cRect.top + container.scrollTop - 9;
+      } else {
+        const items = getItems().filter(el => el !== dragEl);
+        const last = items[items.length - 1];
+        if (!last) { ind.style.display = 'none'; return; }
+        const refRect = last.getBoundingClientRect();
+        topPos = refRect.bottom - cRect.top + container.scrollTop + 3;
+      }
+      ind.style.display = 'block';
+      ind.style.top = topPos + 'px';
+      ind.style.left = '0px';
+      ind.style.width = (container.clientWidth) + 'px';
+      ind.style.height = '';
+    }
+  }
+
+  // Applique réellement le déplacement de dragEl à la position de l'indicateur
+  function applyDrop() {
+    if (!dragEl) return;
+    if (targetBefore) {
+      if (targetBefore !== dragEl) container.insertBefore(dragEl, targetBefore);
+    } else {
+      container.appendChild(dragEl);
+    }
+  }
+
+  // ─────────────────────────── SOURIS (HTML5 DnD) ───────────────────────────
+  function dragStart(e) {
+    dragEl = this;
+    this.classList.add('dragging');
+    e.dataTransfer.effectAllowed = 'move';
+    try { e.dataTransfer.setData('text/plain', this.getAttribute('data-dnd-id') || ''); } catch(_) {}
+  }
+
+  function dragOver(e) {
+    if (!dragEl) return;
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    showIndicator(computeTarget(e.clientX, e.clientY));
+  }
+
+  function dragEnd() {
+    if (!dragEl) return;
+    applyDrop();
+    removeIndicator();
+    dragEl.classList.remove('dragging');
+    dragEl = null;
+    targetBefore = null;
+    commitOrder();
+  }
+
+  // ─────────────────────────── TACTILE (pointer events) ──────────────────────
+  let autoScrollRAF = null;
+  function stopAutoScroll() {
+    if (autoScrollRAF) { cancelAnimationFrame(autoScrollRAF); autoScrollRAF = null; }
+  }
+  function getScrollParent(node) {
+    let n = node;
+    while (n && n !== document.body) {
+      const oy = getComputedStyle(n).overflowY;
+      if ((oy === 'auto' || oy === 'scroll') && n.scrollHeight > n.clientHeight) return n;
+      n = n.parentElement;
+    }
+    return document.scrollingElement || document.documentElement;
+  }
+
+  // ─────────────────────────── BRANCHEMENT DES ÉVÉNEMENTS ────────────────────
+  container.addEventListener('dragover', dragOver);
+  container.addEventListener('drop', (e) => { e.preventDefault(); });
+
+  getItems().forEach(el => {
+    el.setAttribute('draggable', 'true');
+    el.addEventListener('dragstart', dragStart);
+    el.addEventListener('dragend', dragEnd);
+
+    const handle = el.querySelector('.dnd-handle, .dnd-handle-sc');
+    if (!handle) return;
+
+    let touchActive = false;
+    let scrollParent = null;
+    let lastX = 0, lastY = 0;
+    let ghost = null, offX = 0, offY = 0;
+
+    function autoScrollTick() {
+      if (!touchActive || !scrollParent) return;
+      const isWin = (scrollParent === document.scrollingElement || scrollParent === document.documentElement);
+      const rect = isWin ? { top: 0, bottom: window.innerHeight } : scrollParent.getBoundingClientRect();
+      const EDGE = 70, SPEED = 12;
+      let dy = 0;
+      if (lastY < rect.top + EDGE)       dy = -SPEED * (1 - Math.max(0, lastY - rect.top) / EDGE);
+      else if (lastY > rect.bottom - EDGE) dy =  SPEED * (1 - Math.max(0, rect.bottom - lastY) / EDGE);
+      if (dy !== 0) {
+        if (isWin) window.scrollBy(0, dy); else scrollParent.scrollTop += dy;
+        showIndicator(computeTarget(lastX, lastY));
+      }
+      autoScrollRAF = requestAnimationFrame(autoScrollTick);
+    }
+
+    handle.addEventListener('pointerdown', (e) => {
+      if (e.pointerType !== 'touch') return;
+      e.preventDefault();
+      e.stopPropagation();
+      touchActive = true;
+      dragEl = el;
+      lastX = e.clientX; lastY = e.clientY;
+      scrollParent = getScrollParent(el);
+      el.classList.add('dragging');
+
+      // Clone fantôme qui suit le doigt (l'original reste en place avec .dragging)
+      const box = el.getBoundingClientRect();
+      offX = e.clientX - box.left;
+      offY = e.clientY - box.top;
+      ghost = el.cloneNode(true);
+      ghost.classList.remove('dragging');
+      ghost.style.cssText = [
+        'position:fixed', `width:${box.width}px`,
+        `top:${e.clientY - offY}px`, `left:${box.left}px`, 'margin:0',
+        'opacity:0.92', 'pointer-events:none', 'z-index:99999',
+        'box-shadow:0 12px 36px rgba(0,0,0,0.22)', 'transform:scale(1.03)',
+        'transition:none', 'border-radius:14px',
+      ].join(';');
+      document.body.appendChild(ghost);
+
+      try { handle.setPointerCapture(e.pointerId); } catch(_) {}
+      stopAutoScroll();
+      autoScrollRAF = requestAnimationFrame(autoScrollTick);
+      showIndicator(computeTarget(lastX, lastY));
+    });
+
+    handle.addEventListener('pointermove', (e) => {
+      if (!touchActive || dragEl !== el) return;
+      e.preventDefault();
+      lastX = e.clientX; lastY = e.clientY;
+      if (ghost) { ghost.style.top = (e.clientY - offY) + 'px'; ghost.style.left = (e.clientX - offX) + 'px'; }
+      showIndicator(computeTarget(e.clientX, e.clientY));
+    });
+
+    function endTouch() {
+      if (!touchActive || dragEl !== el) return;
+      touchActive = false;
+      stopAutoScroll();
+      if (ghost && ghost.parentNode) ghost.remove();
+      ghost = null;
+      applyDrop();
+      removeIndicator();
+      el.classList.remove('dragging');
+      dragEl = null;
+      targetBefore = null;
+      commitOrder();
+    }
+    handle.addEventListener('pointerup', endTouch);
+    handle.addEventListener('pointercancel', endTouch);
+  });
+}
+
+// ── Page d'accueil : tuiles de séquences ──
+// Métadonnées de niveaux partagées (ordre, libellés, groupes)
+const SEA_NIV_ORDER = ['6ème','5ème','4ème','3ème',
+  'Seconde_LVAB','Seconde_LVC','Première_LVAB','Première_LVC','Terminale_LVAB','Terminale_LVC',
+  'Première_AMC','Terminale_AMC','Première_LLCER','Terminale_LLCER'];
+const SEA_NIV_LABELS = {
+  '6ème':'6ème','5ème':'5ème','4ème':'4ème','3ème':'3ème',
+  'Seconde_LVAB':'Seconde LV A/B','Seconde_LVC':'Seconde LV C',
+  'Première_LVAB':'Première LV A/B','Première_LVC':'Première LV C',
+  'Terminale_LVAB':'Terminale LV A/B','Terminale_LVC':'Terminale LV C',
+  'Première_AMC':'Première AMC','Terminale_AMC':'Terminale AMC',
+  'Première_LLCER':'Première LLCER','Terminale_LLCER':'Terminale LLCER'
+};
+const SEA_NIV_GROUP = {
+  '6ème':'Collège','5ème':'Collège','4ème':'Collège','3ème':'Collège',
+  'Seconde_LVAB':'Lycée Tronc Commun','Seconde_LVC':'Lycée Tronc Commun',
+  'Première_LVAB':'Lycée Tronc Commun','Première_LVC':'Lycée Tronc Commun',
+  'Terminale_LVAB':'Lycée Tronc Commun','Terminale_LVC':'Lycée Tronc Commun',
+  'Première_AMC':'Lycée Spécialités','Terminale_AMC':'Lycée Spécialités',
+  'Première_LLCER':'Lycée Spécialités','Terminale_LLCER':'Lycée Spécialités'
+};
+const SEA_NIV_EMOJI = {
+  'Collège':'🎒','Lycée Tronc Commun':'📘','Lycée Spécialités':'🎓'
+};
+
+// Rendu des drapeaux de langue (partagé entre les sous-vues)
+function seaRenderFlags() {
+  const fl = $('sea-home-flags');
+  if (!fl) return;
+  fl.innerHTML = Object.keys(FL).map(l => {
+    const active = (l === seqLang);
+    const isImg = FL[l].startsWith('<img');
+    const flagHtml = isImg
+      ? FL[l].replace('style="', `style="opacity:${active?'1':'.45'};filter:${active?'none':'grayscale(70%)'};`)
+      : `<span style="font-size:22px;opacity:${active?'1':'.45'};filter:${active?'none':'grayscale(70%)'}">${FL[l]}</span>`;
+    return `<button data-lang="${l}" onclick="setGlobalLang('${l}')" title="${FL_NAMES[l]}"
+      style="cursor:pointer;transition:all .2s;padding:4px 6px;border:none;background:${active?'rgba(62,207,142,0.12)':'transparent'};border-radius:8px;display:inline-flex;align-items:center">${flagHtml}</button>`;
+  }).join('');
+}
+
+// ── Page d'accueil des Séances : tuiles de NIVEAUX ──
+function seaRenderHome() {
+  seaRenderFlags();
+  const grid = $('sea-niv-grid');
   const seqs = (libApp.seqs || []).filter(s => s.lang === seqLang);
 
   if (!seqs.length) {
@@ -8028,53 +8425,37 @@ function seaRenderHome() {
     return;
   }
 
-  // Tri : niveau canonique puis année décroissante puis titre
-  const NIV_ORDER = ['6ème','5ème','4ème','3ème',
-    'Seconde_LVAB','Seconde_LVC','Première_LVAB','Première_LVC','Terminale_LVAB','Terminale_LVC',
-    'Première_AMC','Terminale_AMC','Première_LLCER','Terminale_LLCER'];
-  const NIV_LABELS = {
-    '6ème':'6ème','5ème':'5ème','4ème':'4ème','3ème':'3ème',
-    'Seconde_LVAB':'Seconde LV A/B','Seconde_LVC':'Seconde LV C',
-    'Première_LVAB':'Première LV A/B','Première_LVC':'Première LV C',
-    'Terminale_LVAB':'Terminale LV A/B','Terminale_LVC':'Terminale LV C',
-    'Première_AMC':'Première AMC','Terminale_AMC':'Terminale AMC',
-    'Première_LLCER':'Première LLCER','Terminale_LLCER':'Terminale LLCER'
-  };
-  const NIV_GROUP = {
-    '6ème':'Collège','5ème':'Collège','4ème':'Collège','3ème':'Collège',
-    'Seconde_LVAB':'Lycée Tronc Commun','Seconde_LVC':'Lycée Tronc Commun',
-    'Première_LVAB':'Lycée Tronc Commun','Première_LVC':'Lycée Tronc Commun',
-    'Terminale_LVAB':'Lycée Tronc Commun','Terminale_LVC':'Lycée Tronc Commun',
-    'Première_AMC':'Lycée Spécialités','Terminale_AMC':'Lycée Spécialités',
-    'Première_LLCER':'Lycée Spécialités','Terminale_LLCER':'Lycée Spécialités'
-  };
-
-  seqs.sort((a,b) => {
-    const ia = NIV_ORDER.indexOf(a.niveau), ib = NIV_ORDER.indexOf(b.niveau);
-    if (ia !== ib) return ia - ib;
-    const ya = (b.annee||'').localeCompare(a.annee||'');
-    if (ya !== 0) return ya;
-    return (a.title||'').localeCompare(b.title||'');
+  // Compter les séquences et séances par niveau
+  const nivStats = {}; // niveau -> { nbSeq, nbSea }
+  seqs.forEach(s => {
+    const niv = s.niveau || '—';
+    if (!nivStats[niv]) nivStats[niv] = { nbSeq: 0, nbSea: 0 };
+    nivStats[niv].nbSeq++;
+    nivStats[niv].nbSea += seaCountForSeq(s.id);
   });
 
-  // Regrouper par groupe pédagogique
+  // Trier les niveaux présents selon l'ordre canonique
+  const nivPresent = Object.keys(nivStats).sort((a,b) => {
+    const ia = SEA_NIV_ORDER.indexOf(a), ib = SEA_NIV_ORDER.indexOf(b);
+    return (ia === -1 ? 999 : ia) - (ib === -1 ? 999 : ib);
+  });
+
+  // Grouper par groupe pédagogique
   const groups = ['Collège','Lycée Tronc Commun','Lycée Spécialités'];
   let html = '';
   groups.forEach(g => {
-    const inGroup = seqs.filter(s => NIV_GROUP[s.niveau] === g);
+    const inGroup = nivPresent.filter(niv => SEA_NIV_GROUP[niv] === g);
     if (!inGroup.length) return;
-    html += `<div style="grid-column:1/-1;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;color:var(--text-muted);margin:${html?'18':'0'}px 0 -4px">${g}</div>`;
-    inGroup.forEach(s => {
-      const c = seaCountForSeq(s.id);
-      const title = s.title || '<em style="color:var(--text-muted)">Sans titre</em>';
-      const lvl = NIV_LABELS[s.niveau] || (s.niveau||'').replace(/_/g,' ');
-      html += `<div class="pcard" onclick="seaOpenList(${s.id})">
+    html += `<div style="grid-column:1/-1;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;color:var(--text-muted);margin:${html?'18':'0'}px 0 -4px">${SEA_NIV_EMOJI[g]||''} ${g}</div>`;
+    inGroup.forEach(niv => {
+      const st = nivStats[niv];
+      const lbl = SEA_NIV_LABELS[niv] || (niv||'').replace(/_/g,' ');
+      html += `<div class="pcard" onclick="seaOpenNiveau('${E(niv)}')">
         <div class="pcard-flag">${FL[seqLang]||'🌐'}</div>
-        <div class="pcard-niv pcard-title" title="${E(s.title||'Sans titre')}" style="padding-right:0">${title}</div>
-        <div class="pcard-year">${E(lvl)} · ${E(s.annee||'—')}</div>
-        <div class="pcard-stats" style="margin-top:12px">
-          <span>${c} séance${c>1?'s':''}</span>
-          <span style="color:var(--accent2);font-weight:700">${c===0?'+ Créer':'Ouvrir →'}</span>
+        <div class="pcard-niv pcard-title" style="padding-right:0;font-size:18px">${E(lbl)}</div>
+        <div class="pcard-stats" style="margin-top:14px">
+          <span>${st.nbSeq} séquence${st.nbSeq>1?'s':''} · ${st.nbSea} séance${st.nbSea>1?'s':''}</span>
+          <span style="color:var(--accent2);font-weight:700">Ouvrir →</span>
         </div>
       </div>`;
     });
@@ -8082,11 +8463,77 @@ function seaRenderHome() {
   grid.innerHTML = html;
 }
 
+// ── Ouvrir un niveau : afficher ses séquences ──
+function seaOpenNiveau(niveau) {
+  seaCurrentNiveau = niveau;
+  const lbl = SEA_NIV_LABELS[niveau] || (niveau||'').replace(/_/g,' ');
+  $('sea-seqs-title').innerHTML = `${FL[seqLang]||'🌐'} ${E(lbl)}`;
+  $('sea-seqs-sub').textContent = 'Choisissez une séquence pour gérer ses séances.';
+  seaShowSubview('seqs');
+  seaRenderSeqs();
+}
+
+// ── Rendu des séquences d'un niveau donné ──
+function seaRenderSeqs() {
+  const grid = $('sea-seqs-grid');
+  const seqs = (libApp.seqs || [])
+    .filter(s => s.lang === seqLang && (s.niveau||'—') === seaCurrentNiveau)
+    .sort((a,b) => {
+      const ya = (b.annee||'').localeCompare(a.annee||'');
+      if (ya !== 0) return ya;
+      return (a.title||'').localeCompare(b.title||'');
+    });
+
+  if (!seqs.length) {
+    grid.innerHTML = `<div style="grid-column:1/-1;padding:24px;text-align:center;color:var(--text-muted);font-size:13px;border:1px dashed var(--border);border-radius:14px">
+      Aucune séquence pour ce niveau.
+    </div>`;
+    return;
+  }
+
+  let html = '';
+  seqs.forEach(s => {
+    const c = seaCountForSeq(s.id);
+    const title = s.title || '<em style="color:var(--text-muted)">Sans titre</em>';
+    const lvl = SEA_NIV_LABELS[s.niveau] || (s.niveau||'').replace(/_/g,' ');
+    html += `<div class="pcard" onclick="seaOpenList(${s.id})">
+      <div class="pcard-flag">${FL[seqLang]||'🌐'}</div>
+      <div class="pcard-niv pcard-title" title="${E(s.title||'Sans titre')}" style="padding-right:0">${title}</div>
+      <div class="pcard-year">${E(lvl)} · ${E(s.annee||'—')}</div>
+      <div class="pcard-stats" style="margin-top:12px">
+        <span>${c} séance${c>1?'s':''}</span>
+        <span style="color:var(--accent2);font-weight:700">${c===0?'+ Créer':'Ouvrir →'}</span>
+      </div>
+    </div>`;
+  });
+  grid.innerHTML = html;
+}
+
 function seaBackToHome() {
+  seaCurrentSeqId = null;
+  seaCurrentId = null;
+  seaCurrentNiveau = null;
+  seaShowSubview('home');
+  seaRenderHome();
+}
+
+function seaBackToNiveaux() {
   seaCurrentSeqId = null;
   seaCurrentId = null;
   seaShowSubview('home');
   seaRenderHome();
+}
+
+function seaBackToSeqs() {
+  seaCurrentSeqId = null;
+  seaCurrentId = null;
+  // Retour à la liste des séquences du niveau courant
+  if (seaCurrentNiveau) {
+    seaShowSubview('seqs');
+    seaRenderSeqs();
+  } else {
+    seaBackToHome();
+  }
 }
 
 // ── Liste des séances d'une séquence ──
@@ -8094,6 +8541,8 @@ function seaOpenList(seqId) {
   const seq = libApp.seqs.find(x => x.id === seqId);
   if (!seq) return;
   seaCurrentSeqId = seqId;
+  // S'assurer que le niveau courant est cohérent (utile si on arrive sans passer par la vue niveaux)
+  if (!seaCurrentNiveau) seaCurrentNiveau = seq.niveau || '—';
   const lvl = (seq.niveau||'').replace(/_/g,' ');
   $('sea-list-title').innerHTML = `${FL[seq.lang]||'🌐'} ${E(seq.title || 'Sans titre')}`;
   $('sea-list-sub').innerHTML = `<b>${E(lvl)}</b> · ${E(seq.annee||'—')} — Séances de cette séquence.`;
@@ -8108,11 +8557,18 @@ function seaRenderList() {
     .sort((a,b) => (a.order||0) - (b.order||0) || (a.createdAt||0) - (b.createdAt||0));
 
   let html = '';
+  // Astuce d'aide au drag (affichée seulement s'il y a au moins 2 séances)
+  if (seances.length >= 2) {
+    html += `<div style="grid-column:1/-1;font-size:11px;color:var(--text-muted);margin-bottom:-2px;display:flex;align-items:center;gap:6px">
+      <span style="font-size:13px">↕️</span> Glissez les séances pour les réordonner — la numérotation se met à jour automatiquement.
+    </div>`;
+  }
   seances.forEach((s, idx) => {
     const title = s.title || '<em style="color:var(--text-muted)">Sans titre</em>';
     const totalMin = (s.activities||[]).reduce((sum,a)=>sum+(parseInt(a.duration,10)||0),0);
     const nbAct = (s.activities||[]).length;
-    html += `<div class="pcard pcard-compact" onclick="seaOpenEditor(${s.id})">
+    html += `<div class="pcard pcard-compact" data-dnd-id="${s.id}" onclick="seaOpenEditor(${s.id})">
+      <span class="dnd-handle" title="Glisser pour réordonner" onclick="event.stopPropagation()">⠿</span>
       <button class="pcard-exp" onclick="event.stopPropagation();exportTileSea(${s.id})" title="Exporter cette séance">📤</button>
       <button class="pcard-dup" onclick="event.stopPropagation();seaDuplicateSeance(${s.id})" title="Dupliquer">📋</button>
       <button class="pcard-del" onclick="event.stopPropagation();seaDelSeance(${s.id})" title="Supprimer">✕</button>
@@ -8126,14 +8582,28 @@ function seaRenderList() {
     </div>`;
   });
 
-  // Tuile "Créer une séance" placée APRÈS les séances existantes (ordre chronologique)
-  html += `<div class="pcard pcard-new" onclick="seaNewBlank()">
-    <div class="pcard-new-ico">＋</div>
-    <div style="font-weight:700">Créer une séance${seances.length ? ' '+(seances.length+1) : ''}</div>
-    <div style="font-size:11px;color:var(--text-muted)">Nouveau déroulé</div>
-  </div>`;
+  // Tuile "Créer une séance" dans son propre container (jamais touchée par le drag)
+  const newGrid = $('sea-cards-new');
+  if (newGrid) {
+    newGrid.innerHTML = `<div class="pcard pcard-new" onclick="seaNewBlank()">
+      <div class="pcard-new-ico">＋</div>
+      <div style="font-weight:700">Créer une séance${seances.length ? ' '+(seances.length+1) : ''}</div>
+      <div style="font-size:11px;color:var(--text-muted)">Nouveau déroulé</div>
+    </div>`;
+  }
 
   grid.innerHTML = html;
+
+  // Activer le glisser-déposer pour réordonner les séances
+  enableDragSort(grid, '.pcard[data-dnd-id]', (orderedIds) => {
+    orderedIds.forEach((id, i) => {
+      const sea = seaApp.seas.find(x => String(x.id) === String(id));
+      if (sea) sea.order = i;
+    });
+    seaSave();
+    seaRenderList(); // re-render pour rafraîchir les numéros "Séance N"
+    showToast('✓ Ordre des séances mis à jour', '#10b981');
+  });
 }
 
 async function seaDelSeance(id) {
@@ -8933,6 +9403,8 @@ function seqGoToSeances() {
   // Le bon onglet est le 2e (index 1)
   document.querySelectorAll('.nav-tab')[1]?.classList.add('active');
   $('view-sea').classList.add('active');
+  // Aligner le niveau courant des Séances sur celui de la séquence ouverte
+  seaCurrentNiveau = seq.niveau || '—';
   seaOpenList(libCurrentId);
 }
 
@@ -10096,6 +10568,13 @@ function progRenderTL() {
   const n=progCur.niveau;
   const ax=DA[progCur.lang]?.[daKey(n)]||{};
   let h='';
+  // Astuce drag (uniquement si ≥2 séquences et aucune en édition)
+  const anyEditing = progCur.seqs.some(s => s.editing);
+  if (progCur.seqs.length >= 2 && !anyEditing) {
+    h += `<div style="font-size:11px;color:var(--text-muted);margin-bottom:10px;display:flex;align-items:center;gap:6px">
+      <span style="font-size:13px">↕️</span> Glissez les séquences pour les réordonner — la numérotation s'ajuste automatiquement.
+    </div>`;
+  }
   progCur.seqs.forEach((s,i)=>{
     h += s.editing ? progRenderEdit(s,i,ax) : progRenderDisp(s,i);
   });
@@ -10105,6 +10584,22 @@ function progRenderTL() {
     const a=$('pax-'+s.id); if(a) a.value=s.axe||'';
     const o=$('pob-'+s.id); if(o) o.value=s.objet||'';
   });
+  // Activer le glisser-déposer seulement quand aucune carte n'est en édition
+  if (!anyEditing) {
+    enableDragSort(c, '.sc[data-dnd-id]', (orderedIds) => {
+      // Réordonner progCur.seqs selon le nouvel ordre
+      const byId = {};
+      progCur.seqs.forEach(s => { byId[String(s.id)] = s; });
+      const reordered = orderedIds.map(id => byId[String(id)]).filter(Boolean);
+      // Sécurité : si un id manque, on garde l'ordre existant pour les manquants
+      if (reordered.length === progCur.seqs.length) {
+        progCur.seqs = reordered;
+        progSave();
+        progRenderAll();
+        showToast('✓ Ordre des séquences mis à jour', '#10b981');
+      }
+    });
+  }
 }
 
 function progRenderDisp(s, i) {
@@ -10118,7 +10613,8 @@ function progRenderDisp(s, i) {
     ao=parts.join('<span style="color:var(--border);margin:0 2px">·</span>');
   }
   const pj=s.project?`<div class="sc-project"><b>🎯 Projet final :</b> ${E(s.project)}</div>`:'';
-  return `<div class="sc">
+  return `<div class="sc" data-dnd-id="${s.id}">
+    <span class="dnd-handle-sc" title="Glisser pour réordonner">⠿</span>
     <div class="sc-hdr">
       <div><div class="sc-num">Séquence ${i+1}</div><div class="sc-title">${E(s.title)||'<em style="color:var(--text-muted)">Sans titre</em>'}</div></div>
       <div class="sc-acts">
@@ -10816,19 +11312,13 @@ function calIsHoliday(d, schoolYear) {
   return list.find(h => dateToISO(h.date) === iso);
 }
 
-// Pour métropole (Zone A/B/C), on filtre sur le champ `zones`.
-// Pour la Corse et les DROM-COM, on filtre sur le champ `location` (= académie).
-// IMPORTANT : les noms d'académie dans le dataset ne suivent pas un format standard.
-// Par exemple : "Réunion" (pas "La Réunion"), "Nouvelle Calédonie" (sans tiret).
-// On utilise donc un `LIKE` (match partiel) plus tolérant aux variations d'orthographe.
+// Pour chaque zone, on a un mot-clé distinctif à matcher côté CLIENT dans le champ location.
+// Ça évite toutes les surprises d'orthographe côté API (La Réunion vs Réunion, etc.)
 function calZoneApiField(zone) {
   if (zone === 'A' || zone === 'B' || zone === 'C') return 'zones';
   return 'location';
 }
 
-// Mot-clé robuste à rechercher dans le champ location pour chaque zone.
-// On vise le mot le plus distinctif et qui correspondra quelle que soit la variante exacte
-// d'écriture dans le dataset (avec/sans accent, avec/sans "La", avec/sans tiret).
 function calZoneSearchKeyword(zone) {
   if (!zone) return '';
   if (zone === 'A' || zone === 'B' || zone === 'C') return 'Zone ' + zone;
@@ -10846,27 +11336,32 @@ function calZoneSearchKeyword(zone) {
   return zone;
 }
 
-// Garde-le pour compatibilité (utilisé ailleurs dans le code)
+// Compatibilité legacy
 function calZoneApiValue(zone) { return calZoneSearchKeyword(zone); }
 function calZoneApiLabel(zone) { return calZoneSearchKeyword(zone); }
+
+// Normalisation pour comparaison souple : minuscules + sans accents
+function calNormalize(s) {
+  return String(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+}
 
 async function calLoadVacations(schoolYear) {
   if (!calApp.zone) return [];
   if (calApp.vacationsByYear[schoolYear]) return calApp.vacationsByYear[schoolYear];
   try {
-    const field = calZoneApiField(calApp.zone);
+    const isMetropole = (calApp.zone === 'A' || calApp.zone === 'B' || calApp.zone === 'C');
     const keyword = calZoneSearchKeyword(calApp.zone);
-    const effectiveField = (calApp.zone === 'Corse') ? 'location' : field;
-    // Pour les métropoles : match exact sur "Zone X"
-    // Pour le reste : match partiel (LIKE) pour s'accommoder des variantes orthographiques
-    // exactes du dataset (Réunion vs La Réunion, Nouvelle Calédonie vs Nouvelle-Calédonie…)
+    const keywordNorm = calNormalize(keyword);
+    // Stratégie :
+    // - Métropole : filtre serveur sur `zones="Zone X"` (fiable, peu de résultats)
+    // - DROM-COM/Corse : on télécharge TOUTES les vacances de l'année puis on filtre côté client
+    //   sur le champ `location` (insensible aux accents, casse, et variantes "La X"/"X")
     let whereClause;
-    if (field === 'zones') {
+    if (isMetropole) {
       whereClause = `zones="${keyword}" AND annee_scolaire="${schoolYear}"`;
     } else {
-      // ODSQL : LIKE accepte "*motif*" pour un match partiel insensible à la casse
-      const safeKeyword = String(keyword).replace(/"/g, '\\"');
-      whereClause = `${effectiveField} LIKE "*${safeKeyword}*" AND annee_scolaire="${schoolYear}"`;
+      // On récupère tout pour l'année, on filtrera ensuite
+      whereClause = `annee_scolaire="${schoolYear}"`;
     }
     const params = new URLSearchParams({
       'limit': '100',
@@ -10877,9 +11372,49 @@ async function calLoadVacations(schoolYear) {
     const apiUrl = `https://data.education.gouv.fr/api/explore/v2.1/catalog/datasets/fr-en-calendrier-scolaire/records?${params.toString()}`;
     console.log('[Calendrier] Requête API :', apiUrl);
     const data = await calFetchWithProxyFallback(apiUrl);
-    // Déduplication : on garde les vacances uniques (par nom + date de début)
+    let results = data.results || [];
+    console.log(`[Calendrier] ${results.length} résultats bruts de l'API`);
+    // Pour DROM-COM : filtrer côté client par mot-clé dans le champ location
+    if (!isMetropole) {
+      const before = results.length;
+      results = results.filter(r => {
+        const loc = calNormalize(r.location || '');
+        return loc.includes(keywordNorm);
+      });
+      console.log(`[Calendrier] ${results.length} résultats après filtre client "${keyword}" (sur ${before})`);
+      // Si on n'a rien trouvé, on log les locations distinctes vues, pour debug
+      if (results.length === 0 && (data.results||[]).length > 0) {
+        const locs = [...new Set((data.results||[]).map(r => r.location))].slice(0, 30);
+        console.warn('[Calendrier] Aucun résultat pour "' + keyword + '". Locations vues dans l\'API : ', locs);
+      }
+    }
+    // Pagination potentielle : si on a pile 100 résultats, il y en a probablement plus
+    // (l'année scolaire entière toutes zones confondues fait ~300 lignes). On enchaîne.
+    if (!isMetropole && results.length === 0 && (data.total_count||0) > 100) {
+      console.log('[Calendrier] Pagination : récupération des pages suivantes…');
+      const allResults = [...(data.results||[])];
+      const total = data.total_count;
+      for (let offset = 100; offset < total && offset < 500; offset += 100) {
+        const paramsP = new URLSearchParams({
+          'limit': '100', 'offset': String(offset),
+          'lang': 'fr', 'timezone': 'Europe/Paris', 'where': whereClause,
+        });
+        const apiUrlP = `https://data.education.gouv.fr/api/explore/v2.1/catalog/datasets/fr-en-calendrier-scolaire/records?${paramsP.toString()}`;
+        try {
+          const dataP = await calFetchWithProxyFallback(apiUrlP);
+          allResults.push(...(dataP.results||[]));
+        } catch(_) { break; }
+      }
+      console.log(`[Calendrier] Après pagination : ${allResults.length} résultats au total`);
+      results = allResults.filter(r => {
+        const loc = calNormalize(r.location || '');
+        return loc.includes(keywordNorm);
+      });
+      console.log(`[Calendrier] ${results.length} résultats après filtre client (post-pagination)`);
+    }
+    // Déduplication par (nom + date début)
     const seen = new Set();
-    const vacs = (data.results || [])
+    const vacs = results
       .filter(r => /vacances/i.test(r.description||''))
       .map(r => ({
         name: r.description || 'Vacances',
@@ -10896,7 +11431,7 @@ async function calLoadVacations(schoolYear) {
       });
     calApp.vacationsByYear[schoolYear] = vacs;
     calSave();
-    console.log(`[Calendrier] ${vacs.length} période(s) de vacances chargée(s) pour ${effectiveField} LIKE "${keyword}" ${schoolYear}`);
+    console.log(`[Calendrier] ✓ ${vacs.length} période(s) de vacances finales pour "${keyword}" ${schoolYear}`);
     return vacs;
   } catch (e) {
     console.warn('[Calendrier] Échec chargement vacances :', e);

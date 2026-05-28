@@ -227,6 +227,8 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 .btn-legal:hover{color:var(--text)}
 
 .print-hdr{display:none}
+.prog-print-footer{display:none;text-align:center;font-size:8pt;color:#94a3b8;border-top:1px solid #e2e8f0;padding-top:8px;margin-top:24px}
+.prog-print-footer a{color:#6366f1}
 @media print {
   .hdr,.editor-panel,.tracker,.tl-top,.sc-acts,.btn,.ba,.form-acts,.pcard-new,.nav-tabs,.hdr-actions{display:none!important}
   body{background:#fff!important;height:auto!important;overflow:visible!important;display:block!important}
@@ -244,6 +246,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
   #view-prog.active #prog-editor{display:block!important}
   #view-prog.active .timeline{background:#fff!important;padding:0!important;overflow:visible!important}
   #view-prog.active .print-hdr{display:block!important;margin-bottom:24px;border-bottom:2px solid #e2e8f0;padding:10mm 0 8px}
+  #view-prog.active .prog-print-footer{display:block!important}
   #view-prog.active .print-hdr h1{font-family:'Playfair Display',serif;font-size:22pt;color:#4338ca;text-align:center}
   #view-prog.active .print-hdr .pm{font-size:10pt;color:#64748b;text-align:center;margin-top:4px}
   .sc{border:1px solid #e2e8f0!important;box-shadow:none!important;page-break-inside:avoid!important;margin-bottom:14px!important;color:#1e293b!important}
@@ -280,7 +283,10 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
   .seqmeta-bar>div:first-child{grid-column:1/-1}
   .tl-top-right{width:100%}
   .tl-top-right .btn{flex:1;justify-content:center}
-  .a4-sheet{padding:14mm 9mm;min-height:auto}
+  .a4-sheet{padding:16mm 9mm 14mm;min-height:auto}
+  .a4-badge{top:7mm;right:9mm;padding:3px 10px;font-size:9px}
+  .a4-year{top:8mm;left:9mm}
+  .a4-title{padding:6mm 2mm 0}
   .modal{padding:22px 18px}
 }
 </style>
@@ -518,7 +524,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
           <div class="a4-sec"><div class="a4-sec-title" style="background:#ffedd5;color:#b45309"><span class="emoji-fix">⏱️</span>Déroulé de la séance</div><div id="sea-a4-acts"><div class="a4-empty">Aucune activité</div></div></div>
           <div class="a4-sec" id="sea-a4-trace-sec" style="display:none"><div class="a4-sec-title" style="background:rgba(99,102,241,0.12);color:#4338ca"><span class="emoji-fix">✏️</span>Trace écrite attendue</div><div id="sea-a4-trace" class="a4-trace"></div></div>
           <div class="a4-sec"><div class="a4-sec-title" style="background:#fee2e2;color:#991b1b"><span class="emoji-fix">🏠</span>Devoirs</div><div id="sea-a4-devoirs"><div class="a4-empty">—</div></div></div>
-          <div class="a4-footer">Le Séquenceur IA — Séance · Items des trois axes issus de la Progression IA DRANE Île-de-France (AGPL v3+)</div>
+          <div class="a4-footer">Le Séquenceur IA - Charlie Rollo - Items issus de la <a href="https://drane-ile-de-france.forge.apps.education.fr/progression_ia/" target="_blank" style="color:#6366f1;text-decoration:underline">Progression IA</a> Drane Île-de-France</div>
         </div>
       </div>
     </div>
@@ -591,6 +597,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
         </div>
         <div id="p-sl"></div>
         <button class="btn btn-ghost" style="width:100%;padding:14px;margin-top:14px;border:2px dashed var(--border);font-size:13px" onclick="progAddSeq()">＋ Ajouter une Séquence</button>
+        <div class="prog-print-footer">Le Séquenceur IA - Charlie Rollo - Items issus de la <a href="https://drane-ile-de-france.forge.apps.education.fr/progression_ia/" target="_blank">Progression IA</a> Drane Île-de-France</div>
       </div>
     </div>
   </div>
@@ -1317,6 +1324,7 @@ function seaGenerateMarkdown(){
   if(acts.length){ md+=`## ⏱️ Déroulé de la séance\n\n`; acts.forEach((a,i)=>{ const dur=parseInt(a.duration,10)||0; md+=`${i+1}. **${dur>0?dur+' min':'—'}** · ${a.label||''}\n`; }); md+='\n'; }
   if(s.trace?.trim()) md+=`## ✏️ Trace écrite attendue\n\n${s.trace.trim()}\n\n`;
   if(s.devoirs?.trim()) md+=`## 🏠 Devoirs\n\n${s.devoirs.trim()}\n`;
+  md+=`\n---\n\nLe Séquenceur IA - Charlie Rollo - Items issus de la Progression IA Drane Île-de-France : https://drane-ile-de-france.forge.apps.education.fr/progression_ia/\n`;
   return md;
 }
 function seaMarkdownPreview(){
@@ -1340,6 +1348,7 @@ function buildSeaHTML(){
     acts.forEach(a=>{ const dur=parseInt(a.duration,10)||0; h+=`<li style="font-size:11pt;color:#334155;padding:4pt 0"><b style="color:#0891b2">${dur>0?dur+' min':'—'}</b> · ${E(a.label||'')}</li>`; }); h+=`</ol>`; }
   if(s.trace?.trim()) h+=`<h2 style="font-size:12pt;color:#4338ca;background:#e0e7ff;padding:6pt 10pt;border-radius:4pt">✏️ Trace écrite attendue</h2><p style="font-size:11pt;color:#334155;white-space:pre-wrap">${E(s.trace.trim())}</p>`;
   if(s.devoirs?.trim()) h+=`<h2 style="font-size:12pt;color:#991b1b;background:#fee2e2;padding:6pt 10pt;border-radius:4pt">🏠 Devoirs</h2><p style="font-size:11pt;color:#334155;white-space:pre-wrap">${E(s.devoirs.trim())}</p>`;
+  h+=`<div style="margin-top:14pt;font-size:8pt;color:#94a3b8;border-top:1pt solid #e2e8f0;padding-top:6pt">Le Séquenceur IA - Charlie Rollo - Items issus de la <a href="https://drane-ile-de-france.forge.apps.education.fr/progression_ia/" style="color:#6366f1">Progression IA</a> Drane Île-de-France</div>`;
   return h;
 }
 function seaPrint(){
@@ -1787,7 +1796,7 @@ function progGenerateMarkdown() {
     md += sub('➕ Items personnalisés', s.libre);
     md += '---\n\n';
   });
-  md += `*Items des trois axes issus de la Progression IA — DRANE Île-de-France (AGPL v3+) : https://drane-ile-de-france.forge.apps.education.fr/progression_ia/*\n`;
+  md += `Le Séquenceur IA - Charlie Rollo - Items issus de la Progression IA Drane Île-de-France : https://drane-ile-de-france.forge.apps.education.fr/progression_ia/\n`;
   return md;
 }
 function progMarkdownPreview() {
@@ -1813,7 +1822,7 @@ function buildProgHTML() {
     if((s.libre||[]).length) body+=`<div style="font-size:10pt;margin-bottom:4pt"><b style="color:#1e293b">➕ Items personnalisés</b><br>${chip(s.libre,'#f1f5f9','#475569')}</div>`;
     body+='</div>';
   });
-  body+=`<div style="margin-top:12pt;font-size:8pt;color:#94a3b8;border-top:1pt solid #e2e8f0;padding-top:6pt">Items des trois axes issus de la Progression IA — DRANE Île-de-France (AGPL v3+) — https://drane-ile-de-france.forge.apps.education.fr/progression_ia/</div>`;
+  body+=`<div style="margin-top:12pt;font-size:8pt;color:#94a3b8;border-top:1pt solid #e2e8f0;padding-top:6pt">Le Séquenceur IA - Charlie Rollo - Items issus de la <a href="https://drane-ile-de-france.forge.apps.education.fr/progression_ia/" style="color:#6366f1">Progression IA</a> Drane Île-de-France</div>`;
   return body;
 }
 

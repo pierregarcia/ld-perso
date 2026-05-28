@@ -221,16 +221,23 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 .modal-x{position:absolute;top:12px;right:16px;background:none;border:none;font-size:18px;color:var(--text-muted);cursor:pointer}
 .modal h2{font-family:'Playfair Display',serif;font-size:20px;font-weight:800;margin-bottom:18px;text-align:center}
 
-.app-footer{padding:20px 22px;border-top:1px solid var(--border);display:flex;flex-direction:column;align-items:center;gap:10px;background:var(--panel);margin-top:auto}
-.footer-brand{display:flex;align-items:center;gap:8px;font-size:13px;flex-wrap:wrap;justify-content:center}
-.btn-legal{background:none;border:none;color:var(--text-muted);font-size:11px;text-decoration:underline;cursor:pointer;font-family:inherit;transition:color .2s}
-.btn-legal:hover{color:var(--text)}
+/* FOOTER global — minimaliste */
+.app-footer{padding:14px 24px;border-top:1px solid var(--border);display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:10px 18px;background:var(--panel);font-size:12px;color:var(--text-muted);flex:0 0 auto}
+.footer-brand{display:inline-flex;align-items:center;gap:6px}
+.footer-brand a{color:var(--accent2);text-decoration:none;font-weight:600}
+.footer-brand a:hover{text-decoration:underline}
+.footer-meta{display:inline-flex;align-items:center;gap:8px;flex-wrap:wrap}
+.footer-meta a,.footer-meta button{color:var(--text-muted);text-decoration:none;transition:color .15s;background:none;border:0;font:inherit;cursor:pointer;padding:0}
+.footer-meta a:hover,.footer-meta button:hover{color:var(--accent2);text-decoration:underline}
+.footer-meta .sep{color:var(--border);user-select:none}
+.btn-legal{background:none;border:none;color:var(--text-muted);text-decoration:none;cursor:pointer;font-family:inherit;font-size:inherit;transition:color .15s;padding:0}
+.btn-legal:hover{color:var(--accent2);text-decoration:underline}
 
 .print-hdr{display:none}
 .prog-print-footer{display:none;text-align:center;font-size:8pt;color:#94a3b8;border-top:1px solid #e2e8f0;padding-top:8px;margin-top:24px}
 .prog-print-footer a{color:#6366f1}
 @media print {
-  .hdr,.editor-panel,.tracker,.tl-top,.sc-acts,.btn,.ba,.form-acts,.pcard-new,.nav-tabs,.hdr-actions{display:none!important}
+  .hdr,.editor-panel,.tracker,.tl-top,.sc-acts,.btn,.ba,.form-acts,.pcard-new,.nav-tabs,.hdr-actions,.app-footer{display:none!important}
   body{background:#fff!important;height:auto!important;overflow:visible!important;display:block!important}
   .app-view{display:none!important}
   .app-view.active{display:block!important;overflow:visible!important}
@@ -254,10 +261,12 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
   @page{size:A4 portrait;margin:20mm 18mm}
 }
 /* ── Responsive : tablettes / empilement des éditeurs ── */
+@media(max-width:780px){
+  .app-footer{flex-direction:column;text-align:center;padding:14px 14px;gap:8px;font-size:11px}
+}
 @media(max-width:820px){
   body{height:auto;min-height:100vh;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch}
   .hdr{position:sticky;top:0}
-  .app-view{flex:none}
   .app-view.active{display:block;overflow:visible}
   .seq-layout,.prog-layout{display:block;width:100%;height:auto}
   .editor-panel,.preview-panel,.tracker,.timeline{max-height:none!important;height:auto!important;overflow:visible!important;border-right:none}
@@ -603,6 +612,22 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
   </div>
 </div>
 
+<footer class="app-footer">
+  <div class="footer-brand">
+    <span>🦾</span>
+    <a href="https://forge.apps.education.fr/lelabodecharlie/le-sequenceur-ia/-/blob/main/CHANGELOG?ref_type=heads" target="_blank" rel="noopener">Le Séquenceur IA</a>
+    <span>par</span>
+    <a href="mailto:charlie.rollo@ac-versailles.fr">Charlie Rollo</a>
+  </div>
+  <div class="footer-meta">
+    <a href="https://forge.apps.education.fr/lelabodecharlie/le-sequenceur-ia/-/blob/main/public/index.html?ref_type=heads" target="_blank" rel="noopener">Code source</a>
+    <span class="sep">·</span>
+    <a href="https://forge.apps.education.fr/lelabodecharlie/le-sequenceur-ia/-/work_items" target="_blank" rel="noopener">Signaler / suggérer</a>
+    <span class="sep">·</span>
+    <button type="button" class="btn-legal" onclick="openModal('m-mentions')">Mentions légales</button>
+  </div>
+</footer>
+
 <!-- Modal : Nouvelle séquence -->
 <div id="m-new-seq" class="modal-bg" onclick="closeModal('m-new-seq')">
   <div class="modal" onclick="event.stopPropagation()">
@@ -680,18 +705,22 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 <div id="m-mentions" class="modal-bg" onclick="closeModal('m-mentions')">
   <div class="modal" onclick="event.stopPropagation()">
     <button class="modal-x" onclick="closeModal('m-mentions')">✕</button>
-    <h2>Mentions légales &amp; licence</h2>
+    <h2>Mentions légales</h2>
     <div style="font-size:13px;color:var(--text-muted);line-height:1.7">
-      <p><b style="color:var(--text)">Source des items</b><br>
-      L'intégralité des items des trois axes (« Savoir comment fonctionnent les IA », « Identifier les enjeux des IA », « Apprendre avec l'IA ») provient de la
-      <a href="https://drane-ile-de-france.forge.apps.education.fr/progression_ia/" target="_blank" style="color:var(--accent)">Progression IA de la DRANE Île-de-France</a>.</p>
+      <p><b style="color:var(--text)">Éditeur</b><br>
+      Charlie ROLLO — <a href="mailto:charlie.rollo@ac-versailles.fr" style="color:var(--accent)">charlie.rollo@ac-versailles.fr</a></p>
       <br>
-      <p><b style="color:var(--text)">Licence de la source</b><br>
-      <a href="https://www.gnu.org/licenses/agpl-3.0.html" target="_blank" style="color:var(--accent)">GNU Affero General Public License v3.0 ou ultérieure (AGPL v3+)</a>.
-      Toute redistribution ou réutilisation doit respecter les termes de cette licence et créditer la DRANE Île-de-France.</p>
+      <p><b style="color:var(--text)">Hébergement</b><br>
+      Forge des Communs Numériques Éducatifs — Ministère de l'Éducation nationale, 110 rue de Grenelle, 75007 Paris</p>
       <br>
-      <p><b style="color:var(--text)">Compétences numériques</b><br>
-      Les compétences supplémentaires sont issues du Cadre de Référence des Compétences Numériques (CRCN).</p>
+      <p><b style="color:var(--text)">Licence</b><br>
+      <a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank" style="color:var(--accent)">GNU General Public License v3.0 (GPLv3)</a> — Toute redistribution ou modification doit citer l'auteur original : Charlie ROLLO.</p>
+      <br>
+      <p><b style="color:var(--text)">Données personnelles</b><br>
+      Aucune donnée personnelle n'est collectée ni transmise. Tout est stocké localement dans votre navigateur (<code>localStorage</code>). Le calendrier scolaire interroge l'API publique <a href="https://data.education.gouv.fr/" target="_blank" style="color:var(--accent)">data.education.gouv.fr</a> sans envoyer d'identifiant.</p>
+      <br>
+      <p><b style="color:var(--text)">Crédits</b><br>
+      Items issus de la <a href="https://drane-ile-de-france.forge.apps.education.fr/progression_ia/" target="_blank" style="color:var(--accent)">Progression IA</a> Drane Île-de-France, sous licence <a href="https://www.gnu.org/licenses/agpl-3.0.html" target="_blank" style="color:var(--accent)">AGPL v3+</a>.</p>
     </div>
   </div>
 </div>

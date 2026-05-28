@@ -107,7 +107,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 @keyframes tagIn{from{opacity:0;transform:scale(.8)}to{opacity:1;transform:scale(1)}}
 
 .a4-sheet{background:#fff;width:100%;max-width:210mm;min-height:297mm;padding:24mm 20mm;box-shadow:0 8px 48px rgba(0,0,0,0.3);border-radius:4px;color:#1e293b;position:relative;flex-shrink:0;--user-font-scale:1}
-.a4-sheet.with-user-font #sea-a4-acts,.a4-sheet.with-user-font #sea-a4-trace,.a4-sheet.with-user-font #sea-a4-devoirs,.a4-sheet.with-user-font #sea-a4-meta{font-family:var(--user-font),sans-serif}
+.a4-sheet.with-user-font #sea-a4-acts,.a4-sheet.with-user-font #sea-a4-trace,.a4-sheet.with-user-font #sea-a4-devoirs,.a4-sheet.with-user-font #sea-a4-comp,.a4-sheet.with-user-font #sea-a4-supp{font-family:var(--user-font),sans-serif}
 .a4-badge{position:absolute;top:16mm;right:20mm;background:linear-gradient(135deg,#4338ca,#6366f1);color:#fff;padding:4px 14px;border-radius:16px;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase}
 .a4-year{position:absolute;top:16mm;left:20mm;color:#94a3b8;font-size:10px;font-weight:700;letter-spacing:1px}
 .a4-title{font-family:'Playfair Display',serif;font-size:24px;font-weight:800;color:#1e293b;text-align:center;margin-bottom:6px;line-height:1.3;padding:0 30px}
@@ -122,7 +122,9 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 .a4-list.fonc li::before{color:#eab308}.a4-list.enj li::before{color:#3b82f6}
 .a4-list.app li::before{color:#10b981}.a4-list.crcn li::before{color:#a855f7}
 .a4-list.gray li::before{color:#64748b}
-.a4-list .ax-grp{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.6px;color:#94a3b8;margin:8px 0 2px;padding-left:3px}
+.ax-grp{font-size:11px;font-weight:700;color:#475569;margin:10px 0 3px;padding-left:2px;display:flex;align-items:center;gap:5px}
+.crcn-dom{font-size:9.5px;font-weight:700;color:#7e22ce;margin:4px 0 1px;padding-left:14px}
+[data-theme] .a4-sheet .crcn-dom{color:#7e22ce}
 .a4-empty{color:#94a3b8;font-style:italic;font-size:11px;padding:6px 0;text-align:center}
 .a4-footer{position:absolute;bottom:12mm;left:20mm;right:20mm;text-align:center;font-size:8px;color:#cbd5e1;border-top:1px solid #e2e8f0;padding-top:6px;line-height:1.5}
 .emoji-fix{display:inline-block;margin-right:4px}
@@ -170,6 +172,9 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 .ci{font-size:10px;padding:4px 8px;border-radius:5px;margin-bottom:3px;display:flex;align-items:center;gap:6px;background:var(--card);color:var(--text-muted);line-height:1.3}
 .ci.ok{border-left:3px solid var(--ok);color:var(--text)}.ci.ok::before{content:'✓';color:var(--ok);font-weight:800;font-size:9px}
 .ci.no{border-left:3px solid #f87171}.ci.no::before{content:'○';color:#f87171;font-size:9px}
+.cov-grp{font-size:10px;font-weight:800;color:var(--text);margin:10px 0 4px;display:flex;align-items:center;gap:5px;flex-wrap:wrap}
+.cov-grp-n{font-size:9px;font-weight:700;color:var(--accent);background:var(--card);padding:1px 7px;border-radius:8px}
+.cov-dom{font-size:9px;font-weight:700;color:var(--r-crcn);margin:6px 0 2px;padding-left:2px}
 
 .niv-checks{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px}
 .niv-chk{font-size:11px;font-weight:700;padding:5px 10px;border-radius:16px;border:1.5px solid var(--border);background:var(--card);color:var(--text-muted);cursor:pointer;transition:all .18s;user-select:none}
@@ -262,8 +267,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
     </div>
   </div>
   <div class="nav-tabs">
-    <button class="nav-tab active" onclick="switchView('seq',this)">🧩 Séquenceur</button>
-    <button class="nav-tab" onclick="switchView('sea',this)">✏️ Séances</button>
+    <button class="nav-tab active" onclick="switchView('seq',this)">📝 Séquenceur</button>
     <button class="nav-tab" onclick="switchView('prog',this)">🎯 Progression</button>
   </div>
   <div class="hdr-actions">
@@ -277,167 +281,40 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 <!-- VUE 1 : SÉQUENCEUR                     -->
 <!-- ══════════════════════════════════════ -->
 <div id="view-seq" class="app-view active">
-<div class="seq-layout">
-  <!-- PANNEAU GAUCHE -->
-  <div class="editor-panel">
-    <div style="display:flex;gap:8px;justify-content:space-between;align-items:center;margin-bottom:16px;padding-bottom:14px;border-bottom:1px solid var(--border);flex-wrap:wrap">
-      <button class="btn btn-ghost btn-sm" onclick="seqNewBlank()">＋ Nouvelle</button>
-      <div style="display:flex;gap:6px;flex-wrap:wrap">
-        <button class="btn btn-violet btn-sm" onclick="seqMarkdownPreview()">📋 Markdown</button>
-        <button class="btn btn-blue btn-sm" onclick="seqTextExport()">📝 Texte</button>
-        <button class="btn btn-green btn-sm" onclick="seqPrint()">📄 PDF</button>
-      </div>
-    </div>
 
-    <!-- Bandeau bibliothèque -->
-    <div id="seq-lib-info" style="font-size:11px;color:var(--text-muted);margin-bottom:12px;padding:8px 12px;background:rgba(99,102,241,0.06);border-left:3px solid var(--accent);border-radius:6px">Nouvelle séquence — enregistrée automatiquement dans « Mes séquences ».</div>
-
-    <div class="fg">
-      <label class="fl">Niveau ciblé</label>
-      <select class="fs" id="seq-niveau" onchange="seqOnNiveau();libSaveCurrent()">
-        <option value="">— Choisir —</option>
-        <optgroup label="── Collège ──">
-          <option value="6ème">6ème</option>
-          <option value="5ème">5ème</option>
-          <option value="4ème">4ème</option>
-          <option value="3ème">3ème</option>
-        </optgroup>
-        <optgroup label="── Lycée ──">
-          <option value="Seconde">Seconde</option>
-          <option value="Première">Première</option>
-          <option value="Terminale">Terminale</option>
-        </optgroup>
-      </select>
-    </div>
-    <div class="fg">
-      <label class="fl">Titre de la séquence</label>
-      <input class="fi" id="seq-titre" placeholder="Ex : Séquence IA 6ème — Comment fonctionne une IA ?" oninput="seqPreview();libSaveCurrent()">
-    </div>
-    <div class="fg">
-      <label class="fl">Année scolaire (facultatif)</label>
-      <input class="fi" id="seq-annee" placeholder="2025-2026" oninput="libSaveCurrent()">
-    </div>
-
-    <div class="section-label">Compétences IA</div>
-
-    <div class="fg">
-      <label class="fl" style="color:var(--r-fonc)">🟡 Savoir comment fonctionnent les IA</label>
-      <div class="swa">
-        <select class="fs" id="seq-fonc"><option value="">— Choisir un item —</option></select>
-        <button class="ba fonc" onclick="seqAdd('seq-fonc','fonc','fonc')">+</button>
-      </div>
-      <div class="swa" style="margin-top:4px">
-        <input class="fi" id="seq-fonc-free" placeholder="…ou item personnalisé" style="font-size:12px">
-        <button class="ba fonc" onclick="seqAddFree('seq-fonc-free','fonc','fonc')">+</button>
-      </div>
-      <div class="added-tags" id="seq-tags-fonc"></div>
-    </div>
-
-    <div class="fg">
-      <label class="fl" style="color:var(--r-enj)">🔵 Identifier les enjeux des IA</label>
-      <div class="swa">
-        <select class="fs" id="seq-enj"><option value="">— Choisir un item —</option></select>
-        <button class="ba enj" onclick="seqAdd('seq-enj','enj','enj')">+</button>
-      </div>
-      <div class="swa" style="margin-top:4px">
-        <input class="fi" id="seq-enj-free" placeholder="…ou item personnalisé" style="font-size:12px">
-        <button class="ba enj" onclick="seqAddFree('seq-enj-free','enj','enj')">+</button>
-      </div>
-      <div class="added-tags" id="seq-tags-enj"></div>
-    </div>
-
-    <div class="fg">
-      <label class="fl" style="color:var(--r-app)">🟢 Apprendre avec l'IA</label>
-      <div class="swa">
-        <select class="fs" id="seq-app"><option value="">— Choisir un item —</option></select>
-        <button class="ba app" onclick="seqAdd('seq-app','app','app')">+</button>
-      </div>
-      <div class="swa" style="margin-top:4px">
-        <input class="fi" id="seq-app-free" placeholder="…ou item personnalisé" style="font-size:12px">
-        <button class="ba app" onclick="seqAddFree('seq-app-free','app','app')">+</button>
-      </div>
-      <div class="added-tags" id="seq-tags-app"></div>
-    </div>
-
-    <div class="section-label" style="color:var(--r-crcn)">Compétences Numériques CRCN</div>
-
-    <div class="fg">
-      <label class="fl" style="color:var(--r-crcn)">🟣 Compétences du CRCN</label>
-      <div class="swa"><select class="fs" id="seq-crcn-dom" onchange="seqOnCrcnDom()">
-        <option value="">— Choisir un domaine —</option>
-      </select></div>
-      <div class="swa">
-        <select class="fs" id="seq-crcn"><option value="">— Choisir un domaine d'abord —</option></select>
-        <button class="ba crcn" onclick="seqAdd('seq-crcn','crcn','crcn')">+</button>
-      </div>
-      <div class="added-tags" id="seq-tags-crcn"></div>
-    </div>
-
-    <footer class="app-footer">
-      <div class="footer-brand">
-        <span>🦾</span>
-        <span>Le Séquenceur IA</span>
-      </div>
-      <p style="font-size:10.5px;color:var(--text-muted);text-align:center;line-height:1.6;max-width:400px">
-        Les items des trois axes proviennent de la
-        <a href="https://drane-ile-de-france.forge.apps.education.fr/progression_ia/" target="_blank" style="color:var(--accent);font-weight:700">Progression IA de la DRANE Île-de-France</a>,
-        sous licence <a href="https://www.gnu.org/licenses/agpl-3.0.html" target="_blank" style="color:var(--accent);font-weight:700">AGPL v3+</a>.
-      </p>
-      <button class="btn-legal" onclick="openModal('m-mentions')">⚖️ Mentions légales &amp; licence</button>
-    </footer>
-  </div>
-
-  <!-- PANNEAU DROIT : APERÇU A4 -->
-  <div class="preview-panel">
-    <div class="a4-sheet" id="a4">
-      <div class="a4-badge" id="a4-badge" style="display:none"></div>
-      <div class="a4-title" id="a4-title">Titre de la séquence</div>
-      <div class="a4-sec"><div class="a4-sec-title ia"><span class="emoji-fix">🚀</span>Les compétences IA</div><div id="a4-comp"><div class="a4-empty">Piochez des compétences IA et CRCN à gauche</div></div></div>
-      <div class="a4-footer" id="a4-footer">Le Séquenceur IA — Items des trois axes issus de la Progression IA DRANE Île-de-France (AGPL v3+)</div>
-    </div>
-  </div>
-</div>
-</div>
-<!-- ══════════════════════════════════════ -->
-<!-- VUE 2 : SÉANCES                        -->
-<!-- ══════════════════════════════════════ -->
-<div id="view-sea" class="app-view">
-
-  <!-- Sous-vue 1 : Accueil — tuiles de niveaux -->
+  <!-- Sous-vue : Tableau de bord des séquences (groupées par niveau) -->
   <div id="sea-home" style="width:100%;overflow-y:auto">
     <div class="dash">
-      <div class="dash-head" style="margin-bottom:24px">
+      <div class="dash-head" style="margin-bottom:20px">
         <div>
-          <h1 class="dash-title">Mes Séances</h1>
-          <p class="dash-sub">Choisissez un niveau pour accéder à ses séquences.</p>
+          <h1 class="dash-title">Mes Séquences IA</h1>
+          <p class="dash-sub">Chaque séquence regroupe directement ses séances. Cliquez sur une séquence pour les gérer.</p>
         </div>
+        <button class="btn btn-green" onclick="openNewSeq()">＋ Nouvelle séquence</button>
       </div>
       <div class="grid" id="sea-niv-grid"></div>
     </div>
   </div>
 
-  <!-- Sous-vue 1bis : Séquences d'un niveau -->
-  <div id="sea-seqs" style="display:none;width:100%;overflow-y:auto">
-    <div class="dash">
-      <div style="display:flex;gap:12px;align-items:center;margin-bottom:8px;flex-wrap:wrap">
-        <button class="btn btn-ghost btn-sm" onclick="seaBackToNiveaux()">← Niveaux</button>
-        <h1 class="dash-title" id="sea-seqs-title" style="margin-bottom:0">Séquences</h1>
-      </div>
-      <p class="dash-sub" id="sea-seqs-sub">Choisissez une séquence pour gérer ses séances.</p>
-      <div class="grid" id="sea-seqs-grid"></div>
-    </div>
-  </div>
-
-  <!-- Sous-vue 2 : Séquence — liste des séances -->
+  <!-- Sous-vue : Séances d'une séquence -->
   <div id="sea-list" style="display:none;width:100%;overflow-y:auto">
     <div class="dash">
-      <div style="display:flex;gap:12px;align-items:center;margin-bottom:8px;flex-wrap:wrap">
-        <button class="btn btn-ghost btn-sm" onclick="seaBackToSeqs()">← Séquences</button>
+      <div style="display:flex;gap:12px;align-items:center;margin-bottom:14px;flex-wrap:wrap">
+        <button class="btn btn-ghost btn-sm" onclick="seaBackToHome()">← Mes séquences</button>
         <h1 class="dash-title" id="sea-list-title" style="margin-bottom:0">Séances</h1>
       </div>
-      <p class="dash-sub" id="sea-list-sub">Toutes les séances de cette séquence.</p>
+      <div style="background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:16px 18px;margin-bottom:18px;display:grid;grid-template-columns:1fr 150px 130px auto;gap:10px;align-items:end">
+        <div><label class="fl">Titre de la séquence</label><input class="fi" id="seqmeta-title" placeholder="Ex : Séquence IA 6ème" oninput="seqMetaChg('title',this.value)"></div>
+        <div><label class="fl">Niveau</label><select class="fs" id="seqmeta-niv" onchange="seqMetaChg('niveau',this.value)">
+          <option value="">—</option>
+          <optgroup label="Collège"><option>6ème</option><option>5ème</option><option>4ème</option><option>3ème</option></optgroup>
+          <optgroup label="Lycée"><option>Seconde</option><option>Première</option><option>Terminale</option></optgroup>
+        </select></div>
+        <div><label class="fl">Année</label><input class="fi" id="seqmeta-annee" placeholder="2025-2026" oninput="seqMetaChg('annee',this.value)"></div>
+        <button class="btn btn-danger btn-sm" onclick="seqDeleteCurrent()" style="height:38px">🗑️</button>
+      </div>
+      <p class="dash-sub" id="sea-list-sub" style="margin-top:-6px">Les séances de cette séquence.</p>
       <div class="grid" id="sea-cards-grid"></div>
-      <div class="grid" id="sea-cards-new" style="margin-top:0"></div>
     </div>
   </div>
 
@@ -506,13 +383,13 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 
         <!-- Objectifs IA travaillés -->
         <details id="sea-objs-block" open style="border:1px solid var(--border);border-radius:8px;padding:10px 12px;margin-bottom:12px;background:var(--card)">
-          <summary style="cursor:pointer;font-size:11px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent4);user-select:none">🧩 Compétences IA travaillées</summary>
+          <summary style="cursor:pointer;font-size:11px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent4);user-select:none">🧩 Compétences numériques travaillées</summary>
           <p style="font-size:10px;color:var(--text-muted);margin:6px 0 10px;line-height:1.5">
             Cochez ce qui est travaillé dans la séance. Ajouter un nouvel item le pousse aussi dans la séquence parente.
           </p>
 
           <div class="fg" style="margin-bottom:10px">
-            <label class="fl" style="color:var(--r-fonc);font-size:10px">🟡 Savoir comment fonctionnent les IA</label>
+            <label class="fl" style="color:var(--r-fonc);font-size:10px">⚙️ Savoir comment fonctionnent les IA</label>
             <div id="sea-fonc-list" style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:6px"></div>
             <div class="swa">
               <select class="fs" id="sea-fonc-sel" style="font-size:12px"><option value="">— Ajouter depuis le référentiel —</option></select>
@@ -525,7 +402,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
           </div>
 
           <div class="fg" style="margin-bottom:10px">
-            <label class="fl" style="color:var(--r-enj);font-size:10px">🔵 Identifier les enjeux des IA</label>
+            <label class="fl" style="color:var(--r-enj);font-size:10px">🔍 Identifier les enjeux des IA</label>
             <div id="sea-enj-list" style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:6px"></div>
             <div class="swa">
               <select class="fs" id="sea-enj-sel" style="font-size:12px"><option value="">— Ajouter depuis le référentiel —</option></select>
@@ -538,7 +415,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
           </div>
 
           <div class="fg" style="margin-bottom:10px">
-            <label class="fl" style="color:var(--r-app);font-size:10px">🟢 Apprendre avec l'IA</label>
+            <label class="fl" style="color:var(--r-app);font-size:10px">📖 Apprendre avec l'IA</label>
             <div id="sea-app-list" style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:6px"></div>
             <div class="swa">
               <select class="fs" id="sea-app-sel" style="font-size:12px"><option value="">— Ajouter depuis le référentiel —</option></select>
@@ -551,7 +428,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
           </div>
 
           <div class="fg" style="margin-bottom:0">
-            <label class="fl" style="color:var(--r-crcn);font-size:10px">🟣 Compétences du CRCN</label>
+            <label class="fl" style="color:var(--r-crcn);font-size:10px">💻 Compétences du CRCN</label>
             <div id="sea-crcn-list" style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:6px"></div>
             <div class="swa">
               <select class="fs" id="sea-crcn-dom" style="font-size:12px" onchange="seaCrcnDom()"><option value="">— Choisir un domaine —</option></select>
@@ -607,7 +484,8 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
           <div class="a4-title" id="sea-a4-title" style="margin-bottom:4px">Titre de la séance</div>
           <div id="sea-a4-parent" style="text-align:center;font-size:11px;color:#64748b;margin-bottom:14px"></div>
           <div class="a4-prob" id="sea-a4-obj" style="display:none"></div>
-          <div id="sea-a4-meta" style="margin-bottom:16px;padding:10px 14px;border-top:1px solid #e2e8f0;border-bottom:1px solid #e2e8f0;display:flex;flex-direction:column;gap:6px"></div>
+          <div class="a4-sec"><div class="a4-sec-title ia"><span class="emoji-fix">🧩</span>Compétences numériques</div><div id="sea-a4-comp"><div class="a4-empty">Aucune compétence cochée</div></div></div>
+          <div class="a4-sec"><div class="a4-sec-title" style="background:#f3e8ff;color:#6b21a8"><span class="emoji-fix">📎</span>Supports</div><div id="sea-a4-supp"><div class="a4-empty">—</div></div></div>
           <div class="a4-sec"><div class="a4-sec-title" style="background:#ffedd5;color:#b45309"><span class="emoji-fix">⏱️</span>Déroulé de la séance</div><div id="sea-a4-acts"><div class="a4-empty">Aucune activité</div></div></div>
           <div class="a4-sec" id="sea-a4-trace-sec" style="display:none"><div class="a4-sec-title" style="background:rgba(99,102,241,0.12);color:#4338ca"><span class="emoji-fix">✏️</span>Trace écrite attendue</div><div id="sea-a4-trace" class="a4-trace"></div></div>
           <div class="a4-sec"><div class="a4-sec-title" style="background:#fee2e2;color:#991b1b"><span class="emoji-fix">🏠</span>Devoirs</div><div id="sea-a4-devoirs"><div class="a4-empty">—</div></div></div>
@@ -658,7 +536,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
         <div class="prog-wrap"><div class="prog-fill" id="p-bar" style="width:0%"></div></div>
         <div class="prog-lbl" id="p-lbl">—</div>
         <div id="p-cov-niv"></div>
-        <div class="trk-title" style="margin-top:8px">Réservoirs touchés</div>
+        <div class="trk-title" style="margin-top:8px">Couverture des compétences</div>
         <div id="p-cov-axes"></div>
       </div>
 
@@ -686,6 +564,31 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
         <button class="btn btn-ghost" style="width:100%;padding:14px;margin-top:14px;border:2px dashed var(--border);font-size:13px" onclick="progAddSeq()">＋ Ajouter une Séquence</button>
       </div>
     </div>
+  </div>
+</div>
+
+<!-- Modal : Nouvelle séquence -->
+<div id="m-new-seq" class="modal-bg" onclick="closeModal('m-new-seq')">
+  <div class="modal" onclick="event.stopPropagation()">
+    <button class="modal-x" onclick="closeModal('m-new-seq')">✕</button>
+    <h2>Nouvelle Séquence IA</h2>
+    <div class="fg">
+      <label class="fl">1. Niveau <span style="color:var(--accent-r)">*</span></label>
+      <select class="fs" id="ns-niv">
+        <option value="">— Choisir —</option>
+        <optgroup label="Collège"><option>6ème</option><option>5ème</option><option>4ème</option><option>3ème</option></optgroup>
+        <optgroup label="Lycée"><option>Seconde</option><option>Première</option><option>Terminale</option></optgroup>
+      </select>
+    </div>
+    <div class="fg">
+      <label class="fl">2. Titre (facultatif)</label>
+      <input class="fi" id="ns-title" placeholder="Ex : Comment fonctionne une IA ?">
+    </div>
+    <div class="fg">
+      <label class="fl">3. Année (facultatif)</label>
+      <input class="fi" id="ns-annee" placeholder="2025-2026">
+    </div>
+    <button class="btn btn-green" style="width:100%;padding:13px;font-size:13px;margin-top:8px" onclick="seqCreate()">🚀 Créer et ajouter des séances</button>
   </div>
 </div>
 
@@ -839,12 +742,26 @@ const DB_CRCN = {
 
 // Réservoirs (clé interne → libellé officiel + emoji + classe)
 const RESERVOIRS = [
-  { key:'fonc', cls:'fonc', emoji:'🟡', label:"Savoir comment fonctionnent les IA" },
-  { key:'enj',  cls:'enj',  emoji:'🔵', label:"Identifier les enjeux des IA" },
-  { key:'app',  cls:'app',  emoji:'🟢', label:"Apprendre avec l'IA" },
-  { key:'crcn', cls:'crcn', emoji:'🟣', label:"Compétences du CRCN" }
+  { key:'fonc', cls:'fonc', emoji:'⚙️', label:"Savoir comment fonctionnent les IA" },
+  { key:'enj',  cls:'enj',  emoji:'🔍', label:"Identifier les enjeux des IA" },
+  { key:'app',  cls:'app',  emoji:'📖', label:"Apprendre avec l'IA" },
+  { key:'crcn', cls:'crcn', emoji:'💻', label:"Compétences du CRCN" }
 ];
 const IA_KEYS = ['fonc','enj','app','crcn'];
+
+// Retrouve le domaine CRCN d'une compétence (ou '' si item personnalisé)
+function crcnDomaineOf(item){
+  for(const dom in DB_CRCN){ if(DB_CRCN[dom].includes(item)) return dom; }
+  return '';
+}
+// Regroupe une liste de compétences CRCN par domaine, en respectant l'ordre des domaines
+function crcnGroupByDomaine(items){
+  const groups = {}; const custom = [];
+  items.forEach(it=>{ const d=crcnDomaineOf(it); if(d){ (groups[d]=groups[d]||[]).push(it); } else custom.push(it); });
+  const ordered = Object.keys(DB_CRCN).filter(d=>groups[d]).map(d=>({domaine:d, items:groups[d]}));
+  if(custom.length) ordered.push({domaine:'Autres compétences', items:custom});
+  return ordered;
+}
 
 // Polices proposées (Google Fonts déjà chargées + génériques)
 const SEA_FONTS = [
@@ -865,7 +782,7 @@ function switchView(v, btn) {
   document.querySelectorAll('.app-view').forEach(el => el.classList.remove('active'));
   if (btn) btn.classList.add('active');
   $('view-' + v).classList.add('active');
-  if (v === 'sea' && !seaCurrentId) { seaShowSubview('home'); seaRenderHome(); }
+  if (v === 'seq' && !seaCurrentId) { seaShowSubview('home'); seaRenderHome(); }
   if (v === 'prog') progRenderDash();
 }
 function toggleTheme() {
@@ -898,137 +815,11 @@ function libBlankSeq(){
   return { id:Date.now(), title:'', niveau:'', annee:'', fonc:[], enj:[], app:[], crcn:[], updatedAt:Date.now() };
 }
 // ================================================================
-// SÉQUENCEUR (édite une séquence de la bibliothèque)
+// SÉQUENCES (conteneurs : titre, niveau, année — contiennent les séances)
 // ================================================================
-const seqState = { fonc:[], enj:[], app:[], crcn:[] };
 
-function seqFillReservoirs() {
-  const fill = (selId, items) => {
-    const sel = $(selId); if(!sel) return;
-    sel.innerHTML = '<option value="">— Choisir un item —</option>';
-    items.forEach(i => { sel.innerHTML += `<option value="${E(i)}">${i}</option>`; });
-  };
-  fill('seq-fonc', DB_IA.fonc.items);
-  fill('seq-enj',  DB_IA.enj.items);
-  fill('seq-app',  DB_IA.app.items);
-  const dom = $('seq-crcn-dom');
-  dom.innerHTML = '<option value="">— Choisir un domaine —</option>';
-  Object.keys(DB_CRCN).forEach(d => { dom.innerHTML += `<option value="${E(d)}">${d}</option>`; });
-}
-function seqOnCrcnDom() {
-  const d = $('seq-crcn-dom').value;
-  const sel = $('seq-crcn');
-  sel.innerHTML = '<option value="">— Choisir une compétence —</option>';
-  if (d && DB_CRCN[d]) DB_CRCN[d].forEach(i => { sel.innerHTML += `<option value="${E(i)}">${i}</option>`; });
-}
-function seqOnNiveau() {
-  const n = $('seq-niveau').value;
-  const badge = $('a4-badge');
-  if (n) { badge.style.display='block'; badge.textContent = n; } else badge.style.display='none';
-  seqPreview();
-}
-function seqAdd(selId, key, cls) {
-  const v = $(selId).value;
-  if (!v || seqState[key].includes(v)) return;
-  seqState[key].push(v); $(selId).value = '';
-  seqRenderTags(key, cls); seqPreview(); libSaveCurrent();
-}
-function seqAddFree(inpId, key, cls) {
-  const v = $(inpId).value.trim();
-  if (!v || seqState[key].includes(v)) return;
-  seqState[key].push(v); $(inpId).value = '';
-  seqRenderTags(key, cls); seqPreview(); libSaveCurrent();
-}
-function seqRemove(key, i, cls) {
-  seqState[key].splice(i, 1);
-  seqRenderTags(key, cls); seqPreview(); libSaveCurrent();
-}
-function seqRenderTags(key, cls) {
-  const el = $('seq-tags-'+key); if (!el) return;
-  el.innerHTML = seqState[key].map((v, i) =>
-    `<span class="tag ${cls}"><span class="tl">${S(v,52)}</span><span class="tr" onclick="seqRemove('${key}',${i},'${cls}')">✕</span></span>`
-  ).join('');
-}
-function seqRenderAllTags(){ seqRenderTags('fonc','fonc'); seqRenderTags('enj','enj'); seqRenderTags('app','app'); seqRenderTags('crcn','crcn'); }
-
-// Aperçu : UN SEUL bloc « Les compétences IA » regroupant tout
-function seqPreview() {
-  $('a4-title').textContent = $('seq-titre').value || 'Titre de la séquence';
-  const el = $('a4-comp');
-  const groups = RESERVOIRS.filter(r => seqState[r.key] && seqState[r.key].length);
-  if (!groups.length) { el.innerHTML = `<div class="a4-empty">Piochez des compétences IA et CRCN à gauche</div>`; return; }
-  let html = '';
-  groups.forEach(r => {
-    html += `<div class="ax-grp">${r.emoji} ${E(r.label)}</div>`;
-    html += `<ul class="a4-list ${r.cls}">${seqState[r.key].map(i=>`<li>${E(i)}</li>`).join('')}</ul>`;
-  });
-  el.innerHTML = html;
-}
-
-// ── Lien avec la bibliothèque ──
-function seqLoadIntoEditor(id){
-  const s = libApp.seqs.find(x=>x.id===id);
-  if(!s) return;
-  libCurrentId = id;
-  $('seq-titre').value = s.title||'';
-  $('seq-niveau').value = s.niveau||'';
-  $('seq-annee').value = s.annee||'';
-  IA_KEYS.forEach(k=> seqState[k] = [...(s[k]||[])]);
-  $('seq-crcn-dom').value=''; seqOnCrcnDom();
-  seqRenderAllTags(); seqOnNiveau(); seqPreview();
-  updateSeqLibInfo();
-}
-function seqNewBlank(){
-  const s = libBlankSeq();
-  libApp.seqs.push(s); libSave();
-  seqLoadIntoEditor(s.id);
-  $('seq-titre').focus();
-}
-function updateSeqLibInfo(){
-  const info = $('seq-lib-info');
-  if(!info) return;
-  const cnt = libApp.seqs.length;
-  info.innerHTML = `📚 <b>Mes séquences :</b> ${cnt} enregistrée${cnt>1?'s':''}. La séquence en cours est sauvegardée automatiquement.`;
-}
-// Sauvegarde automatique de la séquence courante
-function libSaveCurrent(){
-  if(libCurrentId==null){
-    // créer à la volée si on commence à taper sans séquence active
-    const s = libBlankSeq(); libApp.seqs.push(s); libCurrentId = s.id;
-  }
-  const s = libApp.seqs.find(x=>x.id===libCurrentId);
-  if(!s) return;
-  s.title = $('seq-titre').value;
-  s.niveau = $('seq-niveau').value;
-  s.annee = $('seq-annee').value;
-  IA_KEYS.forEach(k=> s[k] = [...seqState[k]]);
-  s.updatedAt = Date.now();
-  libSave(); updateSeqLibInfo();
-}
-
-// ── Markdown / Texte séquence ──
-let _mdCurrentContent='', _mdCurrentFilename='', _textPendingType='seq';
-
-function seqGenerateMarkdown() {
-  let md = `# ${$('seq-titre').value || 'Séquence sans titre'}\n\n`;
-  const n = $('seq-niveau').value; if (n) md += `**Niveau :** ${n}\n`;
-  const an = $('seq-annee').value; if (an) md += `**Année :** ${an}\n`;
-  md += `\n## 🚀 Les compétences IA\n\n`;
-  RESERVOIRS.forEach(r=>{
-    if(seqState[r.key] && seqState[r.key].length){
-      md += `**${r.emoji} ${r.label}**\n`;
-      seqState[r.key].forEach(x=> md += `- ${x}\n`);
-      md += '\n';
-    }
-  });
-  md += `---\n\n*Items des trois axes issus de la Progression IA — DRANE Île-de-France (AGPL v3+) : https://drane-ile-de-france.forge.apps.education.fr/progression_ia/*\n`;
-  return md;
-}
-function seqMarkdownPreview() {
-  _mdCurrentContent = seqGenerateMarkdown();
-  _mdCurrentFilename = `Séquence IA - ${$('seq-titre').value || 'Sans titre'}.md`;
-  $('md-content').value = _mdCurrentContent; openModal('m-markdown');
-}
+// Helpers partagés Markdown / Texte
+let _mdCurrentContent='', _mdCurrentFilename='', _textPendingType='sea';
 function mdCopy() {
   const ta = $('md-content'); ta.select(); document.execCommand('copy');
   const btn = event.target; const old = btn.innerHTML;
@@ -1039,29 +830,47 @@ function mdDownload() {
   const a = document.createElement('a');
   a.href = URL.createObjectURL(b); a.download = _mdCurrentFilename; a.click(); URL.revokeObjectURL(a.href);
 }
-function seqTextExport() { _textPendingType='seq'; openModal('m-text-format'); }
 function progTextExport() { _textPendingType='prog'; openModal('m-text-format'); }
 function seaTextExport() { _textPendingType='sea'; openModal('m-text-format'); }
 
-function buildSeqHTML() {
-  const t = $('seq-titre').value, n = $('seq-niveau').value;
-  let comp = '';
-  RESERVOIRS.forEach(r=>{
-    if(seqState[r.key] && seqState[r.key].length){
-      comp += `<div style="font-size:10pt;font-weight:800;color:#4338ca;margin:8pt 0 3pt">${r.emoji} ${E(r.label)}</div>`;
-      comp += `<ul style="list-style:none;padding:0;margin:0">${seqState[r.key].map(i=>`<li style="font-size:10pt;color:#334155;padding:2pt 0 2pt 14pt">▸ ${E(i)}</li>`).join('')}</ul>`;
-    }
-  });
-  return `<div style="text-align:right"><span style="display:inline-block;background:#4338ca;color:#fff;padding:3pt 12pt;border-radius:12pt;font-size:9pt;font-weight:700;text-transform:uppercase;margin-bottom:10pt">${E(n)}</span></div>
-<h1 style="font-family:serif;font-size:22pt;text-align:center;color:#1e293b;margin-bottom:14pt">${E(t||'Sans titre')}</h1>
-<div style="font-size:11pt;font-weight:800;text-transform:uppercase;letter-spacing:1pt;padding:5pt 10pt;border-radius:4pt;background:#e0e7ff;color:#4338ca;margin-bottom:8pt">🚀 Les compétences IA</div>
-${comp||'<div style="color:#94a3b8;font-style:italic">Aucune compétence sélectionnée</div>'}
-<div style="margin-top:18pt;font-size:8pt;color:#94a3b8;border-top:1pt solid #e2e8f0;padding-top:6pt">Items des trois axes issus de la Progression IA — DRANE Île-de-France (AGPL v3+) — https://drane-ile-de-france.forge.apps.education.fr/progression_ia/</div>`;
+// ── Création d'une séquence (modale) ──
+function openNewSeq() {
+  $('ns-title').value='';
+  $('ns-niv').value = seaCurrentNiveau && NIVEAUX.includes(seaCurrentNiveau) ? seaCurrentNiveau : '';
+  $('ns-annee').value='';
+  openModal('m-new-seq');
 }
-function seqPrint() {
-  const ot = document.title;
-  document.title = 'Séquence IA - ' + ($('seq-titre').value || 'Sans titre');
-  window.print(); document.title = ot;
+function seqCreate() {
+  const title = $('ns-title').value.trim();
+  const niv = $('ns-niv').value;
+  if (!niv) { alert('Choisissez un niveau pour la séquence.'); return; }
+  const s = libBlankSeq();
+  s.title = title || ('Séquence IA ' + niv);
+  s.niveau = niv;
+  s.annee = $('ns-annee').value.trim();
+  libApp.seqs.push(s); libSave();
+  closeModal('m-new-seq');
+  seaCurrentNiveau = niv;
+  seaOpenList(s.id);
+}
+
+// ── Réglages de la séquence courante (depuis la liste de séances) ──
+function seqMetaChg(field, value) {
+  const s = libApp.seqs.find(x => x.id === seaCurrentSeqId);
+  if (!s) return;
+  s[field] = value; s.updatedAt = Date.now(); libSave();
+  if (field === 'title') $('sea-list-title').textContent = value || 'Sans titre';
+  if (field === 'niveau') seaCurrentNiveau = value;
+}
+function seqDeleteCurrent() {
+  const s = libApp.seqs.find(x => x.id === seaCurrentSeqId);
+  if (!s) return;
+  const nbSea = seaCountForSeq(s.id);
+  if (!confirm(`Supprimer la séquence « ${s.title||'Sans titre'} »${nbSea?` et ses ${nbSea} séance(s)`:''} ?`)) return;
+  seaApp.seas = seaApp.seas.filter(x => x.seqId !== s.id);
+  libApp.seqs = libApp.seqs.filter(x => x.id !== s.id);
+  seaSave(); libSave();
+  seaBackToHome();
 }
 // ================================================================
 // SÉANCES
@@ -1077,7 +886,7 @@ function seaLoad(){ try{ const d=localStorage.getItem('sqia-sea'); if(d) seaApp=
 function seaSave(){ try{ localStorage.setItem('sqia-sea', JSON.stringify(seaApp)); }catch(e){} }
 
 function seaShowSubview(name){
-  ['home','seqs','list','editor'].forEach(v=>{ const el=$('sea-'+v); if(el) el.style.display=(v===name)?'':'none'; });
+  ['home','list','editor'].forEach(v=>{ const el=$('sea-'+v); if(el) el.style.display=(v===name)?'':'none'; });
 }
 function seaFormatDuration(minutes){
   const m=parseInt(minutes,10)||0;
@@ -1087,83 +896,60 @@ function seaFormatDuration(minutes){
 }
 function seaCountForSeq(seqId){ return seaApp.seas.filter(s=>s.seqId===seqId).length; }
 
-// ── Accueil : tuiles de niveaux ──
+// ── Accueil : tuiles de SÉQUENCES groupées par niveau (chaque tuile contient ses séances) ──
 function seaRenderHome(){
   const grid = $('sea-niv-grid');
   const seqs = libApp.seqs || [];
   if(!seqs.length){
-    grid.innerHTML = `<div style="grid-column:1/-1;padding:24px;text-align:center;color:var(--text-muted);font-size:13px;border:1px dashed var(--border);border-radius:14px">
-      Aucune séquence pour l'instant.<br>Allez dans l'onglet <b>Séquenceur</b> pour en créer une, puis revenez ici pour y ajouter des séances.
+    grid.innerHTML = `<div style="grid-column:1/-1;padding:30px;text-align:center;color:var(--text-muted);font-size:13px;border:1px dashed var(--border);border-radius:14px">
+      Aucune séquence pour l'instant.<br>Cliquez sur <b>＋ Nouvelle séquence</b> pour commencer.
     </div>`;
     return;
   }
-  const nivStats = {};
-  seqs.forEach(s=>{ const niv=s.niveau||'—'; if(!nivStats[niv]) nivStats[niv]={nbSeq:0,nbSea:0}; nivStats[niv].nbSeq++; nivStats[niv].nbSea+=seaCountForSeq(s.id); });
-  const nivPresent = Object.keys(nivStats).sort((a,b)=>{ const ia=NIVEAUX.indexOf(a),ib=NIVEAUX.indexOf(b); return (ia===-1?999:ia)-(ib===-1?999:ib); });
-  let html='';
-  ['Collège','Lycée'].forEach(g=>{
-    const inGroup = nivPresent.filter(niv=> (SEA_NIV_GROUP[niv]||'')===g);
-    if(!inGroup.length) return;
-    html += `<div style="grid-column:1/-1;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;color:var(--text-muted);margin:${html?'18':'0'}px 0 -4px">${SEA_NIV_EMOJI[g]||''} ${g}</div>`;
-    inGroup.forEach(niv=>{
-      const st = nivStats[niv];
-      html += `<div class="pcard" onclick="seaOpenNiveau('${E(niv)}')">
-        <div class="pcard-ico">${g==='Collège'?'🎒':'🎓'}</div>
-        <div class="pcard-niv pcard-title" style="padding-right:0;font-size:18px">${E(niv)}</div>
-        <div class="pcard-stats" style="margin-top:14px">
-          <span>${st.nbSeq} séquence${st.nbSeq>1?'s':''} · ${st.nbSea} séance${st.nbSea>1?'s':''}</span>
-          <span style="color:var(--accent2);font-weight:700">Ouvrir →</span>
-        </div>
-      </div>`;
-    });
-  });
-  // séquences sans niveau
-  const noNiv = nivPresent.filter(n=>!SEA_NIV_GROUP[n]);
-  if(noNiv.length){
-    html += `<div style="grid-column:1/-1;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;color:var(--text-muted);margin:18px 0 -4px">❓ Sans niveau</div>`;
-    noNiv.forEach(niv=>{
-      const st=nivStats[niv];
-      html += `<div class="pcard" onclick="seaOpenNiveau('${E(niv)}')">
-        <div class="pcard-ico">📄</div>
-        <div class="pcard-niv pcard-title" style="padding-right:0;font-size:18px">${E(niv)}</div>
-        <div class="pcard-stats" style="margin-top:14px"><span>${st.nbSeq} séquence${st.nbSeq>1?'s':''} · ${st.nbSea} séance${st.nbSea>1?'s':''}</span><span style="color:var(--accent2);font-weight:700">Ouvrir →</span></div>
-      </div>`;
-    });
-  }
-  grid.innerHTML = html;
-}
-function seaOpenNiveau(niveau){
-  seaCurrentNiveau = niveau;
-  $('sea-seqs-title').textContent = niveau;
-  seaShowSubview('seqs'); seaRenderSeqs();
-}
-function seaRenderSeqs(){
-  const grid = $('sea-seqs-grid');
-  const seqs = (libApp.seqs||[]).filter(s=>(s.niveau||'—')===seaCurrentNiveau)
-    .sort((a,b)=> (b.annee||'').localeCompare(a.annee||'') || (a.title||'').localeCompare(b.title||''));
-  if(!seqs.length){ grid.innerHTML = `<div style="grid-column:1/-1;padding:24px;text-align:center;color:var(--text-muted);font-size:13px;border:1px dashed var(--border);border-radius:14px">Aucune séquence pour ce niveau.</div>`; return; }
-  let html='';
-  seqs.forEach(s=>{
+  const byNiv = {};
+  seqs.forEach(s=>{ const niv=s.niveau||'—'; (byNiv[niv]=byNiv[niv]||[]).push(s); });
+  const nivPresent = Object.keys(byNiv).sort((a,b)=>{ const ia=NIVEAUX.indexOf(a),ib=NIVEAUX.indexOf(b); return (ia===-1?999:ia)-(ib===-1?999:ib); });
+  const seqCard = (s)=>{
     const c = seaCountForSeq(s.id);
     const title = s.title || '<em style="color:var(--text-muted)">Sans titre</em>';
-    html += `<div class="pcard" onclick="seaOpenList(${s.id})">
-      <div class="pcard-ico">🧩</div>
-      <div class="pcard-niv pcard-title" title="${E(s.title||'Sans titre')}" style="padding-right:0">${title}</div>
-      <div class="pcard-year">${E(s.niveau||'—')} · ${E(s.annee||'—')}</div>
-      <div class="pcard-stats" style="margin-top:12px"><span>${c} séance${c>1?'s':''}</span><span style="color:var(--accent2);font-weight:700">${c===0?'+ Créer':'Ouvrir →'}</span></div>
+    const ico = (SEA_NIV_GROUP[s.niveau]==='Lycée')?'🎓':(SEA_NIV_GROUP[s.niveau]==='Collège'?'🎒':'📄');
+    return `<div class="pcard" onclick="seaOpenList(${s.id})">
+      <button class="pcard-del" onclick="event.stopPropagation();seqDeleteFromHome(${s.id})">✕</button>
+      <div class="pcard-ico">${ico}</div>
+      <div class="pcard-niv pcard-title" title="${E(s.title||'Sans titre')}" style="padding-right:24px">${title}</div>
+      <div class="pcard-year">${E(s.niveau||'—')}${s.annee?` · ${E(s.annee)}`:''}</div>
+      <div class="pcard-stats" style="margin-top:12px"><span>${c} séance${c>1?'s':''}</span><span style="color:var(--accent2);font-weight:700">${c===0?'+ Séances':'Ouvrir →'}</span></div>
     </div>`;
+  };
+  let html='';
+  nivPresent.forEach(niv=>{
+    const grp = SEA_NIV_GROUP[niv]||'';
+    const grpEmoji = grp==='Collège'?'🎒':(grp==='Lycée'?'🎓':'❓');
+    html += `<div style="grid-column:1/-1;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;color:var(--text-muted);margin:${html?'18':'0'}px 0 -4px">${grpEmoji} ${E(niv)}</div>`;
+    byNiv[niv].sort((a,b)=> (b.annee||'').localeCompare(a.annee||'') || (a.title||'').localeCompare(b.title||''))
+      .forEach(s=> html += seqCard(s));
   });
   grid.innerHTML = html;
 }
-function seaBackToNiveaux(){ seaCurrentSeqId=null; seaCurrentId=null; seaShowSubview('home'); seaRenderHome(); }
-function seaBackToSeqs(){ seaCurrentSeqId=null; seaCurrentId=null; if(seaCurrentNiveau){ seaShowSubview('seqs'); seaRenderSeqs(); } else seaBackToNiveaux(); }
+function seqDeleteFromHome(id){
+  const s = libApp.seqs.find(x=>x.id===id); if(!s) return;
+  const nbSea = seaCountForSeq(id);
+  if(!confirm(`Supprimer la séquence « ${s.title||'Sans titre'} »${nbSea?` et ses ${nbSea} séance(s)`:''} ?`)) return;
+  seaApp.seas = seaApp.seas.filter(x=>x.seqId!==id);
+  libApp.seqs = libApp.seqs.filter(x=>x.id!==id);
+  seaSave(); libSave(); seaRenderHome();
+}
+function seaBackToHome(){ seaCurrentSeqId=null; seaCurrentId=null; seaShowSubview('home'); seaRenderHome(); }
 
 function seaOpenList(seqId){
   const seq = libApp.seqs.find(x=>x.id===seqId); if(!seq) return;
   seaCurrentSeqId = seqId;
   if(!seaCurrentNiveau) seaCurrentNiveau = seq.niveau||'—';
   $('sea-list-title').textContent = seq.title || 'Sans titre';
-  $('sea-list-sub').innerHTML = `<b>${E(seq.niveau||'—')}</b> · ${E(seq.annee||'—')} — Séances de cette séquence.`;
+  // Remplir les réglages de la séquence
+  if($('seqmeta-title')) $('seqmeta-title').value = seq.title||'';
+  if($('seqmeta-niv')) $('seqmeta-niv').value = seq.niveau||'';
+  if($('seqmeta-annee')) $('seqmeta-annee').value = seq.annee||'';
   seaShowSubview('list'); seaRenderList();
 }
 function seaRenderList(){
@@ -1181,8 +967,8 @@ function seaRenderList(){
       <div class="pcard-stats" style="margin-top:12px"><span>${nbObj} objectif${nbObj>1?'s':''} · ${(s.activities||[]).length} activité${(s.activities||[]).length>1?'s':''}</span><span style="color:var(--accent2);font-weight:700">Ouvrir →</span></div>
     </div>`;
   });
+  html += `<div class="pcard pcard-new" onclick="seaNewBlank()"><div class="pcard-new-ico">＋</div><div style="font-weight:700">Nouvelle séance</div></div>`;
   grid.innerHTML = html;
-  $('sea-cards-new').innerHTML = `<div class="pcard pcard-new" onclick="seaNewBlank()"><div class="pcard-new-ico">＋</div><div style="font-weight:700">Nouvelle séance</div></div>`;
 }
 
 function seaNewBlank(){
@@ -1265,18 +1051,26 @@ function seaFillFontSelect(){
 function seaRenderObjectives(){
   const s = seaApp.seas.find(x=>x.id===seaCurrentId); if(!s) return;
   const seq = libApp.seqs.find(x=>x.id===s.seqId); if(!seq) return;
+  const pill = (r, item, checked) => {
+    const isChecked = checked.includes(item);
+    const safe = JSON.stringify(item).replace(/"/g,'&quot;');
+    const col = isChecked ? `var(--r-${r.key})` : 'var(--border)';
+    return `<span onclick="seaToggleObjective('${r.key}', ${safe})" style="cursor:pointer;display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border:1px solid ${col};background:${isChecked?'rgba(99,102,241,0.06)':'transparent'};color:${isChecked?`var(--r-${r.key})`:'var(--text-muted)'};border-radius:14px;font-size:11px;font-weight:${isChecked?'700':'500'};line-height:1.3;user-select:none;transition:all .15s">${isChecked?'✓ ':''}${EC(S(item,40))}</span>`;
+  };
   RESERVOIRS.forEach(r=>{
     const el = $('sea-'+r.key+'-list'); if(!el) return;
     const items = seq[r.key]||[];
     const checked = s.objectifs?.[r.key]||[];
     if(!items.length){ el.innerHTML = `<span style="font-size:10px;color:var(--text-muted);font-style:italic">Aucun item dans la séquence — ajoutez-en ci-dessous</span>`; return; }
-    el.innerHTML = items.map(item=>{
-      const isChecked = checked.includes(item);
-      const safe = JSON.stringify(item).replace(/"/g,'&quot;');
-      const col = isChecked ? `var(--r-${r.key})` : 'var(--border)';
-      const bg = isChecked ? `var(--r-${r.key})` : 'transparent';
-      return `<span onclick="seaToggleObjective('${r.key}', ${safe})" style="cursor:pointer;display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border:1px solid ${col};background:${isChecked?'rgba(99,102,241,0.06)':'transparent'};color:${isChecked?`var(--r-${r.key})`:'var(--text-muted)'};border-radius:14px;font-size:11px;font-weight:${isChecked?'700':'500'};line-height:1.3;user-select:none;transition:all .15s">${isChecked?'✓ ':''}${EC(S(item,40))}</span>`;
-    }).join('');
+    if(r.key==='crcn'){
+      // Grouper par domaine
+      el.innerHTML = crcnGroupByDomaine(items).map(g=>
+        `<div style="width:100%;font-size:9.5px;font-weight:700;color:var(--r-crcn);margin:4px 0 2px">${EC(g.domaine)}</div>`
+        + `<div style="display:flex;flex-wrap:wrap;gap:4px">${g.items.map(it=>pill(r,it,checked)).join('')}</div>`
+      ).join('');
+    } else {
+      el.innerHTML = items.map(it=>pill(r,it,checked)).join('');
+    }
   });
 }
 function seaToggleObjective(cat, item){
@@ -1429,20 +1223,28 @@ function seaPreview(){
   const oe=$('sea-a4-obj');
   if(s.obj){ oe.style.display='block'; oe.textContent=s.obj; } else oe.style.display='none';
 
-  // Méta : objectifs IA cochés + supports
-  const objs=s.objectifs||{}; const metaLines=[];
-  RESERVOIRS.forEach(r=>{
-    const items=objs[r.key]||[];
-    if(items.length) metaLines.push(`<div style="font-size:11px;line-height:1.5;color:#334155"><b style="color:#64748b;font-weight:700">${r.emoji} ${EC(r.label)} :</b> ${items.map(EC).join(' · ')}</div>`);
-  });
+  // Compétences numériques (axes + CRCN), regroupées par réservoir ; CRCN sous-groupé par domaine
+  const objs=s.objectifs||{};
+  const compEl=$('sea-a4-comp');
+  const groups = RESERVOIRS.filter(r=> (objs[r.key]||[]).length);
+  if(groups.length){
+    compEl.innerHTML = groups.map(r=>{
+      let head = `<div class="ax-grp">${r.emoji} ${EC(r.label)}</div>`;
+      if(r.key==='crcn'){
+        return head + crcnGroupByDomaine(objs.crcn).map(g=>
+          `<div class="crcn-dom">${EC(g.domaine)}</div><ul class="a4-list crcn">${g.items.map(i=>`<li>${EC(i)}</li>`).join('')}</ul>`
+        ).join('');
+      }
+      return head + `<ul class="a4-list ${r.cls}">${objs[r.key].map(i=>`<li>${EC(i)}</li>`).join('')}</ul>`;
+    }).join('');
+  } else compEl.innerHTML = `<div class="a4-empty">Aucune compétence cochée</div>`;
+
+  // Supports
   let supportLines = Array.isArray(s.supports)?s.supports.map(l=>(l||'').trim()).filter(Boolean):[];
+  const suppEl=$('sea-a4-supp');
   if(supportLines.length){
-    const linesHtml = supportLines.map(l=>`<div style="font-size:11px;line-height:1.5;color:#334155;padding-left:14px;text-indent:-14px"><span style="color:#94a3b8">•</span> ${seaLinkify(l)}</div>`).join('');
-    metaLines.push(`<div style="font-size:11px;line-height:1.5;color:#334155"><b style="color:#64748b;font-weight:700">Supports :</b><div style="margin-top:2px">${linesHtml}</div></div>`);
-  }
-  const metaEl=$('sea-a4-meta');
-  metaEl.innerHTML = metaLines.length ? metaLines.join('') : `<div style="font-size:11px;color:#94a3b8;font-style:italic;text-align:center">Aucun objectif ni support sélectionné</div>`;
-  metaEl.style.display='flex';
+    suppEl.innerHTML = `<ul class="a4-list crcn" style="--user-font-scale:var(--user-font-scale,1)">${supportLines.map(l=>`<li>${seaLinkify(l)}</li>`).join('')}</ul>`;
+  } else suppEl.innerHTML = `<div class="a4-empty">—</div>`;
 
   // Activités
   const acts=s.activities||[];
@@ -1478,7 +1280,7 @@ function seaGenerateMarkdown(){
   if(s.obj) md+=`> ${s.obj}\n\n`;
   md+=`---\n\n`;
   const objs=s.objectifs||{}; let hasObj=false;
-  RESERVOIRS.forEach(r=>{ const items=objs[r.key]||[]; if(items.length){ if(!hasObj){ md+=`## 🧩 Compétences IA travaillées\n\n`; hasObj=true; } md+=`- **${r.emoji} ${r.label} :** ${items.join(' · ')}\n`; } });
+  RESERVOIRS.forEach(r=>{ const items=objs[r.key]||[]; if(items.length){ if(!hasObj){ md+=`## 🧩 Compétences numériques travaillées\n\n`; hasObj=true; } if(r.key==='crcn'){ md+=`- **${r.emoji} ${r.label} :**\n`; crcnGroupByDomaine(items).forEach(g=>{ md+=`    - *${g.domaine}* : ${g.items.join(' · ')}\n`; }); } else { md+=`- **${r.emoji} ${r.label} :** ${items.join(' · ')}\n`; } } });
   if(hasObj) md+='\n';
   const supp = Array.isArray(s.supports)?s.supports.map(l=>(l||'').trim()).filter(Boolean):[];
   if(supp.length){ md+=`## Supports\n\n`; supp.forEach(l=>md+=`- ${l}\n`); md+='\n'; }
@@ -1500,7 +1302,7 @@ function buildSeaHTML(){
   if(seq) h+=`<p style="font-size:10pt;color:#64748b">${E(seq.title||'')} — ${E(seq.niveau||'')} — ${E(seq.annee||'')}</p>`;
   if(s.obj) h+=`<p style="font-size:11pt;font-style:italic;color:#475569;border-left:3pt solid #6366f1;padding-left:10pt">${E(s.obj)}</p>`;
   const objs=s.objectifs||{}; let meta='';
-  RESERVOIRS.forEach(r=>{ const items=objs[r.key]||[]; if(items.length) meta+=`<p style="font-size:10pt;margin:2pt 0"><b>${r.emoji} ${E(r.label)} :</b> ${E(items.join(' · '))}</p>`; });
+  RESERVOIRS.forEach(r=>{ const items=objs[r.key]||[]; if(items.length){ if(r.key==='crcn'){ meta+=`<p style="font-size:10pt;margin:2pt 0"><b>${r.emoji} ${E(r.label)} :</b></p>`; crcnGroupByDomaine(items).forEach(g=>{ meta+=`<p style="font-size:10pt;margin:1pt 0 1pt 12pt"><i>${E(g.domaine)}</i> : ${E(g.items.join(' · '))}</p>`; }); } else { meta+=`<p style="font-size:10pt;margin:2pt 0"><b>${r.emoji} ${E(r.label)} :</b> ${E(items.join(' · '))}</p>`; } } });
   const supp = Array.isArray(s.supports)?s.supports.map(l=>(l||'').trim()).filter(Boolean):[];
   if(supp.length) meta+=`<p style="font-size:10pt;margin:2pt 0"><b>Supports :</b> ${E(supp.join(' · '))}</p>`;
   if(meta) h+=`<div style="border-top:1pt solid #cbd5e1;border-bottom:1pt solid #cbd5e1;padding:8pt 0;margin:10pt 0">${meta}</div>`;
@@ -1764,10 +1566,10 @@ function progRenderDisp(s, i) {
     <div class="sc-title">${E(s.title||'Sans titre')}</div>
     ${s.project?`<div class="sc-project"><b>🎯 Projet :</b> ${E(s.project)}</div>`:''}
     <div class="sc-rows" style="margin-top:8px">
-      ${row('🟡 Fonctionnement',s.fonc,'fonc')}
-      ${row('🔵 Enjeux',s.enj,'enj')}
-      ${row('🟢 Apprendre',s.app,'app')}
-      ${row('🟣 CRCN',s.crcn,'crcn')}
+      ${row('⚙️ Fonctionnement',s.fonc,'fonc')}
+      ${row('🔍 Enjeux',s.enj,'enj')}
+      ${row('📖 Apprendre',s.app,'app')}
+      ${row('💻 CRCN',s.crcn,'crcn')}
       ${row('➕ Libre',s.libre,'crcn')}
     </div>
   </div>`;
@@ -1805,7 +1607,7 @@ function progRenderEdit(s, i) {
       <input id="ppj-${s.id}" class="fi" value="${E(s.project)}" placeholder="Tâche finale" oninput="pls(${s.id},'project',this.value)">
     </div>
     <div class="fg">
-      <label class="fl" style="color:var(--r-fonc)">🟡 Savoir comment fonctionnent les IA</label>
+      <label class="fl" style="color:var(--r-fonc)">⚙️ Savoir comment fonctionnent les IA</label>
       <div class="swa">
         <select class="fs" id="pfo-${s.id}"><option value="">— Item —</option>${opt(DB_IA.fonc.items)}</select>
         <button class="ba fonc" onclick="paSel(${s.id},'fonc','pfo-${s.id}','fonc')">+</button>
@@ -1813,7 +1615,7 @@ function progRenderEdit(s, i) {
       <div class="added-tags" id="pt-fonc-${s.id}">${rt(s.fonc,'fonc','fonc')}</div>
     </div>
     <div class="fg">
-      <label class="fl" style="color:var(--r-enj)">🔵 Identifier les enjeux des IA</label>
+      <label class="fl" style="color:var(--r-enj)">🔍 Identifier les enjeux des IA</label>
       <div class="swa">
         <select class="fs" id="pen-${s.id}"><option value="">— Item —</option>${opt(DB_IA.enj.items)}</select>
         <button class="ba enj" onclick="paSel(${s.id},'enj','pen-${s.id}','enj')">+</button>
@@ -1821,7 +1623,7 @@ function progRenderEdit(s, i) {
       <div class="added-tags" id="pt-enj-${s.id}">${rt(s.enj,'enj','enj')}</div>
     </div>
     <div class="fg">
-      <label class="fl" style="color:var(--r-app)">🟢 Apprendre avec l'IA</label>
+      <label class="fl" style="color:var(--r-app)">📖 Apprendre avec l'IA</label>
       <div class="swa">
         <select class="fs" id="pap-${s.id}"><option value="">— Item —</option>${opt(DB_IA.app.items)}</select>
         <button class="ba app" onclick="paSel(${s.id},'app','pap-${s.id}','app')">+</button>
@@ -1829,7 +1631,7 @@ function progRenderEdit(s, i) {
       <div class="added-tags" id="pt-app-${s.id}">${rt(s.app,'app','app')}</div>
     </div>
     <div class="fg">
-      <label class="fl" style="color:var(--r-crcn)">🟣 Compétences du CRCN</label>
+      <label class="fl" style="color:var(--r-crcn)">💻 Compétences du CRCN</label>
       <div class="swa"><select class="fs" id="pcd-${s.id}" onchange="pCrcnDom(${s.id})">${crcnDom}</select></div>
       <div class="swa">
         <select class="fs" id="pcr-${s.id}"><option value="">— Choisir un domaine d'abord —</option></select>
@@ -1873,17 +1675,28 @@ function progRenderCov() {
   });
   nd.innerHTML=nh;
 
-  // Réservoirs touchés (sur l'ensemble de la progression)
-  const touched = { fonc:false, enj:false, app:false, crcn:false };
-  progCur.seqs.forEach(s=>{
-    RESERVOIRS.forEach(r=>{ if((s[r.key]||[]).length) touched[r.key]=true; });
-  });
-  const tc = Object.values(touched).filter(Boolean).length;
-  let ah = `<div class="cov-hdr">🧩 Réservoirs (${tc}/4)
-    <span class="cov-badge ${tc===4?'ok':'no'}">${tc===4?'✓':'…'}</span>
+  // Couverture des compétences individuelles (sur l'ensemble de la progression)
+  const refs = { fonc: DB_IA.fonc.items, enj: DB_IA.enj.items, app: DB_IA.app.items, crcn: Object.values(DB_CRCN).flat() };
+  const usedComp = { fonc:new Set(), enj:new Set(), app:new Set(), crcn:new Set() };
+  progCur.seqs.forEach(s=>{ RESERVOIRS.forEach(r=>{ (s[r.key]||[]).forEach(it=>{ if(refs[r.key].includes(it)) usedComp[r.key].add(it); }); }); });
+  let totalRef=0, totalUsed=0;
+  RESERVOIRS.forEach(r=>{ totalRef += refs[r.key].length; totalUsed += usedComp[r.key].size; });
+  const gpct = totalRef ? Math.round(totalUsed/totalRef*100) : 0;
+  let ah = `<div class="cov-hdr">🧩 Compétences (${totalUsed}/${totalRef})
+    <span class="cov-badge ${totalUsed===totalRef && totalRef>0?'ok':'no'}">${gpct}%</span>
   </div>`;
+  const itemRow = (it,covered)=>`<div class="ci ${covered?'ok':'no'}" style="font-size:9.5px">${EC(it)}</div>`;
   RESERVOIRS.forEach(r=>{
-    ah += `<div class="ci ${touched[r.key]?'ok':'no'}">${r.emoji} ${r.label}</div>`;
+    const u = usedComp[r.key], total = refs[r.key].length;
+    ah += `<div class="cov-grp">${r.emoji} ${EC(r.label)} <span class="cov-grp-n">${u.size}/${total}</span></div>`;
+    if(r.key==='crcn'){
+      Object.keys(DB_CRCN).forEach(dom=>{
+        ah += `<div class="cov-dom">${EC(dom)}</div>`;
+        ah += DB_CRCN[dom].map(it=>itemRow(it,u.has(it))).join('');
+      });
+    } else {
+      ah += refs[r.key].map(it=>itemRow(it,u.has(it))).join('');
+    }
   });
   ad.innerHTML=ah;
 
@@ -1938,10 +1751,10 @@ function progGenerateMarkdown() {
       arr.forEach(x => r += `- ${x}\n`);
       return r + '\n';
     };
-    md += sub('🟡 Savoir comment fonctionnent les IA', s.fonc);
-    md += sub('🔵 Identifier les enjeux des IA', s.enj);
-    md += sub('🟢 Apprendre avec l\'IA', s.app);
-    md += sub('🟣 Compétences du CRCN', s.crcn);
+    md += sub('⚙️ Savoir comment fonctionnent les IA', s.fonc);
+    md += sub('🔍 Identifier les enjeux des IA', s.enj);
+    md += sub('📖 Apprendre avec l\'IA', s.app);
+    md += sub('💻 Compétences du CRCN', s.crcn);
     md += sub('➕ Items personnalisés', s.libre);
     md += '---\n\n';
   });
@@ -1964,10 +1777,10 @@ function buildProgHTML() {
       <div style="font-family:serif;font-size:15pt;font-weight:bold;margin:4pt 0 8pt">${E(s.title||'Sans titre')}</div>`;
     if(s.project) body+=`<div style="font-size:10pt;padding:5pt 10pt;border-left:3pt solid #ef4444;background:#fef2f2;margin-bottom:6pt"><b>🎯 Projet :</b> ${E(s.project)}</div>`;
     const chip=(items,bg,color)=>items.length?items.map(x=>`<span style="display:inline-block;font-size:9pt;padding:2pt 7pt;border-radius:9pt;margin:2pt;background:${bg};color:${color};font-weight:bold">${E(x)}</span>`).join(' '):'';
-    if(s.fonc.length)  body+=`<div style="font-size:10pt;margin-bottom:4pt"><b style="color:#1e293b">🟡 Savoir comment fonctionnent les IA</b><br>${chip(s.fonc,'#fef9c3','#854d0e')}</div>`;
-    if(s.enj.length)   body+=`<div style="font-size:10pt;margin-bottom:4pt"><b style="color:#1e293b">🔵 Identifier les enjeux des IA</b><br>${chip(s.enj,'#dbeafe','#1e40af')}</div>`;
-    if(s.app.length)   body+=`<div style="font-size:10pt;margin-bottom:4pt"><b style="color:#1e293b">🟢 Apprendre avec l'IA</b><br>${chip(s.app,'#d1fae5','#065f46')}</div>`;
-    if(s.crcn.length)  body+=`<div style="font-size:10pt;margin-bottom:4pt"><b style="color:#1e293b">🟣 Compétences du CRCN</b><br>${chip(s.crcn,'#f3e8ff','#6b21a8')}</div>`;
+    if(s.fonc.length)  body+=`<div style="font-size:10pt;margin-bottom:4pt"><b style="color:#1e293b">⚙️ Savoir comment fonctionnent les IA</b><br>${chip(s.fonc,'#fef9c3','#854d0e')}</div>`;
+    if(s.enj.length)   body+=`<div style="font-size:10pt;margin-bottom:4pt"><b style="color:#1e293b">🔍 Identifier les enjeux des IA</b><br>${chip(s.enj,'#dbeafe','#1e40af')}</div>`;
+    if(s.app.length)   body+=`<div style="font-size:10pt;margin-bottom:4pt"><b style="color:#1e293b">📖 Apprendre avec l'IA</b><br>${chip(s.app,'#d1fae5','#065f46')}</div>`;
+    if(s.crcn.length)  body+=`<div style="font-size:10pt;margin-bottom:4pt"><b style="color:#1e293b">💻 Compétences du CRCN</b><br>${chip(s.crcn,'#f3e8ff','#6b21a8')}</div>`;
     if((s.libre||[]).length) body+=`<div style="font-size:10pt;margin-bottom:4pt"><b style="color:#1e293b">➕ Items personnalisés</b><br>${chip(s.libre,'#f1f5f9','#475569')}</div>`;
     body+='</div>';
   });
@@ -1979,10 +1792,7 @@ function buildProgHTML() {
 function textExportDo(format) {
   closeModal('m-text-format');
   let body, filename;
-  if (_textPendingType === 'seq') {
-    body = buildSeqHTML();
-    filename = `Séquence IA - ${$('seq-titre').value || 'Sans titre'}.${format}`;
-  } else if (_textPendingType === 'sea') {
+  if (_textPendingType === 'sea') {
     const sea = seaApp.seas.find(x => x.id === seaCurrentId);
     body = buildSeaHTML();
     filename = `Séance IA - ${(sea&&sea.title) || 'Sans titre'}.${format}`;
@@ -2027,16 +1837,9 @@ seaApp.seas?.forEach(s=>{
   if(!s.activities) s.activities=[];
 });
 
-seqFillReservoirs();
-
-// Ouvre la dernière séquence de la bibliothèque, ou en crée une vierge
-if(libApp.seqs.length){
-  const last = libApp.seqs[libApp.seqs.length-1];
-  seqLoadIntoEditor(last.id);
-} else {
-  seqNewBlank();
-}
-updateSeqLibInfo();
+// Affiche le tableau de bord des séquences
+seaShowSubview('home');
+seaRenderHome();
 progRenderDash();
 </script>
 </body>

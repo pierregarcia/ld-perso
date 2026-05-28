@@ -1,117 +1,85 @@
-# Changelog - Le Séquenceur 📝
+# Changelog — Le Séquenceur IA
 
-Toutes les modifications notables apportées au projet "Le Séquenceur" seront documentées dans ce fichier.
-## [3.5.0] - 2026-05-21
-### Ajouté
-- **Couleur personnalisable des sorties/voyages** : 8 couleurs disponibles (orange, rouge, violet, bleu, turquoise, vert, rose, gris) sélectionnables via une palette de pastilles dans la modale de création/édition. La couleur choisie s'affiche immédiatement dans le calendrier.
-- **Travailler le samedi** : Nouveau toggle dans la barre du calendrier. Par défaut, le samedi n'est pas un jour ouvré pour les séquences ; l'enseignant peut l'activer s'il travaille le samedi. Les sorties et voyages scolaires restent libres de tomber n'importe quel jour.
-- **Jours non-ouvrés dans le picker calendrier** : Le dimanche (toujours) et le samedi (sauf option) sont désormais hachurés et non cliquables dans la mini-calendrier de placement des séquences, avec un message explicatif en toast.
-### Modifié
-- **Couleurs du calendrier** : Les séquences s'affichent désormais avec un fond vif (couleur principale) et un texte blanc, comme les étiquettes de chevauchement. Le numéro du jour est explicitement coloré en blanc sur fond coloré.
-- **Vraie modale de confirmation** : Les boîtes de dialogue natives du navigateur (`confirm()`) sont remplacées par une modale intégrée au design du site (`confirmAsync`), appliquée à toutes les suppressions (séquence, séance, progression, retrait du calendrier, sortie/voyage). La modale de confirmation passe toujours au-dessus des autres modales grâce à un z-index supérieur.
-- **Export depuis le dashboard** : Nouveau bouton 📤 sur chaque tuile de séquence et de séance. Pour une séquence, choix entre exporter la fiche seule ou la séquence avec toutes ses séances (PDF, Word/ODT ou Markdown). Les exports multi s'enchaînent avec un délai pour éviter les conflits d'impression.
-- **Attendus officiels Anglais** : Grammaire et phonologie des 4 niveaux collège (6e, 5e, 4e, 3e) entièrement réécrits selon les programmes officiels. Numérotation locale par niveau (G01…, PH01…), niveaux CECRL entre parenthèses, exemples raccourcis.
-- **Attendus officiels Espagnol** : Idem pour l'espagnol, 4 niveaux collège (6e A1/A1+, 5e A1+/A2, 4e A2+, 3e A2/B1). Phonologie espagnol 3e en pioche libre (tous les items disponibles).
-### Corrigé
-- **Bug majeur calendrier (fond blanc)** : Les séquences posées dans le calendrier n'affichaient aucune couleur ni titre — les chiffres flottaient dans le vide. Cause : un doublon d'attribut `style` dans le HTML généré (un `style="cursor:pointer"` dans la variable `clickAction` et un second `style="background:..."` juste après). Le navigateur gardait uniquement le premier, ignorant le fond, la hauteur et la mise en page. Corrigé en fusionnant tout dans un seul attribut `style`.
-- **Couleurs des sorties/voyages** : La fonction `calOffColorForKind` ne recevait pas l'objet événement complet, rendant impossible l'utilisation d'une couleur personnalisée. Corrigée pour propager `colorIdx` de l'événement jusqu'au rendu de la cellule.
-- **Robustesse `calColorFor`** : La fonction retournait une erreur silencieuse si `libApp.seqs` n'était pas encore chargé. Ajout d'un `try/catch` et d'un fallback déterministe par hash de l'ID.
+Toutes les évolutions notables de ce projet sont documentées dans ce fichier.
+
+Le format suit la convention [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/) et le projet adhère au [versionnement sémantique](https://semver.org/lang/fr/).
+
 ---
- 
-## [3.4.0] - 2026-05-20
-### Ajouté
-- **Image d'illustration** : Bloc dépliable 🖼️ dans l'éditeur de séquence et de séance. L'enseignant colle l'URL d'une image (conseil intégré : clic droit → copier l'adresse). Deux formes : bannière (rectangle, max 180 px) ou ronde (cercle 110 px). Aperçu live dans l'éditeur. L'image s'affiche dans l'aperçu A4 au-dessus du titre.
-- **Trace écrite attendue** : Nouvelle section ✏️ dans l'éditeur de séance, juste avant les devoirs. Champ texte en police Patrick Hand (cursive scolaire). S'affiche dans l'aperçu A4 entre Activités et Devoirs, masquée si vide.
-- **Police personnalisée (Bunny Fonts)** : Bloc dépliable ✒️ dans les éditeurs séquence, séance et progression. 17 polices disponibles (Inter, Playfair Display, Caveat, Patrick Hand, JetBrains Mono…) chargées à la demande via Bunny Fonts (CDN RGPD-compliant). Chaque option du select s'affiche dans sa propre police.
-- **Taille du texte des sections** : Curseur de 85 % à 150 % dans le bloc Police. Affecte uniquement les contenus saisis (items lexique/grammaire, activités, trace, devoirs, tags) — pas le titre ni la problématique. Bouton ↺ pour réinitialiser à 100 %.
-- **Anneau de complétion** : Indicateur SVG circulaire sur chaque tuile de séquence montrant le taux de remplissage des 13 rubriques. Couleurs rouge/orange/vert selon le niveau de complétude. Tooltip listant les rubriques manquantes.
-- **Export depuis les tuiles** : Bouton 📤 sur chaque tuile du dashboard (séquence et séance) pour exporter sans ouvrir l'éditeur.
-### Modifié
-- **Refonte de la vue Mois du calendrier** : Cases de 90 px minimum avec contenu lisible directement (nom du jour férié 🎉, nom des vacances 🏖️, nom de la sortie 🚌, titre de la séquence). Fin des barres horizontales flottantes au profit d'un fond coloré par case. Grille en `minmax(0,1fr)` pour éviter tout débordement. Noms des jours en entier (Lundi, Mardi…).
-- **Calendrier : suppression du filtre « année »** : Le filtre par année scolaire a été retiré du calendrier (source de bugs). L'année est maintenant déduite automatiquement du mois affiché.
-### Corrigé
-- **Visite guidée (tour)** : Le bug de régression entre les étapes 2 et 3 est résolu. Cause : un `setTimeout(() => tourShowStep(idx), 400)` déclenché après un `scrollIntoView` smooth permettait à un second clic "Suivant" de s'intercaler, puis le timeout rappelait l'étape précédente. Remplacé par un scroll instantané (`behavior: 'auto'`). L'overlay est maintenant en `pointer-events:none` sauf quand actif, et `tourEnd()` nettoie agressivement tous les éléments résiduels.
-- **Calendrier : cases dépassent du panel** : Le `max-width:720px` autour du rendu mensuel étouffait les cases avec la nouvelle hauteur de 90 px. Retiré au profit de colonnes en `minmax(0,1fr)` et `overflow:hidden` sur le conteneur.
+
+## [1.0.0] — 2026-05-29
+
+Première version publique du **Séquenceur IA**, dérivé du [Séquenceur LV](https://forge.apps.education.fr/rollocharlie/le-sequenceur) et adapté à l'éducation à l'intelligence artificielle.
+
+### Ajouts — Séquenceur (séquences-conteneurs)
+
+- Tableau de bord listant toutes les séquences, groupées par niveau (6ème → Terminale, collège et lycée distincts).
+- Création de séquence via modale (niveau, titre, année).
+- Chaque tuile de séquence accueille directement ses séances : pas de « fiche de séquence » séparée.
+- Édition en place du titre, du niveau et de l'année de la séquence depuis la liste des séances.
+- Suppression d'une séquence (avec ses séances) depuis la tuile ou la barre de réglages.
+- Bibliothèque persistante des séquences (stockage `localStorage`, clé `sqia-lib`).
+
+### Ajouts — Séances
+
+- Éditeur de séance avec aperçu A4 en direct.
+- Sections de la fiche dans l'ordre : Compétences numériques · Supports · Déroulé · Trace écrite · Devoirs.
+- Compétences numériques travaillées cochées par réservoir avec champ libre par axe ; ajouter un item le pousse aussi dans la séquence parente.
+- Quatre réservoirs avec emojis dédiés :
+  - ⚙️ Savoir comment fonctionnent les IA (8 items)
+  - 🔍 Identifier les enjeux des IA (11 items)
+  - 📖 Apprendre avec l'IA (11 items)
+  - 💻 Compétences du CRCN (5 domaines, 16 sous-compétences)
+- Affichage du domaine CRCN au-dessus des sous-compétences sélectionnées, dans l'éditeur comme sur la fiche.
+- Activités chronométrées (durée + description, total automatique).
+- Trace écrite avec police manuscrite par défaut.
+- Supports externes avec URL cliquables.
+- Devoirs avec URLs auto-converties en liens.
+- Image d'illustration optionnelle (URL distante, format bannière ou ronde).
+- Police personnalisable (sept polices au choix) et curseur de taille de texte.
+- Stockage persistant des séances (clé `sqia-sea`).
+
+### Ajouts — Progression
+
+- Tableau de bord des progressions.
+- Création par modale avec choix du périmètre de niveaux (cases à cocher + raccourcis « Tout collège », « Tout lycée », « Tout »).
+- Timeline éditable des séquences de la progression, avec validation et badge de niveau.
+- Couverture des niveaux (avec barre de progression globale).
+- **Couverture des compétences** détaillée : checklist complète des 46 compétences du référentiel (30 IA + 16 CRCN), avec marqueur ✓ pour les compétences validées et ○ pour celles à couvrir.
+- CRCN sous-groupé par domaine dans la checklist.
+- Stockage persistant des progressions (clé `sqia`).
+- Import / export JSON des progressions.
+
+### Ajouts — Exports
+
+- Markdown (aperçu, copie, téléchargement).
+- Texte au format Word (`.doc`) ou OpenDocument (`.odt`).
+- PDF via impression du navigateur (mise en page A4 dédiée).
+- Pied de page harmonisé sur toutes les feuilles (séances, progression) et dans tous les exports : crédit à la Progression IA de la DRANE Île-de-France avec lien hypertexte.
+
+### Ajouts — Interface
+
+- Deux onglets : Séquenceur (séquences + séances fusionnés) et Progression.
+- Thème clair / sombre persistant.
+- Interface responsive : header collant et menu plein-écran sur téléphone, mise en page empilée pour les éditeurs en dessous de 820 px.
+- Aperçu A4 toujours visible à côté de l'éditeur sur grand écran.
+- Footer global minimaliste : projet, auteur, code source, signalement, mentions légales.
+- Modale Mentions légales détaillant éditeur, hébergement, licence, traitement des données personnelles, crédits.
+
+### Crédits
+
+- Items des trois axes (Savoir / Identifier / Apprendre) issus de la [Progression IA](https://drane-ile-de-france.forge.apps.education.fr/progression_ia/) de la **DRANE Île-de-France**, sous licence AGPL v3+.
+- Référentiel CRCN issu du *Cadre de Référence des Compétences Numériques* (ministère de l'Éducation nationale).
+
+### Licence
+
+- Projet sous [GNU General Public License v3.0](https://www.gnu.org/licenses/gpl-3.0.html).
+- Auteur : Charlie ROLLO — charlie.rollo@ac-versailles.fr.
+
+### Limites connues
+
+- Le module **Calendrier** (zones de vacances A/B/C, jours fériés, planification des séances) n'est pas encore inclus dans cette version.
+- Les progressions ne sont pas encore reliées à la bibliothèque de séquences : elles utilisent leurs propres séquences internes.
+
 ---
- 
-## [3.3.0] - 2026-05-19
-### Ajouté
-- **Attendus officiels intégrés** : Les listes déroulantes Grammaire et Phonologie de l'éditeur de séquence sont alimentées par les programmes officiels EN (6e→3e) et ES (6e→3e), avec numérotation locale et niveaux CECRL.
-- **Palette de couleurs pour les séquences** : Chaque séquence peut recevoir une couleur personnalisée dans le calendrier via une palette circulaire de 12 teintes (bleue, verte, rose…).
-- **Vue Année du calendrier** : 12 mini-mois avec navigation entre années scolaires. Clic sur un mini-mois → bascule en vue Mois. Bandes colorées par séquence sur les mini-calendriers.
-- **Sorties et voyages scolaires** : Ajout d'événements personnalisés (sortie au musée, voyage à l'étranger) dans le calendrier, filtrables par niveau. Icône 🚌 dédiée.
-- **Modale de confirmation** : Remplacement progressif des `confirm()` natifs par une modale intégrée.
-### Modifié
-- **Nuage désactivé** : L'intégration WebDAV avec Nuage Apps Éducation a été retirée (blocage CORS confirmé entre sous-domaines `.apps.education.fr`). Supprimé proprement sans laisser de boutons ni de code mort.
----
- 
-## [3.2.0] - 2026-05-18
-### Ajouté
-- **Séances** : Nouvel onglet ✏️ dédié à la création de séances pour chaque séquence. Éditeur complet : titre, objectif, supports, activités (avec durée individuelle), devoirs. Aperçu A4 synchrone. Duplication et réorganisation par glisser-déposer.
-- **Export séance** : PDF, Word/ODT et Markdown pour chaque fiche de séance.
-- **Dashboard séances** : Tuiles séances sur la page d'accueil, groupées par séquence parente. Compteur de séances par séquence.
-### Modifié
-- **Sauvegarde unifiée** : Les séances sont stockées dans une clé localStorage séparée (`sq7-sea`) pour ne pas alourdir la clé principale.
----
- 
-## [3.1.0] - 2026-05-17
-### Ajouté
-- **Calendrier scolaire** : Nouvel onglet 📆. Placement visuel des séquences sur un calendrier mensuel avec gestion des vacances scolaires (API officielle, zones A/B/C), des jours fériés calculés et des week-ends.
-- **Picker de dates** : Modale de sélection de dates avec mini-calendrier, détection des vacances et du weekend.
-- **Bouton 📍 Aujourd'hui** : Revenir au mois courant en un clic dans la vue calendrier.
-### Modifié
-- **Import/Export ZIP** : L'import en fusion intelligente ne fait qu'ajouter les éléments absents, sans jamais écraser les données existantes. Le changelog indique précisément le nombre d'éléments ajoutés et ignorés.
-## [1.6.0] - 2026-04-25
-### Ajouté
-- **Approche actionnelle** : Ajout des rubriques "Projet final" (Tâche finale) et "Tâches intermédiaires" sous forme de champs libres pour définir l'action au cœur de la séquence.
-- **Lexique** : Réintégration de la catégorie "Lexique" dans les objectifs linguistiques via un champ libre dédié.
-- **Objet d'étude libre** : Ajout d'un champ libre pour créer un objet d'étude personnalisé non listé dans les programmes.
-- **Onboarding (Accueil)** : Nouvel écran de bienvenue lors de la première visite invitant l'utilisateur à configurer sa langue par défaut.
-### Modifié
-- **Restructuration pédagogique** : L'ordre des rubriques a été revu pour coller à la logique de la perspective actionnelle : Ancrage culturel > Projet & Thème > Objectifs linguistiques > Compétences langagières.
-### Corrigé
-- **Export sur Mobile** : Résolution du bug de page blanche / rognée lors de l'export PDF ou Word sur smartphone (dépliage virtuel de l'interface avant la capture).
-- **Responsive Design** : Le titre principal reste désormais sur une seule ligne sur les petits écrans, et le pied de page est épinglé tout en bas de la fenêtre.
 
-## [1.5.0] - 2026-04-24
-### Ajouté
-- **Pied de page institutionnel** : Ajout d'un footer complet avec mention de l'auteur (Charlie ROLLO).
-- **Liens Forge** : Intégration de boutons menant vers le code source sur la Forge des Communs Numériques Éducatifs, le gestionnaire de Tickets (Issues), et le Changelog.
-### Corrigé
-- **Mise en page** : Correction du CSS pour empêcher les liens du pied de page de s'afficher de manière brute en bas de colonne.
-
-## [1.4.0] - 2026-04-24
-### Ajouté
-- **Tutoriel de bienvenue** : Apparition d'une fenêtre de tutoriel pour guider les enseignants. Réouvrable à volonté via l'icône (ℹ️).
-- **Mémorisation de la langue (UX)** : L'application sauvegarde la dernière langue utilisée via le *localStorage* du navigateur.
-- **Champs libres** : Ajout de zones de saisie manuelle pour les rubriques "Phonologie" et "Pragmatique".
-- **Différenciation pédagogique** : Les professeurs de Lycée (Tronc commun et Spécialités) ont désormais accès aux compétences de niveau Collège (A1/A2) directement à la fin de leurs menus déroulants pour faciliter l'adaptation.
-### Corrigé
-- **Export PDF** : Résolution du bug de décalage des lettres (`letter-spacing`) lors de la génération du PDF, causé par un conflit de rendu avec les émojis.
-
-## [1.3.0] - 2026-04-23
-### Ajouté
-- **Italien 🇮🇹** : Intégration complète de la langue italienne (Axes, Objets d'étude, Grammaire, Phonologie, Pragmatique), du Collège à la Terminale, incluant la spécialité LLCER.
-### Modifié
-- **Fidélité institutionnelle** : Restauration intégrale et exacte des textes officiels de l'Éducation Nationale sans aucun raccourcissement abusif, garantissant la rigueur des fiches générées.
-
-## [1.2.0] - 2026-04-22
-### Ajouté
-- **Espagnol 🇪🇸** : Intégration complète de la langue espagnole (Axes, Grammaire, Phono, Pragmatique).
-### Modifié
-- **Mutualisation des compétences** : Les 5 activités langagières (CO, CE, PO, PE, PEC) étant identiques d'une langue à l'autre, elles ont été fusionnées en une base de données unique pour optimiser le code.
-### Corrigé
-- **Logique des spécialités** : La spécialité AMC (Anglais Monde Contemporain) a été restreinte et n'apparaît désormais que lorsque la langue Anglaise est sélectionnée.
-
-## [1.1.0] - 2026-04-20
-### Ajouté
-- **Spécialités Lycée** : Intégration des spécialités AMC (Première, Terminale) et LLCER (Première, Terminale) avec leurs axes et objets d'étude spécifiques.
-### Modifié
-- **Ergonomie des menus** : Masquage intelligent du choix "LV A/B ou LV C" lorsque l'utilisateur sélectionne un niveau de Spécialité ou de Collège.
-
-## [1.0.0] - Lancement initial
-### Ajouté
-- **Interface web** : Création de la structure "Single-Page Application" (HTML/CSS/JS) fonctionnant 100 % en local sans base de données tierce, pour une conformité totale au RGPD.
-- **Bases de données** : Intégration des programmes d'Anglais 🇬🇧 et d'Allemand 🇩🇪 (Collège et Lycée tronc commun).
-- **Générateur** : Système de tags interactifs et prévisualisation en direct de la fiche A4.
-- **Export** : Ajout des fonctionnalités de téléchargement au format PDF et au format Word (.doc) modifiable.
+[1.0.0]: https://forge.apps.education.fr/lelabodecharlie/le-sequenceur-ia/-/tags/v1.0.0

@@ -15,7 +15,7 @@
   --accent3:#f59e0b;--accent4:#10b981;--accent5:#a855f7;
   --accent-r:#ef4444;--accent-y:#eab308;
   --ok:#22c55e;--miss:rgba(239,68,68,0.15);--ok-bg:rgba(34,197,94,0.12);
-  --r-fonc:#eab308;--r-enj:#3b82f6;--r-app:#10b981;--r-crcn:#a855f7;
+  --r-fonc:#eab308;--r-enj:#3b82f6;--r-app:#10b981;--r-crcn:#a855f7;--r-crcnedu:#ec4899;
   --radius:14px;--radius-sm:8px;
 }
 [data-theme="light"]{
@@ -88,6 +88,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 .ba.enj{background:linear-gradient(135deg,var(--r-enj),#2563eb)}
 .ba.app{background:linear-gradient(135deg,var(--r-app),#059669)}
 .ba.crcn{background:linear-gradient(135deg,var(--r-crcn),#7e22ce)}
+.ba.crcnedu{background:linear-gradient(135deg,var(--r-crcnedu),#be185d)}
 .ba.gray{background:linear-gradient(135deg,#64748b,#475569)}
 
 .added-tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px}
@@ -98,11 +99,13 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 .tag.enj{background:rgba(59,130,246,0.16);color:#93c5fd}
 .tag.app{background:rgba(16,185,129,0.16);color:#6ee7b7}
 .tag.crcn{background:rgba(168,85,247,0.16);color:#d8b4fe}
+.tag.crcnedu{background:rgba(236,72,153,0.16);color:#f9a8d4}
 .tag.gray{background:rgba(100,116,139,0.16);color:#cbd5e1}
 [data-theme="light"] .tag.fonc{background:rgba(234,179,8,0.12);color:#a16207}
 [data-theme="light"] .tag.enj{background:rgba(59,130,246,0.12);color:#1d4ed8}
 [data-theme="light"] .tag.app{background:rgba(16,185,129,0.12);color:#047857}
 [data-theme="light"] .tag.crcn{background:rgba(168,85,247,0.12);color:#7e22ce}
+[data-theme="light"] .tag.crcnedu{background:rgba(236,72,153,0.12);color:#be185d}
 [data-theme="light"] .tag.gray{background:rgba(100,116,139,0.12);color:#475569}
 @keyframes tagIn{from{opacity:0;transform:scale(.8)}to{opacity:1;transform:scale(1)}}
 
@@ -157,7 +160,12 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 .pcard-new-ico{font-size:26px;background:var(--card);width:50px;height:50px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--accent)}
 
 /* Progression layout */
-.prog-layout{display:grid;grid-template-columns:340px 1fr;width:100%;height:100%}
+.prog-layout{display:grid;grid-template-columns:340px 1fr;grid-template-rows:auto 1fr;grid-template-areas:"top tl" "bot tl";width:100%;height:100%}
+.tracker-top{grid-area:top;border-bottom:1px solid var(--border)}
+.tracker-bottom{grid-area:bot}
+.timeline{grid-area:tl}
+.prog-info-box{margin:14px 0 6px;padding:10px 12px;background:rgba(34,211,238,0.08);border-left:3px solid var(--accent2);border-radius:6px;font-size:11px;line-height:1.55;color:var(--text)}
+.prog-info-box b{color:var(--accent2)}
 .tracker{background:var(--panel);border-right:1px solid var(--border);padding:16px;overflow-y:auto;display:flex;flex-direction:column;gap:12px}
 .tracker::-webkit-scrollbar{width:4px}.tracker::-webkit-scrollbar-thumb{background:var(--scrollbar);border-radius:2px}
 .timeline{background:var(--preview-bg);padding:20px 24px;overflow-y:auto}
@@ -201,9 +209,15 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 .chip{padding:3px 8px;border-radius:10px;font-size:10px;font-weight:600;display:inline-flex}
 .chip.fonc{background:rgba(234,179,8,0.12);color:#fde047}.chip.enj{background:rgba(59,130,246,0.12);color:#93c5fd}
 .chip.app{background:rgba(16,185,129,0.12);color:#6ee7b7}.chip.crcn{background:rgba(168,85,247,0.12);color:#d8b4fe}
+.chip.crcnedu{background:rgba(236,72,153,0.12);color:#f9a8d4}
 .chip.gray{background:rgba(100,116,139,0.12);color:#cbd5e1}
 [data-theme="light"] .chip.fonc{color:#a16207}[data-theme="light"] .chip.enj{color:#1d4ed8}
-[data-theme="light"] .chip.app{color:#047857}[data-theme="light"] .chip.crcn{color:#7e22ce}[data-theme="light"] .chip.gray{color:#475569}
+[data-theme="light"] .chip.app{color:#047857}[data-theme="light"] .chip.crcn{color:#7e22ce}[data-theme="light"] .chip.crcnedu{color:#be185d}[data-theme="light"] .chip.gray{color:#475569}
+.a4-list.crcnedu li::before{color:#ec4899}
+/* Visibilité du référentiel CRCN-Edu : caché par défaut, affiché si body.crcnedu-on */
+.crcnedu-only{display:none!important}
+body.crcnedu-on .crcnedu-only{display:block!important}
+body.crcnedu-on .crcnedu-only.fg{display:block!important}
 .form-acts{display:flex;justify-content:flex-end;gap:8px;margin-top:12px;padding-top:12px;border-top:1px solid var(--border)}
 .title-err{border-color:var(--accent-r)!important;box-shadow:0 0 0 3px rgba(239,68,68,0.2)!important}
 .empty{text-align:center;padding:50px 20px;color:var(--text-muted)}
@@ -353,6 +367,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
           <option value="">—</option>
           <optgroup label="Collège"><option>6ème</option><option>5ème</option><option>4ème</option><option>3ème</option></optgroup>
           <optgroup label="Lycée"><option>Seconde</option><option>Première</option><option>Terminale</option></optgroup>
+          <optgroup label="Enseignants"><option>Enseignants</option></optgroup>
         </select></div>
         <div><label class="fl">Année</label><input class="fi" id="seqmeta-annee" placeholder="2025-2026" oninput="seqMetaChg('annee',this.value)"></div>
         <button class="btn btn-danger btn-sm" onclick="seqDeleteCurrent()" style="height:38px">🗑️</button>
@@ -482,6 +497,26 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
               <button class="ba crcn" onclick="seaAddFromSelect('crcn','sea-crcn-sel')">+</button>
             </div>
           </div>
+
+          <!-- Toggle d'activation du CRCN-Edu -->
+          <div style="margin:14px 0 0;padding-top:12px;border-top:1px dashed var(--border)">
+            <label style="display:flex;gap:10px;align-items:flex-start;cursor:pointer;padding:8px 10px;background:var(--panel);border-radius:8px;border:1px solid var(--border);transition:border-color .2s" onmouseover="this.style.borderColor='var(--r-crcnedu)'" onmouseout="this.style.borderColor='var(--border)'">
+              <input type="checkbox" id="set-crcnedu-inline" onchange="setShowCrcnEdu(this.checked);applyCrcnEduUI()" style="margin-top:3px;width:16px;height:16px;cursor:pointer;flex-shrink:0">
+              <span style="font-size:11px;line-height:1.5;color:var(--text)"><b style="color:var(--r-crcnedu)">🧑‍🏫 Ajouter les compétences des enseignants / enseignantes</b> — affiche un 5<sup>e</sup> référentiel : les compétences numériques professionnelles des enseignants (CRCN-Edu, 16 compétences).</span>
+            </label>
+          </div>
+
+          <div class="fg crcnedu-only" style="margin-bottom:0;margin-top:10px">
+            <label class="fl" style="color:var(--r-crcnedu);font-size:10px">🧑‍🏫 Compétences des enseignants / enseignantes</label>
+            <div id="sea-crcnedu-list" style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:6px"></div>
+            <div class="swa">
+              <select class="fs" id="sea-crcnedu-dom" style="font-size:12px" onchange="seaCrcnEduDom()"><option value="">— Choisir un domaine —</option></select>
+            </div>
+            <div class="swa" style="margin-top:4px">
+              <select class="fs" id="sea-crcnedu-sel" style="font-size:12px"><option value="">— Choisir un domaine d'abord —</option></select>
+              <button class="ba crcnedu" onclick="seaAddFromSelect('crcnedu','sea-crcnedu-sel')">+</button>
+            </div>
+          </div>
         </details>
 
         <!-- Supports & documents -->
@@ -560,8 +595,8 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
   <!-- Éditeur -->
   <div id="prog-editor" style="display:none;width:100%;height:100%">
     <div class="prog-layout">
-      <!-- Tracker gauche -->
-      <div class="tracker">
+      <!-- Tracker haut (paramètres + périmètre) -->
+      <div class="tracker tracker-top">
         <div class="trk-title">Paramètres</div>
         <div class="fg">
           <label class="fl">Intitulé / classe</label>
@@ -576,12 +611,9 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
         <div class="niv-shortcuts" id="p-niv-shortcuts"></div>
         <div class="niv-checks" id="p-niv-checks"></div>
 
-        <div class="trk-title" style="margin-top:8px">Couverture des niveaux</div>
-        <div class="prog-wrap"><div class="prog-fill" id="p-bar" style="width:0%"></div></div>
-        <div class="prog-lbl" id="p-lbl">—</div>
-        <div id="p-cov-niv"></div>
-        <div class="trk-title" style="margin-top:8px">Couverture des compétences</div>
-        <div id="p-cov-axes"></div>
+        <div class="prog-info-box">
+          <b>💡 Une séquence est un projet pédagogique</b> étalé sur tout ou partie de l'année, composée d'une ou plusieurs séances. Elle peut être structurée autour d'un projet final ou simplement servir de fil rouge — c'est vous qui décidez.
+        </div>
       </div>
 
       <!-- Timeline droite -->
@@ -608,6 +640,16 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
         <button class="btn btn-ghost" style="width:100%;padding:14px;margin-top:14px;border:2px dashed var(--border);font-size:13px" onclick="progAddSeq()">＋ Ajouter une Séquence</button>
         <div class="prog-print-footer">Le Séquenceur IA - Charlie Rollo - Items issus de la <a href="https://drane-ile-de-france.forge.apps.education.fr/progression_ia/" target="_blank">Progression IA</a> Drane Île-de-France</div>
       </div>
+
+      <!-- Tracker bas (couvertures) -->
+      <div class="tracker tracker-bottom">
+        <div class="trk-title">Couverture des niveaux</div>
+        <div class="prog-wrap"><div class="prog-fill" id="p-bar" style="width:0%"></div></div>
+        <div class="prog-lbl" id="p-lbl">—</div>
+        <div id="p-cov-niv"></div>
+        <div class="trk-title" style="margin-top:8px">Couverture des compétences</div>
+        <div id="p-cov-axes"></div>
+      </div>
     </div>
   </div>
 </div>
@@ -624,9 +666,37 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
     <span class="sep">·</span>
     <a href="https://forge.apps.education.fr/lelabodecharlie/le-sequenceur-ia/-/work_items" target="_blank" rel="noopener">Signaler / suggérer</a>
     <span class="sep">·</span>
+    <button type="button" class="btn-legal" onclick="openSettings()">Réglages</button>
+    <span class="sep">·</span>
     <button type="button" class="btn-legal" onclick="openModal('m-mentions')">Mentions légales</button>
   </div>
 </footer>
+
+<!-- Modal : Réglages -->
+<div id="m-settings" class="modal-bg" onclick="closeModal('m-settings')">
+  <div class="modal" onclick="event.stopPropagation()">
+    <button class="modal-x" onclick="closeModal('m-settings')">✕</button>
+    <h2>⚙ Réglages</h2>
+    <div style="font-size:13px;color:var(--text);line-height:1.6">
+      <label style="display:flex;gap:12px;align-items:flex-start;padding:14px;background:var(--card);border-radius:10px;cursor:pointer;border:1px solid var(--border);transition:border-color .2s">
+        <input type="checkbox" id="set-crcnedu" onchange="setShowCrcnEdu(this.checked);applyCrcnEduUI()" style="margin-top:2px;width:18px;height:18px;cursor:pointer">
+        <div style="flex:1">
+          <div style="font-weight:700;color:var(--text);margin-bottom:4px">🧑‍🏫 Afficher les compétences des enseignants / enseignantes</div>
+          <div style="font-size:12px;color:var(--text-muted);line-height:1.55">Ajoute un cinquième référentiel : les 16 compétences numériques professionnelles des enseignants (CRCN-Edu). Apparaît dans l'éditeur de séance et la couverture de la progression.</div>
+        </div>
+      </label>
+    </div>
+  </div>
+</div>
+
+<!-- Modal : Dialogue générique (alert/confirm personnalisés) -->
+<div id="m-dialog" class="modal-bg" onclick="dialogCancel()">
+  <div class="modal" onclick="event.stopPropagation()" style="max-width:420px">
+    <h2 id="dlg-title">Confirmation</h2>
+    <p id="dlg-message" style="font-size:13.5px;line-height:1.55;color:var(--text);text-align:center;margin-bottom:20px;white-space:pre-wrap"></p>
+    <div id="dlg-actions" style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap"></div>
+  </div>
+</div>
 
 <!-- Modal : Nouvelle séquence -->
 <div id="m-new-seq" class="modal-bg" onclick="closeModal('m-new-seq')">
@@ -639,6 +709,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
         <option value="">— Choisir —</option>
         <optgroup label="Collège"><option>6ème</option><option>5ème</option><option>4ème</option><option>3ème</option></optgroup>
         <optgroup label="Lycée"><option>Seconde</option><option>Première</option><option>Terminale</option></optgroup>
+          <optgroup label="Enseignants"><option>Enseignants</option></optgroup>
       </select>
     </div>
     <div class="fg">
@@ -714,7 +785,8 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
       Forge des Communs Numériques Éducatifs — Ministère de l'Éducation nationale, 110 rue de Grenelle, 75007 Paris</p>
       <br>
       <p><b style="color:var(--text)">Licence</b><br>
-      <a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank" style="color:var(--accent)">GNU General Public License v3.0 (GPLv3)</a> — Toute redistribution ou modification doit citer l'auteur original : Charlie ROLLO.</p>
+      Code de l'application sous <a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank" style="color:var(--accent)">GNU General Public License v3.0 (GPLv3)</a> — toute redistribution ou modification doit citer l'auteur original : Charlie ROLLO.<br><br>
+      Les items pédagogiques des trois axes sont réutilisés depuis la <a href="https://drane-ile-de-france.forge.apps.education.fr/progression_ia/" target="_blank" style="color:var(--accent)">Progression IA</a> de la <b>DRANE Île-de-France</b>, sous licence <a href="https://www.gnu.org/licenses/agpl-3.0.html" target="_blank" style="color:var(--accent)">AGPL v3+</a>. Toute redistribution doit préserver cette attribution et conserver les items sous AGPL v3+.</p>
       <br>
       <p><b style="color:var(--text)">Données personnelles</b><br>
       Aucune donnée personnelle n'est collectée ni transmise. Tout est stocké localement dans votre navigateur (<code>localStorage</code>). Le calendrier scolaire interroge l'API publique <a href="https://data.education.gouv.fr/" target="_blank" style="color:var(--accent)">data.education.gouv.fr</a> sans envoyer d'identifiant.</p>
@@ -752,11 +824,11 @@ function renderIllustration(url, shape){
 // ================================================================
 // DONNÉES
 // ================================================================
-const NIVEAUX = ["6ème","5ème","4ème","3ème","Seconde","Première","Terminale"];
+const NIVEAUX = ["6ème","5ème","4ème","3ème","Seconde","Première","Terminale","Enseignants"];
 const COLLEGE = ["6ème","5ème","4ème","3ème"];
 const LYCEE   = ["Seconde","Première","Terminale"];
-const SEA_NIV_GROUP = {"6ème":"Collège","5ème":"Collège","4ème":"Collège","3ème":"Collège","Seconde":"Lycée","Première":"Lycée","Terminale":"Lycée"};
-const SEA_NIV_EMOJI = {"Collège":"🎒","Lycée":"🎓"};
+const SEA_NIV_GROUP = {"6ème":"Collège","5ème":"Collège","4ème":"Collège","3ème":"Collège","Seconde":"Lycée","Première":"Lycée","Terminale":"Lycée","Enseignants":"Enseignants"};
+const SEA_NIV_EMOJI = {"Collège":"🎒","Lycée":"🎓","Enseignants":"🧑‍🏫"};
 
 const DB_IA = {
   fonc: { label:"Savoir comment fonctionnent les IA", items:[
@@ -805,28 +877,51 @@ const DB_CRCN = {
   "5. Environnement numérique":["5.1. Résoudre des problèmes techniques","5.2. Évoluer dans un environnement numérique"]
 };
 
-// Réservoirs (clé interne → libellé officiel + emoji + classe)
-const RESERVOIRS = [
-  { key:'fonc', cls:'fonc', emoji:'⚙️', label:"Savoir comment fonctionnent les IA" },
-  { key:'enj',  cls:'enj',  emoji:'🔍', label:"Identifier les enjeux des IA" },
-  { key:'app',  cls:'app',  emoji:'📖', label:"Apprendre avec l'IA" },
-  { key:'crcn', cls:'crcn', emoji:'💻', label:"Compétences du CRCN" }
-];
-const IA_KEYS = ['fonc','enj','app','crcn'];
+// ── CRCN-Edu — Cadre de Référence des Compétences Numériques pour les enseignants ──
+const DB_CRCN_EDU = {
+  "1. Environnement professionnel":["1.1. Communiquer","1.2. Collaborer","1.3. Se former, développer une veille","1.4. Agir en faveur d'un numérique sûr et responsable","1.5. Adopter une posture ouverte, critique et réflexive"],
+  "2. Ressources numériques":["2.1. Sélectionner des ressources","2.2. Concevoir des ressources","2.3. Gérer des ressources"],
+  "3. Enseignement-apprentissage":["3.1. Concevoir","3.2. Mettre en œuvre","3.3. Évaluer au service des apprentissages"],
+  "4. Diversité et autonomie des apprenants":["4.1. Inclure et rendre accessible","4.2. Différencier","4.3. Engager les apprenants"],
+  "5. Compétences numériques des apprenants":["5.1. Développer les compétences numériques des apprenants","5.2. Évaluer et certifier"]
+};
 
-// Retrouve le domaine CRCN d'une compétence (ou '' si item personnalisé)
-function crcnDomaineOf(item){
-  for(const dom in DB_CRCN){ if(DB_CRCN[dom].includes(item)) return dom; }
-  return '';
+// Référentiels (clé interne → libellé officiel + emoji + classe)
+const RESERVOIRS = [
+  { key:'fonc',    cls:'fonc',    emoji:'⚙️',  label:"Savoir comment fonctionnent les IA" },
+  { key:'enj',     cls:'enj',     emoji:'🔍',  label:"Identifier les enjeux des IA" },
+  { key:'app',     cls:'app',     emoji:'📖',  label:"Apprendre avec l'IA" },
+  { key:'crcn',    cls:'crcn',    emoji:'💻',  label:"Compétences du CRCN" },
+  { key:'crcnedu', cls:'crcnedu', emoji:'🧑‍🏫', label:"Compétences des enseignants / enseignantes" }
+];
+const IA_KEYS = ['fonc','enj','app','crcn','crcnedu'];
+
+// Réglage : afficher le référentiel CRCN-Edu (caché par défaut)
+let showCrcnEdu = false;
+try { showCrcnEdu = localStorage.getItem('sqia-show-crcnedu') === 'true'; } catch(e) {}
+function setShowCrcnEdu(v){
+  showCrcnEdu = !!v;
+  try { localStorage.setItem('sqia-show-crcnedu', showCrcnEdu?'true':'false'); } catch(e) {}
+  document.body.classList.toggle('crcnedu-on', showCrcnEdu);
 }
-// Regroupe une liste de compétences CRCN par domaine, en respectant l'ordre des domaines
-function crcnGroupByDomaine(items){
+// Liste des référentiels visibles selon le réglage
+function visibleReservoirs(){ return RESERVOIRS.filter(r => r.key!=='crcnedu' || showCrcnEdu); }
+
+// Retrouve le domaine d'une compétence dans un référentiel groupé par domaine (CRCN, CRCN-Edu…)
+function domaineOf(item, db){ for(const d in db){ if(db[d].includes(item)) return d; } return ''; }
+// Regroupe une liste de compétences par domaine d'un référentiel donné
+function groupByDomaine(items, db){
   const groups = {}; const custom = [];
-  items.forEach(it=>{ const d=crcnDomaineOf(it); if(d){ (groups[d]=groups[d]||[]).push(it); } else custom.push(it); });
-  const ordered = Object.keys(DB_CRCN).filter(d=>groups[d]).map(d=>({domaine:d, items:groups[d]}));
+  items.forEach(it=>{ const d=domaineOf(it, db); if(d){ (groups[d]=groups[d]||[]).push(it); } else custom.push(it); });
+  const ordered = Object.keys(db).filter(d=>groups[d]).map(d=>({domaine:d, items:groups[d]}));
   if(custom.length) ordered.push({domaine:'Autres compétences', items:custom});
   return ordered;
 }
+// Compatibilité (anciens appels)
+function crcnDomaineOf(item){ return domaineOf(item, DB_CRCN); }
+function crcnGroupByDomaine(items){ return groupByDomaine(items, DB_CRCN); }
+// Renvoie la base de données associée à une clé de référentiel (ou null)
+function dbForKey(key){ return key==='crcn'?DB_CRCN : key==='crcnedu'?DB_CRCN_EDU : null; }
 
 // Polices proposées (Google Fonts déjà chargées + génériques)
 const SEA_FONTS = [
@@ -867,6 +962,49 @@ document.addEventListener('DOMContentLoaded', () => updTgl(document.body.dataset
 function openModal(id)  { $(id).classList.add('on'); }
 function closeModal(id) { $(id).classList.remove('on'); }
 
+// ── Dialogues personnalisés (remplacent alert/confirm) ──
+let _dlgResolve = null;
+function customAlert(message, opts){
+  opts = opts || {};
+  return new Promise(resolve => {
+    _dlgResolve = ()=>{ closeModal('m-dialog'); resolve(); };
+    $('dlg-title').textContent = opts.title || 'Information';
+    $('dlg-message').textContent = message || '';
+    $('dlg-actions').innerHTML = `<button class="btn btn-violet" onclick="dialogOk()" style="min-width:120px;justify-content:center">${opts.ok || 'OK'}</button>`;
+    openModal('m-dialog');
+  });
+}
+function customConfirm(message, opts){
+  opts = opts || {};
+  return new Promise(resolve => {
+    _dlgResolve = (val)=>{ closeModal('m-dialog'); resolve(val); };
+    $('dlg-title').textContent = opts.title || 'Confirmation';
+    $('dlg-message').textContent = message || '';
+    const danger = opts.danger !== false;
+    $('dlg-actions').innerHTML = `
+      <button class="btn btn-ghost" onclick="dialogCancel()" style="min-width:110px;justify-content:center">${opts.cancel || 'Annuler'}</button>
+      <button class="btn ${danger?'btn-pink':'btn-violet'}" onclick="dialogOk()" style="min-width:110px;justify-content:center">${opts.ok || 'Confirmer'}</button>`;
+    openModal('m-dialog');
+  });
+}
+function dialogOk(){ if(_dlgResolve) _dlgResolve(true); _dlgResolve=null; }
+function dialogCancel(){ if(_dlgResolve) _dlgResolve(false); _dlgResolve=null; }
+
+// ── Réglages ──
+function openSettings(){
+  const el = $('set-crcnedu'); if(el) el.checked = showCrcnEdu;
+  openModal('m-settings');
+}
+// Met à jour l'interface (rendus, sélecteurs, cases à cocher) après changement du réglage CRCN-Edu
+function applyCrcnEduUI(){
+  // Sync des cases à cocher
+  const ci=$('set-crcnedu-inline'); if(ci) ci.checked = showCrcnEdu;
+  const cm=$('set-crcnedu');        if(cm) cm.checked = showCrcnEdu;
+  // Recharger l'éditeur courant et les rendus dépendants
+  if(seaCurrentId){ seaCrcnDomInit(); seaRenderObjectives(); seaPreview(); }
+  if(progCur) progRenderAll();
+}
+
 // ================================================================
 // BIBLIOTHÈQUE DE SÉQUENCES (persistante)
 // ================================================================
@@ -877,7 +1015,7 @@ function libSave(){ try{ localStorage.setItem('sqia-lib', JSON.stringify(libApp)
 
 // Crée un objet séquence vide
 function libBlankSeq(){
-  return { id:Date.now(), title:'', niveau:'', annee:'', fonc:[], enj:[], app:[], crcn:[], updatedAt:Date.now() };
+  return { id:Date.now(), title:'', niveau:'', annee:'', fonc:[], enj:[], app:[], crcn:[], crcnedu:[], updatedAt:Date.now() };
 }
 // ================================================================
 // SÉQUENCES (conteneurs : titre, niveau, année — contiennent les séances)
@@ -905,10 +1043,10 @@ function openNewSeq() {
   $('ns-annee').value='';
   openModal('m-new-seq');
 }
-function seqCreate() {
+async function seqCreate() {
   const title = $('ns-title').value.trim();
   const niv = $('ns-niv').value;
-  if (!niv) { alert('Choisissez un niveau pour la séquence.'); return; }
+  if (!niv) { await customAlert('Choisissez un niveau pour la séquence.'); return; }
   const s = libBlankSeq();
   s.title = title || ('Séquence IA ' + niv);
   s.niveau = niv;
@@ -927,11 +1065,11 @@ function seqMetaChg(field, value) {
   if (field === 'title') $('sea-list-title').textContent = value || 'Sans titre';
   if (field === 'niveau') seaCurrentNiveau = value;
 }
-function seqDeleteCurrent() {
+async function seqDeleteCurrent() {
   const s = libApp.seqs.find(x => x.id === seaCurrentSeqId);
   if (!s) return;
   const nbSea = seaCountForSeq(s.id);
-  if (!confirm(`Supprimer la séquence « ${s.title||'Sans titre'} »${nbSea?` et ses ${nbSea} séance(s)`:''} ?`)) return;
+  if (!await customConfirm(`Supprimer la séquence « ${s.title||'Sans titre'} »${nbSea?` et ses ${nbSea} séance(s)`:''} ?`)) return;
   seaApp.seas = seaApp.seas.filter(x => x.seqId !== s.id);
   libApp.seqs = libApp.seqs.filter(x => x.id !== s.id);
   seaSave(); libSave();
@@ -977,7 +1115,7 @@ function seaRenderHome(){
   const seqCard = (s)=>{
     const c = seaCountForSeq(s.id);
     const title = s.title || '<em style="color:var(--text-muted)">Sans titre</em>';
-    const ico = (SEA_NIV_GROUP[s.niveau]==='Lycée')?'🎓':(SEA_NIV_GROUP[s.niveau]==='Collège'?'🎒':'📄');
+    const ico = SEA_NIV_EMOJI[SEA_NIV_GROUP[s.niveau]] || '📄';
     return `<div class="pcard" onclick="seaOpenList(${s.id})">
       <button class="pcard-del" onclick="event.stopPropagation();seqDeleteFromHome(${s.id})">✕</button>
       <div class="pcard-ico">${ico}</div>
@@ -989,17 +1127,17 @@ function seaRenderHome(){
   let html='';
   nivPresent.forEach(niv=>{
     const grp = SEA_NIV_GROUP[niv]||'';
-    const grpEmoji = grp==='Collège'?'🎒':(grp==='Lycée'?'🎓':'❓');
+    const grpEmoji = SEA_NIV_EMOJI[grp] || '❓';
     html += `<div style="grid-column:1/-1;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;color:var(--text-muted);margin:${html?'18':'0'}px 0 -4px">${grpEmoji} ${E(niv)}</div>`;
     byNiv[niv].sort((a,b)=> (b.annee||'').localeCompare(a.annee||'') || (a.title||'').localeCompare(b.title||''))
       .forEach(s=> html += seqCard(s));
   });
   grid.innerHTML = html;
 }
-function seqDeleteFromHome(id){
+async function seqDeleteFromHome(id){
   const s = libApp.seqs.find(x=>x.id===id); if(!s) return;
   const nbSea = seaCountForSeq(id);
-  if(!confirm(`Supprimer la séquence « ${s.title||'Sans titre'} »${nbSea?` et ses ${nbSea} séance(s)`:''} ?`)) return;
+  if(!await customConfirm(`Supprimer la séquence « ${s.title||'Sans titre'} »${nbSea?` et ses ${nbSea} séance(s)`:''} ?`)) return;
   seaApp.seas = seaApp.seas.filter(x=>x.seqId!==id);
   libApp.seqs = libApp.seqs.filter(x=>x.id!==id);
   seaSave(); libSave(); seaRenderHome();
@@ -1040,13 +1178,13 @@ function seaNewBlank(){
   if(!seaCurrentSeqId) return;
   const order = seaApp.seas.filter(s=>s.seqId===seaCurrentSeqId).length;
   const s = { id:Date.now(), seqId:seaCurrentSeqId, title:'', obj:'',
-    objectifs:{fonc:[],enj:[],app:[],crcn:[]}, activities:[], supports:[], trace:'', devoirs:'',
+    objectifs:{fonc:[],enj:[],app:[],crcn:[],crcnedu:[]}, activities:[], supports:[], trace:'', devoirs:'',
     imgUrl:'', imgShape:'banner', fontFamily:'', fontSize:1, order, createdAt:Date.now(), updatedAt:Date.now() };
   seaApp.seas.push(s); seaSave(); seaOpenEditor(s.id);
 }
 async function seaDelSeance(id){
   const s = seaApp.seas.find(x=>x.id===id); if(!s) return;
-  if(!confirm('Supprimer cette séance ?')) return;
+  if(!await customConfirm('Supprimer cette séance ?')) return;
   seaApp.seas = seaApp.seas.filter(x=>x.id!==id);
   seaSave(); seaRenderList();
 }
@@ -1100,11 +1238,22 @@ function seaCrcnDomInit(){
   const dom=$('sea-crcn-dom'); dom.innerHTML='<option value="">— Choisir un domaine —</option>';
   Object.keys(DB_CRCN).forEach(d=> dom.innerHTML+=`<option value="${E(d)}">${d}</option>`);
   $('sea-crcn-sel').innerHTML='<option value="">— Choisir un domaine d\'abord —</option>';
+  const dome=$('sea-crcnedu-dom');
+  if(dome){
+    dome.innerHTML='<option value="">— Choisir un domaine —</option>';
+    Object.keys(DB_CRCN_EDU).forEach(d=> dome.innerHTML+=`<option value="${E(d)}">${d}</option>`);
+    $('sea-crcnedu-sel').innerHTML='<option value="">— Choisir un domaine d\'abord —</option>';
+  }
 }
 function seaCrcnDom(){
   const d=$('sea-crcn-dom').value; const sel=$('sea-crcn-sel');
   sel.innerHTML='<option value="">— Choisir une compétence —</option>';
   if(d&&DB_CRCN[d]) DB_CRCN[d].forEach(i=>sel.innerHTML+=`<option value="${E(i)}">${i}</option>`);
+}
+function seaCrcnEduDom(){
+  const d=$('sea-crcnedu-dom').value; const sel=$('sea-crcnedu-sel');
+  sel.innerHTML='<option value="">— Choisir une compétence —</option>';
+  if(d&&DB_CRCN_EDU[d]) DB_CRCN_EDU[d].forEach(i=>sel.innerHTML+=`<option value="${E(i)}">${i}</option>`);
 }
 function seaFillFontSelect(){
   const sel=$('sea-font'); if(!sel||sel.dataset.filled) return;
@@ -1112,7 +1261,7 @@ function seaFillFontSelect(){
   sel.dataset.filled='1';
 }
 
-// ── Objectifs (pills cliquables, par réservoir) ──
+// ── Objectifs (pills cliquables, par référentiel) ──
 function seaRenderObjectives(){
   const s = seaApp.seas.find(x=>x.id===seaCurrentId); if(!s) return;
   const seq = libApp.seqs.find(x=>x.id===s.seqId); if(!seq) return;
@@ -1127,10 +1276,11 @@ function seaRenderObjectives(){
     const items = seq[r.key]||[];
     const checked = s.objectifs?.[r.key]||[];
     if(!items.length){ el.innerHTML = `<span style="font-size:10px;color:var(--text-muted);font-style:italic">Aucun item dans la séquence — ajoutez-en ci-dessous</span>`; return; }
-    if(r.key==='crcn'){
-      // Grouper par domaine
-      el.innerHTML = crcnGroupByDomaine(items).map(g=>
-        `<div style="width:100%;font-size:9.5px;font-weight:700;color:var(--r-crcn);margin:4px 0 2px">${EC(g.domaine)}</div>`
+    const db = dbForKey(r.key);
+    if(db){
+      // Grouper par domaine (CRCN, CRCN-Edu)
+      el.innerHTML = groupByDomaine(items, db).map(g=>
+        `<div style="width:100%;font-size:9.5px;font-weight:700;color:var(--r-${r.key});margin:4px 0 2px">${EC(g.domaine)}</div>`
         + `<div style="display:flex;flex-wrap:wrap;gap:4px">${g.items.map(it=>pill(r,it,checked)).join('')}</div>`
       ).join('');
     } else {
@@ -1209,9 +1359,9 @@ function seaUpdateAct(idx,field,value){
   if(field==='duration') s.activities[idx].duration=parseInt(value,10)||0; else s.activities[idx][field]=value;
   s.updatedAt=Date.now(); seaSave(); seaPreview();
 }
-function seaDelAct(idx){
+async function seaDelAct(idx){
   const s=seaApp.seas.find(x=>x.id===seaCurrentId); if(!s||!s.activities) return;
-  if(!confirm('Supprimer cette activité ?')) return;
+  if(!await customConfirm('Supprimer cette activité ?')) return;
   s.activities.splice(idx,1); s.updatedAt=Date.now(); seaSave();
   seaEditingActIdx=null; seaRenderActivities(); seaPreview();
 }
@@ -1288,16 +1438,18 @@ function seaPreview(){
   const oe=$('sea-a4-obj');
   if(s.obj){ oe.style.display='block'; oe.textContent=s.obj; } else oe.style.display='none';
 
-  // Compétences numériques (axes + CRCN), regroupées par réservoir ; CRCN sous-groupé par domaine
+  // Compétences numériques (axes + CRCN [+ CRCN-Edu si activé]), CRCN/CRCN-Edu sous-groupés par domaine
   const objs=s.objectifs||{};
   const compEl=$('sea-a4-comp');
-  const groups = RESERVOIRS.filter(r=> (objs[r.key]||[]).length);
+  const groups = visibleReservoirs().filter(r=> (objs[r.key]||[]).length);
   if(groups.length){
     compEl.innerHTML = groups.map(r=>{
       let head = `<div class="ax-grp">${r.emoji} ${EC(r.label)}</div>`;
-      if(r.key==='crcn'){
-        return head + crcnGroupByDomaine(objs.crcn).map(g=>
-          `<div class="crcn-dom">${EC(g.domaine)}</div><ul class="a4-list crcn">${g.items.map(i=>`<li>${EC(i)}</li>`).join('')}</ul>`
+      const db = dbForKey(r.key);
+      if(db){
+        const domColor = r.key==='crcnedu' ? '#be185d' : '#7e22ce';
+        return head + groupByDomaine(objs[r.key], db).map(g=>
+          `<div class="crcn-dom" style="color:${domColor}">${EC(g.domaine)}</div><ul class="a4-list ${r.cls}">${g.items.map(i=>`<li>${EC(i)}</li>`).join('')}</ul>`
         ).join('');
       }
       return head + `<ul class="a4-list ${r.cls}">${objs[r.key].map(i=>`<li>${EC(i)}</li>`).join('')}</ul>`;
@@ -1345,7 +1497,7 @@ function seaGenerateMarkdown(){
   if(s.obj) md+=`> ${s.obj}\n\n`;
   md+=`---\n\n`;
   const objs=s.objectifs||{}; let hasObj=false;
-  RESERVOIRS.forEach(r=>{ const items=objs[r.key]||[]; if(items.length){ if(!hasObj){ md+=`## 🧩 Compétences numériques travaillées\n\n`; hasObj=true; } if(r.key==='crcn'){ md+=`- **${r.emoji} ${r.label} :**\n`; crcnGroupByDomaine(items).forEach(g=>{ md+=`    - *${g.domaine}* : ${g.items.join(' · ')}\n`; }); } else { md+=`- **${r.emoji} ${r.label} :** ${items.join(' · ')}\n`; } } });
+  visibleReservoirs().forEach(r=>{ const items=objs[r.key]||[]; if(items.length){ if(!hasObj){ md+=`## 🧩 Compétences numériques travaillées\n\n`; hasObj=true; } const db=dbForKey(r.key); if(db){ md+=`- **${r.emoji} ${r.label} :**\n`; groupByDomaine(items, db).forEach(g=>{ md+=`    - *${g.domaine}* : ${g.items.join(' · ')}\n`; }); } else { md+=`- **${r.emoji} ${r.label} :** ${items.join(' · ')}\n`; } } });
   if(hasObj) md+='\n';
   const supp = Array.isArray(s.supports)?s.supports.map(l=>(l||'').trim()).filter(Boolean):[];
   if(supp.length){ md+=`## Supports\n\n`; supp.forEach(l=>md+=`- ${l}\n`); md+='\n'; }
@@ -1368,7 +1520,7 @@ function buildSeaHTML(){
   if(seq) h+=`<p style="font-size:10pt;color:#64748b">${E(seq.title||'')} — ${E(seq.niveau||'')} — ${E(seq.annee||'')}</p>`;
   if(s.obj) h+=`<p style="font-size:11pt;font-style:italic;color:#475569;border-left:3pt solid #6366f1;padding-left:10pt">${E(s.obj)}</p>`;
   const objs=s.objectifs||{}; let meta='';
-  RESERVOIRS.forEach(r=>{ const items=objs[r.key]||[]; if(items.length){ if(r.key==='crcn'){ meta+=`<p style="font-size:10pt;margin:2pt 0"><b>${r.emoji} ${E(r.label)} :</b></p>`; crcnGroupByDomaine(items).forEach(g=>{ meta+=`<p style="font-size:10pt;margin:1pt 0 1pt 12pt"><i>${E(g.domaine)}</i> : ${E(g.items.join(' · '))}</p>`; }); } else { meta+=`<p style="font-size:10pt;margin:2pt 0"><b>${r.emoji} ${E(r.label)} :</b> ${E(items.join(' · '))}</p>`; } } });
+  visibleReservoirs().forEach(r=>{ const items=objs[r.key]||[]; if(items.length){ const db=dbForKey(r.key); if(db){ meta+=`<p style="font-size:10pt;margin:2pt 0"><b>${r.emoji} ${E(r.label)} :</b></p>`; groupByDomaine(items, db).forEach(g=>{ meta+=`<p style="font-size:10pt;margin:1pt 0 1pt 12pt"><i>${E(g.domaine)}</i> : ${E(g.items.join(' · '))}</p>`; }); } else { meta+=`<p style="font-size:10pt;margin:2pt 0"><b>${r.emoji} ${E(r.label)} :</b> ${E(items.join(' · '))}</p>`; } } });
   const supp = Array.isArray(s.supports)?s.supports.map(l=>(l||'').trim()).filter(Boolean):[];
   if(supp.length) meta+=`<p style="font-size:10pt;margin:2pt 0"><b>Supports :</b> ${E(supp.join(' · '))}</p>`;
   if(meta) h+=`<div style="border-top:1pt solid #cbd5e1;border-bottom:1pt solid #cbd5e1;padding:8pt 0;margin:10pt 0">${meta}</div>`;
@@ -1455,8 +1607,8 @@ function openNewProg() {
   openModal('m-new-prog');
 }
 
-function progCreate() {
-  if (!npNiveaux.length) { alert('Cochez au moins un niveau à couvrir.'); return; }
+async function progCreate() {
+  if (!npNiveaux.length) { await customAlert('Cochez au moins un niveau à couvrir.'); return; }
   const p = {
     id: Date.now(),
     title: $('np-title').value.trim() || 'Progression IA',
@@ -1494,8 +1646,8 @@ function progRenderDash() {
   </div>`;
   $('prog-grid').innerHTML = h;
 }
-function progDelProg(id) {
-  if (!confirm('Supprimer cette progression ?')) return;
+async function progDelProg(id) {
+  if (!await customConfirm('Supprimer cette progression ?')) return;
   progApp.progs = progApp.progs.filter(x => x.id!==id);
   progSave(); progRenderDash();
 }
@@ -1529,18 +1681,18 @@ function progChg(k, v) {
 }
 
 // ── CRUD séquences ──
-function progAddSeq() {
+async function progAddSeq() {
   if (!progCur) return;
-  if (!progCur.niveaux || !progCur.niveaux.length) { alert('Cochez d\'abord au moins un niveau dans le périmètre.'); return; }
+  if (!progCur.niveaux || !progCur.niveaux.length) { await customAlert('Cochez d\'abord au moins un niveau dans le périmètre.'); return; }
   progCur.seqs.push({
     id:Date.now(), title:'', niveau:progCur.niveaux[0], project:'',
-    fonc:[], enj:[], app:[], crcn:[], libre:[], editing:true
+    fonc:[], enj:[], app:[], crcn:[], crcnedu:[], libre:[], editing:true
   });
   progSave(); progRenderAll();
   setTimeout(()=>$('p-sl').lastElementChild?.scrollIntoView({behavior:'smooth'}),100);
 }
-function progDelSeq(id) {
-  if (!confirm('Supprimer cette séquence ?')) return;
+async function progDelSeq(id) {
+  if (!await customConfirm('Supprimer cette séquence ?')) return;
   progCur.seqs = progCur.seqs.filter(s=>s.id!==id);
   progSave(); progRenderAll();
 }
@@ -1570,7 +1722,7 @@ function pSetNiv(id, v) {
   const s=progCur.seqs.find(x=>x.id===id);
   if (s){ s.niveau=v; progSave(); progRenderCov(); }
 }
-// Ajout depuis un select (réservoir)
+// Ajout depuis un select (référentiel)
 function paSel(id, f, sid, c) {
   const s=progCur.seqs.find(x=>x.id===id); if(!s) return;
   const v=$(sid).value;
@@ -1601,6 +1753,12 @@ function pCrcnDom(id) {
   const sel = $('pcr-'+id);
   sel.innerHTML = '<option value="">— Choisir une compétence —</option>';
   if (d && DB_CRCN[d]) DB_CRCN[d].forEach(i => { sel.innerHTML += `<option value="${E(i)}">${i}</option>`; });
+}
+function pCrcnEduDom(id) {
+  const d = $('pced-'+id).value;
+  const sel = $('pcre-'+id);
+  sel.innerHTML = '<option value="">— Choisir une compétence —</option>';
+  if (d && DB_CRCN_EDU[d]) DB_CRCN_EDU[d].forEach(i => { sel.innerHTML += `<option value="${E(i)}">${i}</option>`; });
 }
 
 // ── Render timeline ──
@@ -1637,6 +1795,7 @@ function progRenderDisp(s, i) {
       ${row('🔍 Enjeux',s.enj,'enj')}
       ${row('📖 Apprendre',s.app,'app')}
       ${row('💻 CRCN',s.crcn,'crcn')}
+      ${showCrcnEdu?row('🧑‍🏫 Enseignants',s.crcnedu,'crcnedu'):''}
       ${row('➕ Libre',s.libre,'crcn')}
     </div>
   </div>`;
@@ -1647,6 +1806,8 @@ function progRenderEdit(s, i) {
   const nivOpt = (progCur.niveaux||[]).map(n=>`<option value="${E(n)}" ${s.niveau===n?'selected':''}>${n}</option>`).join('');
   let crcnDom = '<option value="">— Choisir un domaine —</option>';
   Object.keys(DB_CRCN).forEach(d=>{ crcnDom += `<option value="${E(d)}">${d}</option>`; });
+  let crcnEduDom = '<option value="">— Choisir un domaine —</option>';
+  Object.keys(DB_CRCN_EDU).forEach(d=>{ crcnEduDom += `<option value="${E(d)}">${d}</option>`; });
 
   const rt=(arr,f,c)=>arr.map((v,j)=>
     `<span class="tag ${c}"><span class="tl">${S(v,48)}</span><span class="tr" onclick="prM(${s.id},'${f}',${j},'${c}')">✕</span></span>`
@@ -1706,6 +1867,15 @@ function progRenderEdit(s, i) {
       </div>
       <div class="added-tags" id="pt-crcn-${s.id}">${rt(s.crcn,'crcn','crcn')}</div>
     </div>
+    ${showCrcnEdu?`<div class="fg">
+      <label class="fl" style="color:var(--r-crcnedu)">🧑‍🏫 Compétences des enseignants / enseignantes</label>
+      <div class="swa"><select class="fs" id="pced-${s.id}" onchange="pCrcnEduDom(${s.id})">${crcnEduDom}</select></div>
+      <div class="swa">
+        <select class="fs" id="pcre-${s.id}"><option value="">— Choisir un domaine d'abord —</option></select>
+        <button class="ba crcnedu" onclick="paSel(${s.id},'crcnedu','pcre-${s.id}','crcnedu')">+</button>
+      </div>
+      <div class="added-tags" id="pt-crcnedu-${s.id}">${rt(s.crcnedu||[],'crcnedu','crcnedu')}</div>
+    </div>`:''}
     <div class="fg">
       <label class="fl">➕ Item libre</label>
       <div class="swa">
@@ -1743,23 +1913,26 @@ function progRenderCov() {
   nd.innerHTML=nh;
 
   // Couverture des compétences individuelles (sur l'ensemble de la progression)
-  const refs = { fonc: DB_IA.fonc.items, enj: DB_IA.enj.items, app: DB_IA.app.items, crcn: Object.values(DB_CRCN).flat() };
-  const usedComp = { fonc:new Set(), enj:new Set(), app:new Set(), crcn:new Set() };
-  progCur.seqs.forEach(s=>{ RESERVOIRS.forEach(r=>{ (s[r.key]||[]).forEach(it=>{ if(refs[r.key].includes(it)) usedComp[r.key].add(it); }); }); });
+  const refs = { fonc: DB_IA.fonc.items, enj: DB_IA.enj.items, app: DB_IA.app.items, crcn: Object.values(DB_CRCN).flat(), crcnedu: Object.values(DB_CRCN_EDU).flat() };
+  const usedComp = { fonc:new Set(), enj:new Set(), app:new Set(), crcn:new Set(), crcnedu:new Set() };
+  const visR = visibleReservoirs();
+  progCur.seqs.forEach(s=>{ visR.forEach(r=>{ (s[r.key]||[]).forEach(it=>{ if(refs[r.key].includes(it)) usedComp[r.key].add(it); }); }); });
   let totalRef=0, totalUsed=0;
-  RESERVOIRS.forEach(r=>{ totalRef += refs[r.key].length; totalUsed += usedComp[r.key].size; });
+  visR.forEach(r=>{ totalRef += refs[r.key].length; totalUsed += usedComp[r.key].size; });
   const gpct = totalRef ? Math.round(totalUsed/totalRef*100) : 0;
   let ah = `<div class="cov-hdr">🧩 Compétences (${totalUsed}/${totalRef})
     <span class="cov-badge ${totalUsed===totalRef && totalRef>0?'ok':'no'}">${gpct}%</span>
   </div>`;
   const itemRow = (it,covered)=>`<div class="ci ${covered?'ok':'no'}" style="font-size:9.5px">${EC(it)}</div>`;
-  RESERVOIRS.forEach(r=>{
+  visR.forEach(r=>{
     const u = usedComp[r.key], total = refs[r.key].length;
     ah += `<div class="cov-grp">${r.emoji} ${EC(r.label)} <span class="cov-grp-n">${u.size}/${total}</span></div>`;
-    if(r.key==='crcn'){
-      Object.keys(DB_CRCN).forEach(dom=>{
-        ah += `<div class="cov-dom">${EC(dom)}</div>`;
-        ah += DB_CRCN[dom].map(it=>itemRow(it,u.has(it))).join('');
+    const db = dbForKey(r.key);
+    if(db){
+      const domColor = r.key==='crcnedu' ? 'color:#be185d' : '';
+      Object.keys(db).forEach(dom=>{
+        ah += `<div class="cov-dom" style="${domColor}">${EC(dom)}</div>`;
+        ah += db[dom].map(it=>itemRow(it,u.has(it))).join('');
       });
     } else {
       ah += refs[r.key].map(it=>itemRow(it,u.has(it))).join('');
@@ -1786,9 +1959,9 @@ function progImport(e) {
   r.onload=ev=>{
     try {
       const d=JSON.parse(ev.target.result);
-      if(d.progs){progApp=d;progSave();progRenderDash();alert('Importé avec succès !');}
-      else alert('Format invalide.');
-    } catch(err){alert('Erreur : '+err.message);}
+      if(d.progs){progApp=d;progSave();progRenderDash();customAlert('Importé avec succès !', {title:'Import JSON'});}
+      else customAlert('Format invalide.', {title:'Erreur'});
+    } catch(err){customAlert('Erreur : '+err.message, {title:'Erreur'});}
   };
   r.readAsText(f); e.target.value='';
 }
@@ -1822,6 +1995,7 @@ function progGenerateMarkdown() {
     md += sub('🔍 Identifier les enjeux des IA', s.enj);
     md += sub('📖 Apprendre avec l\'IA', s.app);
     md += sub('💻 Compétences du CRCN', s.crcn);
+    if(showCrcnEdu) md += sub('🧑‍🏫 Compétences des enseignants / enseignantes', s.crcnedu||[]);
     md += sub('➕ Items personnalisés', s.libre);
     md += '---\n\n';
   });
@@ -1848,6 +2022,7 @@ function buildProgHTML() {
     if(s.enj.length)   body+=`<div style="font-size:10pt;margin-bottom:4pt"><b style="color:#1e293b">🔍 Identifier les enjeux des IA</b><br>${chip(s.enj,'#dbeafe','#1e40af')}</div>`;
     if(s.app.length)   body+=`<div style="font-size:10pt;margin-bottom:4pt"><b style="color:#1e293b">📖 Apprendre avec l'IA</b><br>${chip(s.app,'#d1fae5','#065f46')}</div>`;
     if(s.crcn.length)  body+=`<div style="font-size:10pt;margin-bottom:4pt"><b style="color:#1e293b">💻 Compétences du CRCN</b><br>${chip(s.crcn,'#f3e8ff','#6b21a8')}</div>`;
+    if(showCrcnEdu && (s.crcnedu||[]).length) body+=`<div style="font-size:10pt;margin-bottom:4pt"><b style="color:#1e293b">🧑‍🏫 Compétences des enseignants / enseignantes</b><br>${chip(s.crcnedu,'#fce7f3','#be185d')}</div>`;
     if((s.libre||[]).length) body+=`<div style="font-size:10pt;margin-bottom:4pt"><b style="color:#1e293b">➕ Items personnalisés</b><br>${chip(s.libre,'#f1f5f9','#475569')}</div>`;
     body+='</div>';
   });
@@ -1895,19 +2070,26 @@ progLoad();
 // Migrations douces
 progApp.progs?.forEach(p=>{
   if(!p.niveaux) p.niveaux=[];
-  p.seqs?.forEach(s=>{ ['fonc','enj','app','crcn','libre'].forEach(k=>{ if(!s[k]) s[k]=[]; }); if(!s.niveau) s.niveau=(p.niveaux[0]||''); });
+  p.seqs?.forEach(s=>{ ['fonc','enj','app','crcn','crcnedu','libre'].forEach(k=>{ if(!s[k]) s[k]=[]; }); if(!s.niveau) s.niveau=(p.niveaux[0]||''); });
 });
+libApp.seqs?.forEach(s=>{ IA_KEYS.forEach(k=>{ if(!s[k]) s[k]=[]; }); });
 seaApp.seas?.forEach(s=>{
-  if(!s.objectifs) s.objectifs={fonc:[],enj:[],app:[],crcn:[]};
+  if(!s.objectifs) s.objectifs={fonc:[],enj:[],app:[],crcn:[],crcnedu:[]};
   IA_KEYS.forEach(k=>{ if(!s.objectifs[k]) s.objectifs[k]=[]; });
   if(!Array.isArray(s.supports)) s.supports = (typeof s.supports==='string'? s.supports.split('\n').map(l=>l.trim()).filter(Boolean):[]);
   if(!s.activities) s.activities=[];
 });
 
+// Appliquer le réglage CRCN-Edu sur le body
+document.body.classList.toggle('crcnedu-on', showCrcnEdu);
+
 // Affiche le tableau de bord des séquences
 seaShowSubview('home');
 seaRenderHome();
 progRenderDash();
+
+// Synchronise les checkbox CRCN-Edu avec le réglage persisté
+applyCrcnEduUI();
 </script>
 </body>
 </html>

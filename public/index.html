@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Le Séquenceur IA</title>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🦾</text></svg>">
+<title>Le Séquenceur Numérique</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💻</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Playfair+Display:wght@700;800&family=Patrick+Hand&display=swap" rel="stylesheet">
 <style>
@@ -15,7 +15,7 @@
   --accent3:#f59e0b;--accent4:#10b981;--accent5:#a855f7;
   --accent-r:#ef4444;--accent-y:#eab308;
   --ok:#22c55e;--miss:rgba(239,68,68,0.15);--ok-bg:rgba(34,197,94,0.12);
-  --r-fonc:#eab308;--r-enj:#3b82f6;--r-app:#10b981;--r-crcn:#a855f7;--r-crcnedu:#ec4899;
+  --r-fonc:#eab308;--r-enj:#3b82f6;--r-app:#10b981;--r-crcn:#a855f7;--r-crcnedu:#ec4899;--r-pdeg:#f97316;
   --radius:14px;--radius-sm:8px;
 }
 [data-theme="light"]{
@@ -89,6 +89,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 .ba.app{background:linear-gradient(135deg,var(--r-app),#059669)}
 .ba.crcn{background:linear-gradient(135deg,var(--r-crcn),#7e22ce)}
 .ba.crcnedu{background:linear-gradient(135deg,var(--r-crcnedu),#be185d)}
+.ba.pdeg{background:linear-gradient(135deg,var(--r-pdeg),#c2410c)}
 .ba.gray{background:linear-gradient(135deg,#64748b,#475569)}
 
 .added-tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px}
@@ -100,12 +101,14 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 .tag.app{background:rgba(16,185,129,0.16);color:#6ee7b7}
 .tag.crcn{background:rgba(168,85,247,0.16);color:#d8b4fe}
 .tag.crcnedu{background:rgba(236,72,153,0.16);color:#f9a8d4}
+.tag.pdeg{background:rgba(249,115,22,0.16);color:#fdba74}
 .tag.gray{background:rgba(100,116,139,0.16);color:#cbd5e1}
 [data-theme="light"] .tag.fonc{background:rgba(234,179,8,0.12);color:#a16207}
 [data-theme="light"] .tag.enj{background:rgba(59,130,246,0.12);color:#1d4ed8}
 [data-theme="light"] .tag.app{background:rgba(16,185,129,0.12);color:#047857}
 [data-theme="light"] .tag.crcn{background:rgba(168,85,247,0.12);color:#7e22ce}
 [data-theme="light"] .tag.crcnedu{background:rgba(236,72,153,0.12);color:#be185d}
+[data-theme="light"] .tag.pdeg{background:rgba(249,115,22,0.12);color:#c2410c}
 [data-theme="light"] .tag.gray{background:rgba(100,116,139,0.12);color:#475569}
 @keyframes tagIn{from{opacity:0;transform:scale(.8)}to{opacity:1;transform:scale(1)}}
 
@@ -210,14 +213,16 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 .chip.fonc{background:rgba(234,179,8,0.12);color:#fde047}.chip.enj{background:rgba(59,130,246,0.12);color:#93c5fd}
 .chip.app{background:rgba(16,185,129,0.12);color:#6ee7b7}.chip.crcn{background:rgba(168,85,247,0.12);color:#d8b4fe}
 .chip.crcnedu{background:rgba(236,72,153,0.12);color:#f9a8d4}
+.chip.pdeg{background:rgba(249,115,22,0.12);color:#fdba74}
 .chip.gray{background:rgba(100,116,139,0.12);color:#cbd5e1}
 [data-theme="light"] .chip.fonc{color:#a16207}[data-theme="light"] .chip.enj{color:#1d4ed8}
-[data-theme="light"] .chip.app{color:#047857}[data-theme="light"] .chip.crcn{color:#7e22ce}[data-theme="light"] .chip.crcnedu{color:#be185d}[data-theme="light"] .chip.gray{color:#475569}
+[data-theme="light"] .chip.app{color:#047857}[data-theme="light"] .chip.crcn{color:#7e22ce}[data-theme="light"] .chip.crcnedu{color:#be185d}[data-theme="light"] .chip.pdeg{color:#c2410c}[data-theme="light"] .chip.gray{color:#475569}
 .a4-list.crcnedu li::before{color:#ec4899}
-/* Visibilité du référentiel CRCN-Edu : caché par défaut, affiché si body.crcnedu-on */
-.crcnedu-only{display:none!important}
-body.crcnedu-on .crcnedu-only{display:block!important}
-body.crcnedu-on .crcnedu-only.fg{display:block!important}
+.a4-list.pdeg li::before{color:#f97316}
+/* Visibilité des référentiels optionnels : cachés par défaut, affichés si body.{ia,pdeg}-on */
+.ia-only,.pdeg-only{display:none!important}
+body.ia-on .ia-only{display:block!important}
+body.pdeg-on .pdeg-only{display:block!important}
 .form-acts{display:flex;justify-content:flex-end;gap:8px;margin-top:12px;padding-top:12px;border-top:1px solid var(--border)}
 .title-err{border-color:var(--accent-r)!important;box-shadow:0 0 0 3px rgba(239,68,68,0.2)!important}
 .empty{text-align:center;padding:50px 20px;color:var(--text-muted)}
@@ -318,15 +323,15 @@ body.crcnedu-on .crcnedu-only.fg{display:block!important}
 
 <header class="hdr">
   <div class="logo">
-    <div class="logo-ico">🦾</div>
+    <div class="logo-ico">💻</div>
     <div>
-      <div class="logo-txt">Le Séquenceur IA</div>
-      <div class="logo-sub">Éducation à l'IA</div>
+      <div class="logo-txt">Le Séquenceur Numérique</div>
+      <div class="logo-sub">Éducation au Numérique</div>
     </div>
   </div>
   <div class="nav-tabs">
     <button class="nav-tab active" onclick="switchView('seq',this)">📝 Séquenceur</button>
-    <button class="nav-tab" onclick="switchView('prog',this)">🎯 Progression</button>
+    <button class="nav-tab" onclick="switchView('cal',this)">📅 Calendrier</button>
   </div>
   <div class="hdr-actions">
     <div class="neo-toggle" id="neo-toggle" onclick="toggleTheme()">
@@ -345,7 +350,7 @@ body.crcnedu-on .crcnedu-only.fg{display:block!important}
     <div class="dash">
       <div class="dash-head" style="margin-bottom:20px">
         <div>
-          <h1 class="dash-title">Mes Séquences IA</h1>
+          <h1 class="dash-title">Mes Séquences</h1>
           <p class="dash-sub">Chaque séquence regroupe directement ses séances. Cliquez sur une séquence pour les gérer.</p>
         </div>
         <button class="btn btn-green" onclick="openNewSeq()">＋ Nouvelle séquence</button>
@@ -362,9 +367,10 @@ body.crcnedu-on .crcnedu-only.fg{display:block!important}
         <h1 class="dash-title" id="sea-list-title" style="margin-bottom:0">Séances</h1>
       </div>
       <div class="seqmeta-bar" style="background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:16px 18px;margin-bottom:18px;display:grid;grid-template-columns:1fr 150px 130px auto;gap:10px;align-items:end">
-        <div><label class="fl">Titre de la séquence</label><input class="fi" id="seqmeta-title" placeholder="Ex : Séquence IA 6ème" oninput="seqMetaChg('title',this.value)"></div>
+        <div><label class="fl">Titre de la séquence</label><input class="fi" id="seqmeta-title" placeholder="Ex : Séquence 6ème" oninput="seqMetaChg('title',this.value)"></div>
         <div><label class="fl">Niveau</label><select class="fs" id="seqmeta-niv" onchange="seqMetaChg('niveau',this.value)">
           <option value="">—</option>
+          <optgroup label="1er degré"><option>Cycle 1</option><option>Cycle 2</option><option>Cycle 3</option></optgroup>
           <optgroup label="Collège"><option>6ème</option><option>5ème</option><option>4ème</option><option>3ème</option></optgroup>
           <optgroup label="Lycée"><option>Seconde</option><option>Première</option><option>Terminale</option></optgroup>
           <optgroup label="Enseignants"><option>Enseignants</option></optgroup>
@@ -448,6 +454,43 @@ body.crcnedu-on .crcnedu-only.fg{display:block!important}
           </p>
 
           <div class="fg" style="margin-bottom:10px">
+            <label class="fl" style="color:var(--r-crcn);font-size:10px">💻 Compétences du CRCN</label>
+            <div id="sea-crcn-list" style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:6px"></div>
+            <div class="swa">
+              <select class="fs" id="sea-crcn-dom" style="font-size:12px" onchange="seaCrcnDom()"><option value="">— Choisir un domaine —</option></select>
+            </div>
+            <div class="swa" style="margin-top:4px">
+              <select class="fs" id="sea-crcn-sel" style="font-size:12px"><option value="">— Choisir un domaine d'abord —</option></select>
+              <button class="ba crcn" onclick="seaAddFromSelect('crcn','sea-crcn-sel')">+</button>
+            </div>
+          </div>
+
+          <div class="fg" style="margin-bottom:10px">
+            <label class="fl" style="color:var(--r-crcnedu);font-size:10px">🧑‍🏫 Compétences des enseignants / enseignantes</label>
+            <div id="sea-crcnedu-list" style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:6px"></div>
+            <div class="swa">
+              <select class="fs" id="sea-crcnedu-dom" style="font-size:12px" onchange="seaCrcnEduDom()"><option value="">— Choisir un domaine —</option></select>
+            </div>
+            <div class="swa" style="margin-top:4px">
+              <select class="fs" id="sea-crcnedu-sel" style="font-size:12px"><option value="">— Choisir un domaine d'abord —</option></select>
+              <button class="ba crcnedu" onclick="seaAddFromSelect('crcnedu','sea-crcnedu-sel')">+</button>
+            </div>
+          </div>
+
+          <!-- Toggles des référentiels optionnels -->
+          <div style="margin:14px 0 0;padding-top:12px;border-top:1px dashed var(--border);display:flex;flex-direction:column;gap:8px">
+            <label style="display:flex;gap:10px;align-items:flex-start;cursor:pointer;padding:8px 10px;background:var(--panel);border-radius:8px;border:1px solid var(--border);transition:border-color .2s" onmouseover="this.style.borderColor='var(--r-fonc)'" onmouseout="this.style.borderColor='var(--border)'">
+              <input type="checkbox" id="set-ia-inline" onchange="setShowIA(this.checked);applyOptRefsUI()" style="margin-top:3px;width:16px;height:16px;cursor:pointer;flex-shrink:0">
+              <span style="font-size:11px;line-height:1.5;color:var(--text)"><b style="color:var(--r-fonc)">🦾 Ajouter les compétences IA</b> — affiche les trois axes Fonctionnement / Enjeux / Apprendre (Progression IA DRANE, 30 items).</span>
+            </label>
+            <label style="display:flex;gap:10px;align-items:flex-start;cursor:pointer;padding:8px 10px;background:var(--panel);border-radius:8px;border:1px solid var(--border);transition:border-color .2s" onmouseover="this.style.borderColor='var(--r-pdeg)'" onmouseout="this.style.borderColor='var(--border)'">
+              <input type="checkbox" id="set-pdeg-inline" onchange="setShowPremierDegre(this.checked);applyOptRefsUI()" style="margin-top:3px;width:16px;height:16px;cursor:pointer;flex-shrink:0">
+              <span style="font-size:11px;line-height:1.5;color:var(--text)"><b style="color:var(--r-pdeg)">🎨 Ajouter le numérique au 1<sup>er</sup> degré</b> — affiche les compétences ciblées du numérique pour le 1<sup>er</sup> degré.</span>
+            </label>
+          </div>
+
+          <!-- Trois axes IA (visibles si toggle IA activé) -->
+          <div class="fg ia-only" style="margin-bottom:10px;margin-top:14px">
             <label class="fl" style="color:var(--r-fonc);font-size:10px">⚙️ Savoir comment fonctionnent les IA</label>
             <div id="sea-fonc-list" style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:6px"></div>
             <div class="swa">
@@ -460,7 +503,7 @@ body.crcnedu-on .crcnedu-only.fg{display:block!important}
             </div>
           </div>
 
-          <div class="fg" style="margin-bottom:10px">
+          <div class="fg ia-only" style="margin-bottom:10px">
             <label class="fl" style="color:var(--r-enj);font-size:10px">🔍 Identifier les enjeux des IA</label>
             <div id="sea-enj-list" style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:6px"></div>
             <div class="swa">
@@ -473,7 +516,7 @@ body.crcnedu-on .crcnedu-only.fg{display:block!important}
             </div>
           </div>
 
-          <div class="fg" style="margin-bottom:10px">
+          <div class="fg ia-only" style="margin-bottom:10px">
             <label class="fl" style="color:var(--r-app);font-size:10px">📖 Apprendre avec l'IA</label>
             <div id="sea-app-list" style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:6px"></div>
             <div class="swa">
@@ -486,35 +529,16 @@ body.crcnedu-on .crcnedu-only.fg{display:block!important}
             </div>
           </div>
 
-          <div class="fg" style="margin-bottom:0">
-            <label class="fl" style="color:var(--r-crcn);font-size:10px">💻 Compétences du CRCN</label>
-            <div id="sea-crcn-list" style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:6px"></div>
+          <!-- Numérique au 1er degré (visible si toggle 1er degré activé) -->
+          <div class="fg pdeg-only" style="margin-bottom:0">
+            <label class="fl" style="color:var(--r-pdeg);font-size:10px">🎨 Numérique au 1<sup>er</sup> degré</label>
+            <div id="sea-pdeg-list" style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:6px"></div>
             <div class="swa">
-              <select class="fs" id="sea-crcn-dom" style="font-size:12px" onchange="seaCrcnDom()"><option value="">— Choisir un domaine —</option></select>
+              <select class="fs" id="sea-pdeg-dom" style="font-size:12px" onchange="seaPdegDom()"><option value="">— Choisir un domaine —</option></select>
             </div>
             <div class="swa" style="margin-top:4px">
-              <select class="fs" id="sea-crcn-sel" style="font-size:12px"><option value="">— Choisir un domaine d'abord —</option></select>
-              <button class="ba crcn" onclick="seaAddFromSelect('crcn','sea-crcn-sel')">+</button>
-            </div>
-          </div>
-
-          <!-- Toggle d'activation du CRCN-Edu -->
-          <div style="margin:14px 0 0;padding-top:12px;border-top:1px dashed var(--border)">
-            <label style="display:flex;gap:10px;align-items:flex-start;cursor:pointer;padding:8px 10px;background:var(--panel);border-radius:8px;border:1px solid var(--border);transition:border-color .2s" onmouseover="this.style.borderColor='var(--r-crcnedu)'" onmouseout="this.style.borderColor='var(--border)'">
-              <input type="checkbox" id="set-crcnedu-inline" onchange="setShowCrcnEdu(this.checked);applyCrcnEduUI()" style="margin-top:3px;width:16px;height:16px;cursor:pointer;flex-shrink:0">
-              <span style="font-size:11px;line-height:1.5;color:var(--text)"><b style="color:var(--r-crcnedu)">🧑‍🏫 Ajouter les compétences des enseignants / enseignantes</b> — affiche un 5<sup>e</sup> référentiel : les compétences numériques professionnelles des enseignants (CRCN-Edu, 16 compétences).</span>
-            </label>
-          </div>
-
-          <div class="fg crcnedu-only" style="margin-bottom:0;margin-top:10px">
-            <label class="fl" style="color:var(--r-crcnedu);font-size:10px">🧑‍🏫 Compétences des enseignants / enseignantes</label>
-            <div id="sea-crcnedu-list" style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:6px"></div>
-            <div class="swa">
-              <select class="fs" id="sea-crcnedu-dom" style="font-size:12px" onchange="seaCrcnEduDom()"><option value="">— Choisir un domaine —</option></select>
-            </div>
-            <div class="swa" style="margin-top:4px">
-              <select class="fs" id="sea-crcnedu-sel" style="font-size:12px"><option value="">— Choisir un domaine d'abord —</option></select>
-              <button class="ba crcnedu" onclick="seaAddFromSelect('crcnedu','sea-crcnedu-sel')">+</button>
+              <select class="fs" id="sea-pdeg-sel" style="font-size:12px"><option value="">— Choisir un domaine d'abord —</option></select>
+              <button class="ba pdeg" onclick="seaAddFromSelect('pdeg','sea-pdeg-sel')">+</button>
             </div>
           </div>
         </details>
@@ -576,87 +600,23 @@ body.crcnedu-on .crcnedu-only.fg{display:block!important}
 </div>
 
 <!-- ══════════════════════════════════════ -->
-<!-- VUE 3 : PROGRESSION                   -->
+<!-- VUE 2 : CALENDRIER (à venir)           -->
 <!-- ══════════════════════════════════════ -->
-<div id="view-prog" class="app-view">
-  <!-- Dashboard -->
-  <div id="prog-dash" style="width:100%;overflow-y:auto">
-    <div class="dash">
-      <h1 class="dash-title">Mes Progressions IA</h1>
-      <p class="dash-sub">Construisez vos progressions d'éducation à l'IA sur un ou plusieurs niveaux.</p>
-      <div style="margin-bottom:20px;display:flex;gap:8px">
-        <button class="btn btn-ghost" onclick="document.getElementById('prog-imp').click()">📥 Importer JSON</button>
-        <input type="file" id="prog-imp" accept=".json" style="display:none" onchange="progImport(event)">
-      </div>
-      <div class="grid" id="prog-grid"></div>
-    </div>
-  </div>
-
-  <!-- Éditeur -->
-  <div id="prog-editor" style="display:none;width:100%;height:100%">
-    <div class="prog-layout">
-      <!-- Tracker haut (paramètres + périmètre) -->
-      <div class="tracker tracker-top">
-        <div class="trk-title">Paramètres</div>
-        <div class="fg">
-          <label class="fl">Intitulé / classe</label>
-          <input class="fi" id="p-title" placeholder="Ex : EMI 5e — Groupe A" onchange="progChg('title',this.value)">
-        </div>
-        <div class="fg">
-          <label class="fl">Année scolaire</label>
-          <input class="fi" id="p-yr" placeholder="2025-2026" onchange="progChg('annee',this.value)">
-        </div>
-
-        <div class="trk-title" style="margin-top:8px">Périmètre — niveaux couverts</div>
-        <div class="niv-shortcuts" id="p-niv-shortcuts"></div>
-        <div class="niv-checks" id="p-niv-checks"></div>
-
-        <div class="prog-info-box">
-          <b>💡 Une séquence est un projet pédagogique</b> étalé sur tout ou partie de l'année, composée d'une ou plusieurs séances. Elle peut être structurée autour d'un projet final ou simplement servir de fil rouge — c'est vous qui décidez.
-        </div>
-      </div>
-
-      <!-- Timeline droite -->
-      <div class="timeline" id="p-timeline">
-        <div class="tl-top">
-          <div class="tl-top-left">
-            <button class="btn-back" onclick="progBackToDash()">← Retour</button>
-            <div class="tl-title">
-              <span id="p-d-title">Progression</span>
-            </div>
-          </div>
-          <div class="tl-top-right">
-            <button class="btn btn-violet btn-sm" onclick="progExpJSON()">📤 JSON</button>
-            <button class="btn btn-violet btn-sm" onclick="progMarkdownPreview()">📋 Markdown</button>
-            <button class="btn btn-blue btn-sm" onclick="progTextExport()">📝 Texte</button>
-            <button class="btn btn-green btn-sm" onclick="progExpPDF()">📄 PDF</button>
-          </div>
-        </div>
-        <div class="print-hdr">
-          <h1>Ma Progression — Éducation à l'IA</h1>
-          <div class="pm"><span id="p-pr-title"></span> — <span id="p-pr-yr"></span></div>
-        </div>
-        <div id="p-sl"></div>
-        <button class="btn btn-ghost" style="width:100%;padding:14px;margin-top:14px;border:2px dashed var(--border);font-size:13px" onclick="progAddSeq()">＋ Ajouter une Séquence</button>
-        <div class="prog-print-footer">Le Séquenceur IA - Charlie Rollo - Items issus de la <a href="https://drane-ile-de-france.forge.apps.education.fr/progression_ia/" target="_blank">Progression IA</a> Drane Île-de-France</div>
-      </div>
-
-      <!-- Tracker bas (couvertures) -->
-      <div class="tracker tracker-bottom">
-        <div class="trk-title">Couverture des niveaux</div>
-        <div class="prog-wrap"><div class="prog-fill" id="p-bar" style="width:0%"></div></div>
-        <div class="prog-lbl" id="p-lbl">—</div>
-        <div id="p-cov-niv"></div>
-        <div class="trk-title" style="margin-top:8px">Couverture des compétences</div>
-        <div id="p-cov-axes"></div>
-      </div>
-    </div>
+<div id="view-cal" class="app-view">
+  <div class="dash" style="text-align:center;padding-top:80px">
+    <div style="font-size:64px;margin-bottom:18px">📅</div>
+    <h1 class="dash-title">Calendrier</h1>
+    <p class="dash-sub" style="max-width:520px;margin:8px auto 0">
+      Le module Calendrier est en cours de développement. Il permettra de placer les dates des séances individuelles sur l'année scolaire (août → juillet),
+      avec les zones de vacances A / B / C, les jours fériés, les samedis activables, et la possibilité de programmer des séances pendant les vacances (cas universitaires).
+    </p>
+    <p style="margin-top:24px;font-size:12px;color:var(--text-muted)">Disponible dans une prochaine version.</p>
   </div>
 </div>
 
 <footer class="app-footer">
   <div class="footer-brand">
-    <span>🦾</span>
+    <span>💻</span>
     <a href="https://forge.apps.education.fr/lelabodecharlie/le-sequenceur-ia/-/blob/main/CHANGELOG?ref_type=heads" target="_blank" rel="noopener">Le Séquenceur IA</a>
     <span>par</span>
     <a href="mailto:charlie.rollo@ac-versailles.fr">Charlie Rollo</a>
@@ -677,12 +637,20 @@ body.crcnedu-on .crcnedu-only.fg{display:block!important}
   <div class="modal" onclick="event.stopPropagation()">
     <button class="modal-x" onclick="closeModal('m-settings')">✕</button>
     <h2>⚙ Réglages</h2>
-    <div style="font-size:13px;color:var(--text);line-height:1.6">
+    <p style="font-size:12.5px;color:var(--text-muted);line-height:1.55;text-align:center;margin-bottom:14px">Le CRCN et les Compétences des enseignants / enseignantes sont toujours visibles. Activez ci-dessous les référentiels optionnels.</p>
+    <div style="font-size:13px;color:var(--text);line-height:1.6;display:flex;flex-direction:column;gap:10px">
       <label style="display:flex;gap:12px;align-items:flex-start;padding:14px;background:var(--card);border-radius:10px;cursor:pointer;border:1px solid var(--border);transition:border-color .2s">
-        <input type="checkbox" id="set-crcnedu" onchange="setShowCrcnEdu(this.checked);applyCrcnEduUI()" style="margin-top:2px;width:18px;height:18px;cursor:pointer">
+        <input type="checkbox" id="set-ia" onchange="setShowIA(this.checked);applyOptRefsUI()" style="margin-top:2px;width:18px;height:18px;cursor:pointer">
         <div style="flex:1">
-          <div style="font-weight:700;color:var(--text);margin-bottom:4px">🧑‍🏫 Afficher les compétences des enseignants / enseignantes</div>
-          <div style="font-size:12px;color:var(--text-muted);line-height:1.55">Ajoute un cinquième référentiel : les 16 compétences numériques professionnelles des enseignants (CRCN-Edu). Apparaît dans l'éditeur de séance et la couverture de la progression.</div>
+          <div style="font-weight:700;color:var(--text);margin-bottom:4px">🦾 Compétences IA</div>
+          <div style="font-size:12px;color:var(--text-muted);line-height:1.55">Affiche les trois axes de la <a href="https://drane-ile-de-france.forge.apps.education.fr/progression_ia/" target="_blank" style="color:var(--accent)">Progression IA DRANE</a> : Savoir comment fonctionnent les IA, Identifier les enjeux, Apprendre avec l'IA (30 items).</div>
+        </div>
+      </label>
+      <label style="display:flex;gap:12px;align-items:flex-start;padding:14px;background:var(--card);border-radius:10px;cursor:pointer;border:1px solid var(--border);transition:border-color .2s">
+        <input type="checkbox" id="set-pdeg" onchange="setShowPremierDegre(this.checked);applyOptRefsUI()" style="margin-top:2px;width:18px;height:18px;cursor:pointer">
+        <div style="flex:1">
+          <div style="font-weight:700;color:var(--text);margin-bottom:4px">🎨 Numérique au 1<sup>er</sup> degré</div>
+          <div style="font-size:12px;color:var(--text-muted);line-height:1.55">Affiche les compétences ciblées du numérique pour le 1<sup>er</sup> degré (cycles 1, 2, 3).</div>
         </div>
       </label>
     </div>
@@ -702,12 +670,13 @@ body.crcnedu-on .crcnedu-only.fg{display:block!important}
 <div id="m-new-seq" class="modal-bg" onclick="closeModal('m-new-seq')">
   <div class="modal" onclick="event.stopPropagation()">
     <button class="modal-x" onclick="closeModal('m-new-seq')">✕</button>
-    <h2>Nouvelle Séquence IA</h2>
+    <h2>Nouvelle séquence</h2>
     <div class="fg">
       <label class="fl">1. Niveau <span style="color:var(--accent-r)">*</span></label>
       <select class="fs" id="ns-niv">
         <option value="">— Choisir —</option>
-        <optgroup label="Collège"><option>6ème</option><option>5ème</option><option>4ème</option><option>3ème</option></optgroup>
+        <optgroup label="1er degré"><option>Cycle 1</option><option>Cycle 2</option><option>Cycle 3</option></optgroup>
+          <optgroup label="Collège"><option>6ème</option><option>5ème</option><option>4ème</option><option>3ème</option></optgroup>
         <optgroup label="Lycée"><option>Seconde</option><option>Première</option><option>Terminale</option></optgroup>
           <optgroup label="Enseignants"><option>Enseignants</option></optgroup>
       </select>
@@ -724,27 +693,6 @@ body.crcnedu-on .crcnedu-only.fg{display:block!important}
   </div>
 </div>
 
-<!-- Modal : Nouvelle progression -->
-<div id="m-new-prog" class="modal-bg" onclick="closeModal('m-new-prog')">
-  <div class="modal" onclick="event.stopPropagation()">
-    <button class="modal-x" onclick="closeModal('m-new-prog')">✕</button>
-    <h2>Nouvelle Progression IA</h2>
-    <div class="fg">
-      <label class="fl">1. Intitulé / classe</label>
-      <input class="fi" id="np-title" placeholder="Ex : EMI 5e — Groupe A">
-    </div>
-    <div class="fg">
-      <label class="fl">2. Périmètre des niveaux</label>
-      <div class="niv-shortcuts" id="np-niv-shortcuts"></div>
-      <div class="niv-checks" id="np-niv-checks"></div>
-    </div>
-    <div class="fg">
-      <label class="fl">3. Année (optionnel)</label>
-      <input class="fi" id="np-yr" placeholder="2025-2026">
-    </div>
-    <button class="btn btn-green" style="width:100%;padding:13px;font-size:13px;margin-top:8px" onclick="progCreate()">🚀 Créer</button>
-  </div>
-</div>
 
 <!-- Modal : Choix format texte -->
 <div id="m-text-format" class="modal-bg" onclick="closeModal('m-text-format')">
@@ -824,11 +772,17 @@ function renderIllustration(url, shape){
 // ================================================================
 // DONNÉES
 // ================================================================
-const NIVEAUX = ["6ème","5ème","4ème","3ème","Seconde","Première","Terminale","Enseignants"];
+const NIVEAUX = ["Cycle 1","Cycle 2","Cycle 3","6ème","5ème","4ème","3ème","Seconde","Première","Terminale","Enseignants"];
+const PREMIER_DEGRE = ["Cycle 1","Cycle 2","Cycle 3"];
 const COLLEGE = ["6ème","5ème","4ème","3ème"];
 const LYCEE   = ["Seconde","Première","Terminale"];
-const SEA_NIV_GROUP = {"6ème":"Collège","5ème":"Collège","4ème":"Collège","3ème":"Collège","Seconde":"Lycée","Première":"Lycée","Terminale":"Lycée","Enseignants":"Enseignants"};
-const SEA_NIV_EMOJI = {"Collège":"🎒","Lycée":"🎓","Enseignants":"🧑‍🏫"};
+const SEA_NIV_GROUP = {
+  "Cycle 1":"1er degré","Cycle 2":"1er degré","Cycle 3":"1er degré",
+  "6ème":"Collège","5ème":"Collège","4ème":"Collège","3ème":"Collège",
+  "Seconde":"Lycée","Première":"Lycée","Terminale":"Lycée",
+  "Enseignants":"Enseignants"
+};
+const SEA_NIV_EMOJI = {"1er degré":"🎨","Collège":"🎒","Lycée":"🎓","Enseignants":"🧑‍🏫"};
 
 const DB_IA = {
   fonc: { label:"Savoir comment fonctionnent les IA", items:[
@@ -886,26 +840,141 @@ const DB_CRCN_EDU = {
   "5. Compétences numériques des apprenants":["5.1. Développer les compétences numériques des apprenants","5.2. Évaluer et certifier"]
 };
 
+// ── Numérique au 1er degré — compétences ciblées par cycle ──
+// Sources : programmes officiels de l'école maternelle (cycle 1) et de l'école élémentaire (cycles 2 et 3).
+// Items marqués 📌 = attendus de fin de cycle.
+const DB_PREMIER_DEGRE = {
+  // ════ CYCLE 1 ════
+  "Cycle 1 — Langage et écrit":[
+    "Découvrir la fonction de l'écrit via des messages électroniques ou téléphoniques",
+    "Tracer des écritures à la main et au traitement de texte",
+    "Saisir en binôme des mots, phrases et textes courts sur ordinateur",
+    "Aménager un coin écriture (ordinateur, imprimante, tablette, stylets)",
+    "📌 Attendu fin de cycle : copier à l'aide d'un clavier"
+  ],
+  "Cycle 1 — Activités artistiques":[
+    "Découvrir les arts numériques",
+    "Expérimenter différents outils, du crayon à la palette graphique",
+    "Rencontrer des œuvres sous forme de films ou captations vidéo"
+  ],
+  "Cycle 1 — Explorer le monde":[
+    "Produire des images avec l'appareil photographique numérique",
+    "Manipuler une souris d'ordinateur, agir sur une tablette numérique",
+    "Mener des recherches d'informations sur Internet avec l'enseignant",
+    "Comprendre l'idée d'un monde en réseau permettant la communication à distance",
+    "📌 Attendu fin de cycle : utiliser des objets numériques (appareil photo, tablette, ordinateur)"
+  ],
+  "Cycle 1 — EMI":[
+    "Découvrir différentes formes d'information : écrite, sonore, iconographique, multimédia",
+    "Caractériser des images fixes et animées",
+    "Distinguer le réel de sa représentation",
+    "S'initier à la recherche d'informations sur des supports adaptés"
+  ],
+  // ════ CYCLE 2 ════
+  "Cycle 2 — Langage et écrit":[
+    "Écouter des documents audio brefs et reformuler l'essentiel",
+    "Utiliser un dictionnaire numérique pour élucider le sens des mots",
+    "Soutenir la production d'écrits par des outils numériques (maths, sciences)"
+  ],
+  "Cycle 2 — Mathématiques":[
+    "CP — Programmer des déplacements sur tapis quadrillé (max. 10 instructions, 2 virages)",
+    "CE1 — Programmer des déplacements sur tapis quadrillé (max. 15 instructions, 4 virages)",
+    "Modéliser des données en tableaux à double entrée ou diagrammes en barres",
+    "📌 Précision : la calculatrice n'est pas utilisée au cycle 2, sauf dérogation"
+  ],
+  "Cycle 2 — Explorer le monde":[
+    "Consulter des photographies aériennes en ligne pour représenter l'espace"
+  ],
+  "Cycle 2 — EMI":[
+    "Poursuivre l'exploration des formes d'information (écrite, sonore, multimédia)",
+    "Réfléchir aux stéréotypes dans les médias (CE1)",
+    "S'initier à la construction de l'information comme intérêt général (CE2)",
+    "Réaliser des recherches raisonnées sur des supports adaptés à son âge"
+  ],
+  "Cycle 2 — Numérique raisonné":[
+    "Respecter l'intimité et la vie privée, notamment dans l'usage de l'ENT"
+  ],
+  // ════ CYCLE 3 ════
+  "Cycle 3 — Langage et écrit":[
+    "Utiliser le clavier et le traitement de texte pour gagner en rapidité et qualité",
+    "Recourir aux correcteurs orthographiques et dictionnaires en ligne",
+    "S'enregistrer en audio ou vidéo pour améliorer sa prestation orale",
+    "Présenter à l'oral en s'appuyant sur des diaporamas",
+    "Lire des documents numériques avec hyperliens et supports composites"
+  ],
+  "Cycle 3 — Mathématiques":[
+    "Utiliser des logiciels de géométrie dynamique",
+    "S'initier à la programmation de déplacements (robots, personnages à l'écran)",
+    "Utiliser des logiciels de calcul et tableurs (nombres, suites)",
+    "Utiliser la calculatrice pour vérifier un résultat ou traiter des données complexes"
+  ],
+  "Cycle 3 — Activités artistiques":[
+    "Travailler l'image avec des outils numériques (photo, vidéo, création)",
+    "Modifier le sens d'images existantes via des outils numériques",
+    "Rechercher des informations artistiques en ligne",
+    "Manipuler des objets sonores avec des outils informatiques simples",
+    "Critiquer des enregistrements des productions de la classe",
+    "Modéliser numériquement des formes architecturales ou picturales"
+  ],
+  "Cycle 3 — Sciences et technologie":[
+    "Connaître l'organisation d'un environnement numérique et ses périphériques",
+    "Programmer des objets techniques en langage par blocs (ex : Scratch)",
+    "Communiquer des résultats, traiter des données de capteurs, simuler des phénomènes",
+    "Réfléchir au fonctionnement d'Internet et à ses infrastructures matérielles",
+    "Constater les inégalités d'accès au numérique dans le monde"
+  ],
+  "Cycle 3 — EMI":[
+    "Interroger l'origine et la fiabilité des informations en ligne",
+    "Distinguer connaissances scientifiques, opinions et croyances",
+    "Aborder le civisme numérique et la protection de la vie privée (droit à l'image, à l'intimité)",
+    "Identifier les risques liés aux réseaux sociaux",
+    "Découvrir la liberté d'expression et les enjeux de la désinformation"
+  ],
+  "Cycle 3 — Numérique raisonné":[
+    "Connaître le dispositif « Portable en pause »",
+    "Adapter le temps d'écran à son âge et aux recommandations scientifiques",
+    "Connaître le droit à la déconnexion (ENT suspendus le soir et le week-end)",
+    "Connaître la majorité numérique (15 ans) et l'interdiction des réseaux sociaux avant 13 ans",
+    "Respecter la charte d'usage du numérique de l'établissement",
+    "Travailler les traces numériques, la réputation en ligne, la protection des données personnelles",
+    "Envisager la sobriété numérique (consommation énergétique des serveurs, applications)"
+  ]
+};
+
 // Référentiels (clé interne → libellé officiel + emoji + classe)
 const RESERVOIRS = [
+  { key:'crcn',    cls:'crcn',    emoji:'💻',  label:"Compétences du CRCN" },
+  { key:'crcnedu', cls:'crcnedu', emoji:'🧑‍🏫', label:"Compétences des enseignants / enseignantes" },
   { key:'fonc',    cls:'fonc',    emoji:'⚙️',  label:"Savoir comment fonctionnent les IA" },
   { key:'enj',     cls:'enj',     emoji:'🔍',  label:"Identifier les enjeux des IA" },
   { key:'app',     cls:'app',     emoji:'📖',  label:"Apprendre avec l'IA" },
-  { key:'crcn',    cls:'crcn',    emoji:'💻',  label:"Compétences du CRCN" },
-  { key:'crcnedu', cls:'crcnedu', emoji:'🧑‍🏫', label:"Compétences des enseignants / enseignantes" }
+  { key:'pdeg',    cls:'pdeg',    emoji:'🎨',  label:"Numérique au 1er degré" }
 ];
-const IA_KEYS = ['fonc','enj','app','crcn','crcnedu'];
+const IA_KEYS = ['fonc','enj','app','crcn','crcnedu','pdeg'];
 
-// Réglage : afficher le référentiel CRCN-Edu (caché par défaut)
-let showCrcnEdu = false;
-try { showCrcnEdu = localStorage.getItem('sqia-show-crcnedu') === 'true'; } catch(e) {}
-function setShowCrcnEdu(v){
-  showCrcnEdu = !!v;
-  try { localStorage.setItem('sqia-show-crcnedu', showCrcnEdu?'true':'false'); } catch(e) {}
-  document.body.classList.toggle('crcnedu-on', showCrcnEdu);
+// Réglages : référentiels optionnels (cachés par défaut)
+let showIA = false;
+let showPremierDegre = false;
+try { showIA = localStorage.getItem('sqia-show-ia') === 'true'; } catch(e) {}
+try { showPremierDegre = localStorage.getItem('sqia-show-pdeg') === 'true'; } catch(e) {}
+function setShowIA(v){
+  showIA = !!v;
+  try { localStorage.setItem('sqia-show-ia', showIA?'true':'false'); } catch(e) {}
+  document.body.classList.toggle('ia-on', showIA);
 }
-// Liste des référentiels visibles selon le réglage
-function visibleReservoirs(){ return RESERVOIRS.filter(r => r.key!=='crcnedu' || showCrcnEdu); }
+function setShowPremierDegre(v){
+  showPremierDegre = !!v;
+  try { localStorage.setItem('sqia-show-pdeg', showPremierDegre?'true':'false'); } catch(e) {}
+  document.body.classList.toggle('pdeg-on', showPremierDegre);
+}
+// Liste des référentiels visibles selon les réglages
+function visibleReservoirs(){
+  return RESERVOIRS.filter(r => {
+    if(r.key==='fonc' || r.key==='enj' || r.key==='app') return showIA;
+    if(r.key==='pdeg') return showPremierDegre;
+    return true; // crcn, crcnedu toujours visibles
+  });
+}
 
 // Retrouve le domaine d'une compétence dans un référentiel groupé par domaine (CRCN, CRCN-Edu…)
 function domaineOf(item, db){ for(const d in db){ if(db[d].includes(item)) return d; } return ''; }
@@ -921,7 +990,7 @@ function groupByDomaine(items, db){
 function crcnDomaineOf(item){ return domaineOf(item, DB_CRCN); }
 function crcnGroupByDomaine(items){ return groupByDomaine(items, DB_CRCN); }
 // Renvoie la base de données associée à une clé de référentiel (ou null)
-function dbForKey(key){ return key==='crcn'?DB_CRCN : key==='crcnedu'?DB_CRCN_EDU : null; }
+function dbForKey(key){ return key==='crcn'?DB_CRCN : key==='crcnedu'?DB_CRCN_EDU : key==='pdeg'?DB_PREMIER_DEGRE : null; }
 
 // Polices proposées (Google Fonts déjà chargées + génériques)
 const SEA_FONTS = [
@@ -943,7 +1012,6 @@ function switchView(v, btn) {
   if (btn) btn.classList.add('active');
   $('view-' + v).classList.add('active');
   if (v === 'seq' && !seaCurrentId) { seaShowSubview('home'); seaRenderHome(); }
-  if (v === 'prog') progRenderDash();
 }
 function toggleTheme() {
   const t = document.body.dataset.theme === 'dark' ? 'light' : 'dark';
@@ -992,17 +1060,18 @@ function dialogCancel(){ if(_dlgResolve) _dlgResolve(false); _dlgResolve=null; }
 
 // ── Réglages ──
 function openSettings(){
-  const el = $('set-crcnedu'); if(el) el.checked = showCrcnEdu;
+  applyOptRefsUI();
   openModal('m-settings');
 }
-// Met à jour l'interface (rendus, sélecteurs, cases à cocher) après changement du réglage CRCN-Edu
-function applyCrcnEduUI(){
-  // Sync des cases à cocher
-  const ci=$('set-crcnedu-inline'); if(ci) ci.checked = showCrcnEdu;
-  const cm=$('set-crcnedu');        if(cm) cm.checked = showCrcnEdu;
+// Met à jour l'interface (rendus, sélecteurs, cases à cocher) après changement des référentiels optionnels
+function applyOptRefsUI(){
+  // Sync des cases à cocher (toggles inline + modale)
+  const ciIA=$('set-ia-inline');    if(ciIA) ciIA.checked = showIA;
+  const ciPD=$('set-pdeg-inline');  if(ciPD) ciPD.checked = showPremierDegre;
+  const cmIA=$('set-ia');           if(cmIA) cmIA.checked = showIA;
+  const cmPD=$('set-pdeg');         if(cmPD) cmPD.checked = showPremierDegre;
   // Recharger l'éditeur courant et les rendus dépendants
   if(seaCurrentId){ seaCrcnDomInit(); seaRenderObjectives(); seaPreview(); }
-  if(progCur) progRenderAll();
 }
 
 // ================================================================
@@ -1033,7 +1102,6 @@ function mdDownload() {
   const a = document.createElement('a');
   a.href = URL.createObjectURL(b); a.download = _mdCurrentFilename; a.click(); URL.revokeObjectURL(a.href);
 }
-function progTextExport() { _textPendingType='prog'; openModal('m-text-format'); }
 function seaTextExport() { _textPendingType='sea'; openModal('m-text-format'); }
 
 // ── Création d'une séquence (modale) ──
@@ -1048,7 +1116,7 @@ async function seqCreate() {
   const niv = $('ns-niv').value;
   if (!niv) { await customAlert('Choisissez un niveau pour la séquence.'); return; }
   const s = libBlankSeq();
-  s.title = title || ('Séquence IA ' + niv);
+  s.title = title || ('Séquence ' + niv);
   s.niveau = niv;
   s.annee = $('ns-annee').value.trim();
   libApp.seqs.push(s); libSave();
@@ -1244,6 +1312,12 @@ function seaCrcnDomInit(){
     Object.keys(DB_CRCN_EDU).forEach(d=> dome.innerHTML+=`<option value="${E(d)}">${d}</option>`);
     $('sea-crcnedu-sel').innerHTML='<option value="">— Choisir un domaine d\'abord —</option>';
   }
+  const domp=$('sea-pdeg-dom');
+  if(domp){
+    domp.innerHTML='<option value="">— Choisir un domaine —</option>';
+    Object.keys(DB_PREMIER_DEGRE).forEach(d=> domp.innerHTML+=`<option value="${E(d)}">${d}</option>`);
+    $('sea-pdeg-sel').innerHTML='<option value="">— Choisir un domaine d\'abord —</option>';
+  }
 }
 function seaCrcnDom(){
   const d=$('sea-crcn-dom').value; const sel=$('sea-crcn-sel');
@@ -1254,6 +1328,11 @@ function seaCrcnEduDom(){
   const d=$('sea-crcnedu-dom').value; const sel=$('sea-crcnedu-sel');
   sel.innerHTML='<option value="">— Choisir une compétence —</option>';
   if(d&&DB_CRCN_EDU[d]) DB_CRCN_EDU[d].forEach(i=>sel.innerHTML+=`<option value="${E(i)}">${i}</option>`);
+}
+function seaPdegDom(){
+  const d=$('sea-pdeg-dom').value; const sel=$('sea-pdeg-sel');
+  sel.innerHTML='<option value="">— Choisir une compétence —</option>';
+  if(d&&DB_PREMIER_DEGRE[d]) DB_PREMIER_DEGRE[d].forEach(i=>sel.innerHTML+=`<option value="${E(i)}">${i}</option>`);
 }
 function seaFillFontSelect(){
   const sel=$('sea-font'); if(!sel||sel.dataset.filled) return;
@@ -1510,7 +1589,7 @@ function seaGenerateMarkdown(){
 }
 function seaMarkdownPreview(){
   const s=seaApp.seas.find(x=>x.id===seaCurrentId); if(!s) return;
-  _mdCurrentContent=seaGenerateMarkdown(); _mdCurrentFilename=`Séance IA - ${s.title||'Sans titre'}.md`;
+  _mdCurrentContent=seaGenerateMarkdown(); _mdCurrentFilename=`Séance - ${s.title||'Sans titre'}.md`;
   $('md-content').value=_mdCurrentContent; openModal('m-markdown');
 }
 function buildSeaHTML(){
@@ -1534,516 +1613,17 @@ function buildSeaHTML(){
 }
 function seaPrint(){
   const s=seaApp.seas.find(x=>x.id===seaCurrentId);
-  const ot=document.title; document.title='Séance IA - '+((s&&s.title)||'Sans titre');
+  const ot=document.title; document.title='Séance - '+((s&&s.title)||'Sans titre');
   window.print(); document.title=ot;
 }
 
-// ================================================================
-// PROGRESSION
-// ================================================================
-let progApp = { progs: [] }, progCur = null;
-function progSave() { try { localStorage.setItem('sqia', JSON.stringify(progApp)); } catch(e){} }
-function progLoad() { try { const d=localStorage.getItem('sqia'); if(d) progApp=JSON.parse(d); } catch(e){} }
-
-// ── Cases à cocher de niveaux (modale création + tracker) ──
-let npNiveaux = []; // sélection en cours dans la modale
-
-function renderNivChecks(containerId, selected, onToggle) {
-  const c = $(containerId);
-  c.innerHTML = NIVEAUX.map(n =>
-    `<span class="niv-chk ${selected.includes(n)?'on':''}" onclick="${onToggle}('${n}')">${n}</span>`
-  ).join('');
-}
-function renderNivShortcuts(containerId, applyFn) {
-  $(containerId).innerHTML = `
-    <button class="niv-sc" onclick="${applyFn}('college')">Tout collège</button>
-    <button class="niv-sc" onclick="${applyFn}('lycee')">Tout lycée</button>
-    <button class="niv-sc" onclick="${applyFn}('all')">Tout</button>
-    <button class="niv-sc" onclick="${applyFn}('none')">Aucun</button>`;
-}
-
-// Modale création
-function npToggleNiv(n) {
-  const i = npNiveaux.indexOf(n);
-  if (i>=0) npNiveaux.splice(i,1); else npNiveaux.push(n);
-  npNiveaux.sort((a,b)=>NIVEAUX.indexOf(a)-NIVEAUX.indexOf(b));
-  renderNivChecks('np-niv-checks', npNiveaux, 'npToggleNiv');
-}
-function npApplyShortcut(kind) {
-  if (kind==='college') npNiveaux = [...COLLEGE];
-  else if (kind==='lycee') npNiveaux = [...LYCEE];
-  else if (kind==='all') npNiveaux = [...NIVEAUX];
-  else npNiveaux = [];
-  renderNivChecks('np-niv-checks', npNiveaux, 'npToggleNiv');
-}
-
-// Tracker (progression ouverte)
-function pToggleNiv(n) {
-  if (!progCur) return;
-  if (!progCur.niveaux) progCur.niveaux = [];
-  const i = progCur.niveaux.indexOf(n);
-  if (i>=0) progCur.niveaux.splice(i,1); else progCur.niveaux.push(n);
-  progCur.niveaux.sort((a,b)=>NIVEAUX.indexOf(a)-NIVEAUX.indexOf(b));
-  progSave();
-  renderNivChecks('p-niv-checks', progCur.niveaux, 'pToggleNiv');
-  progRenderAll();
-}
-function pApplyShortcut(kind) {
-  if (!progCur) return;
-  if (kind==='college') progCur.niveaux = [...COLLEGE];
-  else if (kind==='lycee') progCur.niveaux = [...LYCEE];
-  else if (kind==='all') progCur.niveaux = [...NIVEAUX];
-  else progCur.niveaux = [];
-  progSave();
-  renderNivChecks('p-niv-checks', progCur.niveaux, 'pToggleNiv');
-  progRenderAll();
-}
-
-function openNewProg() {
-  npNiveaux = [];
-  $('np-title').value = ''; $('np-yr').value = '';
-  renderNivShortcuts('np-niv-shortcuts', 'npApplyShortcut');
-  renderNivChecks('np-niv-checks', npNiveaux, 'npToggleNiv');
-  openModal('m-new-prog');
-}
-
-async function progCreate() {
-  if (!npNiveaux.length) { await customAlert('Cochez au moins un niveau à couvrir.'); return; }
-  const p = {
-    id: Date.now(),
-    title: $('np-title').value.trim() || 'Progression IA',
-    annee: $('np-yr').value,
-    niveaux: [...npNiveaux],
-    seqs: []
-  };
-  progApp.progs.push(p);
-  progSave();
-  closeModal('m-new-prog');
-  progOpenEditor(p.id);
-}
-
-// ── Dashboard ──
-function progRenderDash() {
-  let h = '';
-  progApp.progs.forEach(p => {
-    const niv = (p.niveaux||[]).join(', ') || '—';
-    h += `<div class="pcard" onclick="progOpenEditor(${p.id})">
-      <button class="pcard-del" onclick="event.stopPropagation();progDelProg(${p.id})">✕</button>
-      <div class="pcard-ico">🤖</div>
-      <div class="pcard-niv">${E(p.title||'Progression IA')}</div>
-      <div class="pcard-year">${E(p.annee||'—')}</div>
-      <div style="font-size:10px;color:var(--text-muted);margin-bottom:8px">📚 ${E(niv)}</div>
-      <div class="pcard-stats">
-        <span>${p.seqs.length} séquence(s)</span>
-        <span style="color:var(--accent);font-weight:700">Ouvrir →</span>
-      </div>
-    </div>`;
-  });
-  h += `<div class="pcard pcard-new" onclick="openNewProg()">
-    <div class="pcard-new-ico">＋</div>
-    <div style="font-weight:700">Créer une progression</div>
-    <div style="font-size:11px;color:var(--text-muted)">Nouveau parcours IA</div>
-  </div>`;
-  $('prog-grid').innerHTML = h;
-}
-async function progDelProg(id) {
-  if (!await customConfirm('Supprimer cette progression ?')) return;
-  progApp.progs = progApp.progs.filter(x => x.id!==id);
-  progSave(); progRenderDash();
-}
-
-function progOpenEditor(id) {
-  progCur = progApp.progs.find(x => x.id===id);
-  if (!progCur) return;
-  if (!progCur.niveaux) progCur.niveaux = [];
-  $('prog-dash').style.display='none';
-  $('prog-editor').style.display='block';
-  $('p-title').value = progCur.title || '';
-  $('p-yr').value = progCur.annee || '';
-  $('p-d-title').textContent = progCur.title || 'Progression';
-  $('p-pr-title').textContent = progCur.title || '';
-  $('p-pr-yr').textContent = progCur.annee || '';
-  renderNivShortcuts('p-niv-shortcuts', 'pApplyShortcut');
-  renderNivChecks('p-niv-checks', progCur.niveaux, 'pToggleNiv');
-  progRenderAll();
-}
-function progBackToDash() {
-  $('prog-editor').style.display='none';
-  $('prog-dash').style.display='block';
-  progRenderDash();
-}
-function progChg(k, v) {
-  if (!progCur) return;
-  progCur[k] = v; progSave();
-  if (k==='title') { $('p-d-title').textContent = v||'Progression'; $('p-pr-title').textContent = v||''; }
-  if (k==='annee') $('p-pr-yr').textContent = v||'';
-  progRenderDash();
-}
-
-// ── CRUD séquences ──
-async function progAddSeq() {
-  if (!progCur) return;
-  if (!progCur.niveaux || !progCur.niveaux.length) { await customAlert('Cochez d\'abord au moins un niveau dans le périmètre.'); return; }
-  progCur.seqs.push({
-    id:Date.now(), title:'', niveau:progCur.niveaux[0], project:'',
-    fonc:[], enj:[], app:[], crcn:[], crcnedu:[], libre:[], editing:true
-  });
-  progSave(); progRenderAll();
-  setTimeout(()=>$('p-sl').lastElementChild?.scrollIntoView({behavior:'smooth'}),100);
-}
-async function progDelSeq(id) {
-  if (!await customConfirm('Supprimer cette séquence ?')) return;
-  progCur.seqs = progCur.seqs.filter(s=>s.id!==id);
-  progSave(); progRenderAll();
-}
-function progValSeq(id) {
-  const s = progCur.seqs.find(x=>x.id===id);
-  if (!s) return;
-  const ti=$('pti-'+id); if(ti) s.title=ti.value;
-  const pj=$('ppj-'+id); if(pj) s.project=pj.value;
-  if (!s.title.trim()) {
-    const el=$('pti-'+id);
-    if(el){el.classList.add('title-err');el.focus();el.placeholder='⚠️ Titre obligatoire';}
-    return;
-  }
-  s.editing=false; progSave(); progRenderAll();
-}
-function progEditSeq(id) {
-  const s=progCur.seqs.find(x=>x.id===id);
-  if(s){s.editing=true;progSave();progRenderAll();}
-}
-
-// ── Champs séquence (live) ──
-function pls(id, f, v) {
-  const s=progCur.seqs.find(x=>x.id===id);
-  if (s){ s[f]=v; progSave(); }
-}
-function pSetNiv(id, v) {
-  const s=progCur.seqs.find(x=>x.id===id);
-  if (s){ s.niveau=v; progSave(); progRenderCov(); }
-}
-// Ajout depuis un select (référentiel)
-function paSel(id, f, sid, c) {
-  const s=progCur.seqs.find(x=>x.id===id); if(!s) return;
-  const v=$(sid).value;
-  if (!v||s[f].includes(v)) return;
-  s[f].push(v); $(sid).value=''; progSave(); prT(id,f,c); progRenderCov();
-}
-// Ajout depuis un champ libre
-function paF(id, f, iid, c) {
-  const s=progCur.seqs.find(x=>x.id===id); if(!s) return;
-  const v=$(iid).value.trim();
-  if (!v||s[f].includes(v)) return;
-  s[f].push(v); $(iid).value=''; progSave(); prT(id,f,c); progRenderCov();
-}
-function prM(id, f, i, c) {
-  const s=progCur.seqs.find(x=>x.id===id); if(!s) return;
-  s[f].splice(i,1); progSave(); prT(id,f,c); progRenderCov();
-}
-function prT(id, f, c) {
-  const s=progCur.seqs.find(x=>x.id===id); if(!s) return;
-  const el=$('pt-'+f+'-'+id); if(!el) return;
-  el.innerHTML=s[f].map((v,i)=>
-    `<span class="tag ${c}"><span class="tl">${S(v,48)}</span><span class="tr" onclick="prM(${id},'${f}',${i},'${c}')">✕</span></span>`
-  ).join('');
-}
-// CRCN domaine dans une séquence
-function pCrcnDom(id) {
-  const d = $('pcd-'+id).value;
-  const sel = $('pcr-'+id);
-  sel.innerHTML = '<option value="">— Choisir une compétence —</option>';
-  if (d && DB_CRCN[d]) DB_CRCN[d].forEach(i => { sel.innerHTML += `<option value="${E(i)}">${i}</option>`; });
-}
-function pCrcnEduDom(id) {
-  const d = $('pced-'+id).value;
-  const sel = $('pcre-'+id);
-  sel.innerHTML = '<option value="">— Choisir une compétence —</option>';
-  if (d && DB_CRCN_EDU[d]) DB_CRCN_EDU[d].forEach(i => { sel.innerHTML += `<option value="${E(i)}">${i}</option>`; });
-}
-
-// ── Render timeline ──
-function progRenderAll() { progRenderTL(); progRenderCov(); }
-
-function progRenderTL() {
-  const c=$('p-sl');
-  if (!progCur?.seqs.length) {
-    c.innerHTML='<div class="empty"><div class="ei">✨</div><h3>Prêt !</h3><p>Cliquez sur « Ajouter une Séquence » pour commencer à bâtir votre progression IA.</p></div>';
-    return;
-  }
-  let h='';
-  progCur.seqs.forEach((s,i)=>{
-    h += s.editing ? progRenderEdit(s,i) : progRenderDisp(s,i);
-  });
-  c.innerHTML=h;
-}
-
-function progRenderDisp(s, i) {
-  const chip=(arr,c)=>arr.map(x=>`<span class="chip ${c}">${E(S(x,60))}</span>`).join('');
-  const row=(label,arr,c)=> arr&&arr.length ? `<div class="sc-row"><div class="sc-row-l">${label}</div><div class="sc-row-v">${chip(arr,c)}</div></div>` : '';
-  return `<div class="sc">
-    <div class="sc-hdr">
-      <div class="sc-num">Séquence ${i+1}<span class="sc-niv-badge">${E(s.niveau||'—')}</span></div>
-      <div class="sc-acts">
-        <button class="btn btn-sm btn-ghost" onclick="progEditSeq(${s.id})">✏️</button>
-        <button class="btn btn-sm btn-danger" onclick="progDelSeq(${s.id})">🗑️</button>
-      </div>
-    </div>
-    <div class="sc-title">${E(s.title||'Sans titre')}</div>
-    ${s.project?`<div class="sc-project"><b>🎯 Projet :</b> ${E(s.project)}</div>`:''}
-    <div class="sc-rows" style="margin-top:8px">
-      ${row('⚙️ Fonctionnement',s.fonc,'fonc')}
-      ${row('🔍 Enjeux',s.enj,'enj')}
-      ${row('📖 Apprendre',s.app,'app')}
-      ${row('💻 CRCN',s.crcn,'crcn')}
-      ${showCrcnEdu?row('🧑‍🏫 Enseignants',s.crcnedu,'crcnedu'):''}
-      ${row('➕ Libre',s.libre,'crcn')}
-    </div>
-  </div>`;
-}
-
-function progRenderEdit(s, i) {
-  const opt = (items)=> items.map(it=>`<option value="${E(it)}">${it}</option>`).join('');
-  const nivOpt = (progCur.niveaux||[]).map(n=>`<option value="${E(n)}" ${s.niveau===n?'selected':''}>${n}</option>`).join('');
-  let crcnDom = '<option value="">— Choisir un domaine —</option>';
-  Object.keys(DB_CRCN).forEach(d=>{ crcnDom += `<option value="${E(d)}">${d}</option>`; });
-  let crcnEduDom = '<option value="">— Choisir un domaine —</option>';
-  Object.keys(DB_CRCN_EDU).forEach(d=>{ crcnEduDom += `<option value="${E(d)}">${d}</option>`; });
-
-  const rt=(arr,f,c)=>arr.map((v,j)=>
-    `<span class="tag ${c}"><span class="tl">${S(v,48)}</span><span class="tr" onclick="prM(${s.id},'${f}',${j},'${c}')">✕</span></span>`
-  ).join('');
-
-  return `<div class="sc editing">
-    <div class="sc-hdr">
-      <div class="sc-num">Séquence ${i+1}</div>
-      <div class="sc-acts" style="opacity:1">
-        <button class="btn btn-sm btn-danger" onclick="progDelSeq(${s.id})">🗑️</button>
-      </div>
-    </div>
-    <div class="fg">
-      <label class="fl">Titre *</label>
-      <input id="pti-${s.id}" class="fi" style="font-family:'Playfair Display',serif;font-size:15px;font-weight:700"
-        value="${E(s.title)}" placeholder="Titre obligatoire"
-        oninput="pls(${s.id},'title',this.value);this.classList.remove('title-err')">
-    </div>
-    <div class="fg">
-      <label class="fl">📚 Niveau</label>
-      <div class="swa"><select class="fs" id="pnv-${s.id}" onchange="pSetNiv(${s.id},this.value)">${nivOpt}</select></div>
-    </div>
-    <div class="fg">
-      <label class="fl" style="color:var(--accent-r)">🎯 Projet / production finale</label>
-      <input id="ppj-${s.id}" class="fi" value="${E(s.project)}" placeholder="Tâche finale" oninput="pls(${s.id},'project',this.value)">
-    </div>
-    <div class="fg">
-      <label class="fl" style="color:var(--r-fonc)">⚙️ Savoir comment fonctionnent les IA</label>
-      <div class="swa">
-        <select class="fs" id="pfo-${s.id}"><option value="">— Item —</option>${opt(DB_IA.fonc.items)}</select>
-        <button class="ba fonc" onclick="paSel(${s.id},'fonc','pfo-${s.id}','fonc')">+</button>
-      </div>
-      <div class="added-tags" id="pt-fonc-${s.id}">${rt(s.fonc,'fonc','fonc')}</div>
-    </div>
-    <div class="fg">
-      <label class="fl" style="color:var(--r-enj)">🔍 Identifier les enjeux des IA</label>
-      <div class="swa">
-        <select class="fs" id="pen-${s.id}"><option value="">— Item —</option>${opt(DB_IA.enj.items)}</select>
-        <button class="ba enj" onclick="paSel(${s.id},'enj','pen-${s.id}','enj')">+</button>
-      </div>
-      <div class="added-tags" id="pt-enj-${s.id}">${rt(s.enj,'enj','enj')}</div>
-    </div>
-    <div class="fg">
-      <label class="fl" style="color:var(--r-app)">📖 Apprendre avec l'IA</label>
-      <div class="swa">
-        <select class="fs" id="pap-${s.id}"><option value="">— Item —</option>${opt(DB_IA.app.items)}</select>
-        <button class="ba app" onclick="paSel(${s.id},'app','pap-${s.id}','app')">+</button>
-      </div>
-      <div class="added-tags" id="pt-app-${s.id}">${rt(s.app,'app','app')}</div>
-    </div>
-    <div class="fg">
-      <label class="fl" style="color:var(--r-crcn)">💻 Compétences du CRCN</label>
-      <div class="swa"><select class="fs" id="pcd-${s.id}" onchange="pCrcnDom(${s.id})">${crcnDom}</select></div>
-      <div class="swa">
-        <select class="fs" id="pcr-${s.id}"><option value="">— Choisir un domaine d'abord —</option></select>
-        <button class="ba crcn" onclick="paSel(${s.id},'crcn','pcr-${s.id}','crcn')">+</button>
-      </div>
-      <div class="added-tags" id="pt-crcn-${s.id}">${rt(s.crcn,'crcn','crcn')}</div>
-    </div>
-    ${showCrcnEdu?`<div class="fg">
-      <label class="fl" style="color:var(--r-crcnedu)">🧑‍🏫 Compétences des enseignants / enseignantes</label>
-      <div class="swa"><select class="fs" id="pced-${s.id}" onchange="pCrcnEduDom(${s.id})">${crcnEduDom}</select></div>
-      <div class="swa">
-        <select class="fs" id="pcre-${s.id}"><option value="">— Choisir un domaine d'abord —</option></select>
-        <button class="ba crcnedu" onclick="paSel(${s.id},'crcnedu','pcre-${s.id}','crcnedu')">+</button>
-      </div>
-      <div class="added-tags" id="pt-crcnedu-${s.id}">${rt(s.crcnedu||[],'crcnedu','crcnedu')}</div>
-    </div>`:''}
-    <div class="fg">
-      <label class="fl">➕ Item libre</label>
-      <div class="swa">
-        <input id="plb-${s.id}" class="fi" placeholder="Objectif libre">
-        <button class="ba gray" onclick="paF(${s.id},'libre','plb-${s.id}','gray')">+</button>
-      </div>
-      <div class="added-tags" id="pt-libre-${s.id}">${rt(s.libre||[],'libre','gray')}</div>
-    </div>
-    <div class="form-acts">
-      <button class="btn btn-green" onclick="progValSeq(${s.id})">✓ Valider</button>
-    </div>
-  </div>`;
-}
-
-// ── Couverture ──
-function progRenderCov() {
-  const nd=$('p-cov-niv'), ad=$('p-cov-axes');
-  const perim = progCur?.niveaux || [];
-  if (!perim.length) {
-    nd.innerHTML='<div style="font-size:10px;color:var(--text-muted);font-style:italic">Cochez des niveaux dans le périmètre.</div>';
-    ad.innerHTML=''; $('p-bar').style.width='0%'; $('p-lbl').textContent='—'; return;
-  }
-  // Niveaux ayant au moins une séquence
-  const used = new Set();
-  progCur.seqs.forEach(s=>{ if(s.niveau) used.add(s.niveau); });
-
-  const covered = perim.filter(n=>used.has(n)).length;
-  let nh = `<div class="cov-hdr">📚 Niveaux couverts (${covered}/${perim.length})
-    <span class="cov-badge ${covered===perim.length?'ok':'no'}">${perim.length?Math.round(covered/perim.length*100):0}%</span>
-  </div>`;
-  perim.forEach(n=>{
-    const cnt = progCur.seqs.filter(s=>s.niveau===n).length;
-    nh += `<div class="ci ${used.has(n)?'ok':'no'}">${n}${cnt?` · ${cnt} séq.`:''}</div>`;
-  });
-  nd.innerHTML=nh;
-
-  // Couverture des compétences individuelles (sur l'ensemble de la progression)
-  const refs = { fonc: DB_IA.fonc.items, enj: DB_IA.enj.items, app: DB_IA.app.items, crcn: Object.values(DB_CRCN).flat(), crcnedu: Object.values(DB_CRCN_EDU).flat() };
-  const usedComp = { fonc:new Set(), enj:new Set(), app:new Set(), crcn:new Set(), crcnedu:new Set() };
-  const visR = visibleReservoirs();
-  progCur.seqs.forEach(s=>{ visR.forEach(r=>{ (s[r.key]||[]).forEach(it=>{ if(refs[r.key].includes(it)) usedComp[r.key].add(it); }); }); });
-  let totalRef=0, totalUsed=0;
-  visR.forEach(r=>{ totalRef += refs[r.key].length; totalUsed += usedComp[r.key].size; });
-  const gpct = totalRef ? Math.round(totalUsed/totalRef*100) : 0;
-  let ah = `<div class="cov-hdr">🧩 Compétences (${totalUsed}/${totalRef})
-    <span class="cov-badge ${totalUsed===totalRef && totalRef>0?'ok':'no'}">${gpct}%</span>
-  </div>`;
-  const itemRow = (it,covered)=>`<div class="ci ${covered?'ok':'no'}" style="font-size:9.5px">${EC(it)}</div>`;
-  visR.forEach(r=>{
-    const u = usedComp[r.key], total = refs[r.key].length;
-    ah += `<div class="cov-grp">${r.emoji} ${EC(r.label)} <span class="cov-grp-n">${u.size}/${total}</span></div>`;
-    const db = dbForKey(r.key);
-    if(db){
-      const domColor = r.key==='crcnedu' ? 'color:#be185d' : '';
-      Object.keys(db).forEach(dom=>{
-        ah += `<div class="cov-dom" style="${domColor}">${EC(dom)}</div>`;
-        ah += db[dom].map(it=>itemRow(it,u.has(it))).join('');
-      });
-    } else {
-      ah += refs[r.key].map(it=>itemRow(it,u.has(it))).join('');
-    }
-  });
-  ad.innerHTML=ah;
-
-  // Barre globale = niveaux couverts
-  const pct = perim.length?Math.round(covered/perim.length*100):0;
-  $('p-bar').style.width=pct+'%';
-  $('p-lbl').textContent=`${pct}% des niveaux couverts — ${covered}/${perim.length}`;
-}
-
-// ── Exports Progression ──
-function progExpJSON() {
-  const b=new Blob([JSON.stringify(progApp,null,2)],{type:'application/json'});
-  const a=document.createElement('a');
-  a.href=URL.createObjectURL(b); a.download='Progressions IA.json';
-  a.click(); URL.revokeObjectURL(a.href);
-}
-function progImport(e) {
-  const f=e.target.files[0]; if(!f) return;
-  const r=new FileReader();
-  r.onload=ev=>{
-    try {
-      const d=JSON.parse(ev.target.result);
-      if(d.progs){progApp=d;progSave();progRenderDash();customAlert('Importé avec succès !', {title:'Import JSON'});}
-      else customAlert('Format invalide.', {title:'Erreur'});
-    } catch(err){customAlert('Erreur : '+err.message, {title:'Erreur'});}
-  };
-  r.readAsText(f); e.target.value='';
-}
-function progExpPDF() {
-  progCur.seqs.forEach(s=>s.editing=false);
-  progSave(); progRenderAll();
-  setTimeout(()=>{
-    const ot=document.title;
-    document.title='Progression IA - '+(progCur.title||'');
-    window.print();
-    document.title=ot;
-  },200);
-}
-
-function progGenerateMarkdown() {
-  if (!progCur) return '';
-  let md = `# ${progCur.title || 'Progression IA'}\n\n`;
-  md += `**Année scolaire :** ${progCur.annee||'—'}\n`;
-  md += `**Niveaux couverts :** ${(progCur.niveaux||[]).join(', ')||'—'}\n\n`;
-  md += `---\n\n`;
-  progCur.seqs.forEach((s, i) => {
-    md += `## Séquence ${i+1} — ${s.title || 'Sans titre'} _(${s.niveau||'—'})_\n\n`;
-    if (s.project) md += `> 🎯 **Projet :** ${s.project}\n\n`;
-    const sub = (l, arr) => {
-      if (!arr || !arr.length) return '';
-      let r = `**${l}**\n`;
-      arr.forEach(x => r += `- ${x}\n`);
-      return r + '\n';
-    };
-    md += sub('⚙️ Savoir comment fonctionnent les IA', s.fonc);
-    md += sub('🔍 Identifier les enjeux des IA', s.enj);
-    md += sub('📖 Apprendre avec l\'IA', s.app);
-    md += sub('💻 Compétences du CRCN', s.crcn);
-    if(showCrcnEdu) md += sub('🧑‍🏫 Compétences des enseignants / enseignantes', s.crcnedu||[]);
-    md += sub('➕ Items personnalisés', s.libre);
-    md += '---\n\n';
-  });
-  md += `Le Séquenceur IA - Charlie Rollo - Items issus de la Progression IA Drane Île-de-France : https://drane-ile-de-france.forge.apps.education.fr/progression_ia/\n`;
-  return md;
-}
-function progMarkdownPreview() {
-  _mdCurrentContent = progGenerateMarkdown();
-  _mdCurrentFilename = `Progression IA - ${(progCur?.title||'')}.md`;
-  $('md-content').value = _mdCurrentContent;
-  openModal('m-markdown');
-}
-
-function buildProgHTML() {
-  let body=`<div style="text-align:center;font-size:10pt;color:#64748b;margin-bottom:6pt">${E((progCur.niveaux||[]).join(', '))} — ${E(progCur.annee||'')}</div>
-<h1 style="font-family:serif;font-size:22pt;text-align:center;color:#4338ca;margin-bottom:20pt">${E(progCur.title||'Progression IA')}</h1>`;
-  progCur.seqs.forEach((s,i)=>{
-    body+=`<div style="border:1pt solid #e2e8f0;padding:12pt;margin-bottom:12pt;page-break-inside:avoid">
-      <div style="font-size:9pt;color:#6366f1;font-weight:bold;text-transform:uppercase;letter-spacing:1pt">Séquence ${i+1} · ${E(s.niveau||'')}</div>
-      <div style="font-family:serif;font-size:15pt;font-weight:bold;margin:4pt 0 8pt">${E(s.title||'Sans titre')}</div>`;
-    if(s.project) body+=`<div style="font-size:10pt;padding:5pt 10pt;border-left:3pt solid #ef4444;background:#fef2f2;margin-bottom:6pt"><b>🎯 Projet :</b> ${E(s.project)}</div>`;
-    const chip=(items,bg,color)=>items.length?items.map(x=>`<span style="display:inline-block;font-size:9pt;padding:2pt 7pt;border-radius:9pt;margin:2pt;background:${bg};color:${color};font-weight:bold">${E(x)}</span>`).join(' '):'';
-    if(s.fonc.length)  body+=`<div style="font-size:10pt;margin-bottom:4pt"><b style="color:#1e293b">⚙️ Savoir comment fonctionnent les IA</b><br>${chip(s.fonc,'#fef9c3','#854d0e')}</div>`;
-    if(s.enj.length)   body+=`<div style="font-size:10pt;margin-bottom:4pt"><b style="color:#1e293b">🔍 Identifier les enjeux des IA</b><br>${chip(s.enj,'#dbeafe','#1e40af')}</div>`;
-    if(s.app.length)   body+=`<div style="font-size:10pt;margin-bottom:4pt"><b style="color:#1e293b">📖 Apprendre avec l'IA</b><br>${chip(s.app,'#d1fae5','#065f46')}</div>`;
-    if(s.crcn.length)  body+=`<div style="font-size:10pt;margin-bottom:4pt"><b style="color:#1e293b">💻 Compétences du CRCN</b><br>${chip(s.crcn,'#f3e8ff','#6b21a8')}</div>`;
-    if(showCrcnEdu && (s.crcnedu||[]).length) body+=`<div style="font-size:10pt;margin-bottom:4pt"><b style="color:#1e293b">🧑‍🏫 Compétences des enseignants / enseignantes</b><br>${chip(s.crcnedu,'#fce7f3','#be185d')}</div>`;
-    if((s.libre||[]).length) body+=`<div style="font-size:10pt;margin-bottom:4pt"><b style="color:#1e293b">➕ Items personnalisés</b><br>${chip(s.libre,'#f1f5f9','#475569')}</div>`;
-    body+='</div>';
-  });
-  body+=`<div style="margin-top:12pt;font-size:8pt;color:#94a3b8;border-top:1pt solid #e2e8f0;padding-top:6pt">Le Séquenceur IA - Charlie Rollo - Items issus de la <a href="https://drane-ile-de-france.forge.apps.education.fr/progression_ia/" style="color:#6366f1">Progression IA</a> Drane Île-de-France</div>`;
-  return body;
-}
 
 // ── Action effective d'export texte ──
 function textExportDo(format) {
   closeModal('m-text-format');
-  let body, filename;
-  if (_textPendingType === 'sea') {
-    const sea = seaApp.seas.find(x => x.id === seaCurrentId);
-    body = buildSeaHTML();
-    filename = `Séance IA - ${(sea&&sea.title) || 'Sans titre'}.${format}`;
-  } else {
-    progCur.seqs.forEach(s => s.editing = false);
-    progSave(); progRenderAll();
-    body = buildProgHTML();
-    filename = `Progression IA - ${(progCur?.title||'')}.${format}`;
-  }
+  const sea = seaApp.seas.find(x => x.id === seaCurrentId);
+  const body = buildSeaHTML();
+  const filename = `Séance - ${(sea&&sea.title) || 'Sans titre'}.${format}`;
   if (format === 'doc') {
     const html = `<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word"><head><meta charset="utf-8"></head><body style="font-family:Arial,sans-serif;color:#1e293b;margin:2cm">${body}</body></html>`;
     const a = document.createElement('a');
@@ -2065,31 +1645,33 @@ function textExportDo(format) {
 // ================================================================
 libLoad();
 seaLoad();
-progLoad();
 
 // Migrations douces
-progApp.progs?.forEach(p=>{
-  if(!p.niveaux) p.niveaux=[];
-  p.seqs?.forEach(s=>{ ['fonc','enj','app','crcn','crcnedu','libre'].forEach(k=>{ if(!s[k]) s[k]=[]; }); if(!s.niveau) s.niveau=(p.niveaux[0]||''); });
-});
 libApp.seqs?.forEach(s=>{ IA_KEYS.forEach(k=>{ if(!s[k]) s[k]=[]; }); });
 seaApp.seas?.forEach(s=>{
-  if(!s.objectifs) s.objectifs={fonc:[],enj:[],app:[],crcn:[],crcnedu:[]};
+  if(!s.objectifs) s.objectifs={fonc:[],enj:[],app:[],crcn:[],crcnedu:[],pdeg:[]};
   IA_KEYS.forEach(k=>{ if(!s.objectifs[k]) s.objectifs[k]=[]; });
   if(!Array.isArray(s.supports)) s.supports = (typeof s.supports==='string'? s.supports.split('\n').map(l=>l.trim()).filter(Boolean):[]);
   if(!s.activities) s.activities=[];
 });
 
-// Appliquer le réglage CRCN-Edu sur le body
-document.body.classList.toggle('crcnedu-on', showCrcnEdu);
+// Continuité : si l'utilisateur a des données IA existantes, activer le toggle IA
+// pour qu'il retrouve son contenu sans avoir à le chercher
+const hasExistingIA = (libApp.seqs||[]).some(s => (s.fonc||[]).length || (s.enj||[]).length || (s.app||[]).length)
+                   || (seaApp.seas||[]).some(s => s.objectifs && ((s.objectifs.fonc||[]).length || (s.objectifs.enj||[]).length || (s.objectifs.app||[]).length));
+if (hasExistingIA && localStorage.getItem('sqia-show-ia') === null) {
+  showIA = true;
+  try { localStorage.setItem('sqia-show-ia','true'); } catch(e){}
+}
+document.body.classList.toggle('ia-on', showIA);
+document.body.classList.toggle('pdeg-on', showPremierDegre);
 
 // Affiche le tableau de bord des séquences
 seaShowSubview('home');
 seaRenderHome();
-progRenderDash();
 
-// Synchronise les checkbox CRCN-Edu avec le réglage persisté
-applyCrcnEduUI();
+// Synchronise les checkbox des référentiels optionnels
+applyOptRefsUI();
 </script>
 </body>
 </html>

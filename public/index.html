@@ -465,9 +465,8 @@ body.pdeg-on .pdeg-only{display:block!important}
         <div style="display:flex;gap:8px;justify-content:space-between;align-items:center;margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid var(--border);flex-wrap:wrap">
           <button class="btn btn-ghost btn-sm" onclick="seaBackToList()">← Mes séances</button>
           <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">
-            <button class="btn btn-violet btn-sm" onclick="seaMarkdownPreview()">📋 Markdown</button>
-            <button class="btn btn-blue btn-sm" onclick="seaTextExport()">📝 Texte</button>
-            <button class="btn btn-green btn-sm" onclick="seaPrint()">📄 PDF</button>
+            <button class="btn btn-blue btn-sm" onclick="openSeaDatesModal()">📅 Calendrier <span id="sea-dates-count-btn" style="font-weight:800"></span></button>
+            <button class="btn btn-violet btn-sm" onclick="openModal('m-export')">📤 Exporter</button>
           </div>
         </div>
 
@@ -688,9 +687,23 @@ body.pdeg-on .pdeg-only{display:block!important}
       <div class="cal-tool-group">
         <label class="cal-lbl">Zone</label>
         <select class="fs cal-sel" id="cal-zone" onchange="calOnZoneChange()">
-          <option value="A">Zone A</option>
-          <option value="B">Zone B</option>
-          <option value="C">Zone C</option>
+          <optgroup label="Métropole">
+            <option value="A">Zone A</option>
+            <option value="B">Zone B</option>
+            <option value="C">Zone C</option>
+            <option value="Corse">Corse</option>
+          </optgroup>
+          <optgroup label="Outre-mer">
+            <option value="Guadeloupe">Guadeloupe</option>
+            <option value="Guyane">Guyane</option>
+            <option value="Martinique">Martinique</option>
+            <option value="La Réunion">La Réunion</option>
+            <option value="Mayotte">Mayotte</option>
+            <option value="Nouvelle-Calédonie">Nouvelle-Calédonie</option>
+            <option value="Polynésie française">Polynésie française</option>
+            <option value="Saint-Pierre-et-Miquelon">Saint-Pierre-et-Miquelon</option>
+            <option value="Wallis-et-Futuna">Wallis-et-Futuna</option>
+          </optgroup>
         </select>
       </div>
       <div class="cal-tool-group">
@@ -760,7 +773,8 @@ body.pdeg-on .pdeg-only{display:block!important}
       <div>
         <label class="fl">📚 Programmer une séance</label>
         <div class="cal-add-row">
-          <select class="fs" id="cal-add-sea-sel"><option value="">— Choisir une séance —</option></select>
+          <select class="fs" id="cal-add-sea-sel" style="flex:2"><option value="">— Choisir une séance —</option></select>
+          <input class="fi" id="cal-add-sea-group" placeholder="Groupe (opt.)" style="flex:1;min-width:0">
           <button class="btn btn-violet btn-sm" onclick="calAddSeance()">＋</button>
         </div>
       </div>
@@ -771,6 +785,40 @@ body.pdeg-on .pdeg-only{display:block!important}
           <button class="btn btn-green btn-sm" onclick="calAddEvent()">＋</button>
         </div>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal : Dates programmées de la séance courante -->
+<div id="m-sea-dates" class="modal-bg" onclick="closeModal('m-sea-dates')">
+  <div class="modal" onclick="event.stopPropagation()" style="max-width:560px">
+    <button class="modal-x" onclick="closeModal('m-sea-dates')">✕</button>
+    <h2>📅 Dates programmées</h2>
+    <p style="font-size:12px;color:var(--text-muted);line-height:1.55;text-align:center;margin-bottom:14px">Ajoutez une ou plusieurs dates à laquelle cette séance est donnée. Une même séance peut être programmée plusieurs fois pour des groupes différents (groupe A, B, C…). Les dates apparaissent automatiquement dans le calendrier.</p>
+    <div id="sea-dates-list" style="display:flex;flex-direction:column;gap:6px;margin-bottom:10px"></div>
+    <button class="btn btn-ghost btn-sm" onclick="seaAddDate()" style="width:100%;border:1px dashed var(--border);padding:10px">＋ Ajouter une date</button>
+  </div>
+</div>
+
+<!-- Modal : Exporter -->
+<div id="m-export" class="modal-bg" onclick="closeModal('m-export')">
+  <div class="modal" onclick="event.stopPropagation()" style="max-width:440px">
+    <button class="modal-x" onclick="closeModal('m-export')">✕</button>
+    <h2>📤 Exporter la séance</h2>
+    <p style="font-size:12px;color:var(--text-muted);line-height:1.55;text-align:center;margin-bottom:18px">Choisissez le format d'export.</p>
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <button class="btn btn-violet" onclick="closeModal('m-export');seaMarkdownPreview()" style="padding:14px;justify-content:flex-start;text-align:left">
+        <span style="font-size:22px;margin-right:10px">📋</span>
+        <span><b>Markdown</b><br><span style="font-size:11px;opacity:.85;font-weight:400">Texte structuré, idéal pour blog ou collaboration</span></span>
+      </button>
+      <button class="btn btn-blue" onclick="closeModal('m-export');seaTextExport()" style="padding:14px;justify-content:flex-start;text-align:left">
+        <span style="font-size:22px;margin-right:10px">📝</span>
+        <span><b>Texte (Word / ODT)</b><br><span style="font-size:11px;opacity:.85;font-weight:400">Document éditable Microsoft Word ou LibreOffice</span></span>
+      </button>
+      <button class="btn btn-green" onclick="closeModal('m-export');seaPrint()" style="padding:14px;justify-content:flex-start;text-align:left">
+        <span style="font-size:22px;margin-right:10px">📄</span>
+        <span><b>PDF</b><br><span style="font-size:11px;opacity:.85;font-weight:400">Impression ou enregistrement au format PDF</span></span>
+      </button>
     </div>
   </div>
 </div>
@@ -1398,7 +1446,11 @@ async function seaDelSeance(id){
   const s = seaApp.seas.find(x=>x.id===id); if(!s) return;
   if(!await customConfirm('Supprimer cette séance ?')) return;
   seaApp.seas = seaApp.seas.filter(x=>x.id!==id);
+  // Retirer les dates programmées correspondantes du calendrier
+  if(calApp && calApp.events){ calApp.events = calApp.events.filter(e => !(e.type==='seance' && e.seanceId===id)); calSave(); }
   seaSave(); seaRenderList();
+  if(_calInited && calView==='month') calRenderMonth();
+  else if(_calInited) calRenderYear();
 }
 
 function seaOpenEditor(id){
@@ -1433,11 +1485,63 @@ function seaOpenEditor(id){
   seaRenderObjectives();
   seaRenderActivities();
   seaRenderSupports();
+  seaRenderDates();
   seaShowSubview('editor');
   seaPreview();
   seaSilent = false;
 }
 function seaBackToList(){ seaCurrentId=null; seaShowSubview('list'); seaRenderList(); }
+
+// ── Dates programmées (depuis l'éditeur de séance) ──
+// Les dates sont stockées dans calApp.events ; ce code lit/écrit cette liste.
+function openSeaDatesModal(){
+  seaRenderDates();
+  openModal('m-sea-dates');
+}
+function seaRenderDates(){
+  if(typeof calApp === 'undefined') return;
+  if(!calApp.events) calApp.events = [];
+  const events = calApp.events
+    .filter(e => e.type === 'seance' && e.seanceId === seaCurrentId)
+    .sort((a,b)=>(a.date||'').localeCompare(b.date||''));
+  // Badge du bouton de la barre d'outils
+  const btn = $('sea-dates-count-btn'); if(btn) btn.textContent = events.length ? `(${events.length})` : '';
+  // Liste de la modale
+  const list = $('sea-dates-list'); if(!list) return;
+  if(!events.length){
+    list.innerHTML = `<div style="font-size:11.5px;color:var(--text-muted);font-style:italic;text-align:center;padding:14px 0">Aucune date pour le moment.</div>`;
+    return;
+  }
+  list.innerHTML = events.map(e=>`
+    <div style="display:flex;gap:6px;align-items:center;background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:6px 8px">
+      <input type="date" value="${e.date||''}" onchange="seaUpdateDate(${e.id},'date',this.value)" style="flex:0 1 145px;padding:6px 8px;border:1px solid var(--border);background:var(--card);color:var(--text);border-radius:5px;font-size:12px;font-family:inherit">
+      <input type="text" value="${E(e.group||'')}" placeholder="Groupe (optionnel)" onchange="seaUpdateDate(${e.id},'group',this.value)" style="flex:1;min-width:0;padding:6px 8px;border:1px solid var(--border);background:var(--card);color:var(--text);border-radius:5px;font-size:12px;font-family:inherit">
+      <button class="btn btn-danger btn-sm" onclick="seaDelDate(${e.id})" style="flex-shrink:0;padding:3px 8px">✕</button>
+    </div>`).join('');
+}
+function seaAddDate(){
+  if(!seaCurrentId) return;
+  if(!calApp.events) calApp.events = [];
+  calApp.events.push({ id:Date.now(), date:'', type:'seance', seanceId:seaCurrentId, group:'' });
+  calSave();
+  seaRenderDates();
+  if(_calInited && calView==='month') calRenderMonth();
+  else if(_calInited) calRenderYear();
+}
+function seaUpdateDate(eventId, field, value){
+  const ev = calApp.events.find(e=>e.id===eventId); if(!ev) return;
+  ev[field] = value;
+  calSave();
+  if(_calInited && calView==='month') calRenderMonth();
+  else if(_calInited) calRenderYear();
+}
+function seaDelDate(eventId){
+  calApp.events = calApp.events.filter(e=>e.id!==eventId);
+  calSave();
+  seaRenderDates();
+  if(_calInited && calView==='month') calRenderMonth();
+  else if(_calInited) calRenderYear();
+}
 
 // ── Selects de référentiel (items IA) ──
 function seaFillSelects(){
@@ -1823,13 +1927,35 @@ function calPopulateYearSelect(){
 }
 
 // ── Récupération vacances + fériés (data.education.gouv.fr + calendrier.api.gouv.fr) ──
+// Mappe la zone interne vers le nom utilisé par l'API data.education.gouv.fr
+function calZoneApiName(zone){
+  if(zone === 'A' || zone === 'B' || zone === 'C') return `Zone ${zone}`;
+  return zone; // "Corse", "Guadeloupe", "La Réunion"…
+}
+// Mappe la zone vers l'endpoint des jours fériés (calendrier.api.gouv.fr)
+function calFerieEndpoint(zone){
+  const map = {
+    'Guadeloupe':'guadeloupe',
+    'Guyane':'guyane',
+    'Martinique':'martinique',
+    'La Réunion':'reunion',
+    'Mayotte':'mayotte',
+    'Nouvelle-Calédonie':'nouvelle-caledonie',
+    'Polynésie française':'polynesie-francaise',
+    'Saint-Pierre-et-Miquelon':'saint-pierre-et-miquelon',
+    'Wallis-et-Futuna':'wallis-et-futuna'
+  };
+  return map[zone] || 'metropole';
+}
+
 async function calFetchVacances(){
   const sy = calSettings.schoolYear, zone = calSettings.zone;
   const cacheKey = `sqia-cal-vac-${sy}-${zone}`;
   try { const c = localStorage.getItem(cacheKey); if(c){ calVacances = JSON.parse(c); return; } } catch(e){}
   try {
-    const url = `https://data.education.gouv.fr/api/explore/v2.1/catalog/datasets/fr-en-calendrier-scolaire/records?refine=zones%3A%22Zone+${zone}%22&refine=annee_scolaire%3A%22${sy}%22&limit=50`;
-    calSetStatus(`Chargement des vacances zone ${zone} (${sy})…`);
+    const zoneName = calZoneApiName(zone);
+    const url = `https://data.education.gouv.fr/api/explore/v2.1/catalog/datasets/fr-en-calendrier-scolaire/records?refine=zones%3A%22${encodeURIComponent(zoneName)}%22&refine=annee_scolaire%3A%22${sy}%22&limit=50`;
+    calSetStatus(`Chargement des vacances ${zoneName} (${sy})…`);
     const r = await fetch(url);
     if(!r.ok) throw new Error('HTTP '+r.status);
     const d = await r.json();
@@ -1848,12 +1974,13 @@ async function calFetchVacances(){
 async function calFetchFeries(){
   const sy = calSettings.schoolYear;
   const [yStart, yEnd] = sy.split('-').map(s=>parseInt(s,10));
-  const cacheKey = `sqia-cal-fer-${sy}`;
+  const endpoint = calFerieEndpoint(calSettings.zone);
+  const cacheKey = `sqia-cal-fer-${sy}-${endpoint}`;
   try { const c = localStorage.getItem(cacheKey); if(c){ calFeries = JSON.parse(c); return; } } catch(e){}
   const merged = {};
   try {
     for(const y of [yStart, yEnd]){
-      const r = await fetch(`https://calendrier.api.gouv.fr/jours-feries/metropole/${y}.json`);
+      const r = await fetch(`https://calendrier.api.gouv.fr/jours-feries/${endpoint}/${y}.json`);
       if(r.ok){ Object.assign(merged, await r.json()); }
     }
     calFeries = merged;
@@ -1919,6 +2046,7 @@ async function calOnYearChange(){
 async function calOnZoneChange(){
   calSettings.zone = $('cal-zone').value; calSaveSettings();
   await calFetchVacances();
+  await calFetchFeries();
   if(calView==='month') calRenderMonth(); else calRenderYear();
 }
 function calOnSaturdayChange(){
@@ -1965,7 +2093,9 @@ function calRenderMonth(){
     const tag = ferie ? `<span class="cal-cell-tag" title="${E(ferie)}">${E(ferie)}</span>` : (isVac ? `<span class="cal-cell-tag">Vac.</span>` : '');
     const evtsHtml = events.map(e=>{
       const isFree = e.type==='event';
-      const label = isFree ? e.label : (calLookupSeanceTitle(e.seanceId) || e.label || 'Séance');
+      const baseLabel = isFree ? e.label : (calLookupSeanceTitle(e.seanceId) || e.label || 'Séance');
+      const grp = (!isFree && e.group) ? `[${e.group}] ` : '';
+      const label = grp + baseLabel;
       const icon = isFree ? '🎯' : '📚';
       return `<div class="cal-evt ${isFree?'evt-free':''}" onclick="event.stopPropagation();calDelEvent(${e.id})" title="Cliquer pour supprimer">${icon}<span class="cal-evt-text">${EC(label)}</span><span class="cal-evt-x">✕</span></div>`;
     }).join('');
@@ -2040,10 +2170,11 @@ function calOpenDay(ds){
   const evts = calApp.events.filter(e=>e.date===ds);
   $('cal-day-list').innerHTML = evts.length ? evts.map(e=>{
     const isFree = e.type==='event';
-    const label = isFree ? e.label : (calLookupSeanceTitle(e.seanceId) || e.label || 'Séance');
+    const baseLabel = isFree ? e.label : (calLookupSeanceTitle(e.seanceId) || e.label || 'Séance');
+    const grp = (!isFree && e.group) ? `<span style="font-size:10px;background:var(--accent2);color:#fff;padding:1px 6px;border-radius:4px;margin-right:4px">${E(e.group)}</span>` : '';
     return `<div class="cal-day-list-item">
       <span>${isFree?'🎯':'📚'}</span>
-      <span class="ti">${EC(label)}</span>
+      <span class="ti">${grp}${EC(baseLabel)}</span>
       <button class="btn btn-danger btn-sm" onclick="calDelEvent(${e.id});calOpenDay('${ds}')">✕</button>
     </div>`;
   }).join('') : `<div style="font-size:11px;color:var(--text-muted);text-align:center;padding:8px 0">Aucun événement sur ce jour.</div>`;
@@ -2061,11 +2192,14 @@ function calOpenDay(ds){
 function calAddSeance(){
   const id = parseInt($('cal-add-sea-sel').value, 10);
   if(!id || !_calDialogDate) return;
-  calApp.events.push({ id:Date.now(), date:_calDialogDate, type:'seance', seanceId:id, label:'' });
+  const group = ($('cal-add-sea-group').value || '').trim();
+  calApp.events.push({ id:Date.now(), date:_calDialogDate, type:'seance', seanceId:id, group, label:'' });
   calSave();
   $('cal-add-sea-sel').value = '';
+  $('cal-add-sea-group').value = '';
   calOpenDay(_calDialogDate);
   if(calView==='month') calRenderMonth(); else calRenderYear();
+  if(seaCurrentId===id) seaRenderDates();
 }
 function calAddEvent(){
   const label = $('cal-add-evt-label').value.trim();
@@ -2077,10 +2211,13 @@ function calAddEvent(){
   if(calView==='month') calRenderMonth(); else calRenderYear();
 }
 function calDelEvent(id){
+  const ev = calApp.events.find(e=>e.id===id);
+  const seanceId = ev && ev.seanceId;
   calApp.events = calApp.events.filter(e => e.id !== id);
   calSave();
   if(_calDialogDate) calOpenDay(_calDialogDate);
   if(calView==='month') calRenderMonth(); else calRenderYear();
+  if(seanceId && seaCurrentId===seanceId) seaRenderDates();
 }
 
 // ── Initialisation au premier affichage de l'onglet Calendrier ──
@@ -2107,6 +2244,7 @@ async function calInitOnce(){
 // ================================================================
 libLoad();
 seaLoad();
+calLoad();
 
 // Migrations douces
 libApp.seqs?.forEach(s=>{ IA_KEYS.forEach(k=>{ if(!s[k]) s[k]=[]; }); });

@@ -840,6 +840,27 @@ footer{width:100%;background:var(--bg2);border-top:2.5px solid var(--ink);paddin
   </div>
 </div>
 </div>
+<div class="overlay" id="modal-confirm">
+<div class="modal modal-sm">
+  <div class="modal-title" id="confirm-title">Confirmation</div>
+  <div class="modal-sub" id="confirm-message"></div>
+  <div class="form-actions">
+    <button class="btn btn-outline btn-sm" onclick="confirmCancel()">Annuler</button>
+    <button class="btn btn-sm" id="confirm-ok-btn" onclick="confirmOk()">Confirmer</button>
+  </div>
+</div>
+</div>
+
+<div class="overlay" id="modal-alert">
+<div class="modal modal-sm">
+  <div class="modal-title" id="alert-title">Information</div>
+  <div class="modal-sub" id="alert-message"></div>
+  <div class="form-actions">
+    <button class="btn btn-primary btn-sm" onclick="closeModal('modal-alert')">OK</button>
+  </div>
+</div>
+</div>
+
 <div class="overlay" id="modal-legal">
 <div class="modal">
   <button class="modal-close" onclick="closeModal('modal-legal')">✕</button>
@@ -1515,14 +1536,15 @@ function saveEditClasse(){
   saveS();closeModal('modal-edit-cls');render();
 }
 function deleteClasse(){
-  if(!confirm('Supprimer cette classe et toutes ses données ?')) return;
-  S.classes=S.classes.filter(function(c){return c.id!==S.activeClassId});
-  S.groups=S.groups.filter(function(g){return g.classId!==S.activeClassId});
-  var elIds=S.eleves.filter(function(e){return e.classId===S.activeClassId}).map(function(e){return e.id});
-  S.eleves=S.eleves.filter(function(e){return e.classId!==S.activeClassId});
-  S.passport=S.passport.filter(function(p){return elIds.indexOf(p.eleveId)===-1});
-  S.activeClassId=null;
-  sv('activeClass',null);saveS();closeModal('modal-edit-cls');render();
+  customConfirm('Supprimer cette classe et toutes ses données ?',function(){
+    S.classes=S.classes.filter(function(c){return c.id!==S.activeClassId});
+    S.groups=S.groups.filter(function(g){return g.classId!==S.activeClassId});
+    var elIds=S.eleves.filter(function(e){return e.classId===S.activeClassId}).map(function(e){return e.id});
+    S.eleves=S.eleves.filter(function(e){return e.classId!==S.activeClassId});
+    S.passport=S.passport.filter(function(p){return elIds.indexOf(p.eleveId)===-1});
+    S.activeClassId=null;
+    sv('activeClass',null);saveS();closeModal('modal-edit-cls');render();
+  });
 }
 
 function openAddGroup(){
@@ -1548,10 +1570,11 @@ function openEditGroupModal(gid){
   var fa=document.getElementById('grp-form-actions');fa.innerHTML='';
   var del=document.createElement('button');del.className='btn btn-danger btn-sm';del.textContent='Supprimer';
   del.onclick=(function(gid2){return function(){
-    if(!confirm('Supprimer ce '+groupLabel().toLowerCase()+' ?')) return;
-    S.groups=S.groups.filter(function(x){return x.id!==gid2});
-    S.eleves=S.eleves.map(function(e){return e.groupId===gid2?Object.assign({},e,{groupId:null}):e});
-    saveS();closeModal('modal-add-group');render();
+    customConfirm('Supprimer ce '+groupLabel().toLowerCase()+' ?',function(){
+      S.groups=S.groups.filter(function(x){return x.id!==gid2});
+      S.eleves=S.eleves.map(function(e){return e.groupId===gid2?Object.assign({},e,{groupId:null}):e});
+      saveS();closeModal('modal-add-group');render();
+    });
   }})(gid);
   var cancel=document.createElement('button');cancel.className='btn btn-outline btn-sm';cancel.textContent='Annuler';cancel.onclick=function(){closeModal('modal-add-group')};
   var ok=document.createElement('button');ok.className='btn btn-primary';ok.id='btn-grp-submit';ok.textContent='Enregistrer';ok.onclick=submitGroup;
@@ -1580,14 +1603,26 @@ function populateGroupSel(id){
     var o=document.createElement('option');o.value=g.id;o.textContent=(g.emoji||'⚡')+' '+g.nom;sel.appendChild(o);
   });
 }
+function uniquePrenom(prenom,nom){
+  // Si (prénom, nom) n'existe pas, le retourner tel quel
+  // Sinon, tester "prénom 2", "prénom 3", ... jusqu'à trouver disponible
+  var taken=function(p){
+    return cElvs().some(function(e){
+      return e.prenom.toLowerCase()===p.toLowerCase()&&(e.nom||'').toLowerCase()===(nom||'').toLowerCase();
+    });
+  };
+  if(!taken(prenom)) return prenom;
+  var i=2;
+  while(taken(prenom+' '+i)) i++;
+  return prenom+' '+i;
+}
 function submitAddEleve(){
   var prenom=norm(document.getElementById('f-prenom').value);
   var nom=norm(document.getElementById('f-nom').value);
   var gid=document.getElementById('f-group').value||null;
   var seed=document.getElementById('f-av-seed').value||LORELEI_SEEDS[Math.floor(Math.random()*LORELEI_SEEDS.length)];
   if(!prenom){showMsg('msg-add-eleve','Prénom obligatoire.');return}
-  var dup=cElvs().some(function(e){return e.prenom.toLowerCase()===prenom.toLowerCase()&&e.nom.toLowerCase()===nom.toLowerCase()});
-  if(dup){showMsg('msg-add-eleve','Cet élève existe déjà.');return}
+  prenom=uniquePrenom(prenom,nom);
   S.eleves.push({id:uid('elv'),classId:S.activeClassId,groupId:gid,prenom:prenom,nom:nom,score:SCORE0,avatarSeed:seed});
   saveS();render();closeModal('modal-add-eleve');
 }
@@ -1614,8 +1649,8 @@ function parseElevesTxt(text,groupSelId){
     if(!parts.length) return;
     // Accepte 1 seul mot (prénom seul ou numéro) ou plusieurs (prénom + nom)
     var prenom=parts[0],nom=parts.length>1?parts.slice(1).join(' '):'';
-    var dup=cElvs().some(function(e){return e.prenom.toLowerCase()===prenom.toLowerCase()&&(e.nom||'').toLowerCase()===nom.toLowerCase()});
-    if(dup) return;
+    // Si doublon, on ajoute un suffixe numérique au lieu de skip
+    prenom=uniquePrenom(prenom,nom);
     S.eleves.push({id:uid('elv'),classId:S.activeClassId,groupId:gid,prenom:prenom,nom:nom,score:SCORE0,avatarSeed:LORELEI_SEEDS[Math.floor(Math.random()*LORELEI_SEEDS.length)]});
     n++;
   });
@@ -1685,10 +1720,13 @@ function saveEleveMgr(){
 }
 function deleteEleve(){
   var el=S.eleves.find(function(e){return e.id===S.editEleveId});
-  if(!el||!confirm('Supprimer '+el.prenom+' '+el.nom+' ?')) return;
-  S.eleves=S.eleves.filter(function(e){return e.id!==S.editEleveId});
-  S.passport=S.passport.filter(function(p){return p.eleveId!==S.editEleveId});
-  saveS();render();closeModal('modal-eleve-mgr');
+  if(!el) return;
+  var fullName=el.prenom+(el.nom?' '+el.nom:'');
+  customConfirm('Supprimer '+fullName+' ?',function(){
+    S.eleves=S.eleves.filter(function(e){return e.id!==S.editEleveId});
+    S.passport=S.passport.filter(function(p){return p.eleveId!==S.editEleveId});
+    saveS();render();closeModal('modal-eleve-mgr');
+  });
 }
 
 function refreshAvatarPreview(){
@@ -1965,28 +2003,53 @@ function importData(){
     var file=e.target.files[0];if(!file) return;
     var reader=new FileReader();
     reader.onload=function(ev){
-      try{
-        var data=JSON.parse(ev.target.result);
-        if(!confirm('Importer ces données ? Vos données actuelles seront remplacées.')) return;
+      var data;
+      try{data=JSON.parse(ev.target.result)}
+      catch(err){customAlert('Fichier invalide ou corrompu.','Erreur');return}
+      customConfirm('Importer ces données ? Vos données actuelles seront remplacées.',function(){
         localStorage.clear();
         Object.keys(data).forEach(function(k){
           var v=data[k];
           localStorage.setItem(k,typeof v==='object'?JSON.stringify(v):v);
         });
-        loadS();render();alert('Données importées avec succès.');
-      } catch(err){alert('Fichier invalide ou corrompu.')}
+        loadS();render();customAlert('Données importées avec succès.','Import réussi');
+      });
     };
     reader.readAsText(file);
   };
   input.click();
 }
 function resetApp(){
-  if(!confirm('Effacer toutes les données de ClasseVibe ? Cette action est irréversible.')) return;
-  localStorage.clear();loadS();render();
+  customConfirm('Effacer toutes les données de ClasseVibe ? Cette action est irréversible.',function(){
+    localStorage.clear();loadS();render();
+  });
 }
 
 function openModal(id){var el=document.getElementById(id);if(el)el.classList.add('open')}
 function closeModal(id){var el=document.getElementById(id);if(el)el.classList.remove('open')}
+
+var _confirmCallback=null;
+function customConfirm(message,onYes,opts){
+  opts=opts||{};
+  document.getElementById('confirm-message').textContent=message;
+  document.getElementById('confirm-title').textContent=opts.title||'Confirmation';
+  var btn=document.getElementById('confirm-ok-btn');
+  btn.textContent=opts.okText||'Confirmer';
+  btn.className='btn btn-sm '+(opts.danger===false?'btn-primary':'btn-danger');
+  _confirmCallback=onYes;
+  openModal('modal-confirm');
+}
+function confirmCancel(){_confirmCallback=null;closeModal('modal-confirm')}
+function confirmOk(){
+  var cb=_confirmCallback;_confirmCallback=null;
+  closeModal('modal-confirm');
+  if(cb) cb();
+}
+function customAlert(message,title){
+  document.getElementById('alert-message').textContent=message;
+  document.getElementById('alert-title').textContent=title||'Information';
+  openModal('modal-alert');
+}
 function showMsg(id,t){var el=document.getElementById(id);el.textContent=t;el.style.display='block'}
 function clearMsg(id){var el=document.getElementById(id);el.textContent='';el.style.display='none'}
 
@@ -2337,8 +2400,9 @@ function planAddTable(seats){
   renderPlan();
 }
 function planClearTables(){
-  if(!confirm('Effacer toutes les tables ?')) return;
-  PLAN_STATE.tables=[];renderPlan();
+  customConfirm('Effacer toutes les tables ?',function(){
+    PLAN_STATE.tables=[];renderPlan();
+  });
 }
 function planAutoLayout(){
   var canvas=document.getElementById('plan-canvas-wrap');
@@ -2372,7 +2436,7 @@ function planAssignChair(tableId,chairIdx){
   // si chaise occupée, on libère
   if(t.chairs[chairIdx]){t.chairs[chairIdx]=null;renderPlan();return}
   // si aucun élève sélectionné, ne rien faire
-  if(!PLAN_STATE.selectedEleveId){alert('Sélectionnez d\'abord un élève dans la liste du bas.');return}
+  if(!PLAN_STATE.selectedEleveId){customAlert('Sélectionnez d\'abord un élève dans la liste du bas.');return}
   // s'assurer que l'élève n'est pas déjà ailleurs (retirer)
   PLAN_STATE.tables.forEach(function(tb){
     tb.chairs=tb.chairs.map(function(c){return c===PLAN_STATE.selectedEleveId?null:c});

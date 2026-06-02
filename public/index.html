@@ -80,6 +80,10 @@ button,input,textarea,select{font:inherit;color:inherit;border:none;background:n
 .main{padding:20px;max-width:1440px;margin:0 auto;width:100%}
 
 .stat-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-bottom:22px}
+.class-actions{display:flex;gap:6px;justify-content:flex-end;margin-bottom:10px;flex-wrap:wrap}
+.icon-btn{width:38px;height:38px;border-radius:10px;background:var(--bg2);border:2.5px solid var(--ink);box-shadow:var(--sh);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1rem;padding:0;transition:.12s}
+.icon-btn:hover{transform:translate(-1px,-1px);box-shadow:var(--sh2);background:var(--orange-soft)}
+.icon-btn:active{transform:translate(2px,2px);box-shadow:none}
 .stat-card{background:var(--bg2);border:2.5px solid var(--ink);border-radius:var(--r2);padding:12px 16px;box-shadow:var(--sh);position:relative;overflow:hidden}
 .stat-accent{position:absolute;top:0;left:0;right:0;height:4px}
 .stat-n{font-size:1.85rem;font-weight:900;letter-spacing:-.04em;line-height:1}
@@ -194,7 +198,7 @@ button,input,textarea,select{font:inherit;color:inherit;border:none;background:n
 .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:11px}
 .field{display:flex;flex-direction:column;gap:4px;margin-bottom:11px;min-width:0}
 .field label{font-size:.7rem;font-weight:900;color:var(--ink2);text-transform:uppercase;letter-spacing:.08em}
-.field input,.field textarea,.field select{background:var(--bg3);border:2.5px solid var(--border);border-radius:var(--r);padding:8px 12px;font-weight:700;outline:none;transition:.12s;-webkit-appearance:none;appearance:none;width:100%;max-width:100%;min-width:0;font-family:inherit}
+.field input,.field textarea,.field select{background:var(--bg3);border:2.5px solid var(--border);border-radius:var(--r);padding:8px 12px;font-size:16px;font-weight:700;outline:none;transition:.12s;-webkit-appearance:none;appearance:none;width:100%;max-width:100%;min-width:0;font-family:inherit}
 .field input:focus,.field textarea:focus,.field select:focus{border-color:var(--orange)}
 .form-actions{display:flex;justify-content:flex-end;gap:7px;margin-top:14px;flex-wrap:wrap}
 .msg{padding:8px 12px;border-radius:var(--r);font-size:.79rem;font-weight:700;background:var(--orange-soft);color:var(--ink);border:2px solid var(--orange-border);display:none;margin-bottom:10px}
@@ -379,9 +383,6 @@ footer{width:100%;background:var(--bg2);border-top:2.5px solid var(--ink);paddin
         <button class="btn btn-outline" onclick="importData()">Importer mes données</button>
         <button class="btn btn-soft" onclick="exportData()">Exporter mes données</button>
       </div>
-      <div style="margin-top:12px">
-        <button class="btn btn-soft btn-sm" onclick="openCodeModal()">📥 J'ai un code de projection</button>
-      </div>
     </div>
     <div class="home-classes-wrap" id="home-classes-wrap"></div>
   </div>
@@ -389,6 +390,11 @@ footer{width:100%;background:var(--bg2);border-top:2.5px solid var(--ink);paddin
 
 <div class="screen" id="screen-classe">
   <div class="main">
+    <div class="class-actions">
+      <button class="icon-btn" onclick="renderRank();openModal('modal-rank')" title="Classement" aria-label="Classement">🏆</button>
+      <button class="icon-btn" onclick="renderJournal();openModal('modal-journal')" title="Historique" aria-label="Historique">📋</button>
+      <button class="icon-btn" onclick="openModal('modal-reset')" title="Reset des scores" aria-label="Reset des scores">↺</button>
+    </div>
     <div class="stat-row" id="stat-row"></div>
     <div id="groups-section">
       <div class="section-head">
@@ -490,10 +496,10 @@ footer{width:100%;background:var(--bg2);border-top:2.5px solid var(--ink);paddin
 <div class="modal modal-sm">
   <button class="modal-close" onclick="closeModal('modal-import-eleves')">✕</button>
   <div class="modal-title">Importer une liste d'élèves</div>
-  <div class="modal-sub">Fichier CSV/TXT (un élève par ligne : Prénom Nom) ou collez directement la liste.</div>
+  <div class="modal-sub">Fichier CSV/TXT ou liste collée. Un élève par ligne : prénom seul, prénom + nom, ou simple numéro.</div>
   <div class="field"><label><span id="fi-group-label">Groupe</span> par défaut</label><select id="fi-group"></select></div>
   <div class="field"><label>Fichier CSV / TXT</label><input id="fi-file" type="file" accept=".csv,.txt"></div>
-  <div class="field"><label>Ou coller une liste</label><textarea id="fi-paste" rows="5" placeholder="Alice Martin&#10;Bob Dupont&#10;Claire Robert"></textarea></div>
+  <div class="field"><label>Ou coller une liste</label><textarea id="fi-paste" rows="5" placeholder="Un élève par ligne&#10;Exemples :&#10;Alice Martin&#10;Bob&#10;12"></textarea></div>
   <div class="msg" id="msg-import-eleves"></div>
   <div class="form-actions">
     <button class="btn btn-soft" onclick="importFileEleves()">Importer fichier</button>
@@ -1058,14 +1064,11 @@ function renderTopbar(){
   right.innerHTML='';
   burger.innerHTML='';
   var actions=[
-    {lbl:'📺 Projeter',fn:function(){openProjectModal()},cls:'btn-primary'},
+    {lbl:'🏠 Accueil',fn:function(){goHome()}},
     {lbl:'🎡 Tirage',fn:function(){openTirageModal()}},
     {lbl:'🪑 Plan de classe',fn:function(){openPlanModal()}},
     {lbl:'✏️ Classe',fn:function(){openEditClasse()}},
-    {lbl:'⚙️ Comportements',fn:function(){renderCompMgr();openModal('modal-comp-mgr')}},
-    {lbl:'🏆 Classement',fn:function(){renderRank();openModal('modal-rank')}},
-    {lbl:'📋 Historique',fn:function(){renderJournal();openModal('modal-journal')}},
-    {lbl:'↺ Reset',fn:function(){openModal('modal-reset')}}
+    {lbl:'⚙️ Comportements',fn:function(){renderCompMgr();openModal('modal-comp-mgr')}}
   ];
   actions.forEach(function(a){
     var b1=document.createElement('button');
@@ -1606,10 +1609,12 @@ function parseElevesTxt(text,groupSelId){
   var gid=document.getElementById(groupSelId).value||null;var n=0;
   text.split(/\r?\n/).forEach(function(line){
     var clean=norm(line.replace(/[;,|]+/g,' '));
-    var parts=clean.split(' ').filter(function(p){return p.length>1});
-    if(parts.length<2) return;
-    var prenom=parts[0],nom=parts.slice(1).join(' ');
-    var dup=cElvs().some(function(e){return e.prenom.toLowerCase()===prenom.toLowerCase()&&e.nom.toLowerCase()===nom.toLowerCase()});
+    if(!clean) return;
+    var parts=clean.split(' ').filter(function(p){return p.length>=1});
+    if(!parts.length) return;
+    // Accepte 1 seul mot (prénom seul ou numéro) ou plusieurs (prénom + nom)
+    var prenom=parts[0],nom=parts.length>1?parts.slice(1).join(' '):'';
+    var dup=cElvs().some(function(e){return e.prenom.toLowerCase()===prenom.toLowerCase()&&(e.nom||'').toLowerCase()===nom.toLowerCase()});
     if(dup) return;
     S.eleves.push({id:uid('elv'),classId:S.activeClassId,groupId:gid,prenom:prenom,nom:nom,score:SCORE0,avatarSeed:LORELEI_SEEDS[Math.floor(Math.random()*LORELEI_SEEDS.length)]});
     n++;

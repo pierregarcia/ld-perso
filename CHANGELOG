@@ -1,85 +1,117 @@
-# Changelog — Le Séquenceur IA
+# Changelog — Classe Vibe
 
-Toutes les évolutions notables de ce projet sont documentées dans ce fichier.
+Toutes les évolutions notables du projet sont listées dans ce fichier.
 
-Le format suit la convention [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/) et le projet adhère au [versionnement sémantique](https://semver.org/lang/fr/).
+Le format suit les conventions [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/), et le projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
-## [1.0.0] — 2026-05-29
+## [1.0.0] — 2026-06-02
 
-Première version publique du **Séquenceur IA**, dérivé du [Séquenceur LV](https://forge.apps.education.fr/rollocharlie/le-sequenceur) et adapté à l'éducation à l'intelligence artificielle.
+### Première version publique 🎉
 
-### Ajouts — Séquenceur (séquences-conteneurs)
+Classe Vibe arrive en version stable avec un ensemble complet d'outils de suivi de classe pour les enseignants du primaire au lycée.
 
-- Tableau de bord listant toutes les séquences, groupées par niveau (6ème → Terminale, collège et lycée distincts).
-- Création de séquence via modale (niveau, titre, année).
-- Chaque tuile de séquence accueille directement ses séances : pas de « fiche de séquence » séparée.
-- Édition en place du titre, du niveau et de l'année de la séquence depuis la liste des séances.
-- Suppression d'une séquence (avec ses séances) depuis la tuile ou la barre de réglages.
-- Bibliothèque persistante des séquences (stockage `localStorage`, clé `sqia-lib`).
+### Ajouté
 
-### Ajouts — Séances
+#### Gestion des classes
+- Création de classes multiples, regroupées par niveau libre (CP, 6ème, Terminale, ou tout texte personnalisé)
+- Édition complète d'une classe : nom, niveau, mode groupes, mode passeports
+- Suppression d'une classe avec toutes ses données associées
+- Bascule rapide entre classes depuis l'écran d'accueil
+- Label de groupe personnalisable par classe ("Groupe", "Maison", "Équipe", "Clan"…)
 
-- Éditeur de séance avec aperçu A4 en direct.
-- Sections de la fiche dans l'ordre : Compétences numériques · Supports · Déroulé · Trace écrite · Devoirs.
-- Compétences numériques travaillées cochées par réservoir avec champ libre par axe ; ajouter un item le pousse aussi dans la séquence parente.
-- Quatre réservoirs avec emojis dédiés :
-  - ⚙️ Savoir comment fonctionnent les IA (8 items)
-  - 🔍 Identifier les enjeux des IA (11 items)
-  - 📖 Apprendre avec l'IA (11 items)
-  - 💻 Compétences du CRCN (5 domaines, 16 sous-compétences)
-- Affichage du domaine CRCN au-dessus des sous-compétences sélectionnées, dans l'éditeur comme sur la fiche.
-- Activités chronométrées (durée + description, total automatique).
-- Trace écrite avec police manuscrite par défaut.
-- Supports externes avec URL cliquables.
-- Devoirs avec URLs auto-converties en liens.
-- Image d'illustration optionnelle (URL distante, format bannière ou ronde).
-- Police personnalisable (sept polices au choix) et curseur de taille de texte.
-- Stockage persistant des séances (clé `sqia-sea`).
+#### Gestion des élèves
+- Ajout manuel d'élèves (prénom, nom, groupe, avatar)
+- Import par fichier CSV/TXT ou par collage de liste
+- Édition d'un élève via le crayon ✏️ sur sa carte ou clic droit
+- Suppression d'un élève (et de tous ses tampons associés)
+- Désambiguïsation automatique des prénoms identiques par initiale du nom
 
-### Ajouts — Progression
+#### Avatars
+- 70 avatars Lorelei (par Lisa Wischofsky, licence CC0 1.0) servis via l'API publique DiceBear
+- Sélecteur d'avatar dans la modale de création/édition
+- Bouton "🎲 Aléatoire" pour piocher un avatar au hasard
+- Avatar déterministe par défaut (basé sur le prénom de l'élève)
 
-- Tableau de bord des progressions.
-- Création par modale avec choix du périmètre de niveaux (cases à cocher + raccourcis « Tout collège », « Tout lycée », « Tout »).
-- Timeline éditable des séquences de la progression, avec validation et badge de niveau.
-- Couverture des niveaux (avec barre de progression globale).
-- **Couverture des compétences** détaillée : checklist complète des 46 compétences du référentiel (30 IA + 16 CRCN), avec marqueur ✓ pour les compétences validées et ○ pour celles à couvrir.
-- CRCN sous-groupé par domaine dans la checklist.
-- Stockage persistant des progressions (clé `sqia`).
-- Import / export JSON des progressions.
+#### Système de points
+- Score de départ paramétrable (10 points par défaut)
+- Attribution de points positifs (+1 à +3) ou négatifs (-1 à -3)
+- Trois cibles possibles : un élève, un groupe entier, toute la classe
+- 8 comportements positifs et 8 négatifs prédéfinis, modifiables et extensibles
+- Sélecteur d'emoji intégré pour personnaliser les icônes
+- Bouton "↺ Reset du lundi" pour remettre tous les scores au score initial
 
-### Ajouts — Exports
+#### Système de groupes / maisons
+- Activation optionnelle par classe
+- Création de groupes avec nom, emblème (emoji ou image URL), couleur (10 couleurs)
+- Édition via le crayon ✏️ visible au survol
+- 🏆 Trophée animé sur le groupe en tête du classement
+- Barre de progression visuelle par groupe
+- Filtrage des élèves par groupe via pilules
+- Couleur de groupe propagée automatiquement aux cartes des élèves membres
 
-- Markdown (aperçu, copie, téléchargement).
-- Texte au format Word (`.doc`) ou OpenDocument (`.odt`).
-- PDF via impression du navigateur (mise en page A4 dédiée).
-- Pied de page harmonisé sur toutes les feuilles (séances, progression) et dans tous les exports : crédit à la Progression IA de la DRANE Île-de-France avec lien hypertexte.
+#### Passeport et tampons
+- Système de tampons activable par classe (indépendant des points)
+- Tampons personnalisables avec libellé, emoji ou URL d'image
+- 3 tampons prédéfinis : Mission réussie, Premier de la classe, Esprit d'équipe
+- Visuel distinct des points dans la modale d'attribution (style passeport doré)
+- Compteur de tampons sur la carte de chaque élève
+- Vue détaillée des tampons obtenus par élève, avec possibilité de retirer
 
-### Ajouts — Interface
+#### Tirage au sort
+- Roue de la fortune SVG colorée avec animation (6 à 9 tours, easing naturel)
+- Exclusion automatique de chaque élève déjà tiré (un élève différent à chaque spin)
+- Bouton "🗑 Retirer de la roue" pour exclure manuellement un élève sans le supprimer de la classe
+- Bouton "↺ Réinitialiser la liste" pour remettre tout le monde sur la roue
+- Mode "Répartition en N groupes aléatoires" (2 à 20 groupes, Fisher-Yates)
+- Bouton "🎲 Refaire" pour relancer la répartition
 
-- Deux onglets : Séquenceur (séquences + séances fusionnés) et Progression.
-- Thème clair / sombre persistant.
-- Interface responsive : header collant et menu plein-écran sur téléphone, mise en page empilée pour les éditeurs en dessous de 820 px.
-- Aperçu A4 toujours visible à côté de l'éditeur sur grand écran.
-- Footer global minimaliste : projet, auteur, code source, signalement, mentions légales.
-- Modale Mentions légales détaillant éditeur, hébergement, licence, traitement des données personnelles, crédits.
+#### Plan de classe
+- Glisser-déposer libre des tables sur une grille
+- Tables 1 place ou 2 places
+- Rotation libre de chaque table (0/90/180/270°)
+- Suppression individuelle des tables
+- Bouton "📐 Auto-disposer" pour une grille régulière automatique
+- Pool des élèves non placés en bas, clic-pour-assigner
+- Sauvegarde du plan dans les données de la classe
+- Bouton "🖨 Imprimer" (CSS print propre, seul le plan est imprimé)
+
+#### Projection
+- Mode plein écran sombre avec grandes lettres (lisibilité depuis le fond de la classe)
+- Code court de session (4 caractères) affiché en grand
+- Classement des groupes avec trophée animé sur le leader
+- Tri des élèves par score
+- Export d'un snapshot JSON `classevibe-CODE.json` pour transférer la session vers un autre appareil
+- Réception depuis l'accueil via le bouton "📥 J'ai un code de projection"
+
+#### Historique et classement
+- Historique des 40 dernières actions (points, tampons, reset)
+- Classement complet des groupes et des 15 meilleurs élèves
+
+#### Données et confidentialité
+- Stockage 100 % local (localStorage navigateur)
+- Export complet des données au format JSON
+- Import complet d'une sauvegarde
+- Réinitialisation totale de l'application (depuis Mentions légales)
+- Aucune donnée transmise à un serveur tiers (hors API DiceBear pour les avatars)
+
+#### Interface
+- Design néo-brutaliste avec bordures et ombres caractéristiques
+- Police Nunito (chargée depuis Google Fonts)
+- Palette chaleureuse sur fond crème (#faf8f4)
+- Responsive (téléphone, tablette, ordinateur, TBI)
+- Favicon SVG embarquée
+- Pas de cookie, pas de tracker
 
 ### Crédits
 
-- Items des trois axes (Savoir / Identifier / Apprendre) issus de la [Progression IA](https://drane-ile-de-france.forge.apps.education.fr/progression_ia/) de la **DRANE Île-de-France**, sous licence AGPL v3+.
-- Référentiel CRCN issu du *Cadre de Référence des Compétences Numériques* (ministère de l'Éducation nationale).
-
-### Licence
-
-- Projet sous [GNU General Public License v3.0](https://www.gnu.org/licenses/gpl-3.0.html).
-- Auteur : Charlie ROLLO — charlie.rollo@ac-versailles.fr.
-
-### Limites connues
-
-- Le module **Calendrier** (zones de vacances A/B/C, jours fériés, planification des séances) n'est pas encore inclus dans cette version.
-- Les progressions ne sont pas encore reliées à la bibliothèque de séquences : elles utilisent leurs propres séquences internes.
+- **Auteur** : Charlie ROLLO ([charlie.rollo@ac-versailles.fr](mailto:charlie.rollo@ac-versailles.fr))
+- **Inspiré de** : [La Classe des Héros](https://vibe-edu.forge.apps.education.fr/la-classe-des-heros/) (vibe-edu, Forge apps.education.fr)
+- **Avatars** : [Lorelei](https://www.figma.com/community/file/1198749693280469639) par [Lisa Wischofsky](https://www.instagram.com/lischi_art/), licence [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/), servis via l'API [DiceBear](https://www.dicebear.com)
+- **Hébergement** : Forge des Communs Numériques Éducatifs (Ministère de l'Éducation nationale)
+- **Licence** : GNU General Public License v3.0 (GPLv3)
 
 ---
 
-[1.0.0]: https://forge.apps.education.fr/lelabodecharlie/le-sequenceur-ia/-/tags/v1.0.0
+[1.0.0]: https://forge.apps.education.fr/lelabodecharlie/classe-vibe/-/releases/v1.0.0

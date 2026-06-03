@@ -70,10 +70,14 @@ button,input,textarea,select{font:inherit;color:inherit;border:none;background:n
 .home-level-section{margin-bottom:24px}
 .home-level-title{font-size:.72rem;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:var(--ink3);margin-bottom:12px;text-align:left;padding-left:4px}
 .home-classes-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
-.home-class-card{background:var(--bg2);border:2.5px solid var(--ink);border-radius:var(--r3);padding:18px 20px;text-align:left;transition:.12s;cursor:pointer;box-shadow:var(--sh);position:relative;overflow:hidden}
+.home-class-card{background:var(--bg2);border:2.5px solid var(--ink);border-radius:var(--r3);padding:18px 20px;text-align:left;transition:.12s;cursor:pointer;box-shadow:var(--sh);position:relative;overflow:hidden;user-select:none}
 .home-class-card:hover{transform:translate(-2px,-2px);box-shadow:var(--sh2)}
 .home-class-card:active{transform:translate(2px,2px);box-shadow:none}
 .home-class-card-bar{position:absolute;top:0;left:0;right:0;height:4px;background:var(--orange)}
+.home-class-delete{position:absolute;top:8px;right:8px;width:26px;height:26px;border-radius:8px;background:rgba(255,255,255,.92);border:2px solid var(--ink);font-size:.78rem;font-weight:900;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:2;opacity:0;transition:.15s;padding:0;line-height:1;color:var(--red)}
+.home-class-card:hover .home-class-delete{opacity:1}
+.home-class-delete:hover{background:var(--red);color:#fff;border-color:var(--red)}
+@media(hover:none){.home-class-delete{opacity:.85}}
 .home-class-name{font-weight:900;font-size:1rem;margin-bottom:3px;line-height:1.2}
 .home-class-sub{font-size:.78rem;color:var(--ink3);font-weight:700}
 
@@ -145,10 +149,10 @@ button,input,textarea,select{font:inherit;color:inherit;border:none;background:n
 .carte-add:hover .add-plus{border-color:var(--ink3);background:var(--bg4)}
 .add-lbl{font-size:.77rem;font-weight:900;color:var(--ink3);margin-top:4px;text-align:center}
 
-.carte-edit-btn{position:absolute;top:8px;right:8px;width:26px;height:26px;border-radius:8px;background:rgba(255,255,255,.85);border:2px solid var(--ink);font-size:.78rem;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:2;opacity:0;transition:.15s;padding:0;line-height:1}
+.carte-edit-btn{position:absolute;top:6px;left:6px;width:26px;height:26px;border-radius:8px;background:rgba(255,255,255,.92);border:2px solid var(--ink);font-size:.78rem;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:2;opacity:0;transition:.15s;padding:0;line-height:1;box-shadow:0 1px 3px rgba(0,0,0,.15)}
 .carte:hover .carte-edit-btn,.group-card:hover .carte-edit-btn{opacity:1}
 .carte-edit-btn:hover{background:var(--ink);color:#fff}
-@media(hover:none){.carte-edit-btn{opacity:1}}
+@media(hover:none){.carte-edit-btn{opacity:.95}}
 
 .stamp-pill{font-size:.55rem;font-weight:900;padding:1px 6px;border-radius:99px;background:#fef9c3;color:#854d0e;border:2px solid #facc15;text-transform:uppercase;letter-spacing:.05em;display:inline-flex;align-items:center;gap:3px}
 .behav-card.stamp-style{background:linear-gradient(135deg,#fffbeb,#fef3c7);border-style:dashed;border-color:#facc15;box-shadow:3px 3px 0 #d97706}
@@ -221,8 +225,8 @@ button,input,textarea,select{font:inherit;color:inherit;border:none;background:n
 .avatar-preview{width:64px;height:64px;border-radius:50%;border:2.5px solid var(--ink);overflow:hidden;background:var(--bg3);flex-shrink:0}
 .avatar-preview svg{width:100%;height:100%}
 .avatar-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(58px,1fr));gap:6px;max-height:280px;overflow-y:auto;padding:8px;background:var(--bg3);border:2px solid var(--border);border-radius:var(--r);margin-top:5px}
-.avatar-opt{width:100%;aspect-ratio:1;border-radius:50%;border:2.5px solid transparent;cursor:pointer;overflow:hidden;background:var(--bg2);transition:.1s}
-.avatar-opt svg{width:100%;height:100%;display:block}
+.avatar-opt{position:relative;width:100%;padding-bottom:100%;height:0;border-radius:50%;border:2.5px solid transparent;cursor:pointer;overflow:hidden;background:var(--bg2);transition:.1s;display:block}
+.avatar-opt svg,.avatar-opt img{position:absolute;inset:0;width:100%;height:100%;display:block;object-fit:cover}
 .avatar-opt:hover,.avatar-opt.sel{border-color:var(--orange);transform:scale(1.06)}
 
 .manage-row{display:flex;align-items:center;justify-content:space-between;gap:9px;padding:9px 12px;border-radius:var(--r);background:var(--bg3);border:2px solid var(--border);margin-bottom:6px;flex-wrap:wrap}
@@ -844,6 +848,19 @@ footer{width:100%;background:var(--bg2);border-top:2.5px solid var(--ink);paddin
   </div>
 </div>
 </div>
+<div class="overlay" id="modal-welcome">
+<div class="modal">
+  <button class="modal-close" onclick="closeWelcome()">✕</button>
+  <div class="modal-title">👋 Bienvenue sur <span style="color:var(--orange)">ClasseVibe</span> !</div>
+  <div class="modal-sub" id="welcome-intro">Suivi des élèves, plan de classe, tirage au sort et bien plus.</div>
+  <div id="welcome-body" style="font-size:.92rem;color:var(--ink2);font-weight:600;line-height:1.7"></div>
+  <div class="form-actions" style="justify-content:space-between;flex-wrap:wrap;gap:10px">
+    <button class="btn btn-soft btn-sm" onclick="loadDemoClass();closeWelcome()">🎓 Voir une classe démo</button>
+    <button class="btn btn-primary" onclick="closeWelcome()">C'est parti !</button>
+  </div>
+</div>
+</div>
+
 <div class="overlay" id="modal-confirm">
 <div class="modal modal-sm">
   <div class="modal-title" id="confirm-title">Confirmation</div>
@@ -1070,12 +1087,29 @@ function renderHomeClasses(){
     grid.className='home-classes-grid';
     byLevel[lvl].forEach(function(cls){
       var elvs=S.eleves.filter(function(e){return e.classId===cls.id});
-      var card=document.createElement('button');
+      var card=document.createElement('div');
       card.className='home-class-card';
       card.innerHTML='<div class="home-class-card-bar"></div>'+
+        '<button class="home-class-delete" data-cid="'+cls.id+'" title="Supprimer cette classe" aria-label="Supprimer la classe">✕</button>'+
         '<div class="home-class-name">'+cls.nom+'</div>'+
         '<div class="home-class-sub">'+elvs.length+' élève'+(elvs.length>1?'s':'')+'</div>';
-      card.onclick=(function(id){return function(){S.activeClassId=id;sv('activeClass',id);S.filterGroup='all';render()}})(cls.id);
+      card.onclick=(function(id){return function(ev){
+        if(ev.target.closest('.home-class-delete')) return;
+        S.activeClassId=id;sv('activeClass',id);S.filterGroup='all';render();
+      }})(cls.id);
+      var delBtn=card.querySelector('.home-class-delete');
+      delBtn.addEventListener('click',(function(id,nom){return function(ev){
+        ev.stopPropagation();ev.preventDefault();
+        customConfirm('Supprimer la classe « '+nom+' » et toutes ses données ?',function(){
+          S.classes=S.classes.filter(function(c){return c.id!==id});
+          S.groups=S.groups.filter(function(g){return g.classId!==id});
+          var elIds=S.eleves.filter(function(e){return e.classId===id}).map(function(e){return e.id});
+          S.eleves=S.eleves.filter(function(e){return e.classId!==id});
+          S.passport=S.passport.filter(function(p){return elIds.indexOf(p.eleveId)===-1});
+          if(S.activeClassId===id) S.activeClassId=null;
+          saveS();render();
+        });
+      }})(cls.id,cls.nom));
       grid.appendChild(card);
     });
     sec.appendChild(grid);
@@ -1090,7 +1124,8 @@ function renderTopbar(){
   burger.innerHTML='';
   var actions=[
     {lbl:'🏠 Accueil',fn:function(){goHome()}},
-    {lbl:'🎡 Tirage',fn:function(){openTirageModal()}},
+    {lbl:'🎡 Tirage',fn:function(){openTirageModal('roue')}},
+    {lbl:'👥 Groupes aléatoires',fn:function(){openTirageModal('grp')}},
     {lbl:'🪑 Plan de classe',fn:function(){openPlanModal()}},
     {lbl:'✏️ Classe',fn:function(){openEditClasse()}},
     {lbl:'⚙️ Comportements',fn:function(){renderCompMgr();openModal('modal-comp-mgr')}}
@@ -2251,8 +2286,9 @@ function renderProjectFromSnapshot(){
    TIRAGE AU SORT
 ══════════════════════════════════════════════════════ */
 var roueRotation=0,roueSpinning=false,roueExcluded={},roueLastWinner=null;
-function openTirageModal(){
-  switchTirageTab('roue');
+function openTirageModal(tab){
+  tab=tab||'roue';
+  switchTirageTab(tab);
   roueExcluded={};roueLastWinner=null;roueRotation=0;
   document.getElementById('roue-result').textContent='';
   document.getElementById('roue-result-actions').style.display='none';
@@ -2618,12 +2654,102 @@ function savePlan(){
 }
 function printPlan(){window.print()}
 
+/* ══════════════════════════════════════════════════════
+   BIENVENUE & CLASSE DÉMO
+══════════════════════════════════════════════════════ */
+function showWelcomeIfFirstVisit(){
+  if(localStorage.getItem(SK+'welcome_done')) return;
+  var isMobile=window.innerWidth<=600;
+  var body=document.getElementById('welcome-body');
+  if(isMobile){
+    body.innerHTML=
+      '<p><strong style="color:var(--ink)">📱 Sur téléphone :</strong></p>'+
+      '<ul style="padding-left:18px;margin:8px 0">'+
+      '<li>Touchez <strong>+ Nouvelle classe</strong> pour démarrer.</li>'+
+      '<li>Tous les outils sont dans le <strong>menu en haut à droite</strong> (icône ≡).</li>'+
+      '<li>Touchez un élève pour lui attribuer des <strong>points</strong> ou des <strong>tampons</strong>.</li>'+
+      '<li>Touchez le <strong>crayon ✏️</strong> sur sa carte pour modifier son prénom, sa maison ou son avatar.</li>'+
+      '<li>Touchez une <strong>maison</strong> pour donner des points à tout le groupe d\'un coup.</li>'+
+      '</ul>'+
+      '<p style="margin-top:10px"><strong style="color:var(--ink)">💡 Astuce :</strong> tournez l\'écran en paysage pour une meilleure expérience sur les écrans tactiles.</p>';
+  } else {
+    body.innerHTML=
+      '<p><strong style="color:var(--ink)">💻 Sur ordinateur :</strong></p>'+
+      '<ul style="padding-left:18px;margin:8px 0">'+
+      '<li>Cliquez sur <strong>+ Nouvelle classe</strong> pour démarrer.</li>'+
+      '<li>Tous les outils (Tirage, Plan de classe, Comportements…) sont dans la <strong>barre du haut</strong>.</li>'+
+      '<li><strong>Clic gauche</strong> sur un élève : lui attribuer points ou tampons.</li>'+
+      '<li><strong>Clic droit</strong> sur un élève (ou crayon ✏️) : modifier sa fiche.</li>'+
+      '<li>Cliquez sur une <strong>maison</strong> pour donner des points au groupe entier.</li>'+
+      '</ul>'+
+      '<p style="margin-top:10px"><strong style="color:var(--ink)">💡 Astuce :</strong> activez le mode <strong>Plein écran</strong> (F11) pour utiliser ClasseVibe en classe sans distraction.</p>';
+  }
+  document.getElementById('welcome-intro').textContent=
+    'Suivi des élèves, plan de classe, tirage au sort et bien plus.';
+  openModal('modal-welcome');
+}
+function closeWelcome(){
+  localStorage.setItem(SK+'welcome_done','1');
+  closeModal('modal-welcome');
+}
+
+function loadDemoClass(){
+  // Crée une classe démo "Poudlard CM2" avec 4 maisons et 16 élèves fictifs
+  var classId=uid('cls');
+  var demoClass={
+    id:classId,nom:'Classe Démo',level:'Démo',
+    groupsEnabled:true,groupLabel:'Maison',passportEnabled:true
+  };
+  S.classes.push(demoClass);
+
+  var houses=[
+    {nom:'Phénix',emoji:'🔥',colorIdx:1},
+    {nom:'Dragon',emoji:'🐉',colorIdx:3},
+    {nom:'Licorne',emoji:'🦄',colorIdx:5},
+    {nom:'Tigre',emoji:'🐯',colorIdx:0}
+  ];
+  var houseIds=[];
+  houses.forEach(function(h){
+    var gid=uid('grp');
+    S.groups.push({id:gid,classId:classId,nom:h.nom,emoji:h.emoji,img:'',colorIdx:h.colorIdx});
+    houseIds.push(gid);
+  });
+
+  var demoStudents=[
+    {p:'Léa',n:'Martin'},{p:'Hugo',n:'Bernard'},{p:'Emma',n:'Dubois'},{p:'Louis',n:'Thomas'},
+    {p:'Chloé',n:'Robert'},{p:'Adam',n:'Petit'},{p:'Inès',n:'Richard'},{p:'Noah',n:'Durand'},
+    {p:'Manon',n:'Moreau'},{p:'Lucas',n:'Laurent'},{p:'Jade',n:'Simon'},{p:'Tom',n:'Michel'},
+    {p:'Sarah',n:'Garcia'},{p:'Liam',n:'David'},{p:'Anna',n:'Bertrand'},{p:'Nathan',n:'Roux'}
+  ];
+  demoStudents.forEach(function(s,i){
+    S.eleves.push({
+      id:uid('elv'),classId:classId,groupId:houseIds[i%4],
+      prenom:s.p,nom:s.n,score:Math.floor(Math.random()*8),
+      avatarSeed:LORELEI_SEEDS[i%LORELEI_SEEDS.length]
+    });
+  });
+
+  // Quelques tampons distribués
+  if(S.stamps.length){
+    [0,2,5,7,9].forEach(function(i){
+      S.passport.push({id:uid('ps'),eleveId:S.eleves[S.eleves.length-16+i].id,stampId:S.stamps[0].id,ts:new Date().toLocaleDateString('fr-FR')});
+    });
+    [1,4,8].forEach(function(i){
+      S.passport.push({id:uid('ps'),eleveId:S.eleves[S.eleves.length-16+i].id,stampId:S.stamps[1].id,ts:new Date().toLocaleDateString('fr-FR')});
+    });
+  }
+
+  S.activeClassId=classId;
+  saveS();render();
+}
+
 loadS();
 buildEmojiPicker('emoji-grp','f-grp-emoji',EMOJIS_GRP);
 buildEmojiPicker('emoji-comp','fc-icon',EMOJIS_CMP);
 buildColorPicker('color-row-grp','f-grp-color',GRP_COLORS,0);
 syncNewClsToggle();syncNewClsPassportToggle();
 render();
+showWelcomeIfFirstVisit();
 </script>
 </body>
 </html>

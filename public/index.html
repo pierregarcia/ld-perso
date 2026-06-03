@@ -157,6 +157,10 @@ button,input,textarea,select{font:inherit;color:inherit;border:none;background:n
 .behav-card.stamp-style .behav-icon img{width:2.4rem;height:2.4rem;border-radius:6px;border:2px solid #facc15;background:#fff;padding:2px}
 .behav-card.stamp-style .behav-lbl{color:#92400e}
 .stamp-ribbon{position:absolute;top:6px;right:6px;background:#facc15;color:#1a1a1a;font-size:.55rem;font-weight:900;padding:1px 5px;border-radius:4px;letter-spacing:.05em;border:1.5px solid #d97706}
+.stamp-count-info{font-size:.7rem;font-weight:700;padding:4px 8px;border-radius:6px;background:#fef9c3;color:#854d0e;border:1.5px solid #fcd34d;margin-top:4px;text-align:center;line-height:1.25}
+.stamp-count-info.empty{background:#f3f4f6;color:#6b7280;border-color:#d1d5db}
+.stamp-count-info.full{background:#dcfce7;color:#15803d;border-color:#86efac}
+.stamp-count-info strong{font-weight:900}
 .behav-card.stamp-style{position:relative}
 
 .overlay{position:fixed;inset:0;background:rgba(26,26,26,.5);backdrop-filter:blur(3px);z-index:800;display:none;align-items:center;justify-content:center;padding:14px}
@@ -1392,6 +1396,7 @@ function setAssignMode(mode){
     var modeId=id.replace('am-','');
     el.className='amode'+(mode===modeId?' active':'');
   });
+  renderBehavGrid();
 }
 
 function switchBTab(tab){
@@ -1409,6 +1414,21 @@ function renderBehavGrid(){
   else if(S.bTab==='neg') list=S.comp_neg;
   else list=S.stamps;
   var isStampTab=S.bTab==='stamp';
+
+  // Compute target eleve IDs for stamp counts
+  var targetEleveIds=[];
+  if(isStampTab&&S.cible){
+    if(S.cible.type==='classe'||S.assignMode==='classe'){
+      targetEleveIds=cElvs().map(function(e){return e.id});
+    } else if(S.cible.type==='groupe'){
+      targetEleveIds=cElvs().filter(function(e){return e.groupId===S.cible.groupId}).map(function(e){return e.id});
+    } else if(S.assignMode==='groupe'){
+      targetEleveIds=cElvs().filter(function(e){return e.groupId===S.cible.groupId}).map(function(e){return e.id});
+    } else {
+      targetEleveIds=[S.cible.id];
+    }
+  }
+
   list.forEach(function(b){
     var card=document.createElement('button');
     card.className='behav-card'+(isStampTab?' stamp-style':'');
@@ -1419,7 +1439,33 @@ function renderBehavGrid(){
     if(isStampTab) ptsHtml='<div class="stamp-pill">🏅 Tampon</div>';
     else { var pos=b.val>0;ptsHtml='<div class="behav-pts '+(pos?'bpp':'bpn')+'">'+(pos?'+':'')+b.val+' pt'+(Math.abs(b.val)>1?'s':'')+'</div>'; }
     var ribbon=isStampTab?'<div class="stamp-ribbon">PASSEPORT</div>':'';
-    card.innerHTML=ribbon+iconHtml+'<div class="behav-lbl">'+b.lib+'</div>'+ptsHtml;
+
+    // Stamp count badge
+    var countHtml='';
+    if(isStampTab&&targetEleveIds.length){
+      if(targetEleveIds.length===1){
+        // Individual student
+        var n=eleveStampCount(targetEleveIds[0],b.id);
+        if(n===0){
+          countHtml='<div class="stamp-count-info empty">Pas encore reçu</div>';
+        } else {
+          countHtml='<div class="stamp-count-info">Déjà reçu <strong>'+n+' fois</strong></div>';
+        }
+      } else {
+        // Group or whole class
+        var withStamp=targetEleveIds.filter(function(eid){return eleveStampCount(eid,b.id)>0}).length;
+        var total=targetEleveIds.length;
+        if(withStamp===0){
+          countHtml='<div class="stamp-count-info empty">Aucun élève ne l\'a reçu</div>';
+        } else if(withStamp===total){
+          countHtml='<div class="stamp-count-info full">✓ Tous l\'ont déjà reçu</div>';
+        } else {
+          countHtml='<div class="stamp-count-info"><strong>'+withStamp+'/'+total+'</strong> élèves l\'ont reçu</div>';
+        }
+      }
+    }
+
+    card.innerHTML=ribbon+iconHtml+'<div class="behav-lbl">'+b.lib+'</div>'+ptsHtml+countHtml;
     card.onclick=(function(bv){return function(){applyBehav(bv)}})(b);
     grid.appendChild(card);
   });

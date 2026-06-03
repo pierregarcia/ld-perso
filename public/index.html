@@ -166,7 +166,8 @@ button,input,textarea,select{font:inherit;color:inherit;border:none;background:n
 .stamp-count-info strong{font-weight:900}
 .behav-card.stamp-style{position:relative}
 
-.overlay{position:fixed;inset:0;background:rgba(26,26,26,.5);backdrop-filter:blur(3px);z-index:800;display:none;align-items:center;justify-content:center;padding:14px}
+.overlay{position:fixed;inset:0;background:rgba(26,26,26,.5);backdrop-filter:blur(3px);z-index:800;display:none;align-items:center;justify-content:center;padding:14px;overscroll-behavior:contain}
+body.modal-open{overflow:hidden;position:fixed;width:100%;height:100%;top:0;left:0}
 .overlay.open{display:flex}
 .modal{background:var(--bg2);border:2.5px solid var(--ink);border-radius:var(--r4);padding:24px;width:min(100%,780px);max-height:calc(100vh - 28px);overflow-y:auto;position:relative;box-shadow:5px 5px 0 var(--ink)}
 .modal-sm{width:min(100%,460px)}
@@ -1145,12 +1146,24 @@ function toggleBurger(){
   var p=document.getElementById('burger-panel');
   var b=document.getElementById('burger-btn');
   if(p.classList.contains('open')){closeBurger()}
-  else{p.classList.add('open');b.classList.add('open')}
+  else{
+    if(!document.body.classList.contains('modal-open')){
+      _savedScrollY=window.scrollY||window.pageYOffset||0;
+      document.body.style.top='-'+_savedScrollY+'px';
+    }
+    p.classList.add('open');b.classList.add('open');
+    document.body.classList.add('modal-open');
+  }
 }
 function closeBurger(){
   var p=document.getElementById('burger-panel');
   var b=document.getElementById('burger-btn');
   p.classList.remove('open');b.classList.remove('open');
+  if(!document.querySelector('.overlay.open')){
+    document.body.classList.remove('modal-open');
+    document.body.style.top='';
+    window.scrollTo(0,_savedScrollY);
+  }
 }
 document.addEventListener('click',function(e){
   var p=document.getElementById('burger-panel');
@@ -1195,7 +1208,7 @@ function renderGroups(){
     if(g.img) emblemHtml='<img src="'+g.img+'" alt="" style="width:24px;height:24px;object-fit:contain;border-radius:4px" onerror="this.outerHTML=&quot;'+(g.emoji||'⚡')+'&quot;">';
     else emblemHtml=g.emoji||'⚡';
     card.innerHTML=
-      '<button class="carte-edit-btn" type="button" title="Modifier le '+label.toLowerCase()+'" data-action="edit-grp">✏️</button>'+
+      '<button class="carte-edit-btn" type="button" title="Modifier" data-action="edit-grp">✏️</button>'+
       '<div class="group-top"><div class="group-emblem">'+emblemHtml+(isLeader?'<span class="group-trophy" title="En tête !">🏆</span>':'')+'</div>'+
       '<div class="group-pts" style="color:'+col+'">'+pts+'</div></div>'+
       '<div class="group-name">'+g.nom+'</div>'+
@@ -1218,7 +1231,7 @@ function renderGroups(){
   add.className='group-card group-add';
   add.style.borderColor='var(--border)';
   add.style.borderStyle='dashed';
-  add.innerHTML='<span style="font-size:1.1rem">＋</span> Nouveau '+label.toLowerCase();
+  add.innerHTML='<span style="font-size:1.1rem">＋</span> '+label;
   add.onclick=function(){openAddGroup()};
   row.appendChild(add);
 }
@@ -1267,8 +1280,8 @@ function renderEleves(){
       '<div class="score-n" style="color:'+gCol+'">'+gMoy+'</div>'+
       '<div class="score-l" style="color:'+gCol+'">moy</div>'+
       '</div></div>'+
-      '<div><div class="el-prenom" style="color:var(--ink)">'+activeGroup.nom+'</div><div class="el-nom" style="color:'+gCol+'">'+gMembers.length+' élèves · '+groupLabel().toLowerCase()+'</div></div>'+
-      '<div class="el-tag-row"><div class="el-tag" style="background:'+rgba(gCol,.12)+';color:'+gCol+';border-color:'+rgba(gCol,.5)+'">Attribuer au '+groupLabel().toLowerCase()+'</div></div>';
+      '<div><div class="el-prenom" style="color:var(--ink)">'+activeGroup.nom+'</div><div class="el-nom" style="color:'+gCol+'">'+gMembers.length+' élèves</div></div>'+
+      '<div class="el-tag-row"><div class="el-tag" style="background:'+rgba(gCol,.12)+';color:'+gCol+';border-color:'+rgba(gCol,.5)+'">Attribuer à toute la sélection</div></div>';
     allCard.onclick=function(){openPoints({type:'groupe',groupId:activeGroup.id})};
   } else {
     var moy=allEl.length?Math.round(allEl.reduce(function(s,e){return s+e.score},0)/allEl.length):SCORE0;
@@ -1374,13 +1387,13 @@ function openPoints(cible){
     var col=grp?gc(grp.colorIdx):'#999';
     var members=cElvs().filter(function(e){return e.groupId===cible.groupId});
     document.getElementById('mp-title').textContent=grp.nom;
-    document.getElementById('mp-sub').textContent='Action appliquée à tous les élèves du '+groupLabel().toLowerCase()+'.';
+    document.getElementById('mp-sub').textContent='Action appliquée à toute la sélection.';
     mpAv.className='target-av init-style';
     mpAv.style.background=rgba(col,.15);
     mpAv.style.borderColor=col;
     mpAv.style.color=col;
     mpAv.innerHTML=grp.img?'<img src="'+grp.img+'" alt="" style="width:100%;height:100%;object-fit:contain;padding:6px" onerror="this.outerHTML=&quot;<span>'+(grp.emoji||'⚡')+'</span>&quot;">':(grp.emoji||'⚡');
-    mpInfo.innerHTML='<div style="font-weight:900;font-size:.95rem;color:'+col+'">'+grp.nom+'</div><div style="font-size:.78rem;font-weight:700;color:var(--ink2)">'+members.length+' élèves du '+groupLabel().toLowerCase()+'</div>';
+    mpInfo.innerHTML='<div style="font-weight:900;font-size:.95rem;color:'+col+'">'+grp.nom+'</div><div style="font-size:.78rem;font-weight:700;color:var(--ink2)">'+members.length+' élèves sélectionnés</div>';
   } else {
     document.getElementById('mp-title').textContent=cible.prenom+' '+cible.nom;
     document.getElementById('mp-sub').textContent='Score actuel : '+cible.score+' pts';
@@ -1403,7 +1416,7 @@ function openPoints(cible){
     var btnE=document.createElement('button');btnE.className='amode active';btnE.textContent="À l'élève";btnE.onclick=function(){setAssignMode('eleve')};btnE.id='am-eleve';modeToggle.appendChild(btnE);
     var grp2=S.groups.find(function(g){return g.id===cible.groupId});
     if(grp2){
-      var btnG=document.createElement('button');btnG.className='amode';btnG.textContent='Au '+groupLabel().toLowerCase();btnG.onclick=function(){setAssignMode('groupe')};btnG.id='am-groupe';modeToggle.appendChild(btnG);
+      var btnG=document.createElement('button');btnG.className='amode';btnG.textContent=groupLabel();btnG.onclick=function(){setAssignMode('groupe')};btnG.id='am-groupe';modeToggle.appendChild(btnG);
     }
     var btnC=document.createElement('button');btnC.className='amode';btnC.textContent='À toute la classe';btnC.onclick=function(){setAssignMode('classe')};btnC.id='am-classe';modeToggle.appendChild(btnC);
   } else if(!isAll&&!isGroupe) {
@@ -1628,7 +1641,7 @@ function deleteClasse(){
 
 function openAddGroup(){
   S.editGroupId=null;
-  document.getElementById('modal-grp-title').textContent='Nouveau '+groupLabel().toLowerCase();
+  document.getElementById('modal-grp-title').textContent='Ajouter '+groupLabel().toLowerCase();
   document.getElementById('f-grp-nom').value='';
   document.getElementById('f-grp-emoji').value='';
   document.getElementById('f-grp-img').value='';
@@ -1641,7 +1654,7 @@ function openAddGroup(){
 function openEditGroupModal(gid){
   S.editGroupId=gid;
   var g=S.groups.find(function(x){return x.id===gid});if(!g)return;
-  document.getElementById('modal-grp-title').textContent='Modifier le '+groupLabel().toLowerCase();
+  document.getElementById('modal-grp-title').textContent='Modifier '+groupLabel().toLowerCase();
   document.getElementById('f-grp-nom').value=g.nom;
   document.getElementById('f-grp-emoji').value=g.emoji||'';
   document.getElementById('f-grp-img').value=g.img||'';
@@ -1649,7 +1662,7 @@ function openEditGroupModal(gid){
   var fa=document.getElementById('grp-form-actions');fa.innerHTML='';
   var del=document.createElement('button');del.className='btn btn-danger btn-sm';del.textContent='Supprimer';
   del.onclick=(function(gid2){return function(){
-    customConfirm('Supprimer ce '+groupLabel().toLowerCase()+' ?',function(){
+    customConfirm('Supprimer '+groupLabel().toLowerCase()+' ?',function(){
       S.groups=S.groups.filter(function(x){return x.id!==gid2});
       S.eleves=S.eleves.map(function(e){return e.groupId===gid2?Object.assign({},e,{groupId:null}):e});
       saveS();closeModal('modal-add-group');render();
@@ -1973,7 +1986,7 @@ function renderRank(){
   document.getElementById('rank-grps-title').textContent=groupLabel()+'s';
   var grps=cGrps();
   var rg=document.getElementById('rank-groups');rg.innerHTML='';
-  if(!grps.length){rg.innerHTML='<div class="empty" style="font-size:.78rem">Aucun '+groupLabel().toLowerCase()+'.</div>'}
+  if(!grps.length){rg.innerHTML='<div class="empty" style="font-size:.78rem">Pas encore de '+groupLabel().toLowerCase()+'.</div>'}
   else{
     grps.slice().sort(function(a,b){return gPts(b.id)-gPts(a.id)}).forEach(function(g,i){
       var col=gc(g.colorIdx);var el=document.createElement('div');el.className='rank-row';
@@ -2104,8 +2117,25 @@ function resetApp(){
   });
 }
 
-function openModal(id){var el=document.getElementById(id);if(el)el.classList.add('open')}
-function closeModal(id){var el=document.getElementById(id);if(el)el.classList.remove('open')}
+var _savedScrollY=0;
+function openModal(id){
+  var el=document.getElementById(id);
+  if(!el) return;
+  if(!document.body.classList.contains('modal-open')){
+    _savedScrollY=window.scrollY||window.pageYOffset||0;
+    document.body.style.top='-'+_savedScrollY+'px';
+  }
+  el.classList.add('open');
+  document.body.classList.add('modal-open');
+}
+function closeModal(id){
+  var el=document.getElementById(id);if(el)el.classList.remove('open');
+  if(!document.querySelector('.overlay.open')){
+    document.body.classList.remove('modal-open');
+    document.body.style.top='';
+    window.scrollTo(0,_savedScrollY);
+  }
+}
 
 var _confirmCallback=null;
 function customConfirm(message,onYes,opts){

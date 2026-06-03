@@ -4,9 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ClasseVibe — Suivi de classe</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.bunny.net" crossorigin>
+<link href="https://fonts.bunny.net/css?family=nunito:400,600,700,800,900&display=swap" rel="stylesheet">
 <style>
 :root{
   --bg:#faf8f4;--bg2:#ffffff;--bg3:#f2efe8;--bg4:#ebe6dc;
@@ -854,8 +853,7 @@ footer{width:100%;background:var(--bg2);border-top:2.5px solid var(--ink);paddin
   <div class="modal-title">👋 Bienvenue sur <span style="color:var(--orange)">ClasseVibe</span> !</div>
   <div class="modal-sub" id="welcome-intro">Suivi des élèves, plan de classe, tirage au sort et bien plus.</div>
   <div id="welcome-body" style="font-size:.92rem;color:var(--ink2);font-weight:600;line-height:1.7"></div>
-  <div class="form-actions" style="justify-content:space-between;flex-wrap:wrap;gap:10px">
-    <button class="btn btn-soft btn-sm" onclick="loadDemoClass();closeWelcome()">🎓 Voir une classe démo</button>
+  <div class="form-actions" style="justify-content:center">
     <button class="btn btn-primary" onclick="closeWelcome()">C'est parti !</button>
   </div>
 </div>
@@ -2659,11 +2657,12 @@ function printPlan(){window.print()}
 ══════════════════════════════════════════════════════ */
 function showWelcomeIfFirstVisit(){
   if(localStorage.getItem(SK+'welcome_done')) return;
+  // Auto-create the demo class if no class exists yet
+  if(!S.classes.length) loadDemoClass();
   var isMobile=window.innerWidth<=600;
   var body=document.getElementById('welcome-body');
   if(isMobile){
     body.innerHTML=
-      '<p><strong style="color:var(--ink)">📱 Sur téléphone :</strong></p>'+
       '<ul style="padding-left:18px;margin:8px 0">'+
       '<li>Touchez <strong>+ Nouvelle classe</strong> pour démarrer.</li>'+
       '<li>Tous les outils sont dans le <strong>menu en haut à droite</strong> (icône ≡).</li>'+
@@ -2671,10 +2670,9 @@ function showWelcomeIfFirstVisit(){
       '<li>Touchez le <strong>crayon ✏️</strong> sur sa carte pour modifier son prénom, sa maison ou son avatar.</li>'+
       '<li>Touchez une <strong>maison</strong> pour donner des points à tout le groupe d\'un coup.</li>'+
       '</ul>'+
-      '<p style="margin-top:10px"><strong style="color:var(--ink)">💡 Astuce :</strong> tournez l\'écran en paysage pour une meilleure expérience sur les écrans tactiles.</p>';
+      '<p style="margin-top:10px"><strong style="color:var(--ink)">💡 Astuce :</strong> une classe démo est déjà disponible sur l\'accueil pour tester. Retirez-la avec le bouton ✕ quand vous n\'en avez plus besoin.</p>';
   } else {
     body.innerHTML=
-      '<p><strong style="color:var(--ink)">💻 Sur ordinateur :</strong></p>'+
       '<ul style="padding-left:18px;margin:8px 0">'+
       '<li>Cliquez sur <strong>+ Nouvelle classe</strong> pour démarrer.</li>'+
       '<li>Tous les outils (Tirage, Plan de classe, Comportements…) sont dans la <strong>barre du haut</strong>.</li>'+
@@ -2682,7 +2680,7 @@ function showWelcomeIfFirstVisit(){
       '<li><strong>Clic droit</strong> sur un élève (ou crayon ✏️) : modifier sa fiche.</li>'+
       '<li>Cliquez sur une <strong>maison</strong> pour donner des points au groupe entier.</li>'+
       '</ul>'+
-      '<p style="margin-top:10px"><strong style="color:var(--ink)">💡 Astuce :</strong> activez le mode <strong>Plein écran</strong> (F11) pour utiliser ClasseVibe en classe sans distraction.</p>';
+      '<p style="margin-top:10px"><strong style="color:var(--ink)">💡 Astuce :</strong> une classe démo est déjà disponible sur l\'accueil pour tester. Retirez-la avec le bouton ✕ quand vous n\'en avez plus besoin.</p>';
   }
   document.getElementById('welcome-intro').textContent=
     'Suivi des élèves, plan de classe, tirage au sort et bien plus.';

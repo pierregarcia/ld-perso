@@ -153,6 +153,17 @@ button,input,textarea,select{font:inherit;color:inherit;border:none;background:n
 .carte-edit-btn:hover{background:var(--ink);color:#fff}
 @media(hover:none){.carte-edit-btn{opacity:.95}}
 
+/* Absence */
+.carte-absent-btn{position:absolute;top:6px;right:6px;width:26px;height:26px;border-radius:8px;background:rgba(255,255,255,.92);border:2px solid var(--ink);font-size:.7rem;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:2;opacity:0;transition:.15s;padding:0;line-height:1;font-weight:900;box-shadow:0 1px 3px rgba(0,0,0,.15);color:#16a34a}
+.carte:hover .carte-absent-btn{opacity:1}
+.carte-absent-btn:hover{background:#16a34a;color:#fff;border-color:#16a34a}
+.carte-absent-btn.is-absent{opacity:1;background:#fee2e2;color:#dc2626;border-color:#dc2626;font-size:.85rem}
+.carte-absent-btn.is-absent:hover{background:#dc2626;color:#fff}
+@media(hover:none){.carte-absent-btn{opacity:.95}}
+.carte.absent{opacity:.55;filter:grayscale(.7)}
+.carte.absent .carte-bar{opacity:.4}
+.carte-absent-stamp{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) rotate(-12deg);background:#dc2626;color:white;padding:5px 14px;border-radius:8px;font-weight:900;letter-spacing:.12em;font-size:.8rem;text-transform:uppercase;border:2.5px solid #1a1a1a;box-shadow:3px 3px 0 #1a1a1a;z-index:3;pointer-events:none;opacity:.95}
+
 .stamp-pill{font-size:.55rem;font-weight:900;padding:1px 6px;border-radius:99px;background:#fef9c3;color:#854d0e;border:2px solid #facc15;text-transform:uppercase;letter-spacing:.05em;display:inline-flex;align-items:center;gap:3px}
 .behav-card.stamp-style{background:linear-gradient(135deg,#fffbeb,#fef3c7);border-style:dashed;border-color:#facc15;box-shadow:3px 3px 0 #d97706}
 .behav-card.stamp-style:hover{box-shadow:5px 5px 0 #d97706;background:linear-gradient(135deg,#fef9c3,#fde68a)}
@@ -169,6 +180,16 @@ button,input,textarea,select{font:inherit;color:inherit;border:none;background:n
 .overlay{position:fixed;inset:0;background:rgba(26,26,26,.5);backdrop-filter:blur(3px);z-index:800;display:none;align-items:center;justify-content:center;padding:14px;overscroll-behavior:contain}
 body.modal-open{overflow:hidden;position:fixed;width:100%;height:100%;top:0;left:0}
 .overlay.open{display:flex}
+
+/* Welcome card : reste compact et centré, même sur mobile */
+.welcome-card{width:min(100%,500px) !important;max-width:500px !important;height:auto !important;max-height:85vh !important;border-radius:var(--r2) !important;border:2.5px solid var(--ink) !important;padding:24px 22px !important;overflow-y:auto;box-shadow:6px 6px 0 var(--ink) !important;animation:welcomeFadeIn .35s cubic-bezier(.16,1,.3,1) both}
+.welcome-card .modal-close{position:absolute !important;top:12px !important;right:12px !important}
+.welcome-card .form-actions{position:static !important;background:transparent !important;border:none !important;box-shadow:none !important;margin:18px 0 0 !important;padding:0 !important}
+@keyframes welcomeFadeIn{
+  from{opacity:0;transform:scale(.92) translateY(8px)}
+  to{opacity:1;transform:scale(1) translateY(0)}
+}
+@media(prefers-reduced-motion:reduce){.welcome-card{animation:none}}
 .modal{background:var(--bg2);border:2.5px solid var(--ink);border-radius:var(--r4);padding:24px;width:min(100%,780px);max-height:calc(100vh - 28px);overflow-y:auto;position:relative;box-shadow:5px 5px 0 var(--ink)}
 .modal-sm{width:min(100%,460px)}
 .modal-lg{width:min(100%,1020px)}
@@ -910,7 +931,7 @@ body.pdf-printing #pdf-export-area{display:block}
 </div>
 </div>
 <div class="overlay" id="modal-welcome">
-<div class="modal">
+<div class="modal welcome-card">
   <button class="modal-close" onclick="closeWelcome()">✕</button>
   <div class="modal-title">👋 Bienvenue sur <span style="color:var(--orange)">ClasseVibe</span> !</div>
   <div class="modal-sub" id="welcome-intro">Suivi des élèves, plan de classe, tirage au sort et bien plus.</div>
@@ -1088,7 +1109,12 @@ function gc(ci){return(GRP_COLORS[ci%GRP_COLORS.length]).h}
 function rgba(h,a){var r=parseInt(h.slice(1,3),16),g=parseInt(h.slice(3,5),16),b=parseInt(h.slice(5,7),16);return 'rgba('+r+','+g+','+b+','+a+')'}
 function aCls(){return S.classes.find(function(c){return c.id===S.activeClassId})}
 function cGrps(){return S.groups.filter(function(g){return g.classId===S.activeClassId})}
-function cElvs(){return S.eleves.filter(function(e){return e.classId===S.activeClassId})}
+function cElvs(){
+  return S.eleves
+    .filter(function(e){return e.classId===S.activeClassId})
+    .sort(function(a,b){return (a.prenom||'').localeCompare((b.prenom||''),'fr',{sensitivity:'base',numeric:true})});
+}
+function cElvsPresents(){return cElvs().filter(function(e){return !e.absent})}
 function gPts(gid){return cElvs().filter(function(e){return e.groupId===gid}).reduce(function(s,e){return s+(e.score||0)},0)}
 function maxGPts(){return Math.max.apply(null,cGrps().map(function(g){return gPts(g.id)}).concat([1]))}
 function leaderGroupId(){var grps=cGrps();if(!grps.length)return null;var max=-Infinity,id=null;grps.forEach(function(g){var p=gPts(g.id);if(p>max){max=p;id=g.id}});return max>0?id:null}
@@ -1236,10 +1262,13 @@ document.addEventListener('click',function(e){
 
 function renderStats(){
   var cls=aCls();var el=cElvs();var gr=cGrps();
-  var total=el.reduce(function(s,e){return s+(e.score||0)},0);
-  var moy=el.length?Math.round((total/el.length)*10)/10:0;
+  var absents=el.filter(function(e){return e.absent}).length;
+  var presents=el.length-absents;
+  var elPres=cElvsPresents();
+  var totalPres=elPres.reduce(function(s,e){return s+(e.score||0)},0);
+  var moy=elPres.length?Math.round((totalPres/elPres.length)*10)/10:0;
   var ds=new Date().toLocaleDateString('fr-FR',{weekday:'short',day:'2-digit',month:'short'});
-  var html='<div class="stat-card"><div class="stat-accent" style="background:'+gc(0)+'"></div><div class="stat-n">'+el.length+'</div><div class="stat-l">élèves</div></div>'+
+  var html='<div class="stat-card"><div class="stat-accent" style="background:'+gc(0)+'"></div><div class="stat-n">'+presents+(absents>0?'<span style="font-size:.55em;color:#dc2626;font-weight:700"> /'+el.length+'</span>':'')+'</div><div class="stat-l">'+(absents>0?'présents ('+absents+' abs.)':'élèves')+'</div></div>'+
     '<div class="stat-card"><div class="stat-accent" style="background:'+gc(2)+'"></div><div class="stat-n">'+moy+'</div><div class="stat-l">moyenne</div></div>';
   if(cls.groupsEnabled) html+='<div class="stat-card"><div class="stat-accent" style="background:'+gc(3)+'"></div><div class="stat-n">'+gr.length+'</div><div class="stat-l">'+groupLabel().toLowerCase()+'s</div></div>';
   html+='<div class="stat-card"><div class="stat-accent" style="background:'+gc(4)+'"></div><div class="stat-n" style="font-size:1rem">'+ds+'</div><div class="stat-l">aujourd\'hui</div></div>';
@@ -1367,7 +1396,7 @@ function renderEleves(){
     var grp=S.groups.find(function(g){return g.id===eleve.groupId});
     var col=grp?gc(grp.colorIdx):'#bbb';
     var card=document.createElement('button');
-    card.className='carte';
+    card.className='carte'+(eleve.absent?' absent':'');
     card.dataset.eid=eleve.id;
     var seed=eleve.avatarSeed||hashStr(eleve.prenom+' '+eleve.nom);
     var avHtml='<div class="av-multi" style="border-color:'+col+'">'+avatarImg(seed)+'</div>';
@@ -1375,6 +1404,8 @@ function renderEleves(){
     card.innerHTML=
       '<div class="carte-bar" style="background:'+col+'"></div>'+
       '<button class="carte-edit-btn" type="button" title="Modifier l\'élève">✏️</button>'+
+      '<button class="carte-absent-btn'+(eleve.absent?' is-absent':'')+'" type="button" title="'+(eleve.absent?'Marquer présent':'Marquer absent')+'" data-action="toggle-absent">'+(eleve.absent?'🚪':'✓')+'</button>'+
+      (eleve.absent?'<div class="carte-absent-stamp">ABSENT</div>':'')+
       '<div class="carte-header">'+avHtml+
       '<div class="score-bub" style="background:'+rgba(col,.09)+';border-color:'+col+'">'+
       '<div class="score-n" style="color:'+col+'">'+eleve.score+'</div>'+
@@ -1385,14 +1416,20 @@ function renderEleves(){
       (grp?'<div class="el-tag" style="background:'+rgba(col,.1)+';color:'+col+';border-color:'+rgba(col,.4)+'">'+(grp.emoji||'⚡')+' '+grp.nom+'</div>':'')+
       (stampCount>0?'<div class="el-passport-icon" title="'+stampCount+' tampon(s)">🏅 '+stampCount+'</div>':'')+
       '</div>';
-    // Edit button: click stops propagation and opens edit modal
+    // Edit button
     var editBtn=card.querySelector('.carte-edit-btn');
     editBtn.addEventListener('click',(function(eid){return function(ev){
       ev.stopPropagation();ev.preventDefault();
       openEleveMgr(eid);
     }})(eleve.id));
+    // Absent toggle button
+    var absBtn=card.querySelector('.carte-absent-btn');
+    absBtn.addEventListener('click',(function(eid){return function(ev){
+      ev.stopPropagation();ev.preventDefault();
+      toggleAbsent(eid);
+    }})(eleve.id));
     card.addEventListener('click',(function(e){return function(ev){
-      if(ev.target.closest('.carte-edit-btn')) return;
+      if(ev.target.closest('.carte-edit-btn')||ev.target.closest('.carte-absent-btn')) return;
       if(ev.ctrlKey||ev.metaKey||ev.shiftKey){openEleveMgr(e.id);return}
       openPoints(e);
     }})(eleve));
@@ -1580,6 +1617,11 @@ function renderBehavGrid(){
   });
 }
 
+function toggleAbsent(eid){
+  S.eleves=S.eleves.map(function(e){return e.id===eid?Object.assign({},e,{absent:!e.absent}):e});
+  saveS();render();
+}
+
 function applyBehav(b){
   var now=new Date();
   var ts=now.toLocaleDateString('fr-FR')+' '+now.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
@@ -1601,11 +1643,11 @@ function applyBehav(b){
   if(isStamp){
     var ids=[];
     if(isClasseMode){
-      ids=cElvs().map(function(e){return e.id});
-      addJ('Toute la classe','Tampon : '+b.lib,0,ts);
+      ids=cElvsPresents().map(function(e){return e.id});
+      addJ('Toute la classe (présents)','Tampon : '+b.lib,0,ts);
     } else if(S.assignMode==='groupe'){
       var grp=S.groups.find(function(g){return g.id===S.cible.groupId});
-      if(grp){ids=cElvs().filter(function(e){return e.groupId===grp.id}).map(function(e){return e.id});addJ(groupLabel()+' '+(grp.emoji||'⚡')+' '+grp.nom,'Tampon : '+b.lib,0,ts)}
+      if(grp){ids=cElvsPresents().filter(function(e){return e.groupId===grp.id}).map(function(e){return e.id});addJ(groupLabel()+' '+(grp.emoji||'⚡')+' '+grp.nom,'Tampon : '+b.lib,0,ts)}
     } else {
       ids=[S.cible.id];
       addJ(S.cible.prenom+' '+S.cible.nom,'Tampon : '+b.lib,0,ts);
@@ -1613,12 +1655,13 @@ function applyBehav(b){
     ids.forEach(function(eid){S.passport.push({id:uid('ps'),eleveId:eid,stampId:b.id,ts:ts})});
   } else {
     if(isClasseMode){
-      S.eleves=S.eleves.map(function(e){return e.classId===S.activeClassId?applyToEleve(e,b.val):e});
-      addJ('Toute la classe',b.lib,b.val,ts);
+      var presentIds=cElvsPresents().map(function(e){return e.id});
+      S.eleves=S.eleves.map(function(e){return presentIds.indexOf(e.id)>=0?applyToEleve(e,b.val):e});
+      addJ('Toute la classe (présents)',b.lib,b.val,ts);
     } else if(S.assignMode==='groupe'){
       var grp2=S.groups.find(function(g){return g.id===S.cible.groupId});
       if(grp2){
-        S.eleves=S.eleves.map(function(e){return e.groupId===grp2.id&&e.classId===S.activeClassId?applyToEleve(e,b.val):e});
+        S.eleves=S.eleves.map(function(e){return e.groupId===grp2.id&&e.classId===S.activeClassId&&!e.absent?applyToEleve(e,b.val):e});
         addJ(groupLabel()+' '+(grp2.emoji||'⚡')+' '+grp2.nom,b.lib,b.val,ts);
       }
     } else {
@@ -2411,7 +2454,7 @@ function switchTirageTab(tab){
   if(tab==='roue') drawRoue();
 }
 function roueAvailableEleves(){
-  return cElvs().filter(function(e){return !roueExcluded[e.id]});
+  return cElvsPresents().filter(function(e){return !roueExcluded[e.id]});
 }
 function drawRoue(){
   // Redraw the wheel content; preserve current rotation (no transition for redraw)
@@ -2527,8 +2570,8 @@ function resetRoueExcluded(){
 function genGroupes(){
   var n=parseInt(document.getElementById('tir-n-grp').value)||4;
   if(n<2)n=2;if(n>20)n=20;
-  var eleves=cElvs().slice();
-  if(!eleves.length){document.getElementById('tir-groupes-result').innerHTML='<div class="empty">Aucun élève à répartir.</div>';return}
+  var eleves=cElvsPresents().slice();
+  if(!eleves.length){document.getElementById('tir-groupes-result').innerHTML='<div class="empty">Aucun élève présent à répartir.</div>';return}
   // Shuffle Fisher-Yates
   for(var i=eleves.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=eleves[i];eleves[i]=eleves[j];eleves[j]=t}
   // Distribute round-robin

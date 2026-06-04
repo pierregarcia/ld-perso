@@ -254,7 +254,9 @@ body.modal-open{overflow:hidden;position:fixed;width:100%;height:100%;top:0;left
 .manage-info{display:flex;align-items:center;gap:9px;flex:1;min-width:140px}
 
 .j-row{display:flex;align-items:center;justify-content:space-between;gap:11px;padding:9px 13px;border-radius:var(--r);background:var(--bg3);border:2px solid var(--border);margin-bottom:6px}
-.j-pts{font-weight:900;font-size:.83rem;padding:3px 9px;border-radius:99px;border:2px solid}
+.j-pts{font-weight:900;font-size:.83rem;padding:3px 9px;border-radius:99px;border:2px solid;flex-shrink:0}
+.j-undo{flex-shrink:0;width:30px;height:30px;border-radius:8px;background:var(--bg2);border:2px solid var(--ink);font-size:1rem;font-weight:900;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;color:var(--orange);transition:.12s}
+.j-undo:hover{background:var(--orange);color:#fff;transform:rotate(-15deg)}
 .j-pos{background:#f0fdf4;color:#16a34a;border-color:#16a34a}
 .j-neg{background:#fef2f2;color:#dc2626;border-color:#dc2626}
 .j-zero{background:var(--bg3);color:var(--ink3);border-color:var(--border)}
@@ -361,18 +363,21 @@ footer{width:100%;background:var(--bg2);border-top:2.5px solid var(--ink);paddin
 .tirage-grp-pill img{width:24px;height:24px;border-radius:50%;background:var(--bg2);object-fit:cover}
 
 /* PLAN DE CLASSE */
-.plan-table{position:absolute;background:var(--bg2);border:2.5px solid var(--ink);border-radius:8px;box-shadow:var(--sh);cursor:move;display:flex;align-items:center;justify-content:space-around;user-select:none;touch-action:none;padding:4px;gap:3px;transition:box-shadow .15s}
-.plan-table.dragging{box-shadow:5px 5px 12px rgba(0,0,0,.3);z-index:50;cursor:grabbing}
-.plan-table:hover{box-shadow:var(--sh2)}
-.plan-chair{flex:1;background:var(--bg3);border:2px dashed var(--border);border-radius:6px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:.7rem;font-weight:800;color:var(--ink3);padding:2px;text-align:center;cursor:pointer;min-width:0;overflow:hidden;line-height:1}
-.plan-chair.occupied{background:var(--bg2);border-style:solid;color:var(--ink);font-weight:900}
-.plan-chair.occupied:hover{background:#fee2e2;color:var(--red);border-color:var(--red)}
-.plan-chair-prenom{font-weight:900;line-height:1;width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:0 2px}
-.plan-chair-nom{font-size:.55rem;font-weight:700;color:var(--ink3);text-transform:uppercase;line-height:1.1;margin-top:2px}
-.plan-table-controls{position:absolute;top:-12px;right:-12px;display:flex;gap:2px;opacity:0;transition:opacity .15s}
+.plan-table{position:absolute;border:none;background:transparent;cursor:move;user-select:none;touch-action:none;transition:none}
+.plan-table.dragging{z-index:50;cursor:grabbing}
+.plan-tabletop{position:absolute;background:#e7e0d0;border:2.5px solid var(--ink);box-shadow:var(--sh);pointer-events:none}
+.plan-tabletop-rect{border-radius:6px}
+.plan-tabletop-square{border-radius:6px}
+.plan-tabletop-round{border-radius:50%;background:repeating-radial-gradient(circle at center,#e7e0d0 0,#e7e0d0 6px,#d6cdb8 6px,#d6cdb8 7px)}
+.plan-table-controls{position:absolute;top:-12px;right:-12px;display:flex;gap:2px;opacity:0;transition:opacity .15s;z-index:5}
 .plan-table:hover .plan-table-controls{opacity:1}
 .plan-table-btn{width:22px;height:22px;border-radius:50%;border:2px solid var(--ink);background:var(--bg2);font-size:.65rem;font-weight:900;display:flex;align-items:center;justify-content:center;cursor:pointer;line-height:1;padding:0}
 .plan-table-btn:hover{background:var(--ink);color:#fff}
+.plan-chair{background:var(--bg3);border:2.5px solid var(--border);border-radius:6px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:.7rem;font-weight:800;color:var(--ink3);padding:2px;text-align:center;cursor:pointer;min-width:0;overflow:hidden;line-height:1;box-shadow:var(--sh)}
+.plan-chair.occupied{background:#ffffff !important;border-style:solid;color:var(--ink);font-weight:900;background-color:#ffffff !important}
+.plan-chair.occupied:hover{background:#fee2e2 !important;color:var(--red);border-color:var(--red)}
+.plan-chair-prenom{font-weight:900;line-height:1;width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:0 2px}
+.plan-chair-nom{font-size:.55rem;font-weight:700;color:var(--ink3);text-transform:uppercase;line-height:1.1;margin-top:1px}
 .plan-pool-pill{display:inline-flex;align-items:center;gap:5px;padding:3px 10px 3px 3px;background:var(--bg2);border:2px solid var(--ink);border-radius:99px;font-size:.75rem;font-weight:800;cursor:pointer;transition:.12s}
 .plan-pool-pill:hover{background:var(--orange-soft);border-color:var(--orange)}
 .plan-pool-pill.active{background:var(--orange);color:#fff;border-color:var(--orange)}
@@ -481,7 +486,8 @@ body.pdf-printing #pdf-export-area{display:block}
   <div class="main">
     <div class="class-actions">
       <button class="icon-btn" onclick="exportClassPDF()" title="Exporter en PDF" aria-label="Exporter la classe en PDF">📄</button>
-      <button class="icon-btn" onclick="renderRank();openModal('modal-rank')" title="Classement" aria-label="Classement">🏆</button>
+      <button class="icon-btn" onclick="renderRank();openModal('modal-rank')" title="Classement des élèves" aria-label="Classement des élèves">🏆</button>
+      <button class="icon-btn" id="btn-rank-groups" onclick="renderRankGroups();openModal('modal-rank-groups')" title="Classement des groupes" aria-label="Classement des groupes">🏅</button>
       <button class="icon-btn" onclick="renderJournal();openModal('modal-journal')" title="Historique" aria-label="Historique">📋</button>
       <button class="icon-btn" onclick="openModal('modal-reset')" title="Reset des scores" aria-label="Reset des scores">↺</button>
     </div>
@@ -798,11 +804,18 @@ body.pdf-printing #pdf-export-area{display:block}
 <div class="overlay" id="modal-rank">
 <div class="modal">
   <button class="modal-close" onclick="closeModal('modal-rank')">✕</button>
-  <div class="modal-title">Classement</div>
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:8px">
-    <div><div class="section-title" style="margin-bottom:9px" id="rank-grps-title">Groupes</div><div id="rank-groups"></div></div>
-    <div><div class="section-title" style="margin-bottom:9px">Élèves</div><div id="rank-eleves"></div></div>
-  </div>
+  <div class="modal-title">🏆 Classement des élèves</div>
+  <div class="modal-sub">Top des élèves par nombre de points.</div>
+  <div id="rank-eleves" style="margin-top:14px"></div>
+</div>
+</div>
+
+<div class="overlay" id="modal-rank-groups">
+<div class="modal">
+  <button class="modal-close" onclick="closeModal('modal-rank-groups')">✕</button>
+  <div class="modal-title" id="rank-grps-modal-title">🏅 Classement des groupes</div>
+  <div class="modal-sub">Classement par total de points cumulés.</div>
+  <div id="rank-groups" style="margin-top:14px"></div>
 </div>
 </div>
 
@@ -887,11 +900,27 @@ body.pdf-printing #pdf-export-area{display:block}
   <div class="modal-title">🪑 Plan de classe</div>
   <div class="modal-sub" id="plan-sub">Glissez les tables pour organiser votre salle. Cliquez sur une table pour changer son orientation et son nombre de places.</div>
   <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px;align-items:center">
-    <button class="btn btn-soft btn-sm" onclick="planAddTable(1)">+ Table 1 place</button>
-    <button class="btn btn-soft btn-sm" onclick="planAddTable(2)">+ Table 2 places</button>
+    <div style="display:inline-flex;align-items:center;gap:6px;background:var(--bg3);border:2.5px solid var(--ink);border-radius:14px;padding:4px 8px">
+      <span style="font-size:.8rem;font-weight:800">+ Table</span>
+      <select id="plan-new-shape" style="border:2px solid var(--ink);border-radius:8px;padding:4px 6px;font-weight:700;background:var(--bg2);font-size:.8rem">
+        <option value="rect">Rectangulaire</option>
+        <option value="round">Ronde</option>
+      </select>
+      <select id="plan-new-seats" style="border:2px solid var(--ink);border-radius:8px;padding:4px 6px;font-weight:700;background:var(--bg2);font-size:.8rem">
+        <option value="1">1 place</option>
+        <option value="2" selected>2 places</option>
+        <option value="3">3 places</option>
+        <option value="4">4 places</option>
+        <option value="5">5 places</option>
+        <option value="6">6 places</option>
+        <option value="8">8 places</option>
+      </select>
+      <button class="btn btn-primary btn-sm" onclick="planAddTableFromUI()" style="padding:4px 10px">Ajouter</button>
+    </div>
+    <button class="btn btn-soft btn-sm" onclick="planRandomAssign()">🎲 Placer au hasard</button>
     <button class="btn btn-soft btn-sm" onclick="planAutoLayout()">📐 Auto-disposer</button>
     <button class="btn btn-soft btn-sm" onclick="planClearTables()">🗑️ Tout effacer</button>
-    <span style="font-size:.78rem;color:var(--ink3);font-weight:700">Élèves non assignés : <strong id="plan-unassigned-count" style="color:var(--orange)">0</strong></span>
+    <span style="font-size:.78rem;color:var(--ink3);font-weight:700">Non placés : <strong id="plan-unassigned-count" style="color:var(--orange)">0</strong></span>
   </div>
   <div id="plan-canvas-wrap" style="border:2.5px solid var(--ink);border-radius:var(--r2);background:#f9f7f1;background-image:linear-gradient(rgba(0,0,0,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(0,0,0,.04) 1px,transparent 1px);background-size:30px 30px;position:relative;height:540px;overflow:hidden;touch-action:none">
     <div id="plan-canvas" style="position:absolute;inset:0"></div>
@@ -1278,8 +1307,14 @@ function renderStats(){
 function renderGroups(){
   var cls=aCls();
   var sec=document.getElementById('groups-section');
-  if(!cls.groupsEnabled){sec.style.display='none';return}
+  var rkBtn=document.getElementById('btn-rank-groups');
+  if(!cls.groupsEnabled){
+    sec.style.display='none';
+    if(rkBtn) rkBtn.style.display='none';
+    return;
+  }
   sec.style.display='';
+  if(rkBtn) rkBtn.style.display='';
   var label=groupLabel();
   document.getElementById('groups-section-title').textContent=label+'s';
   document.getElementById('grp-add-label').textContent=label;
@@ -1627,12 +1662,10 @@ function applyBehav(b){
   var ts=now.toLocaleDateString('fr-FR')+' '+now.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
   var isClasseMode=S.cible.type==='classe'||S.assignMode==='classe';
   var isStamp=S.bTab==='stamp';
-  // Helper qui applique le delta de points à un élève donné en gardant le détail bonus/malus et le détail par libellé
   function applyToEleve(e,val){
     var nE=Object.assign({},e,{score:(e.score||0)+val});
     if(val>0) nE.pointsBonus=(e.pointsBonus||0)+val;
     else if(val<0) nE.pointsMalus=(e.pointsMalus||0)+Math.abs(val);
-    // Détail par libellé du comportement
     var behaviors=Object.assign({},e.behaviors||{});
     var key=b.lib;
     if(!behaviors[key]) behaviors[key]={count:0,val:val,icon:b.icon||''};
@@ -1641,45 +1674,91 @@ function applyBehav(b){
     return nE;
   }
   if(isStamp){
-    var ids=[];
+    var ids=[],cibleText='';
     if(isClasseMode){
       ids=cElvsPresents().map(function(e){return e.id});
-      addJ('Toute la classe (présents)','Tampon : '+b.lib,0,ts);
+      cibleText='Toute la classe (présents)';
     } else if(S.assignMode==='groupe'){
       var grp=S.groups.find(function(g){return g.id===S.cible.groupId});
-      if(grp){ids=cElvsPresents().filter(function(e){return e.groupId===grp.id}).map(function(e){return e.id});addJ(groupLabel()+' '+(grp.emoji||'⚡')+' '+grp.nom,'Tampon : '+b.lib,0,ts)}
+      if(grp){ids=cElvsPresents().filter(function(e){return e.groupId===grp.id}).map(function(e){return e.id});cibleText=groupLabel()+' '+(grp.emoji||'⚡')+' '+grp.nom}
     } else {
       ids=[S.cible.id];
-      addJ(S.cible.prenom+' '+S.cible.nom,'Tampon : '+b.lib,0,ts);
+      cibleText=S.cible.prenom+' '+S.cible.nom;
     }
-    ids.forEach(function(eid){S.passport.push({id:uid('ps'),eleveId:eid,stampId:b.id,ts:ts})});
+    var stampPids=[];
+    ids.forEach(function(eid){
+      var pid=uid('ps');
+      stampPids.push(pid);
+      S.passport.push({id:pid,eleveId:eid,stampId:b.id,ts:ts});
+    });
+    addJ(cibleText,'Tampon : '+b.lib,0,ts,{eleveIds:ids,kind:'stamp',stampId:b.id,passportIds:stampPids,behLib:b.lib,behIcon:b.icon||''});
   } else {
+    var ids=[],cibleText='';
     if(isClasseMode){
-      var presentIds=cElvsPresents().map(function(e){return e.id});
-      S.eleves=S.eleves.map(function(e){return presentIds.indexOf(e.id)>=0?applyToEleve(e,b.val):e});
-      addJ('Toute la classe (présents)',b.lib,b.val,ts);
+      ids=cElvsPresents().map(function(e){return e.id});
+      cibleText='Toute la classe (présents)';
     } else if(S.assignMode==='groupe'){
       var grp2=S.groups.find(function(g){return g.id===S.cible.groupId});
       if(grp2){
-        S.eleves=S.eleves.map(function(e){return e.groupId===grp2.id&&e.classId===S.activeClassId&&!e.absent?applyToEleve(e,b.val):e});
-        addJ(groupLabel()+' '+(grp2.emoji||'⚡')+' '+grp2.nom,b.lib,b.val,ts);
+        ids=cElvsPresents().filter(function(e){return e.groupId===grp2.id&&e.classId===S.activeClassId}).map(function(e){return e.id});
+        cibleText=groupLabel()+' '+(grp2.emoji||'⚡')+' '+grp2.nom;
       }
     } else {
-      S.eleves=S.eleves.map(function(e){return e.id===S.cible.id?applyToEleve(e,b.val):e});
-      addJ(S.cible.prenom+' '+S.cible.nom,b.lib,b.val,ts);
+      ids=[S.cible.id];
+      cibleText=S.cible.prenom+' '+S.cible.nom;
     }
+    S.eleves=S.eleves.map(function(e){return ids.indexOf(e.id)>=0?applyToEleve(e,b.val):e});
+    addJ(cibleText,b.lib,b.val,ts,{eleveIds:ids,kind:'points',behLib:b.lib,behIcon:b.icon||'',behVal:b.val});
   }
   saveS();render();closeModal('modal-points');
 }
 
-function addJ(cible,lib,val,ts){
-  S.journal.unshift({id:uid('j'),cible:cible,lib:lib,val:val,ts:ts});
-  S.journal=S.journal.slice(0,40);
+function addJ(cible,lib,val,ts,extra){
+  var entry={id:uid('j'),cible:cible,lib:lib,val:val,ts:ts};
+  if(extra) Object.assign(entry,extra);
+  S.journal.unshift(entry);
+  S.journal=S.journal.slice(0,60);
+}
+
+function undoJournalEntry(entryId){
+  var idx=S.journal.findIndex(function(j){return j.id===entryId});
+  if(idx<0) return;
+  var j=S.journal[idx];
+  if(!j.eleveIds||!j.kind){customAlert('Cette action ne peut pas être annulée (entrée antérieure à cette mise à jour).','Annulation impossible');return}
+  customConfirm('Annuler cette action ? '+j.lib+' ('+j.cible+')',function(){
+    if(j.kind==='stamp'){
+      // Retire les passport entries correspondants
+      if(j.passportIds&&j.passportIds.length){
+        S.passport=S.passport.filter(function(p){return j.passportIds.indexOf(p.id)<0});
+      }
+    } else {
+      // Inverse l'effet : retire les points et décrémente le compteur behaviors
+      var val=j.behVal||0;
+      var lib=j.behLib||j.lib;
+      S.eleves=S.eleves.map(function(e){
+        if(j.eleveIds.indexOf(e.id)<0) return e;
+        var nE=Object.assign({},e,{score:(e.score||0)-val});
+        if(val>0) nE.pointsBonus=Math.max(0,(e.pointsBonus||0)-val);
+        else if(val<0) nE.pointsMalus=Math.max(0,(e.pointsMalus||0)-Math.abs(val));
+        var beh=Object.assign({},e.behaviors||{});
+        if(beh[lib]){
+          var nC=beh[lib].count-1;
+          if(nC<=0) delete beh[lib];
+          else beh[lib]=Object.assign({},beh[lib],{count:nC});
+        }
+        nE.behaviors=beh;
+        return nE;
+      });
+    }
+    // Retire l'entrée du journal
+    S.journal=S.journal.filter(function(x){return x.id!==entryId});
+    saveS();render();renderJournal();
+  });
 }
 
 function doReset(){
   S.eleves=S.eleves.map(function(e){return e.classId===S.activeClassId?Object.assign({},e,{score:SCORE0,pointsBonus:0,pointsMalus:0,behaviors:{}}):e});
-  addJ('Toute la classe','Reset du lundi',0,new Date().toLocaleDateString('fr-FR'));
+  addJ('Toute la classe','Reset du lundi',0,new Date().toLocaleDateString('fr-FR'),{kind:'reset'});
   saveS();render();closeModal('modal-reset');
 }
 
@@ -2094,38 +2173,46 @@ function renderJournal(){
   box.innerHTML='';
   S.journal.forEach(function(j){
     var el=document.createElement('div');el.className='j-row';
-    var ptsHtml=j.val===0?'<div class="j-pts j-zero">—</div>':'<div class="j-pts '+(j.val>0?'j-pos':'j-neg')+'">'+(j.val>0?'+':'')+j.val+'</div>';
-    el.innerHTML='<div><div style="font-weight:900;font-size:.85rem">'+j.cible+'</div>'+
-      '<div style="font-size:.71rem;color:var(--ink3);font-weight:700">'+j.lib+' · '+j.ts+'</div></div>'+ptsHtml;
+    var ptsHtml=j.val===0?'<div class="j-pts j-zero">'+(j.kind==='stamp'?'🏅':'—')+'</div>':'<div class="j-pts '+(j.val>0?'j-pos':'j-neg')+'">'+(j.val>0?'+':'')+j.val+'</div>';
+    var undoBtn=(j.eleveIds&&j.kind&&j.kind!=='reset')?'<button class="j-undo" data-jid="'+j.id+'" title="Annuler cette action">↶</button>':'';
+    el.innerHTML='<div style="flex:1;min-width:0"><div style="font-weight:900;font-size:.85rem">'+j.cible+'</div>'+
+      '<div style="font-size:.71rem;color:var(--ink3);font-weight:700">'+j.lib+' · '+j.ts+'</div></div>'+ptsHtml+undoBtn;
     box.appendChild(el);
+  });
+  box.querySelectorAll('.j-undo').forEach(function(b){
+    b.addEventListener('click',function(){undoJournalEntry(b.dataset.jid)});
   });
 }
 function renderRank(){
-  var cls=aCls();
-  document.getElementById('rank-grps-title').textContent=groupLabel()+'s';
-  var grps=cGrps();
-  var rg=document.getElementById('rank-groups');rg.innerHTML='';
-  if(!grps.length){rg.innerHTML='<div class="empty" style="font-size:.78rem">Pas encore de '+groupLabel().toLowerCase()+'.</div>'}
-  else{
-    grps.slice().sort(function(a,b){return gPts(b.id)-gPts(a.id)}).forEach(function(g,i){
-      var col=gc(g.colorIdx);var el=document.createElement('div');el.className='rank-row';
-      el.innerHTML='<div class="rank-n">'+(MEDALS[i]||'#'+(i+1))+'</div>'+
-        '<div style="font-size:1.1rem">'+(g.emoji||'⚡')+'</div>'+
-        '<div style="font-weight:900;flex:1;font-size:.87rem">'+g.nom+'</div>'+
-        '<div class="rank-pts" style="color:'+col+'">'+gPts(g.id)+'</div>';
-      rg.appendChild(el);
-    });
-  }
+  // Classement des élèves uniquement
   var re=document.getElementById('rank-eleves');re.innerHTML='';
-  cElvs().slice().sort(function(a,b){return b.score-a.score}).slice(0,15).forEach(function(e,i){
+  var eleves=cElvs().slice().sort(function(a,b){return b.score-a.score});
+  if(!eleves.length){re.innerHTML='<div class="empty" style="font-size:.78rem">Aucun élève dans cette classe.</div>';return}
+  eleves.forEach(function(e,i){
     var grp=S.groups.find(function(g){return g.id===e.groupId});
     var col=grp?gc(grp.colorIdx):'#999';
     var el=document.createElement('div');el.className='rank-row';
     el.innerHTML='<div class="rank-n">'+(MEDALS[i]||'#'+(i+1))+'</div>'+
-      '<div style="width:32px;height:32px;border-radius:50%;flex-shrink:0;border:2px solid var(--border);overflow:hidden;background:var(--bg3)">'+avatarImg(e.avatarSeed||hashStr(e.prenom+' '+e.nom))+'</div>'+
-      '<div style="font-weight:900;flex:1;font-size:.85rem">'+e.prenom+' '+e.nom+(grp?' <span style="color:'+col+'">'+(grp.emoji||'⚡')+'</span>':'')+'</div>'+
+      '<div style="width:34px;height:34px;border-radius:50%;flex-shrink:0;border:2px solid var(--border);overflow:hidden;background:var(--bg3)">'+avatarImg(e.avatarSeed||hashStr(e.prenom+' '+e.nom))+'</div>'+
+      '<div style="font-weight:900;flex:1;font-size:.9rem;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+e.prenom+' '+(e.nom||'')+(grp?' <span style="color:'+col+';font-weight:700">'+(grp.emoji||'⚡')+'</span>':'')+(e.absent?' <span style="color:#dc2626;font-size:.7rem;font-weight:800">(absent)</span>':'')+'</div>'+
       '<div class="rank-pts" style="color:'+col+'">'+e.score+'</div>';
     re.appendChild(el);
+  });
+}
+function renderRankGroups(){
+  document.getElementById('rank-grps-modal-title').innerHTML='🏅 Classement des '+groupLabel().toLowerCase()+'s';
+  var grps=cGrps();
+  var rg=document.getElementById('rank-groups');rg.innerHTML='';
+  if(!grps.length){rg.innerHTML='<div class="empty" style="font-size:.85rem">Pas encore de '+groupLabel().toLowerCase()+'.</div>';return}
+  grps.slice().sort(function(a,b){return gPts(b.id)-gPts(a.id)}).forEach(function(g,i){
+    var col=gc(g.colorIdx);
+    var members=cElvs().filter(function(e){return e.groupId===g.id});
+    var el=document.createElement('div');el.className='rank-row';
+    el.innerHTML='<div class="rank-n">'+(MEDALS[i]||'#'+(i+1))+'</div>'+
+      '<div style="font-size:1.3rem">'+(g.emoji||'⚡')+'</div>'+
+      '<div style="flex:1;min-width:0"><div style="font-weight:900;font-size:.95rem;color:'+col+'">'+g.nom+'</div><div style="font-size:.7rem;color:var(--ink3);font-weight:700">'+members.length+' élève'+(members.length>1?'s':'')+'</div></div>'+
+      '<div class="rank-pts" style="color:'+col+'">'+gPts(g.id)+'</div>';
+    rg.appendChild(el);
   });
 }
 
@@ -2610,21 +2697,89 @@ var PLAN_STATE={tables:[],selectedEleveId:null,draggingTable:null};
 function openPlanModal(){
   var cls=aCls();
   PLAN_STATE.tables=(cls.plan&&cls.plan.tables)?JSON.parse(JSON.stringify(cls.plan.tables)):[];
+  // Migration : convertir d'éventuelles tables carrées (option retirée) en rondes
+  PLAN_STATE.tables.forEach(function(t){if(t.shape==='square') t.shape='round'});
   PLAN_STATE.selectedEleveId=null;
   renderPlan();
   openModal('modal-plan');
 }
 function closePlan(){closeModal('modal-plan')}
-function planAddTable(seats){
+// Calcule la taille de la table et la position de chaque chaise selon la forme et le nombre de places
+function planTableLayout(t){
+  var cs=46;
+  var margin=4;     // marge entre la chaise et le bord du container
+  var touchGap=3;   // léger écart entre la chaise et le plateau
+  if(t.shape==='round'){
+    var n=t.seats;
+    var R; // distance centre table -> centre chaise
+    if(n<=1){
+      R=cs/2+18;
+    } else {
+      // Rayon minimal pour que les chaises ne se chevauchent pas
+      var minR=(cs+6)/(2*Math.sin(Math.PI/n));
+      R=Math.max(cs/2+18,minR);
+    }
+    var size=Math.round(2*(R+cs/2+margin));
+    // Diamètre du plateau : assez grand pour que les chaises le touchent légèrement
+    var tableDiameter=Math.max(36,Math.round(2*(R-cs/2-touchGap)));
+    var chairs=[];
+    if(n===1){
+      chairs.push({left:size/2-cs/2,top:margin,w:cs,h:cs});
+    } else {
+      for(var i=0;i<n;i++){
+        var a=(i/n)*2*Math.PI-Math.PI/2;
+        chairs.push({left:size/2+R*Math.cos(a)-cs/2,top:size/2+R*Math.sin(a)-cs/2,w:cs,h:cs});
+      }
+    }
+    return {w:size,h:size,chairs:chairs,tabletop:{w:tableDiameter,h:tableDiameter}};
+  }
+  // rect
+  if(t.seats<=3){
+    var w=Math.max(90,t.seats*(cs+8)+12);
+    var h=cs+12;
+    var chairs=[];
+    var gap=(w-t.seats*cs)/(t.seats+1);
+    for(var i=0;i<t.seats;i++){
+      chairs.push({left:gap+i*(cs+gap),top:6,w:cs,h:cs});
+    }
+    return {w:w,h:h,chairs:chairs,tabletop:null};
+  }
+  // Multi-rangée
+  var topRow=Math.ceil(t.seats/2);
+  var bottomRow=Math.floor(t.seats/2);
+  var maxRow=Math.max(topRow,bottomRow);
+  var w=Math.max(140,maxRow*(cs+8)+12);
+  var h=cs*2+30;
+  var chairs=[];
+  var topGap=(w-topRow*cs)/(topRow+1);
+  for(var i=0;i<topRow;i++){
+    chairs.push({left:topGap+i*(cs+topGap),top:4,w:cs,h:cs});
+  }
+  var botGap=(w-bottomRow*cs)/(bottomRow+1);
+  for(var i=0;i<bottomRow;i++){
+    chairs.push({left:botGap+i*(cs+botGap),top:h-cs-4,w:cs,h:cs});
+  }
+  return {w:w,h:h,chairs:chairs,tabletop:{w:w-16,h:20}};
+}
+
+function planAddTableFromUI(){
+  var shape=document.getElementById('plan-new-shape').value;
+  var seats=parseInt(document.getElementById('plan-new-seats').value)||2;
+  planAddTable(seats,shape);
+}
+function planAddTable(seats,shape){
+  shape=shape||'rect';
   var canvas=document.getElementById('plan-canvas-wrap');
   var w=canvas.clientWidth||600;
+  var h=canvas.clientHeight||540;
   PLAN_STATE.tables.push({
     id:uid('tbl'),
-    x:Math.random()*(w-150)+10,
-    y:Math.random()*200+20,
+    x:Math.random()*(w-200)+10,
+    y:Math.random()*(h-200)+10,
     seats:seats,
+    shape:shape,
     rotation:0,
-    chairs:Array(seats).fill(null) // eleveId per chair
+    chairs:Array(seats).fill(null)
   });
   renderPlan();
 }
@@ -2635,19 +2790,68 @@ function planClearTables(){
 }
 function planAutoLayout(){
   var canvas=document.getElementById('plan-canvas-wrap');
-  var w=canvas.clientWidth-20,h=canvas.clientHeight-20;
+  var W=canvas.clientWidth-20,H=canvas.clientHeight-20;
   var n=PLAN_STATE.tables.length;
   if(!n) return;
-  var cols=Math.ceil(Math.sqrt(n*w/h));
+  // 1. Mélanger l'ordre des tables pour varier les positions à chaque clic
+  var indices=PLAN_STATE.tables.map(function(_,i){return i});
+  for(var i=indices.length-1;i>0;i--){
+    var j=Math.floor(Math.random()*(i+1));
+    var tmp=indices[i];indices[i]=indices[j];indices[j]=tmp;
+  }
+  // 2. Calculer la grille
+  var cols=Math.max(1,Math.ceil(Math.sqrt(n*W/Math.max(H,1))));
   var rows=Math.ceil(n/cols);
-  var cellW=w/cols,cellH=h/rows;
-  PLAN_STATE.tables.forEach(function(t,i){
-    var r=Math.floor(i/cols),c=i%cols;
-    t.x=10+c*cellW+(cellW-100)/2;
-    t.y=10+r*cellH+(cellH-50)/2;
+  var cellW=W/cols,cellH=H/rows;
+  // 3. Placer chaque table dans une cellule, avec petit jitter pour casser l'effet "grille parfaite"
+  indices.forEach(function(tableIdx,gridIdx){
+    var t=PLAN_STATE.tables[tableIdx];
+    var r=Math.floor(gridIdx/cols),c=gridIdx%cols;
+    var lay=planTableLayout(t);
+    var slackX=Math.max(0,cellW-lay.w-10);
+    var slackY=Math.max(0,cellH-lay.h-10);
+    var jitterX=(Math.random()-0.5)*Math.min(slackX,40);
+    var jitterY=(Math.random()-0.5)*Math.min(slackY,30);
+    t.x=Math.max(5,Math.min(W-lay.w-5,10+c*cellW+(cellW-lay.w)/2+jitterX));
+    t.y=Math.max(5,Math.min(H-lay.h-5,10+r*cellH+(cellH-lay.h)/2+jitterY));
     t.rotation=0;
   });
   renderPlan();
+}
+function planRandomAssign(){
+  // Construit la liste complète des slots disponibles
+  var slots=[];
+  PLAN_STATE.tables.forEach(function(t){
+    for(var k=0;k<t.seats;k++) slots.push({tid:t.id,cidx:k});
+  });
+  if(!slots.length){customAlert('Ajoutez d\'abord des tables avant de répartir les élèves.','Plan de classe');return}
+  var eleves=cElvsPresents().slice();
+  if(!eleves.length){customAlert('Aucun élève présent à placer.','Plan de classe');return}
+  customConfirm('Placer aléatoirement '+eleves.length+' élève(s) sur les '+slots.length+' chaise(s) disponible(s) ? Le placement actuel sera effacé.',function(){
+    // Double mélange pour une vraie variété : élèves ET slots
+    for(var i=eleves.length-1;i>0;i--){
+      var j=Math.floor(Math.random()*(i+1));
+      var tmp=eleves[i];eleves[i]=eleves[j];eleves[j]=tmp;
+    }
+    for(var i=slots.length-1;i>0;i--){
+      var j=Math.floor(Math.random()*(i+1));
+      var tmp=slots[i];slots[i]=slots[j];slots[j]=tmp;
+    }
+    // Reset toutes les chaises
+    PLAN_STATE.tables.forEach(function(t){t.chairs=Array(t.seats).fill(null)});
+    // Assigne dans l'ordre des slots mélangés
+    for(var ix=0;ix<Math.min(eleves.length,slots.length);ix++){
+      var s=slots[ix];
+      var t=PLAN_STATE.tables.find(function(x){return x.id===s.tid});
+      if(t) t.chairs[s.cidx]=eleves[ix].id;
+    }
+    renderPlan();
+    if(eleves.length>slots.length){
+      setTimeout(function(){
+        customAlert((eleves.length-slots.length)+' élève(s) n\'ont pas pu être placés faute de chaises.','Plan partiel');
+      },200);
+    }
+  });
 }
 function planRotateTable(id){
   var t=PLAN_STATE.tables.find(function(x){return x.id===id});
@@ -2662,11 +2866,8 @@ function planRemoveTable(id){
 function planAssignChair(tableId,chairIdx){
   var t=PLAN_STATE.tables.find(function(x){return x.id===tableId});
   if(!t) return;
-  // si chaise occupée, on libère
   if(t.chairs[chairIdx]){t.chairs[chairIdx]=null;renderPlan();return}
-  // si aucun élève sélectionné, ne rien faire
   if(!PLAN_STATE.selectedEleveId){customAlert('Sélectionnez d\'abord un élève dans la liste du bas.');return}
-  // s'assurer que l'élève n'est pas déjà ailleurs (retirer)
   PLAN_STATE.tables.forEach(function(tb){
     tb.chairs=tb.chairs.map(function(c){return c===PLAN_STATE.selectedEleveId?null:c});
   });
@@ -2675,7 +2876,6 @@ function planAssignChair(tableId,chairIdx){
   renderPlan();
 }
 function planEleveDisplayName(eleve){
-  // si plusieurs élèves ont le même prénom, ajouter initiale du nom
   var sameCount=cElvs().filter(function(e){return e.prenom.toLowerCase()===eleve.prenom.toLowerCase()}).length;
   if(sameCount>1) return eleve.prenom+' '+(eleve.nom||'').charAt(0).toUpperCase()+'.';
   return eleve.prenom;
@@ -2684,49 +2884,46 @@ function renderPlan(){
   var canvas=document.getElementById('plan-canvas');
   canvas.innerHTML='';
   var eleves=cElvs();
-  // Render tables
   PLAN_STATE.tables.forEach(function(t){
     var tableEl=document.createElement('div');
-    tableEl.className='plan-table';
-    var w=t.seats===2?160:90;
-    var h=50;
-    tableEl.style.width=w+'px';
-    tableEl.style.height=h+'px';
+    var shape=t.shape||'rect';
+    var isRound=shape==='round';
+    var isMultiRow=shape==='rect'&&t.seats>=4;
+    tableEl.className='plan-table plan-table-'+shape+(isMultiRow?' plan-table-rect-multi':'');
+    var lay=planTableLayout(t);
+    tableEl.style.width=lay.w+'px';
+    tableEl.style.height=lay.h+'px';
     tableEl.style.left=t.x+'px';
     tableEl.style.top=t.y+'px';
     tableEl.style.transform='rotate('+t.rotation+'deg)';
     tableEl.dataset.tid=t.id;
-    var chairsHtml='';
-    for(var i=0;i<t.seats;i++){
-      var eid=t.chairs[i];
-      var eleve=eid?eleves.find(function(e){return e.id===eid}):null;
-      if(eleve){
-        var grp=S.groups.find(function(g){return g.id===eleve.groupId});
-        var col=grp?gc(grp.colorIdx):'#999';
-        var display=planEleveDisplayName(eleve);
-        var parts=display.split(' ');
-        var prenom=parts[0];
-        var nomInit=parts.length>1?parts.slice(1).join(' '):'';
-        // Dynamic font-size: chair width ~ 86px (1-seat) or ~74px (2-seat), minus padding
-        var availPx=t.seats===2?68:80;
-        var pxPerChar=availPx/Math.max(prenom.length,1);
-        var fz=Math.min(13,Math.max(7,pxPerChar*1.15));
-        chairsHtml+='<div class="plan-chair occupied" data-tid="'+t.id+'" data-cidx="'+i+'" style="border-color:'+col+';background:'+rgba(col,.08)+'"><div class="plan-chair-prenom" style="color:'+col+';font-size:'+fz.toFixed(1)+'px">'+prenom+'</div>'+(nomInit?'<div class="plan-chair-nom">'+nomInit+'</div>':'')+'</div>';
-      } else {
-        chairsHtml+='<div class="plan-chair" data-tid="'+t.id+'" data-cidx="'+i+'">+</div>';
-      }
+
+    // Plateau visuel (dimensions calculées par planTableLayout pour cohérence)
+    var topHtml='';
+    if(isRound&&lay.tabletop){
+      var tw=lay.tabletop.w;
+      topHtml='<div class="plan-tabletop plan-tabletop-round" style="width:'+tw+'px;height:'+tw+'px;left:'+((lay.w-tw)/2)+'px;top:'+((lay.h-tw)/2)+'px"></div>';
+    } else if(isMultiRow&&lay.tabletop){
+      topHtml='<div class="plan-tabletop plan-tabletop-rect" style="left:8px;right:8px;top:'+(lay.h/2-10)+'px;height:20px"></div>';
+    } else {
+      topHtml='<div class="plan-tabletop plan-tabletop-rect" style="left:6px;right:6px;top:'+(lay.h-6)+'px;height:3px;border-radius:99px"></div>';
     }
-    tableEl.innerHTML=chairsHtml+
+
+    // Chaises positionnées en absolu
+    var chairsHtml='';
+    lay.chairs.forEach(function(pos,i){
+      chairsHtml+=buildChairHtml(t,i,eleves,pos);
+    });
+
+    tableEl.innerHTML=topHtml+chairsHtml+
       '<div class="plan-table-controls">'+
       '<button class="plan-table-btn" data-action="rotate" data-tid="'+t.id+'" title="Pivoter">↻</button>'+
       '<button class="plan-table-btn" data-action="remove" data-tid="'+t.id+'" title="Supprimer">✕</button>'+
       '</div>';
     canvas.appendChild(tableEl);
   });
-  // Bindings
-  canvas.querySelectorAll('.plan-table').forEach(function(el){
-    enableTableDrag(el);
-  });
+
+  canvas.querySelectorAll('.plan-table').forEach(function(el){enableTableDrag(el)});
   canvas.querySelectorAll('[data-action="rotate"]').forEach(function(b){
     b.addEventListener('click',function(ev){ev.stopPropagation();planRotateTable(b.dataset.tid)});
   });
@@ -2736,7 +2933,8 @@ function renderPlan(){
   canvas.querySelectorAll('.plan-chair').forEach(function(c){
     c.addEventListener('click',function(ev){ev.stopPropagation();planAssignChair(c.dataset.tid,parseInt(c.dataset.cidx))});
   });
-  // Pool : élèves non assignés
+
+  // Pool
   var assigned={};
   PLAN_STATE.tables.forEach(function(t){t.chairs.forEach(function(eid){if(eid)assigned[eid]=true})});
   var unassigned=eleves.filter(function(e){return !assigned[e.id]});
@@ -2757,6 +2955,26 @@ function renderPlan(){
     pool.innerHTML+='<div style="font-size:.78rem;color:var(--ink3);font-weight:700;padding:6px">✓ Tous les élèves sont placés.</div>';
   }
   document.getElementById('plan-unassigned-count').textContent=unassigned.length;
+}
+
+function buildChairHtml(t,i,eleves,pos){
+  var eid=t.chairs[i];
+  var eleve=eid?eleves.find(function(e){return e.id===eid}):null;
+  var styleStr='position:absolute;left:'+pos.left+'px;top:'+pos.top+'px;width:'+pos.w+'px;height:'+pos.h+'px;transform:rotate('+(-t.rotation)+'deg);';
+  if(eleve){
+    var grp=S.groups.find(function(g){return g.id===eleve.groupId});
+    var col=grp?gc(grp.colorIdx):'#999';
+    var display=planEleveDisplayName(eleve);
+    var parts=display.split(' ');
+    var prenom=parts[0];
+    var nomInit=parts.length>1?parts.slice(1).join(' '):'';
+    var availPx=pos.w-8;
+    var pxPerChar=availPx/Math.max(prenom.length,1);
+    var fz=Math.min(12,Math.max(7,pxPerChar*1.1));
+    styleStr+='border-color:'+col+';';
+    return '<div class="plan-chair occupied" data-tid="'+t.id+'" data-cidx="'+i+'" style="'+styleStr+'"><div class="plan-chair-prenom" style="color:'+col+';font-size:'+fz.toFixed(1)+'px">'+prenom+'</div>'+(nomInit?'<div class="plan-chair-nom">'+nomInit+'</div>':'')+'</div>';
+  }
+  return '<div class="plan-chair" data-tid="'+t.id+'" data-cidx="'+i+'" style="'+styleStr+'">+</div>';
 }
 function enableTableDrag(el){
   var startX,startY,origX,origY,dragging=false;

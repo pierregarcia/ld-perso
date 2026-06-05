@@ -475,6 +475,7 @@ body.pdf-printing #pdf-export-area{display:block}
       <div class="home-sub">Suivi des élèves, plan de classe, tirage au sort et plus encore !</div>
       <div class="home-cta">
         <button class="btn btn-primary" onclick="openNewClasse()">+ Nouvelle classe</button>
+        <button class="btn btn-soft" onclick="openPronoteHome()">📸 Importer depuis Pronote</button>
         <button class="btn btn-outline" onclick="importData()">Importer mes données</button>
         <button class="btn btn-soft" onclick="exportData()">Exporter mes données</button>
       </div>
@@ -561,6 +562,91 @@ body.pdf-printing #pdf-export-area{display:block}
 </div>
 </div>
 
+<div class="overlay" id="modal-pronote">
+<div class="modal modal-sm">
+  <button class="modal-close" onclick="closeModal('modal-pronote')">✕</button>
+  <div class="modal-title">📸 Importer depuis Pronote</div>
+  <div class="modal-sub">Récupérez prénoms, noms et photos depuis le trombinoscope Pronote. 100% local, aucun envoi serveur.</div>
+
+  <div style="background:var(--bg3);border:2px solid var(--border);border-radius:var(--r);padding:11px 13px;margin-bottom:10px">
+    <div style="font-weight:900;font-size:.86rem;margin-bottom:5px">Étape 1 — Bookmarklet</div>
+    <div style="font-size:.76rem;color:var(--ink2);font-weight:700;margin-bottom:8px">Glissez ce lien dans la barre de favoris de votre navigateur, ouvrez la page Pronote du trombinoscope, puis cliquez sur le favori.</div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">
+      <a id="pronote-bookmarklet-home" href="#" style="background:#2563eb;color:#fff;padding:7px 11px;border-radius:8px;font-weight:800;font-size:.82rem;text-decoration:none;display:inline-flex;align-items:center;gap:5px" onclick="event.preventDefault();customAlert('Glissez ce lien dans votre barre de favoris au lieu de cliquer dessus.','Bookmarklet')">📌 Classe Vibe ← Pronote</a>
+      <button class="btn btn-soft btn-sm" onclick="copyPronoteBookmarklet()">Copier le code</button>
+    </div>
+    <details style="margin-top:9px">
+      <summary style="cursor:pointer;font-size:.76rem;font-weight:800;color:var(--orange);user-select:none">Comment afficher la barre de favoris ?</summary>
+      <div style="font-size:.74rem;color:var(--ink2);font-weight:600;padding:8px 4px 2px;line-height:1.5">
+        <div style="margin-bottom:5px"><strong>🍎 macOS</strong> : <code style="background:var(--bg2);padding:1px 5px;border-radius:3px">⌘ + ⇧ + B</code> (Chrome, Edge, Safari, Firefox)</div>
+        <div style="margin-bottom:5px"><strong>🪟 Windows / 🐧 Linux</strong> : <code style="background:var(--bg2);padding:1px 5px;border-radius:3px">Ctrl + Maj + B</code> (Chrome, Edge, Firefox)</div>
+        <div style="margin-top:7px;padding-top:7px;border-top:1px dashed var(--border)">Si le glisser-déposer ne fonctionne pas (Safari par exemple), utilisez <strong>"Copier le code"</strong>, puis créez un nouveau favori manuellement (clic droit sur la barre → <em>Nouveau favori</em>) et collez le code à la place de l'URL.</div>
+      </div>
+    </details>
+    <div style="margin-top:9px;padding-top:9px;border-top:1px dashed var(--border)">
+      <button class="btn btn-outline btn-sm" onclick="showPronoteConsoleCode()" style="width:100%">🛠️ Le bookmarklet ne marche pas ? Méthode alternative</button>
+    </div>
+    <div style="font-size:.7rem;color:var(--ink3);font-weight:700;margin-top:7px">Le bookmarklet génère un fichier <code style="background:var(--bg2);padding:1px 4px;border-radius:3px">pronote-eleves-AAAA-MM-JJ.json</code>.</div>
+  </div>
+
+  <div style="background:var(--bg3);border:2px solid var(--border);border-radius:var(--r);padding:11px 13px">
+    <div style="font-weight:900;font-size:.86rem;margin-bottom:8px">Étape 2 — Import dans une classe</div>
+    <div class="field" style="margin-bottom:8px">
+      <label>Destination</label>
+      <select id="pn-destination" onchange="onPronoteDestinationChange()">
+        <option value="new">➕ Créer une nouvelle classe</option>
+      </select>
+    </div>
+    <div class="field" id="pn-new-class-name-field" style="margin-bottom:8px">
+      <label>Nom de la nouvelle classe</label>
+      <input id="pn-new-class-name" type="text" maxlength="30" placeholder="ex : 6ème B, CM1, Terminale STMG...">
+    </div>
+    <div class="field" style="margin-bottom:8px">
+      <label>Fichier JSON Pronote</label>
+      <input id="pn-home-file" type="file" accept=".json,application/json">
+    </div>
+    <div class="msg" id="msg-pn-home"></div>
+    <button class="btn btn-primary btn-sm" onclick="importPronoteFromHome()">Importer</button>
+  </div>
+
+  <div class="form-actions" style="margin-top:14px">
+    <button class="btn btn-outline btn-sm" onclick="closeModal('modal-pronote')">Fermer</button>
+  </div>
+  <div style="font-size:.68rem;color:var(--ink3);font-weight:700;text-align:center;margin-top:10px;padding-top:9px;border-top:1px dashed var(--border)">
+    Méthode d'import inspirée de <a href="https://mathix.fr/" target="_blank" rel="noopener noreferrer" style="color:var(--orange);text-decoration:none;font-weight:800">Mathix</a>, merci à eux 🙏
+  </div>
+</div>
+</div>
+
+<div class="overlay" id="modal-pronote-console">
+<div class="modal modal-sm">
+  <button class="modal-close" onclick="closeModal('modal-pronote-console')">✕</button>
+  <div class="modal-title">🛠️ Méthode Console (si le bookmarklet ne fonctionne pas)</div>
+  <div class="modal-sub">Marche partout (Chrome, Safari, Firefox, Edge) même quand le bookmarklet est bloqué.</div>
+  <div style="background:var(--bg3);border:2px solid var(--border);border-radius:var(--r);padding:11px 13px;margin-bottom:10px">
+    <ol style="margin:0 0 6px 0;padding-left:22px;font-size:.78rem;font-weight:700;color:var(--ink2);line-height:1.6">
+      <li>Ouvrez la page Pronote du trombinoscope (avec les photos visibles).</li>
+      <li>Ouvrez la <strong>console développeur</strong> :
+        <ul style="margin:3px 0;padding-left:18px;font-weight:600">
+          <li>🍎 Mac : <code style="background:var(--bg2);padding:1px 4px;border-radius:3px">⌘ + ⌥ + J</code> (Chrome) ou <code style="background:var(--bg2);padding:1px 4px;border-radius:3px">⌘ + ⌥ + C</code> (Safari, après avoir activé le menu Développement dans Réglages → Avancés)</li>
+          <li>🪟 Windows / 🐧 Linux : <code style="background:var(--bg2);padding:1px 4px;border-radius:3px">F12</code> puis onglet <em>Console</em></li>
+        </ul>
+      </li>
+      <li>Copiez le code ci-dessous, collez-le dans la console et appuyez sur <code style="background:var(--bg2);padding:1px 4px;border-radius:3px">Entrée</code>.</li>
+      <li>Le fichier <code style="background:var(--bg2);padding:1px 4px;border-radius:3px">pronote-eleves-AAAA-MM-JJ.json</code> se téléchargera automatiquement.</li>
+    </ol>
+  </div>
+  <div class="field">
+    <label>Code à coller dans la console</label>
+    <textarea id="pronote-console-code" readonly rows="6" style="font-family:ui-monospace,'SF Mono',Menlo,monospace;font-size:.7rem;line-height:1.4"></textarea>
+  </div>
+  <div class="form-actions">
+    <button class="btn btn-outline btn-sm" onclick="closeModal('modal-pronote-console')">Fermer</button>
+    <button class="btn btn-primary btn-sm" onclick="copyPronoteConsoleCode()">📋 Copier le code</button>
+  </div>
+</div>
+</div>
+
 <div class="overlay" id="modal-add-eleve">
 <div class="modal modal-sm">
   <button class="modal-close" onclick="closeModal('modal-add-eleve')">✕</button>
@@ -598,9 +684,50 @@ body.pdf-printing #pdf-export-area{display:block}
   <div class="field"><label>Fichier CSV / TXT</label><input id="fi-file" type="file" accept=".csv,.txt"></div>
   <div class="field"><label>Ou coller une liste</label><textarea id="fi-paste" rows="5" placeholder="Un élève par ligne&#10;Exemples :&#10;Alice Martin&#10;Bob&#10;12"></textarea></div>
   <div class="msg" id="msg-import-eleves"></div>
-  <div class="form-actions">
+  <div class="form-actions" style="margin-bottom:12px">
     <button class="btn btn-soft" onclick="importFileEleves()">Importer fichier</button>
     <button class="btn btn-soft" onclick="importPasteEleves()">Importer collage</button>
+  </div>
+
+  <!-- Section Pronote -->
+  <div style="border-top:2px solid var(--border);padding-top:14px;margin-top:8px">
+    <div style="font-weight:900;font-size:1rem;margin-bottom:6px">📸 Importer depuis Pronote</div>
+    <div style="font-size:.78rem;color:var(--ink2);font-weight:700;margin-bottom:10px">Récupérez prénoms, noms et photos depuis le trombinoscope Pronote, sans serveur tiers.</div>
+
+    <div style="background:var(--bg3);border:2px solid var(--border);border-radius:var(--r);padding:11px 13px;margin-bottom:10px">
+      <div style="font-weight:900;font-size:.86rem;margin-bottom:5px">Étape 1 — Bookmarklet</div>
+      <div style="font-size:.76rem;color:var(--ink2);font-weight:700;margin-bottom:8px">Glissez ce lien dans la barre de favoris de votre navigateur, ouvrez la page Pronote du trombinoscope, puis cliquez sur le favori.</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">
+        <a id="pronote-bookmarklet" href="#" style="background:#2563eb;color:#fff;padding:7px 11px;border-radius:8px;font-weight:800;font-size:.82rem;text-decoration:none;display:inline-flex;align-items:center;gap:5px" onclick="event.preventDefault();customAlert('Glissez ce lien dans votre barre de favoris au lieu de cliquer dessus.','Bookmarklet')">📌 Classe Vibe ← Pronote</a>
+        <button class="btn btn-soft btn-sm" onclick="copyPronoteBookmarklet()">Copier le code</button>
+      </div>
+      <details style="margin-top:9px">
+        <summary style="cursor:pointer;font-size:.76rem;font-weight:800;color:var(--orange);user-select:none">Comment afficher la barre de favoris ?</summary>
+        <div style="font-size:.74rem;color:var(--ink2);font-weight:600;padding:8px 4px 2px;line-height:1.5">
+          <div style="margin-bottom:5px"><strong>🍎 macOS</strong> : <code style="background:var(--bg2);padding:1px 5px;border-radius:3px">⌘ + ⇧ + B</code> (Chrome, Edge, Safari, Firefox)</div>
+          <div style="margin-bottom:5px"><strong>🪟 Windows / 🐧 Linux</strong> : <code style="background:var(--bg2);padding:1px 5px;border-radius:3px">Ctrl + Maj + B</code> (Chrome, Edge, Firefox)</div>
+          <div style="margin-top:7px;padding-top:7px;border-top:1px dashed var(--border)">Si le glisser-déposer ne fonctionne pas (Safari par exemple), utilisez <strong>"Copier le code"</strong>, puis créez un nouveau favori manuellement et collez le code à la place de l'URL.</div>
+        </div>
+      </details>
+      <div style="margin-top:9px;padding-top:9px;border-top:1px dashed var(--border)">
+        <button class="btn btn-outline btn-sm" onclick="showPronoteConsoleCode()" style="width:100%">🛠️ Le bookmarklet ne marche pas ? Méthode alternative</button>
+      </div>
+      <div style="font-size:.7rem;color:var(--ink3);font-weight:700;margin-top:7px">Le bookmarklet génère un fichier <code style="background:var(--bg2);padding:1px 4px;border-radius:3px">pronote-eleves-AAAA-MM-JJ.json</code> à importer ci-dessous.</div>
+    </div>
+
+    <div style="background:var(--bg3);border:2px solid var(--border);border-radius:var(--r);padding:11px 13px">
+      <div style="font-weight:900;font-size:.86rem;margin-bottom:5px">Étape 2 — Import du JSON</div>
+      <div class="field" style="margin-bottom:8px"><label><span id="fi-pn-group-label">Groupe</span> par défaut</label><select id="fi-pn-group"></select></div>
+      <div class="field" style="margin-bottom:8px"><label>Fichier JSON Pronote</label><input id="fi-pn-file" type="file" accept=".json,application/json"></div>
+      <div class="msg" id="msg-import-pronote"></div>
+      <button class="btn btn-primary btn-sm" onclick="importPronoteJson()">Importer le JSON</button>
+    </div>
+    <div style="font-size:.68rem;color:var(--ink3);font-weight:700;text-align:center;margin-top:10px">
+      Méthode d'import inspirée de <a href="https://mathix.fr/" target="_blank" rel="noopener noreferrer" style="color:var(--orange);text-decoration:none;font-weight:800">Mathix</a>, merci à eux 🙏
+    </div>
+  </div>
+
+  <div class="form-actions" style="margin-top:14px">
     <button class="btn btn-outline btn-sm" onclick="closeModal('modal-import-eleves')">Fermer</button>
   </div>
 </div>
@@ -666,6 +793,13 @@ body.pdf-printing #pdf-export-area{display:block}
       <span style="font-size:.77rem;font-weight:700;color:var(--ink2)">Les élèves peuvent gagner des tampons.</span>
     </div>
   </div>
+  <div style="margin-bottom:14px">
+    <div class="field" style="margin-bottom:6px"><label>Affichage des avatars</label></div>
+    <div style="display:flex;align-items:center;gap:10px">
+      <button id="toggle-photos-btn" class="btn btn-outline btn-sm" onclick="toggleNewClsPhotos()" style="min-width:88px">📸 Photos</button>
+      <span id="toggle-photos-hint" style="font-size:.77rem;font-weight:700;color:var(--ink2)">Photos Pronote si disponibles.</span>
+    </div>
+  </div>
   <div class="msg" id="msg-add-cls"></div>
   <div class="form-actions">
     <button class="btn btn-outline btn-sm" onclick="closeModal('modal-add-classe')">Annuler</button>
@@ -704,6 +838,13 @@ body.pdf-printing #pdf-export-area{display:block}
     <div style="display:flex;align-items:center;gap:10px">
       <button id="toggle-edit-passport-btn" class="btn btn-outline btn-sm" onclick="toggleEditClsPassport()" style="min-width:58px"></button>
       <span style="font-size:.77rem;font-weight:700;color:var(--ink2)">Passeports / tampons.</span>
+    </div>
+  </div>
+  <div style="margin-bottom:14px">
+    <div class="field" style="margin-bottom:6px"><label>Affichage des avatars</label></div>
+    <div style="display:flex;align-items:center;gap:10px">
+      <button id="toggle-edit-photos-btn" class="btn btn-outline btn-sm" onclick="toggleEditClsPhotos()" style="min-width:88px"></button>
+      <span id="toggle-edit-photos-hint" style="font-size:.77rem;font-weight:700;color:var(--ink2)"></span>
     </div>
   </div>
   <div class="form-actions" style="justify-content:space-between">
@@ -1020,6 +1161,8 @@ body.pdf-printing #pdf-export-area{display:block}
     <br>
     <p><strong style="color:var(--ink)">Avatars :</strong> Illustrations <a href="https://www.figma.com/community/file/1198749693280469639" target="_blank" rel="noopener" style="color:var(--orange)">Lorelei</a> par <a href="https://www.instagram.com/lischi_art/" target="_blank" rel="noopener" style="color:var(--orange)">Lisa Wischofsky</a>, sous licence <a href="https://creativecommons.org/publicdomain/zero/1.0/" target="_blank" rel="noopener" style="color:var(--orange)">CC0 1.0</a> — servies via l'API publique <a href="https://www.dicebear.com" target="_blank" rel="noopener" style="color:var(--orange)">DiceBear</a>.</p>
     <br>
+    <p><strong style="color:var(--ink)">Import depuis Pronote :</strong> Méthode du bookmarklet inspirée et adaptée de <a href="https://mathix.fr/" target="_blank" rel="noopener" style="color:var(--orange)">Mathix</a> (Arnaud Champollion) — merci pour ce travail mis à disposition de la communauté enseignante.</p>
+    <br>
     <p style="font-size:.78rem;color:var(--ink3)">Version 1.0 — ClasseVibe</p>
   </div>
   <div class="sep"></div>
@@ -1110,6 +1253,27 @@ function avatarImg(seed,extraStyle){
   return '<img src="'+url+'" alt="" loading="lazy" style="width:100%;height:100%;display:block;object-fit:cover;'+(extraStyle||'')+'" onerror="this.style.opacity=0.3;this.alt=&quot;⚠&quot;">';
 }
 
+// Génère le HTML <img> pour un élève, en priorisant sa photo Pronote si disponible ET si la classe l'autorise
+function avatarImgForEleve(eleve,extraStyle){
+  if(eleve&&eleve.photoData&&classAllowsPhotos(eleve.classId)){
+    return '<img src="'+eleve.photoData+'" alt="" loading="lazy" style="width:100%;height:100%;display:block;object-fit:cover;'+(extraStyle||'')+'">';
+  }
+  return avatarImg((eleve&&eleve.avatarSeed)||hashStr((eleve&&(eleve.prenom+' '+eleve.nom))||''),extraStyle);
+}
+
+// Retourne l'URL (ou data URI) à utiliser comme src d'image pour un élève donné
+function eleveAvatarSrc(eleve){
+  if(eleve&&eleve.photoData&&classAllowsPhotos(eleve.classId)) return eleve.photoData;
+  return loreleiUrl((eleve&&eleve.avatarSeed)||((eleve&&(eleve.prenom+' '+eleve.nom))||''));
+}
+
+// Indique si la classe autorise l'affichage des photos (défaut : oui)
+function classAllowsPhotos(classId){
+  var cls=S.classes.find(function(c){return c.id===classId});
+  if(!cls) return true;
+  return typeof cls.showPhotos==='undefined'?true:!!cls.showPhotos;
+}
+
 function ld(k){try{return JSON.parse(localStorage.getItem(SK+k))}catch(e){return null}}
 function sv(k,v){localStorage.setItem(SK+k,JSON.stringify(v))}
 
@@ -1125,6 +1289,7 @@ var S={
   editCompId:null,editCompType:null,editGroupId:null,editEleveId:null,
   newClsGroups:false,editClsGroups:false,
   newClsPassport:false,editClsPassport:false,
+  newClsShowPhotos:true,editClsShowPhotos:true,
   assignMode:'eleve',
   projectCode:null,projectMode:false
 };
@@ -1255,7 +1420,9 @@ function renderTopbar(){
   var burger=document.getElementById('burger-panel-inner');
   right.innerHTML='';
   burger.innerHTML='';
-  var actions=[
+  var isHome=!S.activeClassId;
+  // Sur la page d'accueil, seul "🏠 Accueil" est utile (et même celui-ci est superflu) — on n'affiche rien
+  var actions=isHome ? [] : [
     {lbl:'🏠 Accueil',fn:function(){goHome()}},
     {lbl:'🎡 Tirage',fn:function(){openTirageModal('roue')}},
     {lbl:'👥 Groupes aléatoires',fn:function(){openTirageModal('grp')}},
@@ -1274,6 +1441,9 @@ function renderTopbar(){
     b2.onclick=(function(fn){return function(){closeBurger();fn()}})(a.fn);
     burger.appendChild(b2);
   });
+  // Masquer le bouton burger s'il n'y a aucune action
+  var bbtn=document.getElementById('burger-btn');
+  if(bbtn) bbtn.style.display=isHome?'none':'';
 }
 
 function toggleBurger(){
@@ -1507,9 +1677,15 @@ function renderEleves(){
   impCard.innerHTML='<div class="add-plus" style="font-size:1rem">📋</div><div class="add-lbl">Importer une liste</div>';
   impCard.onclick=function(){
     populateGroupSel('fi-group');
+    populateGroupSel('fi-pn-group');
     document.getElementById('fi-group-label').textContent=groupLabel();
+    document.getElementById('fi-pn-group-label').textContent=groupLabel();
     clearMsg('msg-import-eleves');
+    clearMsg('msg-import-pronote');
     document.getElementById('fi-paste').value='';
+    // Mise à jour de l'URL du bookmarklet à l'ouverture
+    var bk=document.getElementById('pronote-bookmarklet');
+    if(bk) bk.href=buildBookmarkletHref();
     openModal('modal-import-eleves');
   };
   grid.appendChild(impCard);
@@ -1780,10 +1956,11 @@ function doReset(){
 }
 
 function openNewClasse(){
-  S.newClsGroups=false;S.newClsPassport=false;
-  syncNewClsToggle();syncNewClsPassportToggle();
+  S.newClsGroups=false;S.newClsPassport=false;S.newClsShowPhotos=true;
+  syncNewClsToggle();syncNewClsPassportToggle();syncNewClsPhotosToggle();
   document.getElementById('f-cls-nom').value='';
   document.getElementById('f-cls-level').value='';
+  document.getElementById('f-cls-scorebase').value=0;
   document.getElementById('f-cls-grouplabel').value='';
   document.getElementById('grp-label-field').style.display='none';
   clearMsg('msg-add-cls');
@@ -1801,6 +1978,14 @@ function toggleNewClsPassport(){S.newClsPassport=!S.newClsPassport;syncNewClsPas
 function syncNewClsPassportToggle(){
   document.getElementById('toggle-passport-btn').textContent=S.newClsPassport?'Oui':'Non';
 }
+function toggleNewClsPhotos(){S.newClsShowPhotos=!S.newClsShowPhotos;syncNewClsPhotosToggle()}
+function syncNewClsPhotosToggle(){
+  var b=document.getElementById('toggle-photos-btn');
+  var h=document.getElementById('toggle-photos-hint');
+  if(!b) return;
+  b.textContent=S.newClsShowPhotos?'📸 Photos':'🎨 Illustrations';
+  h.textContent=S.newClsShowPhotos?'Photos Pronote si disponibles.':'Illustrations Lorelei (anonymes).';
+}
 function submitAddClasse(){
   var nom=norm(document.getElementById('f-cls-nom').value);
   if(!nom){showMsg('msg-add-cls','Nom obligatoire.');return}
@@ -1808,7 +1993,7 @@ function submitAddClasse(){
   var scoreBase=Math.max(0,Math.min(100,parseInt(document.getElementById('f-cls-scorebase').value)||0));
   var grpLabel=norm(document.getElementById('f-cls-grouplabel').value)||'Groupe';
   var id=uid('cls');
-  S.classes.push({id:id,nom:nom,level:lvl,scoreBase:scoreBase,groupsEnabled:S.newClsGroups,groupLabel:grpLabel,passportEnabled:S.newClsPassport});
+  S.classes.push({id:id,nom:nom,level:lvl,scoreBase:scoreBase,groupsEnabled:S.newClsGroups,groupLabel:grpLabel,passportEnabled:S.newClsPassport,showPhotos:S.newClsShowPhotos});
   S.activeClassId=id;sv('activeClass',id);
   saveS();closeModal('modal-add-classe');S.filterGroup='all';render();
 }
@@ -1820,7 +2005,9 @@ function openEditClasse(){
   document.getElementById('f-edit-cls-grouplabel').value=cls.groupLabel||'';
   S.editClsGroups=cls.groupsEnabled||false;
   S.editClsPassport=cls.passportEnabled||false;
-  syncEditClsToggle();syncEditClsPassportToggle();
+  // Par défaut on affiche les photos si elles existent (cohérence avec anciens imports Pronote)
+  S.editClsShowPhotos=typeof cls.showPhotos==='undefined'?true:cls.showPhotos;
+  syncEditClsToggle();syncEditClsPassportToggle();syncEditClsPhotosToggle();
   document.getElementById('edit-grp-label-field').style.display=S.editClsGroups?'':'none';
   openModal('modal-edit-cls');
 }
@@ -1835,6 +2022,14 @@ function syncEditClsToggle(){
 function toggleEditClsPassport(){S.editClsPassport=!S.editClsPassport;syncEditClsPassportToggle()}
 function syncEditClsPassportToggle(){
   document.getElementById('toggle-edit-passport-btn').textContent=S.editClsPassport?'Oui':'Non';
+}
+function toggleEditClsPhotos(){S.editClsShowPhotos=!S.editClsShowPhotos;syncEditClsPhotosToggle()}
+function syncEditClsPhotosToggle(){
+  var b=document.getElementById('toggle-edit-photos-btn');
+  var h=document.getElementById('toggle-edit-photos-hint');
+  if(!b) return;
+  b.textContent=S.editClsShowPhotos?'📸 Photos':'🎨 Illustrations';
+  h.textContent=S.editClsShowPhotos?'Photos Pronote si disponibles.':'Illustrations Lorelei (anonymes).';
 }
 function saveEditClasse(){
   var nom=norm(document.getElementById('f-edit-cls-nom').value);
@@ -1851,7 +2046,7 @@ function saveEditClasse(){
       return e.classId===S.activeClassId?Object.assign({},e,{score:(e.score||0)+delta}):e;
     });
   }
-  S.classes=S.classes.map(function(c){return c.id===S.activeClassId?Object.assign({},c,{nom:nom,level:lvl,scoreBase:newBase,groupsEnabled:S.editClsGroups,groupLabel:grpLabel,passportEnabled:S.editClsPassport}):c});
+  S.classes=S.classes.map(function(c){return c.id===S.activeClassId?Object.assign({},c,{nom:nom,level:lvl,scoreBase:newBase,groupsEnabled:S.editClsGroups,groupLabel:grpLabel,passportEnabled:S.editClsPassport,showPhotos:S.editClsShowPhotos}):c});
   saveS();closeModal('modal-edit-cls');render();
 }
 function deleteClasse(){
@@ -1979,6 +2174,281 @@ function parseElevesTxt(text,groupSelId){
   return n;
 }
 
+/* ══════════════════════════════════════════════════════
+   IMPORT PRONOTE (bookmarklet + JSON)
+   - Le bookmarklet s'exécute sur la page Pronote (trombinoscope)
+   - Il essaie plusieurs sélecteurs connus pour extraire prénom/nom/photo
+   - Il redimensionne les photos en miniatures 96x96 JPEG ~80% (taille raisonnable)
+   - Il génère un JSON téléchargeable, ouvert à un format simple
+══════════════════════════════════════════════════════ */
+
+// Bookmarklet basé sur le code éprouvé du collègue Plan-de-Classe,
+// avec ajout d'un diagnostic détaillé en cas de 0 photo trouvée.
+var PRONOTE_BOOKMARKLET_SRC=`(async()=>{
+try{
+  const V='Classe Vibe';
+  console.log(V+' : démarrage');
+  function cleanAlt(a){
+    let s=String(a||'').replace(/\\u00A0/g,' ').replace(/\\s+/g,' ').trim();
+    if(/^\\s*photo/i.test(s)){
+      s=s.replace(/^\\s*photos?\\S*\\s*/i,'');
+      s=s.replace(/^(?:d['’]?|de)\\s+/i,'');
+    }
+    s=s.replace(/^\\s*de\\s+/i,'');
+    s=s.replace(/\\s*logo[^]*$/i,'');
+    return s.trim();
+  }
+  function smartSplit(s){
+    s=(s||'').trim().replace(/\\s+/g,' ');
+    if(!s)return{prenom:'',nom:''};
+    const t=s.split(' ');
+    const A=w=>/^[A-ZÀ-ÖØ-Þ'’\\-]+$/.test(w);
+    const C=w=>/^[A-ZÀ-ÖØ-Þ][a-zà-öø-ÿ'’\\-]+$/.test(w);
+    if(t.length===1)return{prenom:t[0],nom:''};
+    if(A(t[0])){
+      let k=1;while(k<t.length&&A(t[k]))k++;
+      if(k<t.length)return{prenom:t.slice(k).join(' '),nom:t.slice(0,k).join(' ').toUpperCase()};
+    }
+    if(A(t[t.length-1])){
+      let k=t.length-2;while(k>=0&&A(t[k]))k--;
+      const pren=t.slice(0,k+1).join(' '),nom=t.slice(k+1).join(' ').toUpperCase();
+      if(pren)return{prenom:pren,nom:nom};
+    }
+    if(A(t[0])&&(C(t[1])||A(t[1])))return{prenom:t.slice(1).join(' '),nom:t[0].toUpperCase()};
+    if(C(t[0])&&A(t[t.length-1]))return{prenom:t.slice(0,-1).join(' '),nom:t[t.length-1].toUpperCase()};
+    return{prenom:t[0],nom:t.slice(1).join(' ')};
+  }
+  async function toDataURL(u){
+    try{
+      const r=await fetch(u,{credentials:'include'});
+      const b=await r.blob();
+      return await new Promise(res=>{
+        const fr=new FileReader();
+        fr.onload=()=>res(fr.result);
+        fr.onerror=()=>res(u);
+        fr.readAsDataURL(b);
+      });
+    }catch(e){return u}
+  }
+  function collectImgs(root){
+    try{return[...root.images]}catch(_){return[]}
+  }
+  // Récolte récursive dans toutes les iframes accessibles (même origine)
+  function deepCollect(doc){
+    let imgs=collectImgs(doc);
+    try{
+      for(const f of doc.querySelectorAll('iframe,frame')){
+        try{
+          const sub=f.contentDocument||(f.contentWindow&&f.contentWindow.document);
+          if(sub)imgs=imgs.concat(deepCollect(sub));
+        }catch(_){}
+      }
+    }catch(_){}
+    return imgs;
+  }
+  const allImgs=deepCollect(document);
+  console.log(V+' : '+allImgs.length+' images au total');
+  // Filtre : alt contient "photo"
+  const photoImgs=allImgs.filter(img=>/photo/i.test(String(img.alt||'')));
+  console.log(V+' : '+photoImgs.length+' avec alt="photo..."');
+  // Diagnostic visible si rien trouvé
+  if(!photoImgs.length){
+    // Liste les 8 premiers alt-text pour aider à diagnostiquer
+    const sample=allImgs.slice(0,8).map(i=>'"'+(i.alt||'(vide)').slice(0,40)+'"').join('\\n');
+    alert(V+' : 0 photo détectée.\\n\\n'+allImgs.length+' images sur la page mais aucune avec un attribut alt contenant "photo".\\n\\n8 premiers alt-text trouvés :\\n'+sample+'\\n\\nÊtes-vous bien sur la page du trombinoscope Pronote ? Si oui, les photos sont peut-être dans une iframe cross-origin inaccessible.');
+    return;
+  }
+  const out=[],seen=new Set;
+  for(const img of photoImgs){
+    const raw=cleanAlt(img.alt);
+    if(!raw||seen.has(raw))continue;
+    seen.add(raw);
+    const photo=await toDataURL(img.currentSrc||img.src);
+    const {prenom,nom}=smartSplit(raw);
+    out.push({prenom,nom,photo});
+  }
+  console.log(V+' : '+out.length+' élèves extraits');
+  const payload={version:1,source:'pronote',exportedAt:new Date().toISOString().slice(0,10),generated:new Date().toISOString(),eleves:out,students:out};
+  const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='pronote-eleves-'+new Date().toISOString().slice(0,10)+'.json';
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(()=>{
+    try{URL.revokeObjectURL(a.href);a.remove()}catch(_){}
+    alert(V+' : '+out.length+' élève(s) exportés. Importez le fichier JSON dans l\\'app.');
+  },150);
+}catch(err){
+  alert('Classe Vibe — erreur : '+err.message+'\\n\\nOuvrez la console (F12) pour plus de détails.');
+  console.error(err);
+}
+})();`;
+
+function buildBookmarkletHref(){
+  // Retire les commentaires de ligne (sinon ils mangent tout après le whitespace-collapse),
+  // puis réduit les espaces multiples
+  var min=PRONOTE_BOOKMARKLET_SRC
+    .replace(/^\s*\/\/.*$/gm,'') // retire les lignes entières de commentaires
+    .replace(/\s+/g,' ')
+    .trim();
+  // Encodage URL MINIMAL : seuls les caractères incompatibles avec javascript: URLs
+  return 'javascript:'+min
+    .replace(/%/g,'%25')
+    .replace(/#/g,'%23')
+    .replace(/"/g,'%22')
+    .replace(/ /g,'%20')
+    .replace(/\n/g,'%0A');
+}
+function copyPronoteBookmarklet(){
+  var code=buildBookmarkletHref();
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(code).then(function(){
+      customAlert('Code du bookmarklet copié. Créez un nouveau favori dans votre navigateur et collez-le comme adresse.','Code copié');
+    }).catch(function(){fallback()});
+  } else fallback();
+  function fallback(){
+    var ta=document.createElement('textarea');ta.value=code;document.body.appendChild(ta);ta.select();
+    try{document.execCommand('copy')}catch(e){}
+    ta.remove();
+    customAlert('Code copié dans le presse-papier.','Code copié');
+  }
+}
+
+// Affiche le code source brut dans un textarea, à coller dans la console des outils de développement de la page Pronote
+function showPronoteConsoleCode(){
+  var raw=PRONOTE_BOOKMARKLET_SRC
+    .replace(/^\s*\/\/.*$/gm,'')
+    .replace(/\s+/g,' ')
+    .trim();
+  document.getElementById('pronote-console-code').value=raw;
+  openModal('modal-pronote-console');
+  setTimeout(function(){
+    var ta=document.getElementById('pronote-console-code');
+    if(ta){ta.focus();ta.select()}
+  },100);
+}
+function copyPronoteConsoleCode(){
+  var ta=document.getElementById('pronote-console-code');
+  ta.select();
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(ta.value).then(function(){
+      customAlert('Code copié. Ouvrez la console (F12) sur la page Pronote, collez et appuyez sur Entrée.','Code copié');
+    }).catch(function(){try{document.execCommand('copy')}catch(e){};customAlert('Code copié.','Code copié')});
+  } else {
+    try{document.execCommand('copy')}catch(e){}
+    customAlert('Code copié.','Code copié');
+  }
+}
+
+function importPronoteJson(){
+  var file=document.getElementById('fi-pn-file').files[0];
+  if(!file){showMsg('msg-import-pronote','Choisissez un fichier JSON Pronote.');return}
+  var reader=new FileReader();
+  reader.onload=function(e){
+    var data;
+    try{data=JSON.parse(e.target.result)}catch(err){showMsg('msg-import-pronote','Fichier JSON invalide.');return}
+    var list=Array.isArray(data)?data:(data.eleves||data.students||[]);
+    if(!list.length){showMsg('msg-import-pronote','Aucun élève dans le fichier.');return}
+    var gid=document.getElementById('fi-pn-group').value||null;
+    var res=insertPronoteEleves(list,S.activeClassId,gid);
+    if(res.n){
+      saveS();render();
+      showMsg('msg-import-pronote',res.n+' élève(s) importés depuis Pronote'+(res.withPhoto?' ('+res.withPhoto+' avec photo)':'')+'.');
+      document.getElementById('fi-pn-file').value='';
+    } else {
+      showMsg('msg-import-pronote','Aucun élève valide trouvé.');
+    }
+  };
+  reader.readAsText(file);
+}
+
+// Insère une liste d'élèves Pronote dans une classe donnée. Retourne {n, withPhoto}.
+function insertPronoteEleves(list,classId,gid){
+  var cls=S.classes.find(function(c){return c.id===classId});
+  var base=(cls&&cls.scoreBase)||0;
+  var n=0,withPhoto=0;
+  list.forEach(function(item){
+    var prenom=norm(item.prenom||'');
+    var nom=norm(item.nom||'');
+    if(!prenom) return;
+    // Désambiguïsation : uniquePrenom() utilise cElvs() (classe active). On contourne pour classId arbitraire.
+    var taken=function(p){return S.eleves.some(function(e){return e.classId===classId&&e.prenom.toLowerCase()===p.toLowerCase()&&(e.nom||'').toLowerCase()===nom.toLowerCase()})};
+    if(taken(prenom)){var i=2;while(taken(prenom+' '+i)) i++;prenom=prenom+' '+i}
+    var seed=LORELEI_SEEDS[Math.floor(Math.random()*LORELEI_SEEDS.length)];
+    var elev={id:uid('elv'),classId:classId,groupId:gid,prenom:prenom,nom:nom,score:base,pointsBonus:0,pointsMalus:0,behaviors:{},avatarSeed:seed};
+    if(item.photo&&typeof item.photo==='string'&&item.photo.indexOf('data:image')===0){
+      elev.photoData=item.photo;
+      withPhoto++;
+    }
+    S.eleves.push(elev);
+    n++;
+  });
+  return {n:n,withPhoto:withPhoto};
+}
+
+function openPronoteHome(){
+  // Remplit la liste des classes existantes
+  var sel=document.getElementById('pn-destination');
+  sel.innerHTML='<option value="new">➕ Créer une nouvelle classe</option>';
+  S.classes.forEach(function(c){
+    var opt=document.createElement('option');
+    opt.value=c.id;opt.textContent=c.nom+(c.level?' ('+c.level+')':'');
+    sel.appendChild(opt);
+  });
+  document.getElementById('pn-new-class-name').value='';
+  document.getElementById('pn-home-file').value='';
+  clearMsg('msg-pn-home');
+  onPronoteDestinationChange();
+  // Mise à jour du href du bookmarklet
+  var bk=document.getElementById('pronote-bookmarklet-home');
+  if(bk) bk.href=buildBookmarkletHref();
+  openModal('modal-pronote');
+}
+function onPronoteDestinationChange(){
+  var val=document.getElementById('pn-destination').value;
+  document.getElementById('pn-new-class-name-field').style.display=val==='new'?'':'none';
+}
+function importPronoteFromHome(){
+  var file=document.getElementById('pn-home-file').files[0];
+  if(!file){showMsg('msg-pn-home','Choisissez un fichier JSON Pronote.');return}
+  var dest=document.getElementById('pn-destination').value;
+  var classId=null;
+  var willCreateClass=false;
+  var newClassName='';
+  if(dest==='new'){
+    newClassName=norm(document.getElementById('pn-new-class-name').value);
+    if(!newClassName){showMsg('msg-pn-home','Nom de la nouvelle classe obligatoire.');return}
+    willCreateClass=true;
+  } else {
+    classId=dest;
+  }
+  var reader=new FileReader();
+  reader.onload=function(e){
+    var data;
+    try{data=JSON.parse(e.target.result)}catch(err){showMsg('msg-pn-home','Fichier JSON invalide.');return}
+    var list=Array.isArray(data)?data:(data.eleves||data.students||[]);
+    if(!list.length){showMsg('msg-pn-home','Aucun élève dans le fichier.');return}
+    if(willCreateClass){
+      classId=uid('cls');
+      S.classes.push({id:classId,nom:newClassName,level:'',scoreBase:0,groupsEnabled:false,groupLabel:'Groupe',passportEnabled:false,showPhotos:true});
+    }
+    var res=insertPronoteEleves(list,classId,null);
+    if(res.n){
+      S.activeClassId=classId;sv('activeClass',classId);
+      saveS();
+      closeModal('modal-pronote');
+      render();
+      setTimeout(function(){customAlert(res.n+' élève(s) importés'+(res.withPhoto?' ('+res.withPhoto+' avec photo)':'')+' dans « '+(willCreateClass?newClassName:S.classes.find(function(c){return c.id===classId}).nom)+' ».','Import réussi');},150);
+    } else {
+      // Si on a créé la classe mais aucun élève valide, on retire la classe
+      if(willCreateClass){S.classes=S.classes.filter(function(c){return c.id!==classId})}
+      showMsg('msg-pn-home','Aucun élève valide trouvé dans le fichier.');
+    }
+  };
+  reader.readAsText(file);
+}
+
 function openEleveMgr(eid){
   S.editEleveId=eid;
   var eleve=S.eleves.find(function(e){return e.id===eid});if(!eleve) return;
@@ -1988,7 +2458,7 @@ function openEleveMgr(eid){
   document.getElementById('em-name').textContent=eleve.prenom+' '+eleve.nom;
   document.getElementById('em-info').textContent=(grp?(grp.emoji||'⚡')+' '+grp.nom:'Sans '+groupLabel().toLowerCase())+' · '+eleve.score+' pts';
   var emAv=document.getElementById('em-av');
-  emAv.innerHTML=avatarImg(eleve.avatarSeed||hashStr(eleve.prenom+' '+eleve.nom));
+  emAv.innerHTML=avatarImgForEleve(eleve);
   emAv.style.borderColor=col;
   document.getElementById('em-prenom').value=eleve.prenom;
   document.getElementById('em-nom').value=eleve.nom||'';
@@ -2230,7 +2700,7 @@ function renderRank(){
     var net=netPts(e);
     var el=document.createElement('div');el.className='rank-row';
     el.innerHTML='<div class="rank-n">'+(MEDALS[i]||'#'+(i+1))+'</div>'+
-      '<div style="width:34px;height:34px;border-radius:50%;flex-shrink:0;border:2px solid var(--border);overflow:hidden;background:var(--bg3)">'+avatarImg(e.avatarSeed||hashStr(e.prenom+' '+e.nom))+'</div>'+
+      '<div style="width:34px;height:34px;border-radius:50%;flex-shrink:0;border:2px solid var(--border);overflow:hidden;background:var(--bg3)">'+avatarImgForEleve(e)+'</div>'+
       '<div style="font-weight:900;flex:1;font-size:.9rem;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+e.prenom+' '+(e.nom||'')+(grp?' <span style="color:'+col+';font-weight:700">'+(grp.emoji||'⚡')+'</span>':'')+(e.absent?' <span style="color:#dc2626;font-size:.7rem;font-weight:800">(absent)</span>':'')+'</div>'+
       '<div class="rank-pts" style="color:'+col+'">'+(net>0?'+':'')+net+'</div>';
     re.appendChild(el);
@@ -2318,7 +2788,7 @@ function renderProject(){
     var card=document.createElement('div');
     card.className='pelv-card';
     card.style.borderColor=col;
-    card.innerHTML='<div class="pelv-av" style="border-color:'+col+'">'+avatarImg(e.avatarSeed||hashStr(e.prenom+' '+e.nom))+'</div>'+
+    card.innerHTML='<div class="pelv-av" style="border-color:'+col+'">'+avatarImgForEleve(e)+'</div>'+
       '<div class="pelv-info"><div class="pelv-name">'+e.prenom+'</div>'+(grp?'<div class="pelv-grp" style="color:'+col+'">'+(grp.emoji||'⚡')+' '+grp.nom+'</div>':'')+'</div>'+
       '<div class="pelv-pts" style="color:'+col+'">'+e.score+'</div>';
     elBox.appendChild(card);
@@ -2562,7 +3032,7 @@ function renderProjectFromSnapshot(){
     var grp=grps.find(function(g){return g.id===e.groupId});
     var col=grp?gc(grp.colorIdx):'#666';
     var card=document.createElement('div');card.className='pelv-card';card.style.borderColor=col;
-    card.innerHTML='<div class="pelv-av" style="border-color:'+col+'">'+avatarImg(e.avatarSeed||e.prenom+' '+e.nom)+'</div>'+
+    card.innerHTML='<div class="pelv-av" style="border-color:'+col+'">'+avatarImgForEleve(e)+'</div>'+
       '<div class="pelv-info"><div class="pelv-name">'+e.prenom+'</div>'+(grp?'<div class="pelv-grp" style="color:'+col+'">'+(grp.emoji||'⚡')+' '+grp.nom+'</div>':'')+'</div>'+
       '<div class="pelv-pts" style="color:'+col+'">'+e.score+'</div>';
     elBox.appendChild(card);
@@ -2728,12 +3198,12 @@ function genGroupes(){
     card.style.boxShadow='3px 3px 0 '+col;
     var pills='';
     members.forEach(function(e){
-      pills+='<span class="tirage-grp-pill">'+avatarImg(e.avatarSeed||e.prenom+' '+e.nom,'width:24px;height:24px;border-radius:50%')+'<span>'+e.prenom+'</span></span>';
+      pills+='<span class="tirage-grp-pill">'+avatarImgForEleve(e,'width:24px;height:24px;border-radius:50%')+'<span>'+e.prenom+'</span></span>';
     });
     // Re-wrap avatar (the pill img needs proper sizing)
     pills='';
     members.forEach(function(e){
-      var url=loreleiUrl(e.avatarSeed||e.prenom+' '+e.nom);
+      var url=eleveAvatarSrc(e);
       pills+='<span class="tirage-grp-pill"><img src="'+url+'" alt="" loading="lazy">'+'<span>'+e.prenom+'</span></span>';
     });
     card.innerHTML='<div class="tirage-grp-title" style="color:'+col+'">Groupe '+(idx+1)+' <span style="font-weight:700;color:var(--ink3);font-size:.78rem">('+members.length+')</span></div>'+
@@ -2996,7 +3466,7 @@ function renderPlan(){
   unassigned.forEach(function(e){
     var pill=document.createElement('button');
     pill.className='plan-pool-pill'+(PLAN_STATE.selectedEleveId===e.id?' active':'');
-    var url=loreleiUrl(e.avatarSeed||e.prenom+' '+e.nom);
+    var url=eleveAvatarSrc(e);
     pill.innerHTML='<img src="'+url+'" alt="" loading="lazy"><span>'+planEleveDisplayName(e)+'</span>';
     pill.onclick=(function(eid){return function(){
       PLAN_STATE.selectedEleveId=PLAN_STATE.selectedEleveId===eid?null:eid;
@@ -3210,7 +3680,7 @@ function exportClassPDF(){
     var tampons=S.passport.filter(function(p){return p.eleveId===e.id}).length;
     html+='<div class="pdf-mini-card">';
     html+='<div class="bar" style="background:'+col+'"></div>';
-    html+='<img src="'+loreleiUrl(e.avatarSeed||e.prenom)+'" alt="">';
+    html+='<img src="'+eleveAvatarSrc(e)+'" alt="">';
     html+='<div class="n">'+escHtml(e.prenom)+'</div>';
     if(e.nom) html+='<div class="nom">'+escHtml(e.nom)+'</div>';
     if(grp) html+='<div class="grp" style="background:'+rgba(col,.12)+';color:'+col+';border-color:'+col+'">'+(grp.emoji||'')+' '+escHtml(grp.nom)+'</div>';
@@ -3254,7 +3724,7 @@ function exportClassPDF(){
       html+='<div class="pdf-id-body">';
       // Bloc gauche : avatar + identité + score
       html+='<div class="pdf-id-left">';
-      html+='<div class="pdf-id-avatar"><img src="'+loreleiUrl(e.avatarSeed||e.prenom)+'" alt=""></div>';
+      html+='<div class="pdf-id-avatar"><img src="'+eleveAvatarSrc(e)+'" alt=""></div>';
       html+='<div class="pdf-id-name">'+escHtml(e.prenom)+'</div>';
       if(e.nom) html+='<div class="pdf-id-nom">'+escHtml(e.nom)+'</div>';
       if(grp){

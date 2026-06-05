@@ -1088,7 +1088,10 @@ function loreleiSeedFor(seed){
 // Retourne l'URL DiceBear Lorelei pour un seed donné
 function loreleiUrl(seed){
   var s=loreleiSeedFor(seed);
-  return 'https://api.dicebear.com/10.x/lorelei/svg?seed='+encodeURIComponent(s)+'&radius=50&beardProbability=0&backgroundColor='+LORELEI_BG;
+  // hairProbability=100 : force la présence de cheveux (élimine les chauves)
+  // eyebrows : liste curatée (sans monosourcil)
+  var eyebrows='variant01,variant02,variant03,variant04,variant06,variant07,variant08,variant09,variant11,variant12,variant13';
+  return 'https://api.dicebear.com/10.x/lorelei/svg?seed='+encodeURIComponent(s)+'&radius=50&beardProbability=0&hairProbability=100&eyebrows='+eyebrows+'&backgroundColor='+LORELEI_BG;
 }
 
 // Génère le HTML <img> pour un avatar

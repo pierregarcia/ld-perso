@@ -846,6 +846,7 @@ body.pdf-printing #pdf-export-area{display:block}
       <button id="toggle-edit-photos-btn" class="btn btn-outline btn-sm" onclick="toggleEditClsPhotos()" style="min-width:58px"></button>
       <span id="toggle-edit-photos-hint" style="font-size:.77rem;font-weight:700;color:var(--ink2)"></span>
     </div>
+    <div id="photos-diagnostic" style="font-size:.72rem;color:var(--ink3);font-weight:700;margin-top:6px;padding:6px 10px;background:var(--bg3);border-radius:8px;border:1px dashed var(--border)"></div>
   </div>
   <div class="form-actions" style="justify-content:space-between">
     <button class="btn btn-danger btn-sm" onclick="deleteClasse()">Supprimer la classe</button>
@@ -1619,8 +1620,7 @@ function renderEleves(){
     var card=document.createElement('button');
     card.className='carte'+(eleve.absent?' absent':'');
     card.dataset.eid=eleve.id;
-    var seed=eleve.avatarSeed||hashStr(eleve.prenom+' '+eleve.nom);
-    var avHtml='<div class="av-multi" style="border-color:'+col+'">'+avatarImg(seed)+'</div>';
+    var avHtml='<div class="av-multi" style="border-color:'+col+'">'+avatarImgForEleve(eleve)+'</div>';
     var stampCount=cls.passportEnabled?eleveTotalStamps(eleve.id):0;
     card.innerHTML=
       '<div class="carte-bar" style="background:'+col+'"></div>'+
@@ -1724,10 +1724,9 @@ function openPoints(cible){
   } else {
     document.getElementById('mp-title').textContent=cible.prenom+' '+cible.nom;
     document.getElementById('mp-sub').textContent='Score actuel : '+cible.score+' pts';
-    var seed=cible.avatarSeed||cible.prenom+' '+cible.nom;
     mpAv.className='target-av';
     mpAv.style.background='var(--bg4)';
-    mpAv.innerHTML=avatarImg(seed);
+    mpAv.innerHTML=avatarImgForEleve(cible);
     var grpE=S.groups.find(function(g){return g.id===cible.groupId});
     var colE=grpE?gc(grpE.colorIdx):'#999';
     mpInfo.innerHTML='<div style="font-weight:900;font-size:.95rem">'+cible.prenom+' '+cible.nom+'</div>'+
@@ -1983,8 +1982,8 @@ function syncNewClsPhotosToggle(){
   var b=document.getElementById('toggle-photos-btn');
   var h=document.getElementById('toggle-photos-hint');
   if(!b) return;
-  b.textContent=S.newClsShowPhotos?'📸 Photos':'🎨 Illustrations';
-  h.textContent=S.newClsShowPhotos?'Photos Pronote si disponibles.':'Illustrations Lorelei (anonymes).';
+  b.textContent=S.newClsShowPhotos?'Oui':'Non';
+  h.textContent=S.newClsShowPhotos?'📸 Photos Pronote si disponibles, sinon Lorelei.':'🎨 Illustrations Lorelei uniquement (photos ignorées).';
 }
 function submitAddClasse(){
   var nom=norm(document.getElementById('f-cls-nom').value);
@@ -2009,6 +2008,19 @@ function openEditClasse(){
   S.editClsShowPhotos=typeof cls.showPhotos==='undefined'?true:cls.showPhotos;
   syncEditClsToggle();syncEditClsPassportToggle();syncEditClsPhotosToggle();
   document.getElementById('edit-grp-label-field').style.display=S.editClsGroups?'':'none';
+  // Diagnostic photos
+  var diag=document.getElementById('photos-diagnostic');
+  if(diag){
+    var elvs=S.eleves.filter(function(e){return e.classId===S.activeClassId});
+    var withPhoto=elvs.filter(function(e){return !!e.photoData}).length;
+    if(!elvs.length){
+      diag.textContent='Aucun élève dans cette classe.';
+    } else if(withPhoto===0){
+      diag.innerHTML='<strong>⚠️ Aucun élève n\'a de photo importée.</strong> Activer le toggle ne changera rien — vous verrez toujours les illustrations Lorelei. Pour avoir des photos, utilisez le bouton 📸 Importer depuis Pronote.';
+    } else {
+      diag.innerHTML='<strong>'+withPhoto+' / '+elvs.length+' élèves</strong> ont une photo Pronote en mémoire.';
+    }
+  }
   openModal('modal-edit-cls');
 }
 function toggleEditClsGroups(){
@@ -2028,8 +2040,8 @@ function syncEditClsPhotosToggle(){
   var b=document.getElementById('toggle-edit-photos-btn');
   var h=document.getElementById('toggle-edit-photos-hint');
   if(!b) return;
-  b.textContent=S.editClsShowPhotos?'📸 Photos':'🎨 Illustrations';
-  h.textContent=S.editClsShowPhotos?'Photos Pronote si disponibles.':'Illustrations Lorelei (anonymes).';
+  b.textContent=S.editClsShowPhotos?'Oui':'Non';
+  h.textContent=S.editClsShowPhotos?'📸 Photos Pronote si disponibles, sinon Lorelei.':'🎨 Illustrations Lorelei uniquement (photos ignorées).';
 }
 function saveEditClasse(){
   var nom=norm(document.getElementById('f-edit-cls-nom').value);

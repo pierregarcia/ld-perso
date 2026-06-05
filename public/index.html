@@ -643,6 +643,11 @@ body.pdf-printing #pdf-export-area{display:block}
     <label>Niveau (optionnel)</label>
     <input id="f-cls-level" type="text" maxlength="30" placeholder="ex : 6ème, CM2, Terminale...">
   </div>
+  <div class="field">
+    <label>Score de base affiché</label>
+    <input id="f-cls-scorebase" type="number" min="0" max="100" step="1" value="0" style="font-family:inherit">
+    <div style="font-size:.7rem;color:var(--ink3);font-weight:700;margin-top:4px">Tous les élèves démarrent à ce score. Le classement reste basé sur les vrais points gagnés.</div>
+  </div>
   <div style="margin-bottom:14px">
     <div class="field" style="margin-bottom:6px"><label>Activer les groupes / maisons</label></div>
     <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
@@ -677,6 +682,11 @@ body.pdf-printing #pdf-export-area{display:block}
   <div class="field">
     <label>Niveau (optionnel)</label>
     <input id="f-edit-cls-level" type="text" maxlength="30" placeholder="ex : 6ème, CM2, Terminale...">
+  </div>
+  <div class="field">
+    <label>Score de base affiché</label>
+    <input id="f-edit-cls-scorebase" type="number" min="0" max="100" step="1" style="font-family:inherit">
+    <div style="font-size:.7rem;color:var(--ink3);font-weight:700;margin-top:4px">Tous les élèves démarrent à ce score. Le classement reste basé sur les vrais points gagnés.</div>
   </div>
   <div style="margin-bottom:14px">
     <div class="field" style="margin-bottom:6px"><label>Mode groupes</label></div>
@@ -1148,7 +1158,9 @@ function cElvs(){
     .sort(function(a,b){return (a.prenom||'').localeCompare((b.prenom||''),'fr',{sensitivity:'base',numeric:true})});
 }
 function cElvsPresents(){return cElvs().filter(function(e){return !e.absent})}
-function gPts(gid){return cElvs().filter(function(e){return e.groupId===gid}).reduce(function(s,e){return s+(e.score||0)},0)}
+// Points "réels" d'un élève = bonus - malus (exclut le score de base)
+function netPts(e){return (e.pointsBonus||0)-(e.pointsMalus||0)}
+function gPts(gid){return cElvs().filter(function(e){return e.groupId===gid}).reduce(function(s,e){return s+netPts(e)},0)}
 function maxGPts(){return Math.max.apply(null,cGrps().map(function(g){return gPts(g.id)}).concat([1]))}
 function leaderGroupId(){var grps=cGrps();if(!grps.length)return null;var max=-Infinity,id=null;grps.forEach(function(g){var p=gPts(g.id);if(p>max){max=p;id=g.id}});return max>0?id:null}
 function groupLabel(){var c=aCls();return c&&c.groupLabel?c.groupLabel:'Groupe'}
@@ -1761,7 +1773,8 @@ function undoJournalEntry(entryId){
 }
 
 function doReset(){
-  S.eleves=S.eleves.map(function(e){return e.classId===S.activeClassId?Object.assign({},e,{score:SCORE0,pointsBonus:0,pointsMalus:0,behaviors:{}}):e});
+  var base=aCls().scoreBase||0;
+  S.eleves=S.eleves.map(function(e){return e.classId===S.activeClassId?Object.assign({},e,{score:base,pointsBonus:0,pointsMalus:0,behaviors:{}}):e});
   addJ('Toute la classe','Reset du lundi',0,new Date().toLocaleDateString('fr-FR'),{kind:'reset'});
   saveS();render();closeModal('modal-reset');
 }
@@ -1792,9 +1805,10 @@ function submitAddClasse(){
   var nom=norm(document.getElementById('f-cls-nom').value);
   if(!nom){showMsg('msg-add-cls','Nom obligatoire.');return}
   var lvl=document.getElementById('f-cls-level').value;
+  var scoreBase=Math.max(0,Math.min(100,parseInt(document.getElementById('f-cls-scorebase').value)||0));
   var grpLabel=norm(document.getElementById('f-cls-grouplabel').value)||'Groupe';
   var id=uid('cls');
-  S.classes.push({id:id,nom:nom,level:lvl,groupsEnabled:S.newClsGroups,groupLabel:grpLabel,passportEnabled:S.newClsPassport});
+  S.classes.push({id:id,nom:nom,level:lvl,scoreBase:scoreBase,groupsEnabled:S.newClsGroups,groupLabel:grpLabel,passportEnabled:S.newClsPassport});
   S.activeClassId=id;sv('activeClass',id);
   saveS();closeModal('modal-add-classe');S.filterGroup='all';render();
 }
@@ -1802,6 +1816,7 @@ function openEditClasse(){
   var cls=aCls();
   document.getElementById('f-edit-cls-nom').value=cls.nom;
   document.getElementById('f-edit-cls-level').value=cls.level||'';
+  document.getElementById('f-edit-cls-scorebase').value=cls.scoreBase||0;
   document.getElementById('f-edit-cls-grouplabel').value=cls.groupLabel||'';
   S.editClsGroups=cls.groupsEnabled||false;
   S.editClsPassport=cls.passportEnabled||false;
@@ -1825,8 +1840,18 @@ function saveEditClasse(){
   var nom=norm(document.getElementById('f-edit-cls-nom').value);
   if(!nom) return;
   var lvl=document.getElementById('f-edit-cls-level').value;
+  var newBase=Math.max(0,Math.min(100,parseInt(document.getElementById('f-edit-cls-scorebase').value)||0));
   var grpLabel=norm(document.getElementById('f-edit-cls-grouplabel').value)||'Groupe';
-  S.classes=S.classes.map(function(c){return c.id===S.activeClassId?Object.assign({},c,{nom:nom,level:lvl,groupsEnabled:S.editClsGroups,groupLabel:grpLabel,passportEnabled:S.editClsPassport}):c});
+  var cls=aCls();
+  var oldBase=cls.scoreBase||0;
+  var delta=newBase-oldBase;
+  // Si le score de base change, on décale TOUS les scores affichés des élèves de la classe (les bonus/malus restent inchangés)
+  if(delta!==0){
+    S.eleves=S.eleves.map(function(e){
+      return e.classId===S.activeClassId?Object.assign({},e,{score:(e.score||0)+delta}):e;
+    });
+  }
+  S.classes=S.classes.map(function(c){return c.id===S.activeClassId?Object.assign({},c,{nom:nom,level:lvl,scoreBase:newBase,groupsEnabled:S.editClsGroups,groupLabel:grpLabel,passportEnabled:S.editClsPassport}):c});
   saveS();closeModal('modal-edit-cls');render();
 }
 function deleteClasse(){
@@ -1917,7 +1942,8 @@ function submitAddEleve(){
   var seed=document.getElementById('f-av-seed').value||LORELEI_SEEDS[Math.floor(Math.random()*LORELEI_SEEDS.length)];
   if(!prenom){showMsg('msg-add-eleve','Prénom obligatoire.');return}
   prenom=uniquePrenom(prenom,nom);
-  S.eleves.push({id:uid('elv'),classId:S.activeClassId,groupId:gid,prenom:prenom,nom:nom,score:SCORE0,avatarSeed:seed});
+  var base=aCls().scoreBase||0;
+  S.eleves.push({id:uid('elv'),classId:S.activeClassId,groupId:gid,prenom:prenom,nom:nom,score:base,pointsBonus:0,pointsMalus:0,behaviors:{},avatarSeed:seed});
   saveS();render();closeModal('modal-add-eleve');
 }
 function importFileEleves(){
@@ -1936,6 +1962,7 @@ function importPasteEleves(){
 }
 function parseElevesTxt(text,groupSelId){
   var gid=document.getElementById(groupSelId).value||null;var n=0;
+  var base=aCls().scoreBase||0;
   text.split(/\r?\n/).forEach(function(line){
     var clean=norm(line.replace(/[;,|]+/g,' '));
     if(!clean) return;
@@ -1945,7 +1972,7 @@ function parseElevesTxt(text,groupSelId){
     var prenom=parts[0],nom=parts.length>1?parts.slice(1).join(' '):'';
     // Si doublon, on ajoute un suffixe numérique au lieu de skip
     prenom=uniquePrenom(prenom,nom);
-    S.eleves.push({id:uid('elv'),classId:S.activeClassId,groupId:gid,prenom:prenom,nom:nom,score:SCORE0,avatarSeed:LORELEI_SEEDS[Math.floor(Math.random()*LORELEI_SEEDS.length)]});
+    S.eleves.push({id:uid('elv'),classId:S.activeClassId,groupId:gid,prenom:prenom,nom:nom,score:base,pointsBonus:0,pointsMalus:0,behaviors:{},avatarSeed:LORELEI_SEEDS[Math.floor(Math.random()*LORELEI_SEEDS.length)]});
     n++;
   });
   if(n){saveS();render()}
@@ -2188,18 +2215,24 @@ function renderJournal(){
   });
 }
 function renderRank(){
-  // Classement des élèves uniquement
+  // Classement des élèves : basé sur les VRAIS points (bonus - malus), pas sur le score affiché
   var re=document.getElementById('rank-eleves');re.innerHTML='';
-  var eleves=cElvs().slice().sort(function(a,b){return b.score-a.score});
+  var eleves=cElvs().slice().sort(function(a,b){return netPts(b)-netPts(a)});
   if(!eleves.length){re.innerHTML='<div class="empty" style="font-size:.78rem">Aucun élève dans cette classe.</div>';return}
+  var cls=aCls();
+  var base=cls&&cls.scoreBase||0;
+  if(base>0){
+    re.innerHTML='<div style="font-size:.72rem;color:var(--ink3);font-weight:700;margin-bottom:8px;padding:6px 10px;background:var(--bg3);border-radius:8px">Classement basé sur les points gagnés (hors score de base de '+base+').</div>';
+  }
   eleves.forEach(function(e,i){
     var grp=S.groups.find(function(g){return g.id===e.groupId});
     var col=grp?gc(grp.colorIdx):'#999';
+    var net=netPts(e);
     var el=document.createElement('div');el.className='rank-row';
     el.innerHTML='<div class="rank-n">'+(MEDALS[i]||'#'+(i+1))+'</div>'+
       '<div style="width:34px;height:34px;border-radius:50%;flex-shrink:0;border:2px solid var(--border);overflow:hidden;background:var(--bg3)">'+avatarImg(e.avatarSeed||hashStr(e.prenom+' '+e.nom))+'</div>'+
       '<div style="font-weight:900;flex:1;font-size:.9rem;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+e.prenom+' '+(e.nom||'')+(grp?' <span style="color:'+col+';font-weight:700">'+(grp.emoji||'⚡')+'</span>':'')+(e.absent?' <span style="color:#dc2626;font-size:.7rem;font-weight:800">(absent)</span>':'')+'</div>'+
-      '<div class="rank-pts" style="color:'+col+'">'+e.score+'</div>';
+      '<div class="rank-pts" style="color:'+col+'">'+(net>0?'+':'')+net+'</div>';
     re.appendChild(el);
   });
 }
@@ -2208,14 +2241,19 @@ function renderRankGroups(){
   var grps=cGrps();
   var rg=document.getElementById('rank-groups');rg.innerHTML='';
   if(!grps.length){rg.innerHTML='<div class="empty" style="font-size:.85rem">Pas encore de '+groupLabel().toLowerCase()+'.</div>';return}
+  var cls=aCls();
+  if(cls&&cls.scoreBase>0){
+    rg.innerHTML='<div style="font-size:.72rem;color:var(--ink3);font-weight:700;margin-bottom:8px;padding:6px 10px;background:var(--bg3);border-radius:8px">Classement basé sur les points gagnés (hors score de base).</div>';
+  }
   grps.slice().sort(function(a,b){return gPts(b.id)-gPts(a.id)}).forEach(function(g,i){
     var col=gc(g.colorIdx);
     var members=cElvs().filter(function(e){return e.groupId===g.id});
+    var pts=gPts(g.id);
     var el=document.createElement('div');el.className='rank-row';
     el.innerHTML='<div class="rank-n">'+(MEDALS[i]||'#'+(i+1))+'</div>'+
       '<div style="font-size:1.3rem">'+(g.emoji||'⚡')+'</div>'+
       '<div style="flex:1;min-width:0"><div style="font-weight:900;font-size:.95rem;color:'+col+'">'+g.nom+'</div><div style="font-size:.7rem;color:var(--ink3);font-weight:700">'+members.length+' élève'+(members.length>1?'s':'')+'</div></div>'+
-      '<div class="rank-pts" style="color:'+col+'">'+gPts(g.id)+'</div>';
+      '<div class="rank-pts" style="color:'+col+'">'+(pts>0?'+':'')+pts+'</div>';
     rg.appendChild(el);
   });
 }
@@ -3362,7 +3400,7 @@ function loadDemoClass(){
   // Crée une classe démo "Poudlard CM2" avec 4 maisons et 16 élèves fictifs
   var classId=uid('cls');
   var demoClass={
-    id:classId,nom:'Classe Démo',level:'Démo',
+    id:classId,nom:'Classe Démo',level:'Démo',scoreBase:10,
     groupsEnabled:true,groupLabel:'Maison',passportEnabled:true
   };
   S.classes.push(demoClass);
@@ -3423,7 +3461,7 @@ function loadDemoClass(){
       if(item.val>0) bonus+=item.count*item.val;
       else malus+=item.count*Math.abs(item.val);
     });
-    var sc=bonus-malus;
+    var sc=10+bonus-malus; // scoreBase 10 + net points
     S.eleves.push({
       id:uid('elv'),classId:classId,groupId:houseIds[i%4],
       prenom:s.p,nom:s.n,score:sc,pointsBonus:bonus,pointsMalus:malus,behaviors:beh,

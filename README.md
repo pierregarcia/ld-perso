@@ -1,128 +1,121 @@
-# Classe Vibe
+<div align="center">
 
-> Outil web de suivi de classe — points, groupes/maisons, passeports, plan de classe et tirage au sort. 100 % local, sans serveur, sans inscription.
+# Classe **Active** 💬
 
-## ✨ Présentation
+**Application web de suivi de classe** — single-file HTML, 100 % côté client, sans serveur, sans cookie tiers, sans télémétrie commerciale.
 
-Classe Vibe est une application web pour enseignants du primaire au lycée. Elle permet de gérer plusieurs classes, suivre la progression des élèves au quotidien, attribuer des points positifs ou négatifs, organiser la classe en maisons/groupes (façon Poudlard), distribuer des tampons sur un passeport de réussites, faire des tirages au sort à la roue de la fortune et concevoir son plan de classe en glisser-déposer.
+🔗 [Forge des Communs Numériques Éducatifs](https://forge.apps.education.fr/lelabodecharlie/classe-vibe) · 📄 [Licence GPLv3](./LICENSE) · 📜 [Changelog](./CHANGELOG.md)
 
-Tout est stocké dans le navigateur de l'enseignant. Aucune inscription, aucun serveur, aucune donnée transmise à un tiers.
-
-## 🚀 Démarrer en 30 secondes
-
-1. Ouvrir l'application : [classe-vibe sur la Forge](https://forge.apps.education.fr/lelabodecharlie/classe-vibe/)
-2. Cliquer sur **+ Nouvelle classe**
-3. Donner un nom à la classe (et un niveau libre si tu veux : "6ème", "CM2", "Terminale STMG"…)
-4. Activer ou non les **groupes** et les **passeports**
-5. Ajouter des élèves manuellement ou via la tuile **📋 Importer une liste** (CSV/TXT ou simple collage)
-
-C'est prêt.
-
-## 🎯 Fonctionnalités principales
-
-### Suivi de classe au quotidien
-- **Score par élève** (10 par défaut, modifiable au reset du lundi)
-- **8 comportements positifs et 8 négatifs** prédéfinis, modifiables et extensibles
-- **Attribution flexible** : à un élève, à tout un groupe, à toute la classe
-- **Historique** des 40 dernières actions
-- **Classement** des élèves et des groupes
-- **Reset du lundi** pour repartir à 10 chaque semaine
-
-### Groupes / Maisons (optionnel)
-- Crée des **groupes colorés** avec emblème (emoji ou image) et nom personnalisé
-- Le label "Groupe" est **librement renommable** par classe : Maison, Équipe, Clan, Tribu…
-- 🏆 **Trophée animé** sur le groupe en tête
-- **Couleur du groupe propagée automatiquement** aux cartes des élèves membres
-
-### Passeports / Tampons (optionnel)
-- Système de **tampons indépendant des points**, façon carnet de réussites
-- Tampons personnalisables avec emoji ou image (URL)
-- **Visuel doré distinctif** dans la modale d'attribution
-- Compteur de tampons visible sur la carte de chaque élève
-
-### 🎡 Tirage au sort
-- **Roue de la fortune** animée (6-9 tours, easing naturel)
-- **Exclusion automatique** des élèves déjà tirés (un élève différent à chaque spin)
-- Bouton "🗑 Retirer de la roue" pour exclure manuellement
-- **Répartition aléatoire** en N groupes (2 à 20) façon Fisher-Yates
-
-### 🪑 Plan de classe
-- **Glisser-déposer libre** des tables sur une grille
-- Tables 1 place ou 2 places, rotation libre
-- Clic-pour-assigner un élève à une chaise
-- Désambiguïsation automatique des prénoms identiques (initiale du nom ajoutée)
-- **Bouton Imprimer** avec CSS d'impression dédiée
-
-### 📺 Projection (mode TBI)
-- Vue **plein écran sombre** avec grandes lettres, pensée pour le fond de classe
-- Code de session court (4 caractères) affiché en grand
-- Classement groupes + élèves trié par score
-
-### Synchro tablette ↔ tableau (sans serveur)
-- Sur la tablette : **📺 Projeter** → **⬇ Exporter** télécharge un snapshot `classevibe-CODE.json`
-- Transférer le fichier (AirDrop, mail, Drive, clé USB…)
-- Sur l'ordinateur de classe : **📥 J'ai un code de projection** → charger le fichier → projection plein écran en lecture seule
-
-### Avatars
-- **70 avatars Lorelei** (style cartoon doux)
-- Choix manuel ou aléatoire
-- Avatar déterministe par défaut basé sur le prénom
-
-## 🔒 Confidentialité
-
-- **100 % local** : tout est stocké dans le `localStorage` du navigateur
-- **Aucune inscription**, aucun compte, aucun cookie
-- **Aucune donnée transmise à un serveur tiers** (sauf l'API DiceBear pour afficher les avatars, qui ne reçoit que le seed textuel — aucun nom d'élève n'est transmis)
-- **Exportation libre** de tes données au format JSON
-- **Suppression totale** possible à tout moment depuis Mentions légales
-
-## 🌐 Compatibilité
-
-- Tous les navigateurs récents (Chrome, Firefox, Safari, Edge)
-- Ordinateur, tablette, téléphone, TBI
-- Mode hors ligne possible (sauf chargement initial des polices et avatars)
-
-## 📦 Installation locale
-
-Classe Vibe est un fichier HTML unique sans dépendance de build :
-
-```bash
-git clone https://forge.apps.education.fr/lelabodecharlie/classe-vibe.git
-cd classe-vibe
-# Ouvrir public/index.html dans un navigateur, c'est tout
-```
-
-Aucun `npm install`, aucun bundler, aucun framework. L'application complète tient dans un seul fichier HTML d'environ 130 Ko.
-
-## 🛠 Architecture technique
-
-- **HTML/CSS/JS vanilla** (pas de framework)
-- **ES5** intégral pour compatibilité maximale (pas de `let`, pas d'arrow function dans les boucles critiques)
-- **Stockage** : `localStorage` avec préfixe `cvibe_v5_`
-- **Avatars** : API DiceBear Lorelei via `<img>` avec `loading="lazy"`
-- **Police** : Nunito chargée depuis Google Fonts
-- **Pas de service worker** (à venir pour le vrai offline)
-
-## 🤝 Contribuer
-
-Les suggestions et signalements de bugs sont les bienvenus via les [tickets de la Forge](https://forge.apps.education.fr/lelabodecharlie/classe-vibe/-/work_items).
-
-Toute contribution doit citer Charlie ROLLO comme auteur original (clause de la licence GPLv3).
-
-## 📜 Licence et crédits
-
-**Licence** : [GNU General Public License v3.0 (GPLv3)](https://www.gnu.org/licenses/gpl-3.0.fr.html)
-
-**Auteur** : Charlie ROLLO — [charlie.rollo@ac-versailles.fr](mailto:charlie.rollo@ac-versailles.fr)
-
-**Hébergement** : Forge des Communs Numériques Éducatifs, Ministère de l'Éducation nationale (110 rue de Grenelle, 75007 Paris).
-
-**Inspiré de** : [La Classe des Héros](https://vibe-edu.forge.apps.education.fr/la-classe-des-heros/) (vibe-edu).
-
-**Avatars** : [Lorelei](https://www.figma.com/community/file/1198749693280469639) par [Lisa Wischofsky](https://www.instagram.com/lischi_art/), sous licence [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/), servis par l'API publique [DiceBear](https://www.dicebear.com).
-
-**Police** : [Nunito](https://fonts.google.com/specimen/Nunito) (Open Font License).
+</div>
 
 ---
 
-Voir le [CHANGELOG](./CHANGELOG) pour la liste détaillée des évolutions.
+## ✨ Pour quoi faire ?
+
+Classe Active est un outil pour les enseignants du **collège / lycée** (mais adaptable à tout niveau) qui permet de :
+
+- Suivre les **points de comportement** par élève, par groupe, ou par classe entière
+- Gérer plusieurs classes avec leurs propres listes d'élèves, comportements personnalisés, échelle de score
+- Importer la liste et les **photos** des élèves depuis **Pronote** via bookmarklet (méthode adaptée de [Mathix](https://mathix.fr))
+- Faire un **plan de classe** (tables rectangulaires et rondes, drag and drop)
+- **Tirer au sort** un élève ou répartir en groupes aléatoires
+- Exporter une **fiche PDF** de la classe (vue d'ensemble + fiches d'identité)
+- Et surtout — depuis la **version 1.5** — projeter au tableau un **Class Screen** entièrement personnalisable avec timer, feux, roue, groupes, sites web, QR codes et zones de texte (voir plus bas).
+
+Toutes les données restent **dans le navigateur de l'enseignant** (localStorage). Rien n'est envoyé sur Internet, sauf si vous utilisez l'export JSON pour partager une session avec un collègue.
+
+---
+
+## 🚀 Démarrer
+
+**Aucune installation nécessaire.** Téléchargez le fichier `classevibe.html`, ouvrez-le dans Chrome / Firefox / Safari, et c'est parti.
+
+Pour héberger en ligne (école, ENT, GitLab Pages…), uploadez simplement le fichier HTML — pas de build, pas de Node, pas de dépendances.
+
+Vous pouvez aussi l'utiliser **hors-ligne** : ouvrez la page une fois, puis travaillez sans Internet (sauf pour les avatars Lorelei qui sont récupérés en CDN — voyez plus bas pour les détails).
+
+---
+
+## 🟦 Class Screen — Tableau personnalisé
+
+Nouveauté majeure de la **version 1.5** : depuis n'importe quelle classe, cliquez sur le bouton **🟦 Class Screen** dans la topbar pour ouvrir un tableau plein écran inspiré de [Classroom Screen](https://classroomscreen.com).
+
+Vous pouvez y composer un tableau avec autant de widgets que voulu :
+
+| Widget | Description |
+|---|---|
+| ⏱️ **Timer** | Compte à rebours ou chronomètre, anneau de progression SVG, bip sonore, alerte rouge à 10 s. Choix « décompte fluide à la seconde » ou « changement minute par minute » selon ce que vous souhaitez montrer. |
+| 📝 **Texte** | Zone de texte avec barre d'outils intégrée : police (9 choix dont Comic Sans MS, Verdana, Impact…), taille, gras, italique, couleur, alignement. |
+| 🚦 **Feux** | Vrais feux tricolores SVG, boîtier noir, dégradés et halo lumineux. Cliquez pour activer / désactiver une couleur. |
+| 🎡 **Roue** | Roue de loterie avec les élèves présents. Labels radiaux (dans le sens de la bande colorée). Bouton « Retirer » pour enlever le gagnant du tirage suivant. |
+| 👥 **Groupes** | Répartition aléatoire en N groupes (2-20), avec photos Pronote ou prénoms seuls. Cases responsives. |
+| 🌐 **Site web** | Iframe sécurisée pour intégrer Genially, LearningApps, YouTube, Wordwall, etc. |
+| 📱 **QR Code** | Génère localement un QR code à partir d'un lien — pour que les élèves le scannent avec leur téléphone. **100 % hors-ligne** (bibliothèque embarquée). |
+
+Chaque widget se **déplace** (clic-glisser sur l'en-tête), **redimensionne** (coin bas-droit), passe en **plein écran** (bouton ⛶) ou se ferme (✕). Un clic sur un widget l'amène au premier plan.
+
+Vous pouvez aussi mettre un **fond personnalisé** (URL d'image ou couleur unie) via le bouton 🖼️.
+
+**Tout est sauvegardé** par classe dans le navigateur : positions, tailles, contenus, état du timer en cours, rotation actuelle de la roue, URLs des sites embarqués, derniers groupes générés, fond personnalisé. Quand vous reviendrez, votre tableau sera exactement comme vous l'avez laissé.
+
+Sur mobile (≤ 760 px), les widgets s'empilent verticalement pour rester accessibles.
+
+---
+
+## 📸 Import Pronote
+
+Pour récupérer la liste et les photos de vos élèves depuis le trombinoscope Pronote :
+
+1. Sur la page d'accueil, cliquez **📸 Importer depuis Pronote**.
+2. Glissez le **bookmarklet bleu** dans votre barre de favoris (un seul clic suffit).
+3. Allez sur la page **Trombinoscope** de Pronote (avec photos visibles).
+4. Cliquez sur le favori « 📌 Classe Active ← Pronote ».
+5. Un fichier `pronote-eleves-AAAA-MM-JJ.json` est téléchargé automatiquement.
+6. Revenez sur Classe Active et chargez ce fichier dans le formulaire d'import.
+
+La méthode est adaptée de [Mathix](https://mathix.fr) (merci !). Si le bookmarklet ne marche pas (Content-Security-Policy de votre Pronote), une **méthode console** alternative est proposée — il vous suffit de coller le code dans la console F12 de Pronote.
+
+**Important** — RGPD : la saisie des noms et photos d'élèves constitue un traitement de données personnelles. Vous devez le **déclarer dans le registre des activités de traitement de votre établissement** ([guide CNIL](https://cnil.fr/fr/RGPD-le-registre-des-activites-de-traitement)). Le rappel apparaît dans les mentions légales de l'app.
+
+---
+
+## 🛠️ Stack technique
+
+- **HTML / CSS / JS vanilla** dans un seul fichier (~200 Ko)
+- **Police** : [Nunito](https://www.bunny.net/fonts/google/Nunito) via [Bunny Fonts](https://fonts.bunny.net) (RGPD-compliant, sans cookie, sans tracking)
+- **Avatars** : [Lorelei](https://www.figma.com/community/file/1198749693280469639) par Lisa Wischofsky, CC0, servies par [DiceBear](https://www.dicebear.com)
+- **QR codes** : `qrcode-generator` de Kazuhiko Arase (MIT, ~20 Ko minifié, **embarqué dans le fichier**)
+- **PDF** : [jsPDF](https://github.com/parallax/jsPDF) chargé en CDN
+- **Aucune** dépendance npm, aucun build step, aucune compilation
+
+### Architecture des données
+
+Toutes les données sont stockées sous le préfixe `cvibe_v5_` dans `localStorage` :
+
+- `classes` : array `[{id, nom, level, scoreBase, groupsEnabled, groupLabel, passportEnabled, showPhotos, plan, dashboard}]`
+- `groups` : `[{id, classId, nom, emoji, img, colorIdx}]`
+- `eleves` : `[{id, classId, groupId, prenom, nom, score, pointsBonus, pointsMalus, behaviors, absent, avatarSeed, photoData?}]`
+- `comp_pos`, `comp_neg` : comportements personnalisés
+- `stamps`, `passport` : tampons et passeports
+- `journal` : 60 dernières actions (avec undo)
+
+Les dashboards Class Screen sont stockés directement dans chaque classe : `cls.dashboard = {widgets: [], background: ''}`.
+
+---
+
+## 🤝 Contributions
+
+Le projet est en GPLv3 — vous êtes libres de l'utiliser, l'adapter, le partager. Les contributions, retours et tickets sont les bienvenus sur la [Forge](https://forge.apps.education.fr/lelabodecharlie/classe-vibe).
+
+---
+
+## 🙏 Crédits
+
+- Inspirée de [**La Classe des Héros**](https://github.com/clascomdiv/laclassedesheros) (Damien Beauchêne)
+- Méthode d'import Pronote inspirée de [**Mathix**](https://mathix.fr) (Arnaud Champollion)
+- Avatars Lorelei par [**Lisa Wischofsky**](https://www.instagram.com/lischi_art/), CC0
+- Service DiceBear pour la diffusion des avatars
+- Bibliothèque QR `qrcode-generator` par [**Kazuhiko Arase**](http://www.d-project.com/)
+- Police Nunito par [**Vernon Adams**](https://github.com/vernnobile/Nunito), [OFL](https://scripts.sil.org/OFL)
+- Bibliothèque PDF [**jsPDF**](https://github.com/parallax/jsPDF), MIT
+- Et un grand merci à la communauté des enseignants qui partagent leurs idées et leurs outils !

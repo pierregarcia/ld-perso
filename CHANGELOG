@@ -1,117 +1,120 @@
-# Changelog — Classe Vibe
+# Changelog — Classe Active
 
-Toutes les évolutions notables du projet sont listées dans ce fichier.
-
-Le format suit les conventions [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/), et le projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
-
----
-
-## [1.0.0] — 2026-06-02
-
-### Première version publique 🎉
-
-Classe Vibe arrive en version stable avec un ensemble complet d'outils de suivi de classe pour les enseignants du primaire au lycée.
-
-### Ajouté
-
-#### Gestion des classes
-- Création de classes multiples, regroupées par niveau libre (CP, 6ème, Terminale, ou tout texte personnalisé)
-- Édition complète d'une classe : nom, niveau, mode groupes, mode passeports
-- Suppression d'une classe avec toutes ses données associées
-- Bascule rapide entre classes depuis l'écran d'accueil
-- Label de groupe personnalisable par classe ("Groupe", "Maison", "Équipe", "Clan"…)
-
-#### Gestion des élèves
-- Ajout manuel d'élèves (prénom, nom, groupe, avatar)
-- Import par fichier CSV/TXT ou par collage de liste
-- Édition d'un élève via le crayon ✏️ sur sa carte ou clic droit
-- Suppression d'un élève (et de tous ses tampons associés)
-- Désambiguïsation automatique des prénoms identiques par initiale du nom
-
-#### Avatars
-- 70 avatars Lorelei (par Lisa Wischofsky, licence CC0 1.0) servis via l'API publique DiceBear
-- Sélecteur d'avatar dans la modale de création/édition
-- Bouton "🎲 Aléatoire" pour piocher un avatar au hasard
-- Avatar déterministe par défaut (basé sur le prénom de l'élève)
-
-#### Système de points
-- Score de départ paramétrable (10 points par défaut)
-- Attribution de points positifs (+1 à +3) ou négatifs (-1 à -3)
-- Trois cibles possibles : un élève, un groupe entier, toute la classe
-- 8 comportements positifs et 8 négatifs prédéfinis, modifiables et extensibles
-- Sélecteur d'emoji intégré pour personnaliser les icônes
-- Bouton "↺ Reset du lundi" pour remettre tous les scores au score initial
-
-#### Système de groupes / maisons
-- Activation optionnelle par classe
-- Création de groupes avec nom, emblème (emoji ou image URL), couleur (10 couleurs)
-- Édition via le crayon ✏️ visible au survol
-- 🏆 Trophée animé sur le groupe en tête du classement
-- Barre de progression visuelle par groupe
-- Filtrage des élèves par groupe via pilules
-- Couleur de groupe propagée automatiquement aux cartes des élèves membres
-
-#### Passeport et tampons
-- Système de tampons activable par classe (indépendant des points)
-- Tampons personnalisables avec libellé, emoji ou URL d'image
-- 3 tampons prédéfinis : Mission réussie, Premier de la classe, Esprit d'équipe
-- Visuel distinct des points dans la modale d'attribution (style passeport doré)
-- Compteur de tampons sur la carte de chaque élève
-- Vue détaillée des tampons obtenus par élève, avec possibilité de retirer
-
-#### Tirage au sort
-- Roue de la fortune SVG colorée avec animation (6 à 9 tours, easing naturel)
-- Exclusion automatique de chaque élève déjà tiré (un élève différent à chaque spin)
-- Bouton "🗑 Retirer de la roue" pour exclure manuellement un élève sans le supprimer de la classe
-- Bouton "↺ Réinitialiser la liste" pour remettre tout le monde sur la roue
-- Mode "Répartition en N groupes aléatoires" (2 à 20 groupes, Fisher-Yates)
-- Bouton "🎲 Refaire" pour relancer la répartition
-
-#### Plan de classe
-- Glisser-déposer libre des tables sur une grille
-- Tables 1 place ou 2 places
-- Rotation libre de chaque table (0/90/180/270°)
-- Suppression individuelle des tables
-- Bouton "📐 Auto-disposer" pour une grille régulière automatique
-- Pool des élèves non placés en bas, clic-pour-assigner
-- Sauvegarde du plan dans les données de la classe
-- Bouton "🖨 Imprimer" (CSS print propre, seul le plan est imprimé)
-
-#### Projection
-- Mode plein écran sombre avec grandes lettres (lisibilité depuis le fond de la classe)
-- Code court de session (4 caractères) affiché en grand
-- Classement des groupes avec trophée animé sur le leader
-- Tri des élèves par score
-- Export d'un snapshot JSON `classevibe-CODE.json` pour transférer la session vers un autre appareil
-- Réception depuis l'accueil via le bouton "📥 J'ai un code de projection"
-
-#### Historique et classement
-- Historique des 40 dernières actions (points, tampons, reset)
-- Classement complet des groupes et des 15 meilleurs élèves
-
-#### Données et confidentialité
-- Stockage 100 % local (localStorage navigateur)
-- Export complet des données au format JSON
-- Import complet d'une sauvegarde
-- Réinitialisation totale de l'application (depuis Mentions légales)
-- Aucune donnée transmise à un serveur tiers (hors API DiceBear pour les avatars)
-
-#### Interface
-- Design néo-brutaliste avec bordures et ombres caractéristiques
-- Police Nunito (chargée depuis Google Fonts)
-- Palette chaleureuse sur fond crème (#faf8f4)
-- Responsive (téléphone, tablette, ordinateur, TBI)
-- Favicon SVG embarquée
-- Pas de cookie, pas de tracker
-
-### Crédits
-
-- **Auteur** : Charlie ROLLO ([charlie.rollo@ac-versailles.fr](mailto:charlie.rollo@ac-versailles.fr))
-- **Inspiré de** : [La Classe des Héros](https://vibe-edu.forge.apps.education.fr/la-classe-des-heros/) (vibe-edu, Forge apps.education.fr)
-- **Avatars** : [Lorelei](https://www.figma.com/community/file/1198749693280469639) par [Lisa Wischofsky](https://www.instagram.com/lischi_art/), licence [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/), servis via l'API [DiceBear](https://www.dicebear.com)
-- **Hébergement** : Forge des Communs Numériques Éducatifs (Ministère de l'Éducation nationale)
-- **Licence** : GNU General Public License v3.0 (GPLv3)
+Format inspiré de [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/).
+Le projet suit globalement le [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
-[1.0.0]: https://forge.apps.education.fr/lelabodecharlie/classe-vibe/-/releases/v1.0.0
+## [1.5.0] — 2026-06-07
+
+### 🎉 Renommage du projet
+
+- **ClasseVibe → Classe Active** dans toute l'interface (titre de l'onglet, logo en-tête, page d'accueil, modale de bienvenue, mentions légales, exports PDF, bookmarklet Pronote).
+- L'animation de tremblement (`vibeShake`) reste appliquée au mot **Active** sur la page d'accueil, lancée une fois au chargement.
+- Nouveau favicon : 💬 (data URI SVG inline, pas de fichier externe).
+- Les noms de fichiers téléchargés deviennent `classe-active-AAAA-MM-JJ.json` (export complet) et `classe-active-CODE.json` (export session).
+- **Compatibilité ascendante** préservée : la clé localStorage (`cvibe_v5_`) et le marqueur de fichier JSON (`_classevibe_session`) restent inchangés pour ne pas casser les données existantes ou les imports d'anciennes sessions.
+
+### 🟦 Class Screen — Tableau personnalisé (nouveau)
+
+Nouveau bouton **🟦 Class Screen** dans la topbar de chaque classe, ouvrant un tableau plein écran inspiré de Classroom Screen. Chaque classe possède son propre tableau, sauvegardé en localStorage (positions, tailles, contenus, fond).
+
+#### Widgets disponibles
+
+- **⏱️ Timer** — compte à rebours ou chronomètre, anneau SVG de progression, bip sonore à zéro, alerte rouge à 10 secondes. Réglable via ⚙️ : mode, durée initiale, décompte visuel (fluide à la seconde **OU** changement minute par minute).
+- **📝 Texte** — zone de texte avec barre d'outils intégrée : police (9 choix), taille, gras, italique, couleur, alignement (gauche/centre/droite avec icônes style traitement de texte).
+- **🚦 Feux tricolores** — SVG vectoriel avec boîtier noir, dégradés radiaux, halo lumineux et reflet brillant. Clic pour activer/désactiver une couleur.
+- **🎡 Roue aléatoire** — basée sur les élèves présents de la classe. Labels **radiaux** alignés dans le sens de chaque bande colorée, animation manuelle `requestAnimationFrame` (4,2 s, easing quartic), persistence de la rotation finale, bouton « Retirer » le gagnant, « ↺ Tous » pour réinitialiser.
+- **👥 Groupes aléatoires** — N groupes (2-20), avec photos ou prénoms seuls, grille responsive (cases équilibrées en `1fr`, pills et photos qui s'adaptent à 5 paliers de taille).
+- **🌐 Site web** — iframe avec sandbox sécurisé (`allow-scripts allow-same-origin allow-popups allow-forms allow-presentation`). Saisie d'URL inline + bouton ✎ pour modifier.
+- **📱 QR Code** — génération **100 % locale** via la bibliothèque `qrcode-generator` (Kazuhiko Arase, MIT) embarquée. Format SVG vectoriel, mode UTF-8, boutons ✎ (modifier) et 📋 (copier l'URL). Aucune dépendance réseau.
+
+#### Système de widgets
+
+- Header flottant en haut-droite avec boutons ⛶ (plein écran) et ✕ (supprimer) ; ⚙️ uniquement pour le Timer.
+- **Drag and drop** sur la barre d'en-tête (zone invisible mais cliquable).
+- **Redimensionnement** par poignée en bas-droite (apparaît au survol).
+- **Plein écran** : bouton ⛶ étend le widget à tout le viewport ; bouton 🗗 le restaure.
+- **Click-to-front** : un clic sur un widget l'amène au premier plan (compteur de z-index global).
+- **Persistance** : chaque modification (déplacement, redimensionnement, contenu, état du timer, rotation de la roue, etc.) est immédiatement sauvegardée dans `cls.dashboard`.
+
+#### Fond personnalisé
+
+- Bouton 🖼️ Fond : URL d'image (Unsplash, Wikipedia, etc.) **OU** couleur unie (color picker).
+- Le fond est sauvegardé avec le tableau et persiste entre les sessions.
+
+#### Toolbar
+
+- Boutons icônes uniquement (gain de place sur petit écran).
+- Tooltips détaillés sur chaque action.
+- Bouton 🏠 Maison transparent à droite pour revenir à la classe (avec sauvegarde automatique).
+- Bouton 🗑️ Vider avec modale de confirmation personnalisée (au-dessus du dashboard, z-index 2600).
+
+#### Mobile
+
+- Sur écran ≤ 760 px : les widgets s'empilent verticalement avec scroll, taille auto (la position absolue est désactivée pour ne pas dépasser de l'écran).
+
+### 📸 Import Pronote — refonte (Mathix-style)
+
+L'import des élèves depuis le trombinoscope Pronote a été complètement réécrit sur la base de la méthode du site [Mathix](https://mathix.fr) (créditée dans les deux modales d'import et dans les mentions légales).
+
+- Nouvelle approche : parcourt tous les `<img>` (récursivement dans les iframes accessibles), filtre par `alt` contenant « photo », nettoie l'alt-text (`cleanAlt`) et sépare prénom / nom (`smartSplit` reconnaît 6 patterns différents : NOM Prénom, Prénom NOM, NOM-COMPOSÉ Prénom, etc.).
+- Photos récupérées via `fetch + FileReader` avec `credentials: 'include'` (accès aux ressources authentifiées Pronote).
+- Diagnostic visible si aucune photo trouvée : liste les 8 premiers alt-text de la page pour aider à diagnostiquer.
+- Format de sortie compatible avec l'autre outil : `{generated, exportedAt, eleves, students}`.
+- **Méthode console** alternative (modale dédiée) si le bookmarklet est bloqué par la CSP du Pronote.
+
+### 📷 Affichage photos Pronote
+
+- Nouveau toggle Oui / Non « Afficher les photos importées » dans la création et l'édition de classe (cohérent avec les autres toggles Groupes/Passeports).
+- Diagnostic en temps réel dans la modale d'édition : *« N / M élèves ont une photo Pronote en mémoire »*.
+- Quand le toggle est désactivé, l'app utilise les avatars Lorelei à la place des photos (utile pour faire des projections anonymes).
+
+### ⚖️ RGPD
+
+- Nouvel encadré orange dans les mentions légales : rappel que la saisie des noms et photos d'élèves constitue un traitement de données personnelles, avec lien direct vers [le registre des activités de traitement (CNIL)](https://cnil.fr/fr/RGPD-le-registre-des-activites-de-traitement).
+- Crédit Mathix dans les mentions légales (méthode d'import du bookmarklet).
+
+### 🐛 Corrections
+
+- **Bug critique** : la minification du bookmarklet écrasait les retours-ligne, ce qui faisait que les commentaires `//` mangeaient toute la suite du code (« Unexpected end of input »). Fix : strip des commentaires de ligne avant le whitespace collapse.
+- `renderTextBody` crashait avec « Cannot set properties of null » car `document.getElementById` ne trouvait pas les éléments d'un widget pas encore inséré dans le DOM. Remplacé par `body.querySelector` qui fonctionne sur les sous-arbres détachés.
+- `ResizeObserver loop` corrigée en différant le re-render des widgets dans un double `requestAnimationFrame`.
+- Le bouton 🖼️ Fond du dashboard s'ouvrait derrière le tableau (z-index 800 vs 2000). Modale dash-bg passée à z-index 2600.
+- Bouton burger menu : les 3 traits étaient empilés horizontalement sur desktop car `.burger-btn` n'avait pas de `display:none` par défaut. Corrigé.
+- Toggle Photos : passage du label dynamique (« 📸 Photos » / « 🎨 Illustrations ») à un Oui / Non clair avec descriptif (le label précédent était trompeur — cliquer sur le bouton « Photos » désactivait en fait les photos).
+- Roue : recalcul des angles pour que la slice gagnante s'arrête bien sous le pointeur ▼, et que la rotation soit persistée entre les re-renders.
+
+---
+
+## [1.4.0] — 2026-06-06
+
+### Améliorations
+
+- Avatars Lorelei : DiceBear avec `hairProbability=100&beardProbability=0` et liste de sourcils choisis (exclusion des bald / unibrow / variants peu lisibles).
+- Plan de classe : tables rectangulaires (≥ 4 places en 2 rangées face-à-face) ou rondes (chaises positionnées mathématiquement). Drag-and-drop pour échanger élèves entre chaises.
+- Tirage roue et répartition de groupes (sur la page Classe) : élèves absents automatiquement exclus.
+- Système d'absences (🚪) avec exclusion automatique des classements, tirages, plans.
+- Système d'annulation (↶) sur chaque entrée du journal : restaure les scores et compteurs de comportements.
+- Export PDF amélioré : page 1 vue d'ensemble (mini-cartes) + 3 fiches d'identité par page A4.
+
+---
+
+## [1.3.0] — 2026-06-05
+
+### Ajouts
+
+- Système de classes multiples avec niveau libre (collège / lycée / autre).
+- Score de base configurable par classe (0-100).
+- Stat row par classe : nombre d'élèves, moyenne, top, bottom.
+- Classement des élèves et des groupes.
+- Journal détaillé des 60 dernières actions avec horodatage et undo.
+- Export / import JSON complet.
+- Sessions partageables par code projection.
+
+---
+
+## Première mise en ligne — 2026-06-04
+
+- Application de classe en single-file HTML, 100 % côté client (localStorage), style néo-brutaliste, police Nunito (Bunny Fonts, RGPD-compliant).
+- Inspirée de [La Classe des Héros](https://github.com/clascomdiv/laclassedesheros), licence GPLv3.

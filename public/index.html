@@ -186,6 +186,10 @@ body.modal-open{overflow:hidden;position:fixed;width:100%;height:100%;top:0;left
 
 /* Welcome card : reste compact et centré, même sur mobile */
 .welcome-card{width:min(100%,500px) !important;max-width:500px !important;height:auto !important;max-height:85vh !important;border-radius:var(--r2) !important;border:2.5px solid var(--ink) !important;padding:24px 22px !important;overflow-y:auto;box-shadow:6px 6px 0 var(--ink) !important;animation:welcomeFadeIn .35s cubic-bezier(.16,1,.3,1) both}
+@media(max-width:600px){.welcome-card{width:calc(100% - 32px) !important;max-width:calc(100% - 32px) !important;max-height:calc(100vh - 80px) !important;padding:18px 16px !important;margin:16px;border-radius:16px !important;box-shadow:4px 4px 0 var(--ink) !important}
+.welcome-card .modal-title{font-size:1.1rem !important}
+.welcome-card .modal-sub{font-size:.85rem !important}
+.welcome-card #welcome-body{font-size:.85rem !important;line-height:1.55 !important}}
 .welcome-card .modal-close{position:absolute !important;top:12px !important;right:12px !important}
 .welcome-card .form-actions{position:static !important;background:transparent !important;border:none !important;box-shadow:none !important;margin:18px 0 0 !important;padding:0 !important}
 @keyframes welcomeFadeIn{
@@ -460,7 +464,7 @@ body.pdf-printing #pdf-export-area{display:block}
 .dash-canvas{position:absolute;inset:0;overflow:hidden}
 #modal-dash-bg,#modal-dash-confirm,#modal-dash-prompt{z-index:2600}
 .dash-config-popover{z-index:2400}
-.dash-toolbar{position:fixed;bottom:14px;left:50%;transform:translateX(-50%);z-index:100;background:#fff;border:2.5px solid var(--ink);border-radius:16px;padding:6px;display:flex;gap:3px;box-shadow:0 10px 30px rgba(0,0,0,.25);align-items:center;flex-wrap:nowrap;max-width:calc(100vw - 16px);overflow-x:auto;scrollbar-width:none}
+.dash-toolbar{position:fixed;bottom:14px;left:50%;transform:translateX(-50%);z-index:100;border:2.5px solid var(--ink);border-radius:16px;padding:6px;display:flex;gap:3px;box-shadow:0 10px 30px rgba(0,0,0,.25);align-items:center;flex-wrap:nowrap;max-width:calc(100vw - 16px);overflow-x:auto;scrollbar-width:none;background-color:#fff;background-image:linear-gradient(90deg,#fff 30%,rgba(255,255,255,0)),linear-gradient(90deg,rgba(255,255,255,0),#fff 70%),radial-gradient(farthest-side at 0% 50%,rgba(0,0,0,.2),rgba(0,0,0,0)),radial-gradient(farthest-side at 100% 50%,rgba(0,0,0,.2),rgba(0,0,0,0));background-position:left center,right center,left center,right center;background-repeat:no-repeat;background-size:36px 100%,36px 100%,12px 100%,12px 100%;background-attachment:local,local,scroll,scroll}
 .dash-toolbar::-webkit-scrollbar{display:none}
 .dash-toolbar button{background:var(--bg3);border:2px solid transparent;padding:0;width:42px;height:42px;border-radius:10px;cursor:pointer;font-size:1.1rem;color:var(--ink);transition:.12s;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0}
 .dash-toolbar button:hover{background:var(--orange-soft);border-color:var(--orange);transform:translateY(-1px)}
@@ -549,8 +553,9 @@ body.pdf-printing #pdf-export-area{display:block}
 .dash-config-popover .row{display:flex;align-items:center;gap:8px;margin-bottom:8px;font-weight:700}
 .dash-config-popover button{padding:8px;border:none;border-radius:6px;background:var(--orange);color:#fff;font-weight:800;cursor:pointer;font-size:.82rem;width:100%}
 @media (max-width:760px){
-  .dash-toolbar{padding:5px;gap:2px;bottom:8px}
-  .dash-toolbar button{width:38px;height:38px;font-size:1rem}
+  .dash-toolbar{padding:5px;gap:3px;bottom:8px;flex-wrap:wrap;justify-content:center;max-width:calc(100vw - 16px);overflow-x:visible}
+  .dash-toolbar button{width:36px;height:36px;font-size:.98rem}
+  .dash-toolbar .dash-tb-sep{display:none}
   /* Sur mobile : empile les widgets verticalement, scroll vertical */
   .dash-canvas{overflow-y:auto;overflow-x:hidden;display:flex;flex-direction:column;gap:12px;padding:12px 10px 80px 10px;align-items:stretch}
   .dash-widget:not(.fullscreen){position:relative !important;left:auto !important;top:auto !important;width:100% !important;height:auto !important;min-height:240px;max-width:100%;flex-shrink:0}
@@ -1519,14 +1524,7 @@ function eleveStampCount(eleveId,stampId){return S.passport.filter(function(p){r
 function eleveTotalStamps(eleveId){return S.passport.filter(function(p){return p.eleveId===eleveId}).length}
 
 (function(){
-  var svg='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">'+
-    '<rect width="32" height="32" rx="8" fill="#f97316"/>'+
-    '<text x="16" y="17" font-family="system-ui,sans-serif" font-weight="900" font-size="15" fill="white" text-anchor="middle" dominant-baseline="middle" letter-spacing="-1">CV</text>'+
-    '</svg>';
-  var link=document.createElement('link');
-  link.rel='icon';link.type='image/svg+xml';
-  link.href='data:image/svg+xml;charset=UTF-8,'+encodeURIComponent(svg);
-  document.head.appendChild(link);
+  // Favicon défini statiquement dans <head> (logo Classe Active)
 })();
 function goHome(){S.activeClassId=null;sv('activeClass',null);render()}
 

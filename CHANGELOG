@@ -118,3 +118,43 @@ L'import des élèves depuis le trombinoscope Pronote a été complètement ré�
 
 - Application de classe en single-file HTML, 100 % côté client (localStorage), style néo-brutaliste, police Nunito (Bunny Fonts, RGPD-compliant).
 - Inspirée de [La Classe des Héros](https://github.com/clascomdiv/laclassedesheros), licence GPLv3.
+
+## Nouveautés (session du 2026-06-08, suite)
+
+### Nouvelles fonctionnalités
+- **🔊 Sons de feedback** : son positif/négatif à l'attribution de points (Web Audio, 100 % local). Bouton 🔊/🔇 dans la barre du haut pour couper.
+- **🌙 Mode sombre** : bascule clair/sombre persistante, bouton dans la barre du haut.
+- **📈 Graphique d'évolution** : courbe des points nets de la classe jour par jour (canvas natif, max 120 jours par classe). Bouton 📈 dans les actions de classe.
+- **✅ Widget Liste de tâches** (Class Screen) : consignes cochables affichées au tableau, gros caractères, son à la validation.
+- **🎨 Couleur par classe** : 8 couleurs d'accent au choix dans la création/édition de classe. Visible sur la carte d'accueil et appliquée à toute l'interface de la classe.
+- **🎡 Roue — retrait auto** : case à cocher « Retrait auto après tirage » pour interroger équitablement tous les élèves sans clics supplémentaires.
+
+### Correctifs
+- Favicon : suppression du favicon dynamique « CV » qui écrasait le logo Classe Active.
+- Modale de bienvenue : dimensionnement adapté aux mobiles.
+- Barre d'outils du Class Screen : passage à la ligne sur mobile + ombres de défilement.
+
+## Plan de classe — Système d'affinités (session 2026-06-08)
+
+### Nouveau : placement intelligent
+- **Profils d'élève** (fiche élève) : tags Bavard, Sérieux/moteur, En difficulté, Besoin particulier, Discret/timide, Agité.
+- **Rang imposé** (fiche élève) : forcer un élève au rang 1, 2 ou 3 (proximité du tableau).
+- **Repère TABLEAU** affiché en haut du plan ; chaque table reçoit automatiquement un **numéro de rang** selon sa position verticale (on place les tables librement, les rangs se déduisent).
+- **Modale 🔗 Affinités** : paires d'élèves à séparer, paires à rapprocher, et **accompagnants AESH** (nom + élève rattaché).
+- **✨ Placement intelligent** : algorithme qui respecte au mieux toutes les contraintes simultanément (rangs imposés, séparations, rapprochements, équilibrage des profils par table, AESH placé sur une chaise voisine de son élève). 400 essais, on garde le meilleur score. Affiche un score de contraintes (0 = parfait).
+
+### Répartition fiche élève / plan
+- Attribut d'UN élève (profil, rang) → fiche élève.
+- Relation entre DEUX personnes (séparer, rapprocher, AESH) → modale Affinités du plan.
+
+## Plan de classe — Position du tableau & mobile (session 2026-06-08)
+
+- **Position du tableau réglable** : le bandeau TABLEAU peut être placé en haut, en bas, à gauche ou à droite. Les **rangs des tables sont recalculés automatiquement** selon l'axe de proximité (vertical pour haut/bas, horizontal pour gauche/droite). La position est sauvegardée avec le plan et incluse dans l'annulation (Ctrl+Z).
+- **Vue mobile du plan repensée** : barre d'outils en défilement horizontal compact (au lieu d'un empilement vertical qui mangeait l'écran), canvas dimensionné à 62 % de la hauteur visible, liste des élèves à placer en zone scrollable, contrôles de table et badges de rang agrandis pour le tactile.
+
+## Plan de classe — Affinités v2 (session 2026-06-08)
+
+- **Rangs recalculés en direct** : déplacer une table devant une autre met immédiatement à jour les numéros de rang (la table avancée devient rang 1, etc.). Le recalcul suit la position du tableau (haut/bas/gauche/droite).
+- **Élèves en difficulté placés devant** : un élève marqué « En difficulté » (sans rang imposé) est placé en priorité sur les rangs 1 à 3 par le placement intelligent.
+- **AESH garantie à côté de son élève** : l'algorithme réserve désormais la chaise voisine AVANT de placer les autres élèves. L'AESH ne peut plus se retrouver ailleurs. Si la disposition ne le permet pas (pas assez de tables de 2+ places), un message prévient avant de lancer.
+- **Le placement intelligent ne déplace plus les tables** : seuls les élèves sont réorganisés sur les chaises existantes ; la disposition de la salle reste intacte.

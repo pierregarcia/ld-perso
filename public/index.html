@@ -3833,14 +3833,72 @@ function genGroupes(){
   if(n<2)n=2;if(n>20)n=20;
   var eleves=cElvsPresents().slice();
   if(!eleves.length){document.getElementById('tir-groupes-result').innerHTML='<div class="empty">Aucun élève présent à répartir.</div>';return}
-  // Shuffle Fisher-Yates
-  for(var i=eleves.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=eleves[i];eleves[i]=eleves[j];eleves[j]=t}
-  // Distribute round-robin
-  var groupes=[];
-  for(var k=0;k<n;k++) groupes.push([]);
-  eleves.forEach(function(e,idx){groupes[idx%n].push(e)});
+
+  // Récupère les paires à séparer depuis les affinités du plan de la classe
+  var cls=aCls();
+  var sepPairs=(cls && cls.plan && cls.plan.affin && cls.plan.affin.separer)?cls.plan.affin.separer:[];
+  // Ne garde que les paires valides où les deux élèves sont présents
+  var presentIds={};eleves.forEach(function(e){presentIds[e.id]=true});
+  sepPairs=sepPairs.filter(function(p){return p[0]&&p[1]&&presentIds[p[0]]&&presentIds[p[1]]});
+
+  // Évalue une répartition : plus le score est BAS, mieux c'est.
+  function scoreRepartition(groupes){
+    var penalty=0;
+    // Carte eleveId -> index de groupe
+    var grpOf={};
+    groupes.forEach(function(members,gi){members.forEach(function(e){grpOf[e.id]=gi})});
+    // 1. Paires à séparer dans le même groupe = forte pénalité
+    sepPairs.forEach(function(p){
+      if(grpOf[p[0]]!==undefined && grpOf[p[0]]===grpOf[p[1]]) penalty+=100;
+    });
+    // 2. Équilibrage profils : chaque groupe devrait mêler "en difficulté" et "sérieux/moteur"
+    groupes.forEach(function(members){
+      var diff=0,serieux=0;
+      members.forEach(function(e){
+        if(elhasProfil(e,'difficulte'))diff++;
+        if(elhasProfil(e,'serieux'))serieux++;
+      });
+      // un groupe avec des élèves en difficulté mais aucun moteur = occasion manquée
+      if(diff>0 && serieux===0) penalty+=12*diff;
+      // concentration de moteurs au même endroit = léger gâchis
+      if(serieux>1) penalty+=4*(serieux-1);
+    });
+    // 3. Déséquilibre de taille (écart max-min) légèrement pénalisé
+    var sizes=groupes.map(function(g){return g.length});
+    var ecart=Math.max.apply(null,sizes)-Math.min.apply(null,sizes);
+    if(ecart>1) penalty+=8*(ecart-1);
+    return penalty;
+  }
+
+  function buildRandom(){
+    var arr=eleves.slice();
+    for(var i=arr.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=arr[i];arr[i]=arr[j];arr[j]=t}
+    var groupes=[];for(var k=0;k<n;k++)groupes.push([]);
+    arr.forEach(function(e,idx){groupes[idx%n].push(e)});
+    return groupes;
+  }
+
+  // Plusieurs essais, on garde la meilleure répartition
+  var best=null,bestScore=Infinity;
+  var tries=(sepPairs.length||eleves.some(function(e){return (e.profils||[]).length}))?500:1;
+  for(var attempt=0;attempt<tries;attempt++){
+    var g=buildRandom();
+    var sc=scoreRepartition(g);
+    if(sc<bestScore){bestScore=sc;best=g;if(sc===0)break}
+  }
+  var groupes=best;
+
   var box=document.getElementById('tir-groupes-result');
   box.innerHTML='';
+  // Message si des séparations n'ont pas pu être respectées
+  if(sepPairs.length){
+    var grpOf={};groupes.forEach(function(members,gi){members.forEach(function(e){grpOf[e.id]=gi})});
+    var conflits=sepPairs.filter(function(p){return grpOf[p[0]]===grpOf[p[1]]}).length;
+    var info=document.createElement('div');
+    info.style.cssText='font-size:.78rem;font-weight:800;margin-bottom:10px;padding:8px 12px;border-radius:10px;'+(conflits?'background:#fef3c7;color:#a16207':'background:#dcfce7;color:#15803d');
+    info.textContent=conflits?('⚠️ '+conflits+' séparation(s) n\'ont pas pu être respectées (trop de contraintes pour '+n+' groupes).'):'✅ Toutes les séparations sont respectées.';
+    box.appendChild(info);
+  }
   groupes.forEach(function(members,idx){
     var col=GRP_COLORS[idx%GRP_COLORS.length].h;
     var card=document.createElement('div');
@@ -3848,11 +3906,6 @@ function genGroupes(){
     card.style.borderColor=col;
     card.style.boxShadow='3px 3px 0 '+col;
     var pills='';
-    members.forEach(function(e){
-      pills+='<span class="tirage-grp-pill">'+avatarImgForEleve(e,'width:24px;height:24px;border-radius:50%')+'<span>'+e.prenom+'</span></span>';
-    });
-    // Re-wrap avatar (the pill img needs proper sizing)
-    pills='';
     members.forEach(function(e){
       var url=eleveAvatarSrc(e);
       pills+='<span class="tirage-grp-pill"><img src="'+url+'" alt="" loading="lazy">'+'<span>'+e.prenom+'</span></span>';

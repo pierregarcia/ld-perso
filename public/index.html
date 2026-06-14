@@ -372,6 +372,34 @@ footer{width:100%;background:var(--bg2);border-top:2.5px solid var(--ink);paddin
   /* Footer plus serré */
   footer{padding:8px 12px;flex-wrap:wrap;gap:4px}
   .f-link{font-size:.7rem;padding:4px 6px}
+
+  /* ===== PLAN DE CLASSE SUR MOBILE ===== */
+  /* Sous-titre plus court */
+  #plan-sub{font-size:.78rem;line-height:1.4}
+  /* Barre d'outils : défilement horizontal compact au lieu d'empilement vertical */
+  .plan-toolbar{flex-wrap:nowrap !important;overflow-x:auto;overflow-y:hidden;gap:6px !important;margin-bottom:10px !important;padding-bottom:6px;-webkit-overflow-scrolling:touch;scrollbar-width:thin;
+    -webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 24px),transparent);mask-image:linear-gradient(90deg,#000 calc(100% - 24px),transparent)}
+  .plan-toolbar::-webkit-scrollbar{height:4px}
+  .plan-toolbar::-webkit-scrollbar-thumb{background:var(--border);border-radius:10px}
+  .plan-toolbar > *{flex-shrink:0}
+  .plan-toolbar .btn{padding:7px 11px;font-size:.78rem}
+  /* La zone "+ Table" et "Tableau:" gardent leurs contrôles compacts */
+  .plan-toolbar select{font-size:.75rem;padding:3px 4px}
+  /* Canvas : hauteur réduite mais utilisable, avec pincement-zoom possible */
+  #plan-canvas-wrap{height:62vh !important;min-height:340px;touch-action:none}
+  /* Pool : défilement horizontal sur une ligne, plus compact */
+  #plan-pool{margin-top:10px !important;max-height:120px;overflow-y:auto}
+  .plan-pool-pill{font-size:.8rem;padding:5px 12px 5px 5px}
+  .plan-pool-pill img{width:26px;height:26px}
+  /* Contrôles de table toujours visibles sur tactile (pas de hover) */
+  .plan-table-controls{opacity:1 !important}
+  .plan-table-btn{width:26px;height:26px;font-size:.75rem}
+  /* Badge de rang plus gros pour le tactile */
+  .plan-rank-badge{width:24px !important;height:24px !important;font-size:.78rem !important}
+  /* Barre Imprimer / Fermer / Enregistrer : fixée en bas de l'écran */
+  .plan-actions{position:fixed !important;left:0;right:0;bottom:0;margin:0 !important;padding:10px 14px !important;background:var(--bg2);border-top:2.5px solid var(--ink);box-shadow:0 -4px 14px rgba(0,0,0,.12);z-index:20;display:flex;align-items:center}
+  /* Espace réservé pour ne pas masquer le pool derrière la barre fixe */
+  #plan-pool{margin-bottom:70px !important}
 }
 
 /* TIRAGE / ROUE */
@@ -491,6 +519,23 @@ body.pdf-printing #pdf-export-area{display:block}
 .dash-task-del:hover{background:var(--red);color:#fff}
 .dash-tasks-add{display:flex;gap:6px;padding-top:8px;border-top:2px solid var(--border)}
 .accent-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:4px}
+.profil-row{display:flex;gap:7px;flex-wrap:wrap;margin-top:4px}
+.affin-section{margin-bottom:18px;padding:14px;background:var(--bg3);border:2px solid var(--border);border-radius:var(--r2)}
+.affin-head{display:flex;justify-content:space-between;align-items:center;font-weight:900;font-size:.9rem;margin-bottom:10px}
+.affin-list{display:flex;flex-direction:column;gap:8px}
+.affin-row{display:flex;align-items:center;gap:8px;background:var(--bg2);border:2px solid var(--border);border-radius:12px;padding:8px 10px}
+.affin-row select{flex:1;min-width:0;border:2px solid var(--border);border-radius:8px;padding:6px 8px;font-weight:700;font-size:.82rem;background:var(--bg2);color:var(--ink)}
+.affin-row .affin-link{font-weight:900;color:var(--ink3);font-size:.85rem;flex-shrink:0}
+.affin-del{width:30px;height:30px;flex-shrink:0;border-radius:8px;border:2px solid var(--border);background:var(--bg2);color:var(--ink3);font-weight:900;cursor:pointer;font-size:.8rem}
+.affin-del:hover{background:var(--red);color:#fff;border-color:var(--red)}
+.affin-empty{font-size:.78rem;color:var(--ink3);font-weight:700;padding:4px 2px}
+.plan-pool-pill.is-aesh{background:#ede9fe;border-color:#8b5cf6}
+.plan-pool-pill.is-aesh span{color:#6d28d9}
+.plan-chair.chair-aesh{border-style:dashed!important}
+.profil-tag{display:inline-flex;align-items:center;gap:5px;padding:6px 11px;border-radius:999px;font-weight:800;font-size:.78rem;border:2.5px solid var(--border);background:var(--bg2);color:var(--ink2);cursor:pointer;transition:.12s}
+.profil-tag:hover{border-color:var(--ink3)}
+.profil-tag.on{background:var(--orange-soft);border-color:var(--orange);color:var(--orange)}
+.profil-tag span{font-size:.95rem}
 .accent-swatch{width:32px;height:32px;border-radius:10px;border:2.5px solid var(--border);cursor:pointer;transition:.12s;padding:0}
 .accent-swatch:hover{transform:scale(1.12)}
 .accent-swatch.sel{border-color:var(--ink);box-shadow:0 0 0 2px var(--bg2),0 0 0 4.5px var(--ink);transform:scale(1.08)}
@@ -1118,6 +1163,19 @@ body.pdf-printing #pdf-export-area{display:block}
     <div class="field" style="margin-bottom:6px"><label>Passeport — tampons obtenus</label></div>
     <div id="em-passport-stamps" class="passport-stamps"></div>
   </div>
+  <div class="field" style="margin-top:6px">
+    <label>Profil pour le plan de classe</label>
+    <div id="em-profils" class="profil-row"></div>
+  </div>
+  <div class="field">
+    <label>Rang imposé (proximité du tableau)</label>
+    <select id="em-rang">
+      <option value="">Aucune contrainte</option>
+      <option value="1">Rang 1 — tout devant</option>
+      <option value="2">Rang 2 ou plus proche</option>
+      <option value="3">Rang 3 ou plus proche</option>
+    </select>
+  </div>
   <div class="form-actions" style="justify-content:space-between;margin-top:14px">
     <button class="btn btn-danger btn-sm" onclick="deleteEleve()">Supprimer</button>
     <div style="display:flex;gap:7px">
@@ -1292,8 +1350,8 @@ body.pdf-printing #pdf-export-area{display:block}
 <div class="modal modal-lg">
   <button class="modal-close" onclick="closePlan()">✕</button>
   <div class="modal-title">🪑 Plan de classe</div>
-  <div class="modal-sub" id="plan-sub">Glissez les tables pour organiser votre salle. Cliquez sur une table pour changer son orientation et son nombre de places.</div>
-  <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px;align-items:center">
+  <div class="modal-sub" id="plan-sub">Glissez les tables pour organiser votre salle. Le numéro en haut à gauche de chaque table indique son <strong>rang</strong> (proximité du tableau). Utilisez « 🔗 Affinités » puis « ✨ Placement intelligent » pour placer automatiquement vos élèves selon vos contraintes.</div>
+  <div class="plan-toolbar" style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px;align-items:center">
     <div style="display:inline-flex;align-items:center;gap:6px;background:var(--bg3);border:2.5px solid var(--ink);border-radius:14px;padding:4px 8px">
       <span style="font-size:.8rem;font-weight:800">+ Table</span>
       <select id="plan-new-shape" style="border:2px solid var(--ink);border-radius:8px;padding:4px 6px;font-weight:700;background:var(--bg2);font-size:.8rem">
@@ -1312,23 +1370,64 @@ body.pdf-printing #pdf-export-area{display:block}
       <button class="btn btn-primary btn-sm" onclick="planAddTableFromUI()" style="padding:4px 10px">Ajouter</button>
     </div>
     <button class="btn btn-soft btn-sm" onclick="planRandomAssign()">🎲 Placer au hasard</button>
+    <button class="btn btn-primary btn-sm" onclick="planSmartAssign()" title="Placement automatique respectant les profils, rangs et affinités">✨ Placement intelligent</button>
+    <button class="btn btn-soft btn-sm" onclick="openAffinites()" title="Gérer les affinités, AESH et contraintes">🔗 Affinités</button>
     <button class="btn btn-soft btn-sm" onclick="planAutoLayout()">📐 Auto-disposer</button>
+    <div style="display:inline-flex;align-items:center;gap:6px;background:var(--bg3);border:2px solid var(--border);border-radius:12px;padding:3px 8px">
+      <span style="font-size:.76rem;font-weight:800">📋 Tableau :</span>
+      <select id="plan-board-pos" onchange="planSetBoardPos(this.value)" style="border:2px solid var(--border);border-radius:8px;padding:4px 6px;font-weight:700;background:var(--bg2);font-size:.78rem;color:var(--ink)">
+        <option value="top">En haut</option>
+        <option value="bottom">En bas</option>
+        <option value="left">À gauche</option>
+        <option value="right">À droite</option>
+      </select>
+    </div>
     <button class="btn btn-soft btn-sm" id="btn-plan-undo" onclick="planUndo()" disabled title="Annuler la dernière action (Ctrl+Z)">↩ Annuler</button>
     <button class="btn btn-soft btn-sm" onclick="planClearTables()">🗑️ Tout effacer</button>
     <span style="font-size:.78rem;color:var(--ink3);font-weight:700">Non placés : <strong id="plan-unassigned-count" style="color:var(--orange)">0</strong></span>
   </div>
   <div id="plan-canvas-wrap" style="border:2.5px solid var(--ink);border-radius:var(--r2);background:#f9f7f1;background-image:linear-gradient(rgba(0,0,0,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(0,0,0,.04) 1px,transparent 1px);background-size:30px 30px;position:relative;height:540px;overflow:hidden;touch-action:none">
+    <div id="plan-board" style="position:absolute;top:8px;left:50%;transform:translateX(-50%);background:#1a1a1a;color:#fff;font-weight:900;font-size:.82rem;letter-spacing:.18em;padding:7px 38px;border-radius:8px;border:2.5px solid #1a1a1a;box-shadow:0 4px 10px rgba(0,0,0,.25);z-index:5;pointer-events:none;text-transform:uppercase;white-space:nowrap">📋 Tableau</div>
     <div id="plan-canvas" style="position:absolute;inset:0"></div>
   </div>
   <div id="plan-pool" style="margin-top:14px;padding:10px;background:var(--bg3);border:2px solid var(--border);border-radius:var(--r);display:flex;flex-wrap:wrap;gap:6px;min-height:50px">
     <div style="font-size:.7rem;font-weight:900;color:var(--ink3);text-transform:uppercase;letter-spacing:.08em;width:100%;margin-bottom:4px">Élèves à placer (cliquez sur une chaise pour assigner)</div>
   </div>
-  <div class="form-actions" style="justify-content:space-between;margin-top:14px">
+  <div class="form-actions plan-actions" style="justify-content:space-between;margin-top:14px">
     <button class="btn btn-soft btn-sm" onclick="printPlan()">🖨 Imprimer</button>
     <div style="display:flex;gap:7px">
       <button class="btn btn-outline btn-sm" onclick="closePlan()">Fermer</button>
       <button class="btn btn-primary" onclick="savePlan()">Enregistrer</button>
     </div>
+  </div>
+</div>
+</div>
+
+<!-- Gestion des affinités / contraintes du plan -->
+<div class="overlay" id="modal-affinites">
+<div class="modal modal-lg">
+  <button class="modal-close" onclick="closeModal('modal-affinites')">✕</button>
+  <div class="modal-title">🔗 Affinités &amp; contraintes</div>
+  <div class="modal-sub">Définissez qui éloigner, qui rapprocher, et placez les accompagnants (AESH). Ces règles sont prises en compte par le « Placement intelligent ».</div>
+
+  <div class="affin-section">
+    <div class="affin-head"><span>🚫 Élèves à séparer</span><button class="btn btn-soft btn-sm" onclick="addAffinPair('separer')">+ Ajouter une paire</button></div>
+    <div id="affin-list-separer" class="affin-list"></div>
+  </div>
+
+  <div class="affin-section">
+    <div class="affin-head"><span>🤝 Élèves à rapprocher</span><button class="btn btn-soft btn-sm" onclick="addAffinPair('rapprocher')">+ Ajouter une paire</button></div>
+    <div id="affin-list-rapprocher" class="affin-list"></div>
+  </div>
+
+  <div class="affin-section">
+    <div class="affin-head"><span>🧑‍🏫 Accompagnants (AESH)</span><button class="btn btn-soft btn-sm" onclick="addAesh()">+ Ajouter un accompagnant</button></div>
+    <div id="affin-list-aesh" class="affin-list"></div>
+    <div style="font-size:.74rem;color:var(--ink3);font-weight:700;margin-top:6px">L'accompagnant occupe une chaise voisine de l'élève qui lui est rattaché. Il apparaît dans la liste des « personnes à placer ».</div>
+  </div>
+
+  <div class="form-actions" style="justify-content:flex-end;margin-top:14px">
+    <button class="btn btn-primary btn-sm" onclick="closeModal('modal-affinites');renderPlan()">Terminé</button>
   </div>
 </div>
 </div>
@@ -2871,7 +2970,34 @@ function openEleveMgr(eid){
   } else {
     document.getElementById('em-passport-section').style.display='none';
   }
+  renderEleveProfils(eleve);
+  document.getElementById('em-rang').value=eleve.rang||'';
   openModal('modal-eleve-mgr');
+}
+// Profils d'élève pour le plan de classe (multi-sélection par tags)
+var PROFILS=[
+  {id:'bavard',label:'Bavard',emoji:'💬'},
+  {id:'serieux',label:'Sérieux / moteur',emoji:'⭐'},
+  {id:'difficulte',label:'En difficulté',emoji:'🫶'},
+  {id:'besoin',label:'Besoin particulier',emoji:'🧩'},
+  {id:'timide',label:'Discret / timide',emoji:'🌱'},
+  {id:'agite',label:'Agité',emoji:'⚡'}
+];
+function renderEleveProfils(eleve){
+  var wrap=document.getElementById('em-profils');
+  if(!wrap) return;
+  var current=eleve.profils||[];
+  wrap.innerHTML='';
+  PROFILS.forEach(function(p){
+    var on=current.indexOf(p.id)>=0;
+    var b=document.createElement('button');
+    b.type='button';
+    b.className='profil-tag'+(on?' on':'');
+    b.dataset.pid=p.id;
+    b.innerHTML='<span>'+p.emoji+'</span> '+p.label;
+    b.onclick=function(){b.classList.toggle('on')};
+    wrap.appendChild(b);
+  });
 }
 function renderEleveStamps(eid){
   var wrap=document.getElementById('em-passport-stamps');
@@ -2903,7 +3029,10 @@ function saveEleveMgr(){
   var nomv=norm(document.getElementById('em-nom').value);
   var seed=document.getElementById('em-av-seed').value||LORELEI_SEEDS[0];
   if(!prenom){return}
-  S.eleves=S.eleves.map(function(e){return e.id===S.editEleveId?Object.assign({},e,{groupId:gid,prenom:prenom,nom:nomv,avatarSeed:seed}):e});
+  var profils=[];
+  document.querySelectorAll('#em-profils .profil-tag.on').forEach(function(b){profils.push(b.dataset.pid)});
+  var rang=document.getElementById('em-rang').value||null;
+  S.eleves=S.eleves.map(function(e){return e.id===S.editEleveId?Object.assign({},e,{groupId:gid,prenom:prenom,nom:nomv,avatarSeed:seed,profils:profils,rang:rang}):e});
   saveS();render();closeModal('modal-eleve-mgr');
 }
 function deleteEleve(){
@@ -3621,18 +3750,20 @@ function genGroupes(){
 /* ══════════════════════════════════════════════════════
    PLAN DE CLASSE
 ══════════════════════════════════════════════════════ */
-var PLAN_STATE={tables:[],selectedEleveId:null,draggingTable:null,history:[]};
+var PLAN_STATE={tables:[],selectedEleveId:null,draggingTable:null,history:[],affin:{separer:[],rapprocher:[],aesh:[]}};
 
 // Sauvegarde l'état courant dans l'historique avant une action (max 50 étapes)
 function planSnapshot(){
-  PLAN_STATE.history.push(JSON.stringify(PLAN_STATE.tables));
+  PLAN_STATE.history.push(JSON.stringify({tables:PLAN_STATE.tables,boardPos:PLAN_STATE.boardPos}));
   if(PLAN_STATE.history.length>50) PLAN_STATE.history.shift();
   planSyncUndoBtn();
 }
 // Annule la dernière action (Ctrl+Z / Cmd+Z)
 function planUndo(){
   if(!PLAN_STATE.history.length) return;
-  PLAN_STATE.tables=JSON.parse(PLAN_STATE.history.pop());
+  var snap=JSON.parse(PLAN_STATE.history.pop());
+  if(snap && snap.tables){PLAN_STATE.tables=snap.tables;PLAN_STATE.boardPos=snap.boardPos||'top'}
+  else {PLAN_STATE.tables=snap} // compat anciens snapshots
   planSyncUndoBtn();
   renderPlan();
 }
@@ -3644,6 +3775,13 @@ function openPlanModal(){
   var cls=aCls();
   PLAN_STATE.tables=(cls.plan&&cls.plan.tables)?JSON.parse(JSON.stringify(cls.plan.tables)):[];
   PLAN_STATE.tables.forEach(function(t){if(t.shape==='square') t.shape='round'});
+  var savedAffin=(cls.plan&&cls.plan.affin)?JSON.parse(JSON.stringify(cls.plan.affin)):{};
+  PLAN_STATE.affin={
+    separer:savedAffin.separer||[],
+    rapprocher:savedAffin.rapprocher||[],
+    aesh:savedAffin.aesh||[]
+  };
+  PLAN_STATE.boardPos=(cls.plan&&cls.plan.boardPos)||'top';
   PLAN_STATE.selectedEleveId=null;
   PLAN_STATE.history=[];
   renderPlan();
@@ -3832,10 +3970,61 @@ function planEleveDisplayName(eleve){
   if(sameCount>1) return eleve.prenom+' '+(eleve.nom||'').charAt(0).toUpperCase()+'.';
   return eleve.prenom;
 }
+// Position du tableau (par défaut en haut). Stockée dans PLAN_STATE.boardPos.
+function planBoardPos(){return PLAN_STATE.boardPos||'top'}
+
+// Place visuellement le bandeau TABLEAU selon sa position.
+function planRenderBoard(){
+  var b=document.getElementById('plan-board');
+  if(!b) return;
+  var pos=planBoardPos();
+  // reset
+  b.style.top=b.style.bottom=b.style.left=b.style.right='';
+  if(pos==='top'){b.style.top='8px';b.style.left='50%';b.style.transform='translateX(-50%)';b.style.writingMode='horizontal-tb';b.style.padding='7px 38px'}
+  else if(pos==='bottom'){b.style.bottom='8px';b.style.left='50%';b.style.transform='translateX(-50%)';b.style.writingMode='horizontal-tb';b.style.padding='7px 38px'}
+  else if(pos==='left'){b.style.left='8px';b.style.top='50%';b.style.transform='translateY(-50%)';b.style.writingMode='vertical-rl';b.style.padding='38px 7px'}
+  else if(pos==='right'){b.style.right='8px';b.style.top='50%';b.style.transform='translateY(-50%)';b.style.writingMode='vertical-rl';b.style.padding='38px 7px'}
+  var sel=document.getElementById('plan-board-pos');
+  if(sel) sel.value=pos;
+}
+
+function planSetBoardPos(pos){
+  planSnapshot();
+  PLAN_STATE.boardPos=pos;
+  renderPlan();
+}
+
+// Calcule le rang (1=plus proche du tableau) de chaque table selon sa distance au tableau.
+// L'axe dépend de la position du tableau (vertical pour haut/bas, horizontal pour gauche/droite).
+function planComputeRanks(){
+  var pos=planBoardPos();
+  var canvas=document.getElementById('plan-canvas-wrap');
+  var W=canvas?canvas.clientWidth:600, H=canvas?canvas.clientHeight:540;
+  // distance de chaque table au tableau (plus petit = plus proche)
+  function dist(t){
+    if(pos==='top') return t.y;
+    if(pos==='bottom') return H-t.y;
+    if(pos==='left') return t.x;
+    if(pos==='right') return W-t.x;
+    return t.y;
+  }
+  var tables=PLAN_STATE.tables.slice().sort(function(a,b){return dist(a)-dist(b)});
+  var ranks={};
+  var currentRank=0;
+  var lastD=-9999;
+  tables.forEach(function(t){
+    var d=dist(t);
+    if(d-lastD>35){currentRank++;lastD=d}
+    ranks[t.id]=currentRank;
+  });
+  return ranks;
+}
 function renderPlan(){
   var canvas=document.getElementById('plan-canvas');
   canvas.innerHTML='';
+  planRenderBoard();
   var eleves=cElvs();
+  var ranks=planComputeRanks();
   PLAN_STATE.tables.forEach(function(t){
     var tableEl=document.createElement('div');
     var shape=t.shape||'rect';
@@ -3868,6 +4057,7 @@ function renderPlan(){
     });
 
     tableEl.innerHTML=topHtml+chairsHtml+
+      '<div class="plan-rank-badge" style="position:absolute;top:-9px;left:-9px;width:22px;height:22px;border-radius:50%;background:var(--orange);color:#fff;font-size:.7rem;font-weight:900;display:flex;align-items:center;justify-content:center;border:2px solid #fff;box-shadow:0 2px 5px rgba(0,0,0,.3);transform:rotate('+(-t.rotation)+'deg);z-index:4" title="Rang '+ranks[t.id]+' (proximité du tableau)">'+ranks[t.id]+'</div>'+
       '<div class="plan-table-controls">'+
       '<button class="plan-table-btn" data-action="rotate" data-tid="'+t.id+'" title="Pivoter">↻</button>'+
       '<button class="plan-table-btn" data-action="remove" data-tid="'+t.id+'" title="Supprimer">✕</button>'+
@@ -3888,7 +4078,7 @@ function renderPlan(){
 
   // Pool
   var assigned={};
-  PLAN_STATE.tables.forEach(function(t){t.chairs.forEach(function(eid){if(eid)assigned[eid]=true})});
+  PLAN_STATE.tables.forEach(function(t){t.chairs.forEach(function(eid){if(eid && typeof eid==='string')assigned[eid]=true})});
   var unassigned=eleves.filter(function(e){return !assigned[e.id]});
   var pool=document.getElementById('plan-pool');
   pool.innerHTML='<div style="font-size:.7rem;font-weight:900;color:var(--ink3);text-transform:uppercase;letter-spacing:.08em;width:100%;margin-bottom:4px">Élèves à placer ('+unassigned.length+') — cliquez sur un élève puis sur une chaise vide</div>';
@@ -3911,6 +4101,14 @@ function renderPlan(){
 
 function buildChairHtml(t,i,eleves,pos){
   var eid=t.chairs[i];
+  // Chaise occupée par un AESH (objet {aesh:true,...})
+  if(eid && typeof eid==='object' && eid.aesh){
+    var styleA='position:absolute;left:'+pos.left+'px;top:'+pos.top+'px;width:'+pos.w+'px;height:'+pos.h+'px;transform:rotate('+(-t.rotation)+'deg);border-color:#8b5cf6;';
+    var availA=pos.w-8;
+    var nm=eid.nom||'AESH';
+    var fzA=Math.min(11,Math.max(7,(availA/Math.max(nm.length,1))*1.1));
+    return '<div class="plan-chair occupied chair-aesh" data-tid="'+t.id+'" data-cidx="'+i+'" style="'+styleA+'"><div class="plan-chair-prenom" style="color:#6d28d9;font-size:'+fzA.toFixed(1)+'px">🧑‍🏫</div><div class="plan-chair-nom" style="color:#6d28d9">'+escapeXml(nm)+'</div></div>';
+  }
   var eleve=eid?eleves.find(function(e){return e.id===eid}):null;
   var styleStr='position:absolute;left:'+pos.left+'px;top:'+pos.top+'px;width:'+pos.w+'px;height:'+pos.h+'px;transform:rotate('+(-t.rotation)+'deg);';
   if(eleve){
@@ -4059,10 +4257,243 @@ function enableChairInteraction(chair){
 }
 
 function savePlan(){
-  S.classes=S.classes.map(function(c){return c.id===S.activeClassId?Object.assign({},c,{plan:{tables:PLAN_STATE.tables}}):c});
+  S.classes=S.classes.map(function(c){return c.id===S.activeClassId?Object.assign({},c,{plan:{tables:PLAN_STATE.tables,affin:PLAN_STATE.affin,boardPos:PLAN_STATE.boardPos}}):c});
   saveS();closePlan();
 }
 function printPlan(){window.print()}
+
+/* ══════════════════════════════════════════════════════
+   AFFINITÉS & CONTRAINTES DU PLAN
+══════════════════════════════════════════════════════ */
+function openAffinites(){
+  renderAffinites();
+  openModal('modal-affinites');
+}
+function eleveOptions(selectedId){
+  var opts='<option value="">— choisir —</option>';
+  cElvs().forEach(function(e){
+    opts+='<option value="'+e.id+'"'+(e.id===selectedId?' selected':'')+'>'+escapeXml(planEleveDisplayName(e))+'</option>';
+  });
+  return opts;
+}
+function renderAffinites(){
+  ['separer','rapprocher'].forEach(function(kind){
+    var box=document.getElementById('affin-list-'+kind);
+    var list=PLAN_STATE.affin[kind]||[];
+    if(!list.length){box.innerHTML='<div class="affin-empty">Aucune paire définie.</div>';return}
+    box.innerHTML='';
+    list.forEach(function(pair,i){
+      var row=document.createElement('div');
+      row.className='affin-row';
+      row.innerHTML='<select data-kind="'+kind+'" data-i="'+i+'" data-slot="0">'+eleveOptions(pair[0])+'</select>'+
+        '<span class="affin-link">'+(kind==='separer'?'≠':'+')+'</span>'+
+        '<select data-kind="'+kind+'" data-i="'+i+'" data-slot="1">'+eleveOptions(pair[1])+'</select>'+
+        '<button class="affin-del" data-kind="'+kind+'" data-i="'+i+'" title="Supprimer">✕</button>';
+      box.appendChild(row);
+    });
+  });
+  // AESH
+  var box=document.getElementById('affin-list-aesh');
+  var list=PLAN_STATE.affin.aesh||[];
+  if(!list.length){box.innerHTML='<div class="affin-empty">Aucun accompagnant défini.</div>';}
+  else{
+    box.innerHTML='';
+    list.forEach(function(a,i){
+      var row=document.createElement('div');
+      row.className='affin-row';
+      row.innerHTML='<input type="text" value="'+escapeXml(a.nom||'')+'" placeholder="Nom de l\'AESH" data-aesh-i="'+i+'" data-aesh-f="nom" style="flex:1;min-width:0;border:2px solid var(--border);border-radius:8px;padding:6px 8px;font-weight:700;font-size:.82rem;background:var(--bg2);color:var(--ink)">'+
+        '<span class="affin-link">→</span>'+
+        '<select data-aesh-i="'+i+'" data-aesh-f="eleveId">'+eleveOptions(a.eleveId)+'</select>'+
+        '<button class="affin-del" data-aesh-del="'+i+'" title="Supprimer">✕</button>';
+      box.appendChild(row);
+    });
+  }
+  // Bind events
+  document.querySelectorAll('#modal-affinites select[data-kind]').forEach(function(sel){
+    sel.onchange=function(){
+      var k=sel.dataset.kind,i=+sel.dataset.i,slot=+sel.dataset.slot;
+      PLAN_STATE.affin[k][i][slot]=sel.value;
+    };
+  });
+  document.querySelectorAll('#modal-affinites .affin-del[data-kind]').forEach(function(b){
+    b.onclick=function(){PLAN_STATE.affin[b.dataset.kind].splice(+b.dataset.i,1);renderAffinites()};
+  });
+  document.querySelectorAll('#modal-affinites [data-aesh-i]').forEach(function(inp){
+    inp.onchange=function(){
+      var i=+inp.dataset.aeshI,f=inp.dataset.aeshF;
+      PLAN_STATE.affin.aesh[i][f]=inp.value;
+    };
+  });
+  document.querySelectorAll('#modal-affinites .affin-del[data-aesh-del]').forEach(function(b){
+    b.onclick=function(){PLAN_STATE.affin.aesh.splice(+b.dataset.aeshDel,1);renderAffinites()};
+  });
+}
+function addAffinPair(kind){
+  PLAN_STATE.affin[kind].push(['','']);
+  renderAffinites();
+}
+function addAesh(){
+  PLAN_STATE.affin.aesh.push({id:uid('aesh'),nom:'',eleveId:''});
+  renderAffinites();
+}
+
+/* ══════════════════════════════════════════════════════
+   PLACEMENT INTELLIGENT
+   Respecte au mieux : rangs imposés, paires à séparer/rapprocher,
+   équilibrage bavards/sérieux/en-difficulté, et AESH à côté de leur élève.
+══════════════════════════════════════════════════════ */
+function planEleveById(id){return cElvs().find(function(e){return e.id===id})}
+function elhasProfil(e,p){return (e.profils||[]).indexOf(p)>=0}
+
+// Construit la liste des sièges avec leur table et rang.
+function planBuildSeats(){
+  var ranks=planComputeRanks();
+  var seats=[];
+  PLAN_STATE.tables.forEach(function(t){
+    for(var k=0;k<t.seats;k++){
+      seats.push({tid:t.id,cidx:k,rang:ranks[t.id]||1});
+    }
+  });
+  return seats;
+}
+
+// Score d'une configuration : plus c'est bas, mieux c'est (0 = parfait).
+function planScoreConfig(assign,seats,seatByKey){
+  // assign : map eleveId -> {tid,cidx}
+  var penalty=0;
+  var sep=PLAN_STATE.affin.separer||[];
+  var rap=PLAN_STATE.affin.rapprocher||[];
+  // Helper : deux élèves à la même table ?
+  function sameTable(a,b){return assign[a]&&assign[b]&&assign[a].tid===assign[b].tid}
+  // 1. Paires à séparer (forte pénalité si même table)
+  sep.forEach(function(p){if(p[0]&&p[1]&&sameTable(p[0],p[1])) penalty+=100});
+  // 2. Paires à rapprocher (pénalité si PAS même table)
+  rap.forEach(function(p){if(p[0]&&p[1]&&assign[p[0]]&&assign[p[1]]&&!sameTable(p[0],p[1])) penalty+=60});
+  // 3. Rang imposé
+  cElvs().forEach(function(e){
+    if(!e.rang||!assign[e.id]) return;
+    var seatRang=assign[e.id].rang;
+    var want=parseInt(e.rang);
+    if(seatRang>want) penalty+=40*(seatRang-want); // placé trop loin du tableau
+  });
+  // 4. Équilibrage par table : éviter 2+ bavards/agités ensemble, idéalement 1 sérieux par table
+  var byTable={};
+  Object.keys(assign).forEach(function(eid){
+    var tid=assign[eid].tid;(byTable[tid]=byTable[tid]||[]).push(eid);
+  });
+  Object.keys(byTable).forEach(function(tid){
+    var ids=byTable[tid];
+    var bavards=0,serieux=0,difficulte=0,agites=0;
+    ids.forEach(function(eid){
+      var e=planEleveById(eid);if(!e)return;
+      if(elhasProfil(e,'bavard'))bavards++;
+      if(elhasProfil(e,'serieux'))serieux++;
+      if(elhasProfil(e,'difficulte'))difficulte++;
+      if(elhasProfil(e,'agite'))agites++;
+    });
+    if(bavards>1) penalty+=25*(bavards-1);
+    if(agites>1) penalty+=25*(agites-1);
+    // élève en difficulté sans sérieux à la même table = occasion manquée
+    if(difficulte>0 && serieux===0 && ids.length>1) penalty+=15*difficulte;
+  });
+  return penalty;
+}
+
+function planSmartAssign(){
+  var seats=planBuildSeats();
+  if(!seats.length){customAlert('Ajoutez d\'abord des tables avant de lancer le placement.','Plan de classe');return}
+  var eleves=cElvsPresents().slice();
+  if(!eleves.length){customAlert('Aucun élève présent à placer.','Plan de classe');return}
+  // AESH valides (avec un élève rattaché présent)
+  var aeshList=(PLAN_STATE.affin.aesh||[]).filter(function(a){
+    return a.eleveId && eleves.some(function(e){return e.id===a.eleveId});
+  });
+  var needSeats=eleves.length+aeshList.length;
+  if(needSeats>seats.length){
+    customAlert('Pas assez de chaises : '+needSeats+' personne(s) à placer pour '+seats.length+' chaise(s). Ajoutez des tables.','Plan de classe');
+    return;
+  }
+  customConfirm('Lancer le placement intelligent de '+eleves.length+' élève(s)'+(aeshList.length?' et '+aeshList.length+' AESH':'')+' ? Le placement actuel sera remplacé.',function(){
+    planSnapshot();
+    var best=null,bestScore=Infinity;
+    // Plusieurs essais aléatoires + on garde le meilleur (recuit léger)
+    for(var attempt=0;attempt<400;attempt++){
+      var assign=planTryAssign(eleves,seats);
+      if(!assign) continue;
+      var sc=planScoreConfig(assign,seats);
+      if(sc<bestScore){bestScore=sc;best=assign;if(sc===0)break}
+    }
+    if(!best){customAlert('Impossible de générer un placement.','Plan de classe');return}
+    // Applique
+    PLAN_STATE.tables.forEach(function(t){t.chairs=Array(t.seats).fill(null)});
+    Object.keys(best).forEach(function(eid){
+      var s=best[eid];
+      var t=PLAN_STATE.tables.find(function(x){return x.id===s.tid});
+      if(t) t.chairs[s.cidx]=eid;
+    });
+    // Place les AESH sur une chaise voisine (même table) libre
+    planPlaceAesh(aeshList);
+    renderPlan();
+    setTimeout(function(){
+      var msg=bestScore===0?'✅ Placement parfait : toutes les contraintes sont respectées !':'Placement optimisé (score de contraintes : '+bestScore+', plus c\'est bas mieux c\'est). Certaines contraintes peuvent rester partiellement non satisfaites si elles sont contradictoires.';
+      customAlert(msg,'Placement intelligent');
+    },250);
+  });
+}
+
+// Génère une affectation respectant les rangs imposés en priorité, puis aléatoire.
+function planTryAssign(eleves,seats){
+  var freeSeats=seats.slice();
+  // mélange
+  for(var i=freeSeats.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=freeSeats[i];freeSeats[i]=freeSeats[j];freeSeats[j]=t}
+  var assign={};
+  var elvShuffled=eleves.slice();
+  for(var i=elvShuffled.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=elvShuffled[i];elvShuffled[i]=elvShuffled[j];elvShuffled[j]=t}
+  // 1. Place d'abord les élèves avec rang imposé (les plus contraints : rang 1 d'abord)
+  var contraints=elvShuffled.filter(function(e){return e.rang}).sort(function(a,b){return parseInt(a.rang)-parseInt(b.rang)});
+  var libres=elvShuffled.filter(function(e){return !e.rang});
+  var ok=true;
+  contraints.forEach(function(e){
+    var want=parseInt(e.rang);
+    // cherche un siège de rang <= want
+    var idx=freeSeats.findIndex(function(s){return s.rang<=want});
+    if(idx<0) idx=freeSeats.findIndex(function(s){return true}); // fallback : n'importe lequel
+    if(idx<0){ok=false;return}
+    assign[e.id]=freeSeats[idx];freeSeats.splice(idx,1);
+  });
+  if(!ok) return null;
+  // 2. Place les autres au hasard sur les sièges restants
+  libres.forEach(function(e){
+    if(!freeSeats.length)return;
+    assign[e.id]=freeSeats.shift();
+  });
+  return assign;
+}
+
+// Place chaque AESH sur une chaise libre de la même table que son élève (sinon table adjacente).
+function planPlaceAesh(aeshList){
+  aeshList.forEach(function(a){
+    // Trouve la table de l'élève rattaché
+    var hostTable=PLAN_STATE.tables.find(function(t){return t.chairs.indexOf(a.eleveId)>=0});
+    if(!hostTable) return;
+    var freeIdx=hostTable.chairs.indexOf(null);
+    if(freeIdx>=0){
+      hostTable.chairs[freeIdx]={aesh:true,id:a.id,nom:a.nom||'AESH'};
+      return;
+    }
+    // Pas de place à la table : cherche la table la plus proche avec une chaise libre
+    var others=PLAN_STATE.tables.filter(function(t){return t!==hostTable && t.chairs.indexOf(null)>=0});
+    others.sort(function(t1,t2){
+      var d1=Math.hypot(t1.x-hostTable.x,t1.y-hostTable.y);
+      var d2=Math.hypot(t2.x-hostTable.x,t2.y-hostTable.y);
+      return d1-d2;
+    });
+    if(others.length){
+      var t=others[0];var fi=t.chairs.indexOf(null);
+      t.chairs[fi]={aesh:true,id:a.id,nom:a.nom||'AESH'};
+    }
+  });
+}
 
 /* ══════════════════════════════════════════════════════
    EXPORT PDF DE LA CLASSE

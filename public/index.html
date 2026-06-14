@@ -520,6 +520,23 @@ body.pdf-printing #pdf-export-area{display:block}
 .dash-tasks-add{display:flex;gap:6px;padding-top:8px;border-top:2px solid var(--border)}
 .accent-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:4px}
 .profil-row{display:flex;gap:7px;flex-wrap:wrap;margin-top:4px}
+.em-histo{display:flex;flex-direction:column;gap:6px;max-height:220px;overflow-y:auto;padding:4px;background:var(--bg3);border:2px solid var(--border);border-radius:var(--r);margin-top:4px}
+.em-histo-row{display:flex;align-items:center;justify-content:space-between;gap:8px;background:var(--bg2);border:2px solid var(--border);border-radius:10px;padding:7px 10px}
+.em-histo-main{display:flex;align-items:center;gap:9px;min-width:0;flex:1}
+.em-histo-icon{font-size:1.1rem;flex-shrink:0}
+.em-histo-text{display:flex;flex-direction:column;min-width:0}
+.em-histo-text strong{font-size:.85rem;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.em-histo-meta{font-size:.68rem;color:var(--ink3);font-weight:700}
+.em-histo-right{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.em-histo-badge{font-weight:900;font-size:.78rem;padding:3px 8px;border-radius:99px;white-space:nowrap}
+.badge-pos{background:#dcfce7;color:#15803d}
+.badge-neg{background:#fee2e2;color:#b91c1c}
+.badge-stamp{background:#fef3c7;color:#a16207}
+html[data-theme="dark"] .badge-pos{background:#143524;color:#4ade80}
+html[data-theme="dark"] .badge-neg{background:#3a1818;color:#f87171}
+html[data-theme="dark"] .badge-stamp{background:#3a3015;color:#fbbf24}
+.em-histo-del{width:26px;height:26px;flex-shrink:0;border-radius:8px;border:2px solid var(--border);background:var(--bg2);color:var(--ink3);font-weight:900;cursor:pointer;font-size:.72rem;display:flex;align-items:center;justify-content:center;transition:.12s}
+.em-histo-del:hover{background:var(--red);color:#fff;border-color:var(--red)}
 .affin-section{margin-bottom:18px;padding:14px;background:var(--bg3);border:2px solid var(--border);border-radius:var(--r2)}
 .affin-head{display:flex;justify-content:space-between;align-items:center;font-weight:900;font-size:.9rem;margin-bottom:10px}
 .affin-list{display:flex;flex-direction:column;gap:8px}
@@ -1175,6 +1192,10 @@ body.pdf-printing #pdf-export-area{display:block}
       <option value="2">Rang 2 ou plus proche</option>
       <option value="3">Rang 3 ou plus proche</option>
     </select>
+  </div>
+  <div class="field" style="margin-top:6px">
+    <label>Historique des points &amp; tampons</label>
+    <div id="em-historique" class="em-histo"></div>
   </div>
   <div class="form-actions" style="justify-content:space-between;margin-top:14px">
     <button class="btn btn-danger btn-sm" onclick="deleteEleve()">Supprimer</button>
@@ -2972,7 +2993,103 @@ function openEleveMgr(eid){
   }
   renderEleveProfils(eleve);
   document.getElementById('em-rang').value=eleve.rang||'';
+  renderEleveHistorique(eid);
   openModal('modal-eleve-mgr');
+}
+// Historique des actions (points + tampons) concernant un élève précis, avec retrait individuel.
+function renderEleveHistorique(eid){
+  var wrap=document.getElementById('em-historique');
+  if(!wrap) return;
+  // Filtre le journal global pour ne garder que les entrées touchant cet élève
+  var entrees=S.journal.filter(function(j){
+    return j.eleveIds && j.eleveIds.indexOf(eid)>=0;
+  });
+  if(!entrees.length){
+    wrap.innerHTML='<div class="empty" style="font-size:.78rem">Aucune action enregistrée pour cet élève.</div>';
+    return;
+  }
+  wrap.innerHTML='';
+  entrees.forEach(function(j){
+    var row=document.createElement('div');
+    row.className='em-histo-row';
+    var isStamp=j.kind==='stamp';
+    var collectif=j.eleveIds.length>1;
+    var icon=j.behIcon||(isStamp?'🏅':'•');
+    var valTxt='';
+    if(isStamp){valTxt='<span class="em-histo-badge badge-stamp">🏅 Tampon</span>'}
+    else{
+      var v=j.behVal||j.val||0;
+      valTxt='<span class="em-histo-badge '+(v>0?'badge-pos':'badge-neg')+'">'+(v>0?'+':'')+v+'</span>';
+    }
+    row.innerHTML=''
+      +'<div class="em-histo-main">'
+      +'<span class="em-histo-icon">'+icon+'</span>'
+      +'<div class="em-histo-text"><strong>'+escapeXml(j.behLib||j.lib)+'</strong>'
+      +'<span class="em-histo-meta">'+escapeXml(j.ts||'')+(collectif?' • action collective ('+j.eleveIds.length+')':'')+'</span></div>'
+      +'</div>'
+      +'<div class="em-histo-right">'+valTxt
+      +'<button class="em-histo-del" title="Retirer cette action pour '+escapeXml(eleveById(eid)?eleveById(eid).prenom:'l\'élève')+'" data-jid="'+j.id+'" data-eid="'+eid+'">✕</button>'
+      +'</div>';
+    wrap.appendChild(row);
+  });
+  // Bind les boutons de retrait
+  wrap.querySelectorAll('.em-histo-del').forEach(function(b){
+    b.onclick=function(){removeHistoEntryForEleve(b.dataset.jid,b.dataset.eid)};
+  });
+}
+function eleveById(id){return S.eleves.find(function(e){return e.id===id})}
+
+// Retire l'effet d'une action UNIQUEMENT pour un élève (utile pour les actions collectives).
+function removeHistoEntryForEleve(entryId,eid){
+  var j=S.journal.find(function(x){return x.id===entryId});
+  if(!j){return}
+  var el=eleveById(eid);
+  var nom=el?el.prenom:'l\'élève';
+  customConfirm('Retirer « '+(j.behLib||j.lib)+' » pour '+nom+' ?',function(){
+    if(j.kind==='stamp'){
+      // Retire un tampon de cet élève correspondant à cette action
+      if(j.stampId){
+        for(var i=0;i<S.passport.length;i++){
+          if(S.passport[i].eleveId===eid && S.passport[i].stampId===j.stampId){
+            // priorité : retirer celui dont l'id est dans passportIds si présent
+            S.passport.splice(i,1);break;
+          }
+        }
+      }
+    } else {
+      // Inverse les points + décrémente le compteur de comportement pour CET élève
+      var val=j.behVal||j.val||0;
+      var lib=j.behLib||j.lib;
+      S.eleves=S.eleves.map(function(e){
+        if(e.id!==eid) return e;
+        var nE=Object.assign({},e,{score:(e.score||0)-val});
+        if(val>0) nE.pointsBonus=Math.max(0,(e.pointsBonus||0)-val);
+        else if(val<0) nE.pointsMalus=Math.max(0,(e.pointsMalus||0)-Math.abs(val));
+        var beh=Object.assign({},e.behaviors||{});
+        if(beh[lib]){
+          var nC=beh[lib].count-1;
+          if(nC<=0) delete beh[lib]; else beh[lib]=Object.assign({},beh[lib],{count:nC});
+        }
+        nE.behaviors=beh;
+        return nE;
+      });
+    }
+    // Met à jour l'entrée du journal : retire cet élève de la cible
+    var remaining=j.eleveIds.filter(function(x){return x!==eid});
+    if(j.passportIds){
+      // on ne sait pas exactement quel pid, on en retire un (cosmétique)
+      j.passportIds=j.passportIds.slice(1);
+    }
+    if(remaining.length===0){
+      // plus personne : on supprime l'entrée
+      S.journal=S.journal.filter(function(x){return x.id!==entryId});
+    } else {
+      j.eleveIds=remaining;
+    }
+    saveS();render();
+    renderEleveHistorique(eid);
+    if(aCls().passportEnabled) renderEleveStamps(eid);
+  });
 }
 // Profils d'élève pour le plan de classe (multi-sélection par tags)
 var PROFILS=[

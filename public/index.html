@@ -4127,13 +4127,13 @@ function buildChairHtml(t,i,eleves,pos){
   return '<div class="plan-chair" data-tid="'+t.id+'" data-cidx="'+i+'" style="'+styleStr+'">+</div>';
 }
 function enableTableDrag(el){
-  var startX,startY,origX,origY,dragging=false;
+  var startX,startY,origX,origY,dragging=false,moved=false;
   function onPointerDown(ev){
     if(ev.target.closest('.plan-chair, .plan-table-btn')) return;
     ev.preventDefault();
     var t=PLAN_STATE.tables.find(function(x){return x.id===el.dataset.tid});
     if(!t) return;
-    dragging=true;el.classList.add('dragging');
+    dragging=true;moved=false;el.classList.add('dragging');
     var pt=ev.touches?ev.touches[0]:ev;
     startX=pt.clientX;startY=pt.clientY;
     origX=t.x;origY=t.y;
@@ -4145,6 +4145,7 @@ function enableTableDrag(el){
     if(!dragging) return;
     var t=PLAN_STATE.tables.find(function(x){return x.id===el.dataset.tid});
     if(!t) return;
+    if(!moved){planSnapshot();moved=true}
     var pt=ev.touches?ev.touches[0]:ev;
     t.x=origX+(pt.clientX-startX);
     t.y=origY+(pt.clientY-startY);
@@ -4160,6 +4161,8 @@ function enableTableDrag(el){
     dragging=false;el.classList.remove('dragging');
     document.removeEventListener('pointermove',onPointerMove);
     document.removeEventListener('pointerup',onPointerUp);
+    // Si la table a bougé, recalcule les rangs et rafraîchit (badges à jour)
+    if(moved) renderPlan();
   }
   el.addEventListener('pointerdown',onPointerDown);
 }
@@ -4376,6 +4379,13 @@ function planScoreConfig(assign,seats,seatByKey){
     var want=parseInt(e.rang);
     if(seatRang>want) penalty+=40*(seatRang-want); // placé trop loin du tableau
   });
+  // 3bis. Élèves en difficulté (sans rang imposé) : on les veut sur les rangs 1-3
+  cElvs().forEach(function(e){
+    if(e.rang||!assign[e.id]) return; // déjà géré par le rang imposé
+    if(!elhasProfil(e,'difficulte')) return;
+    var seatRang=assign[e.id].rang;
+    if(seatRang>3) penalty+=20*(seatRang-3); // au-delà du 3e rang, pénalité croissante
+  });
   // 4. Équilibrage par table : éviter 2+ bavards/agités ensemble, idéalement 1 sérieux par table
   var byTable={};
   Object.keys(assign).forEach(function(eid){
@@ -4408,91 +4418,146 @@ function planSmartAssign(){
   var aeshList=(PLAN_STATE.affin.aesh||[]).filter(function(a){
     return a.eleveId && eleves.some(function(e){return e.id===a.eleveId});
   });
+  // Vérifie qu'aucun élève n'a deux AESH (1 AESH par élève pour la garantie de voisinage)
   var needSeats=eleves.length+aeshList.length;
   if(needSeats>seats.length){
-    customAlert('Pas assez de chaises : '+needSeats+' personne(s) à placer pour '+seats.length+' chaise(s). Ajoutez des tables.','Plan de classe');
+    customAlert('Pas assez de chaises : '+needSeats+' personne(s) à placer pour '+seats.length+' chaise(s). Ajoutez des tables ou des places.','Plan de classe');
     return;
   }
-  customConfirm('Lancer le placement intelligent de '+eleves.length+' élève(s)'+(aeshList.length?' et '+aeshList.length+' AESH':'')+' ? Le placement actuel sera remplacé.',function(){
+  // Vérifie qu'il existe au moins une table de 2+ places par élève suivi par une AESH
+  var bigTables=PLAN_STATE.tables.filter(function(t){return t.seats>=2});
+  if(aeshList.length>bigTables.length){
+    customAlert('Chaque AESH doit être à côté de son élève : il faut au moins une table de 2 places (ou plus) par AESH. Vous avez '+aeshList.length+' AESH mais seulement '+bigTables.length+' table(s) de 2 places ou plus.','Plan de classe — AESH');
+    return;
+  }
+  customConfirm('Lancer le placement intelligent de '+eleves.length+' élève(s)'+(aeshList.length?' et '+aeshList.length+' AESH (placée(s) à côté de leur élève)':'')+' ?\n\nLes tables ne seront pas déplacées, seuls les élèves seront réorganisés sur les chaises.',function(){
     planSnapshot();
-    var best=null,bestScore=Infinity;
-    // Plusieurs essais aléatoires + on garde le meilleur (recuit léger)
-    for(var attempt=0;attempt<400;attempt++){
-      var assign=planTryAssign(eleves,seats);
-      if(!assign) continue;
-      var sc=planScoreConfig(assign,seats);
-      if(sc<bestScore){bestScore=sc;best=assign;if(sc===0)break}
+    var best=null,bestScore=Infinity,bestAesh=null;
+    for(var attempt=0;attempt<600;attempt++){
+      var result=planTryAssign(eleves,aeshList);
+      if(!result) continue;
+      var sc=planScoreConfig(result.assign);
+      if(sc<bestScore){bestScore=sc;best=result.assign;bestAesh=result.aeshSeats;if(sc===0)break}
     }
-    if(!best){customAlert('Impossible de générer un placement.','Plan de classe');return}
-    // Applique
+    if(!best){
+      customAlert('Impossible de placer toutes les AESH à côté de leur élève avec la disposition actuelle. Vérifiez qu\'il y a assez de tables de 2+ places.','Plan de classe — AESH');
+      return;
+    }
+    // Applique SANS toucher aux tables (positions inchangées)
     PLAN_STATE.tables.forEach(function(t){t.chairs=Array(t.seats).fill(null)});
     Object.keys(best).forEach(function(eid){
       var s=best[eid];
       var t=PLAN_STATE.tables.find(function(x){return x.id===s.tid});
       if(t) t.chairs[s.cidx]=eid;
     });
-    // Place les AESH sur une chaise voisine (même table) libre
-    planPlaceAesh(aeshList);
+    // Place les AESH sur la chaise réservée à côté de leur élève
+    bestAesh.forEach(function(as){
+      var t=PLAN_STATE.tables.find(function(x){return x.id===as.tid});
+      if(t) t.chairs[as.cidx]={aesh:true,id:as.aeshId,nom:as.nom};
+    });
     renderPlan();
     setTimeout(function(){
-      var msg=bestScore===0?'✅ Placement parfait : toutes les contraintes sont respectées !':'Placement optimisé (score de contraintes : '+bestScore+', plus c\'est bas mieux c\'est). Certaines contraintes peuvent rester partiellement non satisfaites si elles sont contradictoires.';
+      var msg=bestScore===0?'✅ Placement parfait : toutes les contraintes sont respectées !':'Placement optimisé (score de contraintes : '+bestScore+', plus c\'est bas mieux c\'est). Les contraintes obligatoires (AESH, rangs) sont respectées ; certaines préférences peuvent rester partielles si elles se contredisent.';
       customAlert(msg,'Placement intelligent');
     },250);
   });
 }
 
-// Génère une affectation respectant les rangs imposés en priorité, puis aléatoire.
-function planTryAssign(eleves,seats){
-  var freeSeats=seats.slice();
-  // mélange
-  for(var i=freeSeats.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=freeSeats[i];freeSeats[i]=freeSeats[j];freeSeats[j]=t}
+// Génère une affectation complète. Retourne {assign, aeshSeats} ou null si impossible.
+// Ordre : 1) réserver les paires (élève+AESH) sur une même table, 2) rangs imposés,
+//         3) élèves en difficulté vers les rangs 1-3, 4) le reste au hasard.
+function planTryAssign(eleves,aeshList){
+  // Reconstruit la liste fraîche des sièges libres (les tables ne bougent pas)
+  var seats=planBuildSeats();
+  var freeByTable={};
+  PLAN_STATE.tables.forEach(function(t){freeByTable[t.id]=[]});
+  seats.forEach(function(s){freeByTable[s.tid].push(s)});
+  // mélange les sièges dans chaque table et l'ordre des tables
+  Object.keys(freeByTable).forEach(function(tid){shuffle(freeByTable[tid])});
+
   var assign={};
-  var elvShuffled=eleves.slice();
-  for(var i=elvShuffled.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=elvShuffled[i];elvShuffled[i]=elvShuffled[j];elvShuffled[j]=t}
-  // 1. Place d'abord les élèves avec rang imposé (les plus contraints : rang 1 d'abord)
-  var contraints=elvShuffled.filter(function(e){return e.rang}).sort(function(a,b){return parseInt(a.rang)-parseInt(b.rang)});
-  var libres=elvShuffled.filter(function(e){return !e.rang});
+  var aeshSeats=[];
+  var usedEleveIds={};
+
+  // ---- 1. AESH : réserver une table de 2+ places, asseoir l'élève + l'AESH côte à côte ----
+  var aeshShuffled=aeshList.slice();shuffle(aeshShuffled);
+  var tablesOrder=PLAN_STATE.tables.slice();shuffle(tablesOrder);
   var ok=true;
-  contraints.forEach(function(e){
-    var want=parseInt(e.rang);
-    // cherche un siège de rang <= want
-    var idx=freeSeats.findIndex(function(s){return s.rang<=want});
-    if(idx<0) idx=freeSeats.findIndex(function(s){return true}); // fallback : n'importe lequel
-    if(idx<0){ok=false;return}
-    assign[e.id]=freeSeats[idx];freeSeats.splice(idx,1);
+  aeshShuffled.forEach(function(a){
+    if(!ok) return;
+    var eleve=eleves.find(function(e){return e.id===a.eleveId});
+    if(!eleve){return}
+    // cherche une table ayant au moins 2 sièges libres
+    var hostId=null;
+    for(var k=0;k<tablesOrder.length;k++){
+      var tid=tablesOrder[k].id;
+      if(freeByTable[tid] && freeByTable[tid].length>=2){
+        // si l'élève a un rang imposé, vérifier que la table le respecte
+        if(eleve.rang){
+          var want=parseInt(eleve.rang);
+          if(freeByTable[tid][0].rang>want) continue;
+        }
+        hostId=tid;break;
+      }
+    }
+    if(hostId===null){ok=false;return}
+    var sEleve=freeByTable[hostId].shift();
+    var sAesh=freeByTable[hostId].shift();
+    assign[eleve.id]=sEleve;usedEleveIds[eleve.id]=true;
+    aeshSeats.push({tid:sAesh.tid,cidx:sAesh.cidx,aeshId:a.id,nom:a.nom||'AESH'});
   });
   if(!ok) return null;
-  // 2. Place les autres au hasard sur les sièges restants
-  libres.forEach(function(e){
-    if(!freeSeats.length)return;
-    assign[e.id]=freeSeats.shift();
+
+  // Reconstruit une liste plate des sièges encore libres
+  function flatFree(){
+    var arr=[];Object.keys(freeByTable).forEach(function(tid){arr=arr.concat(freeByTable[tid])});return arr;
+  }
+  function takeSeat(predicate){
+    // retire et renvoie le premier siège libre satisfaisant predicate (ou n'importe lequel si non trouvé)
+    var all=flatFree();
+    var pick=all.find(predicate)|| all[0];
+    if(!pick) return null;
+    var lst=freeByTable[pick.tid];
+    lst.splice(lst.indexOf(pick),1);
+    return pick;
+  }
+
+  // ---- 2. Élèves avec rang imposé (hors ceux déjà placés via AESH) ----
+  var restants=eleves.filter(function(e){return !usedEleveIds[e.id]});
+  shuffle(restants);
+  var contraints=restants.filter(function(e){return e.rang}).sort(function(a,b){return parseInt(a.rang)-parseInt(b.rang)});
+  contraints.forEach(function(e){
+    if(usedEleveIds[e.id])return;
+    var want=parseInt(e.rang);
+    var s=takeSeat(function(x){return x.rang<=want});
+    if(!s){ok=false;return}
+    assign[e.id]=s;usedEleveIds[e.id]=true;
   });
-  return assign;
+  if(!ok) return null;
+
+  // ---- 3. Élèves "en difficulté" sans rang imposé → rangs 1 à 3 en priorité ----
+  var difficiles=restants.filter(function(e){return !e.rang && !usedEleveIds[e.id] && elhasProfil(e,'difficulte')});
+  difficiles.forEach(function(e){
+    var s=takeSeat(function(x){return x.rang<=3});
+    if(!s)return;
+    assign[e.id]=s;usedEleveIds[e.id]=true;
+  });
+
+  // ---- 4. Tous les autres au hasard ----
+  var autres=restants.filter(function(e){return !usedEleveIds[e.id]});
+  autres.forEach(function(e){
+    var s=takeSeat(function(){return true});
+    if(!s)return;
+    assign[e.id]=s;usedEleveIds[e.id]=true;
+  });
+
+  return {assign:assign,aeshSeats:aeshSeats};
 }
 
-// Place chaque AESH sur une chaise libre de la même table que son élève (sinon table adjacente).
-function planPlaceAesh(aeshList){
-  aeshList.forEach(function(a){
-    // Trouve la table de l'élève rattaché
-    var hostTable=PLAN_STATE.tables.find(function(t){return t.chairs.indexOf(a.eleveId)>=0});
-    if(!hostTable) return;
-    var freeIdx=hostTable.chairs.indexOf(null);
-    if(freeIdx>=0){
-      hostTable.chairs[freeIdx]={aesh:true,id:a.id,nom:a.nom||'AESH'};
-      return;
-    }
-    // Pas de place à la table : cherche la table la plus proche avec une chaise libre
-    var others=PLAN_STATE.tables.filter(function(t){return t!==hostTable && t.chairs.indexOf(null)>=0});
-    others.sort(function(t1,t2){
-      var d1=Math.hypot(t1.x-hostTable.x,t1.y-hostTable.y);
-      var d2=Math.hypot(t2.x-hostTable.x,t2.y-hostTable.y);
-      return d1-d2;
-    });
-    if(others.length){
-      var t=others[0];var fi=t.chairs.indexOf(null);
-      t.chairs[fi]={aesh:true,id:a.id,nom:a.nom||'AESH'};
-    }
-  });
+// Mélange un tableau en place (Fisher-Yates)
+function shuffle(arr){
+  for(var i=arr.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=arr[i];arr[i]=arr[j];arr[j]=t}
+  return arr;
 }
 
 /* ══════════════════════════════════════════════════════

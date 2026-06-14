@@ -4477,6 +4477,48 @@ function planBuildSeats(){
   return seats;
 }
 
+// Renvoie, pour une table, la liste des indices de chaises adjacentes à une chaise donnée.
+// "Adjacent" = chaises dont les centres sont les plus proches (côte à côte physiquement).
+function planChairNeighbors(t,cidx){
+  var layout=planTableLayout(t);
+  var chairs=layout.chairs;
+  if(!chairs||chairs.length<2) return [];
+  function center(c){return {x:c.left+c.w/2,y:c.top+c.h/2}}
+  var me=center(chairs[cidx]);
+  var dists=[];
+  for(var i=0;i<chairs.length;i++){
+    if(i===cidx) continue;
+    var c=center(chairs[i]);
+    var d=Math.hypot(c.x-me.x,c.y-me.y);
+    dists.push({idx:i,d:d});
+  }
+  dists.sort(function(a,b){return a.d-b.d});
+  if(!dists.length) return [];
+  // Seuil : on garde les chaises dont la distance est proche de la plus petite (côte à côte).
+  // Pour une table rectangulaire 2 rangées, la chaise voisine sur la même rangée est nettement plus proche
+  // que celle d'en face. On tolère 35% au-dessus du minimum.
+  var dmin=dists[0].d;
+  var voisins=[];
+  dists.forEach(function(o){ if(o.d<=dmin*1.35+1) voisins.push(o.idx) });
+  return voisins;
+}
+
+// Trouve une paire de chaises LIBRES et ADJACENTES sur une table donnée.
+// freeIdxs : tableau des indices de chaises encore libres sur cette table.
+// Renvoie [idxEleve, idxAesh] ou null.
+function planFindAdjacentPair(t,freeIdxs){
+  for(var i=0;i<freeIdxs.length;i++){
+    var ci=freeIdxs[i];
+    var voisins=planChairNeighbors(t,ci);
+    for(var j=0;j<voisins.length;j++){
+      if(freeIdxs.indexOf(voisins[j])>=0){
+        return [ci,voisins[j]];
+      }
+    }
+  }
+  return null;
+}
+
 // Score d'une configuration : plus c'est bas, mieux c'est (0 = parfait).
 function planScoreConfig(assign,seats,seatByKey){
   // assign : map eleveId -> {tid,cidx}
@@ -4596,7 +4638,7 @@ function planTryAssign(eleves,aeshList){
   var aeshSeats=[];
   var usedEleveIds={};
 
-  // ---- 1. AESH : réserver une table de 2+ places, asseoir l'élève + l'AESH côte à côte ----
+  // ---- 1. AESH : réserver une PAIRE DE CHAISES ADJACENTES, élève + AESH côte à côte ----
   var aeshShuffled=aeshList.slice();shuffle(aeshShuffled);
   var tablesOrder=PLAN_STATE.tables.slice();shuffle(tablesOrder);
   var ok=true;
@@ -4604,22 +4646,28 @@ function planTryAssign(eleves,aeshList){
     if(!ok) return;
     var eleve=eleves.find(function(e){return e.id===a.eleveId});
     if(!eleve){return}
-    // cherche une table ayant au moins 2 sièges libres
-    var hostId=null;
+    // cherche une table avec une paire de chaises libres ADJACENTES
+    var hostId=null,pair=null;
     for(var k=0;k<tablesOrder.length;k++){
-      var tid=tablesOrder[k].id;
-      if(freeByTable[tid] && freeByTable[tid].length>=2){
-        // si l'élève a un rang imposé, vérifier que la table le respecte
-        if(eleve.rang){
-          var want=parseInt(eleve.rang);
-          if(freeByTable[tid][0].rang>want) continue;
-        }
-        hostId=tid;break;
+      var t=tablesOrder[k];
+      var libres=freeByTable[t.id];
+      if(!libres || libres.length<2) continue;
+      // si l'élève a un rang imposé, vérifier que la table le respecte
+      if(eleve.rang){
+        var want=parseInt(eleve.rang);
+        if(libres[0].rang>want) continue;
       }
+      var freeIdxs=libres.map(function(s){return s.cidx});
+      var found=planFindAdjacentPair(t,freeIdxs);
+      if(found){hostId=t.id;pair=found;break}
     }
     if(hostId===null){ok=false;return}
-    var sEleve=freeByTable[hostId].shift();
-    var sAesh=freeByTable[hostId].shift();
+    // Retire les deux chaises de la paire des sièges libres de la table
+    var libres=freeByTable[hostId];
+    var sEleve=libres.find(function(s){return s.cidx===pair[0]});
+    var sAesh=libres.find(function(s){return s.cidx===pair[1]});
+    libres.splice(libres.indexOf(sEleve),1);
+    libres.splice(libres.indexOf(sAesh),1);
     assign[eleve.id]=sEleve;usedEleveIds[eleve.id]=true;
     aeshSeats.push({tid:sAesh.tid,cidx:sAesh.cidx,aeshId:a.id,nom:a.nom||'AESH'});
   });

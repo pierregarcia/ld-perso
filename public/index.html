@@ -408,6 +408,20 @@ footer{width:100%;background:var(--bg2);border-top:2.5px solid var(--ink);paddin
 .tirage-grp-members{display:flex;flex-wrap:wrap;gap:6px}
 .tirage-grp-pill{display:inline-flex;align-items:center;gap:6px;background:var(--bg3);border:2px solid var(--border);border-radius:99px;padding:3px 10px 3px 3px;font-size:.8rem;font-weight:700}
 .tirage-grp-pill img{width:24px;height:24px;border-radius:50%;background:var(--bg2);object-fit:cover}
+/* Classe puzzle */
+.puzzle-sujets{display:flex;flex-direction:column;gap:8px;margin-top:4px}
+.puzzle-sujet-row{display:flex;align-items:center;gap:8px;background:var(--bg2);border:2px solid var(--border);border-radius:12px;padding:6px 10px}
+.puzzle-sujet-letter{width:28px;height:28px;flex-shrink:0;border-radius:8px;background:var(--ink);color:var(--bg2);font-weight:900;display:flex;align-items:center;justify-content:center;font-size:.9rem}
+.puzzle-sujet-row input[type="text"]{flex:1;min-width:0;border:2px solid var(--border);border-radius:8px;padding:6px 10px;font-weight:700;font-size:.85rem;background:var(--bg3);color:var(--ink)}
+.puzzle-sujet-facile{display:flex;align-items:center;gap:4px;font-size:.72rem;font-weight:800;color:var(--ink2);white-space:nowrap;cursor:pointer;flex-shrink:0}
+.puzzle-sujet-facile input{width:15px;height:15px;accent-color:var(--orange);cursor:pointer}
+.puzzle-sujet-del{width:28px;height:28px;flex-shrink:0;border-radius:8px;border:2px solid var(--border);background:var(--bg2);color:var(--ink3);font-weight:900;cursor:pointer;font-size:.72rem}
+.puzzle-sujet-del:hover{background:var(--red);color:#fff;border-color:var(--red)}
+.puzzle-mode-row{display:flex;gap:8px;margin-top:4px}
+.puzzle-mode-btn{flex:1;border:2.5px solid var(--border);border-radius:12px;padding:9px;font-weight:800;font-size:.82rem;background:var(--bg2);color:var(--ink2);cursor:pointer;transition:.12s}
+.puzzle-mode-btn.ap{border-color:var(--orange);background:var(--orange-soft);color:var(--orange)}
+.puzzle-badge{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:7px;color:#fff;font-weight:900;font-size:.85rem;margin-right:4px;vertical-align:middle}
+.puzzle-badge-sm{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:6px;color:#fff;font-weight:900;font-size:.72rem;flex-shrink:0}
 
 /* PLAN DE CLASSE */
 .plan-table{position:absolute;border:none;background:transparent;cursor:move;user-select:none;touch-action:none;transition:none}
@@ -611,7 +625,13 @@ html[data-theme="dark"] .badge-stamp{background:#3a3015;color:#fbbf24}
 .dash-text-toolbar input[type=number]{border:1.5px solid var(--border);background:#fff}
 .dash-text-toolbar select{border:1.5px solid var(--border);background:#fff;padding:0 6px}
 .dash-text-toolbar .dash-tt-sep{width:1px;height:22px;background:var(--border);margin:0 4px}
-.dash-text-area{flex:1;width:100%;border:none;outline:none;background:transparent;resize:none;font-family:inherit;color:inherit;padding:0;line-height:1.4;min-height:30px}
+.dash-tt-color{position:relative;display:inline-flex;align-items:center;justify-content:center;height:30px;width:30px;border-radius:5px;cursor:pointer;overflow:hidden}
+.dash-tt-color:hover{background:var(--bg3)}
+.dash-tt-color input[type=color]{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;border:none;padding:0}
+.dash-tt-color span{font-weight:900;font-size:.85rem;pointer-events:none;border-bottom:3px solid var(--orange);line-height:1.1;color:var(--ink)}
+.dash-text-area{flex:1;width:100%;border:none;outline:none;background:transparent;font-family:inherit;color:inherit;padding:0;line-height:1.4;min-height:30px;overflow-y:auto;word-break:break-word}
+.dash-text-area:empty:before{content:attr(data-placeholder);color:var(--ink3);pointer-events:none}
+.dash-text-area:focus{outline:none}
 /* Widget Traffic Lights — SVG style */
 .dash-lights-wrap{width:100%;height:100%;display:flex;align-items:center;justify-content:center;padding:6px}
 .dash-lights-svg{max-width:100%;max-height:100%;display:block}
@@ -1335,6 +1355,7 @@ html[data-theme="dark"] .badge-stamp{background:#3a3015;color:#fbbf24}
   <div class="btabs">
     <button class="btab ap" id="tir-tab-roue" onclick="switchTirageTab('roue')">🎡 Roue</button>
     <button class="btab" id="tir-tab-grp" onclick="switchTirageTab('grp')">👥 Répartition en groupes</button>
+    <button class="btab" id="tir-tab-puzzle" onclick="switchTirageTab('puzzle')">🧩 Classe puzzle</button>
   </div>
   <!-- ROUE -->
   <div id="tir-pane-roue">
@@ -1363,10 +1384,41 @@ html[data-theme="dark"] .badge-stamp{background:#3a3015;color:#fbbf24}
     </div>
     <div id="tir-groupes-result"></div>
   </div>
-</div>
-</div>
-
-<!-- Plan de classe -->
+  <!-- CLASSE PUZZLE (Jigsaw) -->
+  <div id="tir-pane-puzzle" style="display:none">
+    <div style="font-size:.82rem;color:var(--ink2);font-weight:700;line-height:1.5;margin-bottom:12px;padding:10px 12px;background:var(--bg3);border-radius:10px;border:2px solid var(--border)">
+      <strong>Méthode Jigsaw en 2 temps :</strong> chaque élève devient expert d'un sujet. <strong>Phase 1</strong> : les experts d'un même sujet se réunissent pour le maîtriser. <strong>Phase 2</strong> : ils retournent dans leur groupe d'origine (un expert par sujet) pour s'expliquer mutuellement.
+    </div>
+    <div class="field"><label>Sujets / parties du cours</label>
+      <div id="puzzle-sujets" class="puzzle-sujets"></div>
+      <button class="btn btn-soft btn-sm" onclick="puzzleAddSujet()" style="margin-top:6px">+ Ajouter un sujet</button>
+    </div>
+    <div class="field">
+      <label>Nombre de groupes d'experts</label>
+      <div class="puzzle-mode-row">
+        <button type="button" class="puzzle-mode-btn ap" id="puzzle-ng-auto" onclick="puzzleSetNgMode('auto')">⚙️ Automatique</button>
+        <button type="button" class="puzzle-mode-btn" id="puzzle-ng-manual" onclick="puzzleSetNgMode('manual')">✋ Je choisis</button>
+      </div>
+      <div id="puzzle-ng-manual-row" style="display:none;align-items:center;gap:8px;margin-top:8px">
+        <span style="font-size:.82rem;font-weight:800">Groupes d'experts :</span>
+        <input id="puzzle-ng-input" type="number" min="2" max="12" value="4" style="width:64px;border:2px solid var(--border);border-radius:8px;padding:6px 8px;font-weight:700;background:var(--bg3);color:var(--ink)">
+      </div>
+      <div id="puzzle-ng-hint" style="font-size:.74rem;color:var(--ink3);font-weight:700;margin-top:6px">Automatique : un groupe d'experts par sujet. Si vous en demandez plus que de sujets, certains sujets seront confiés à 2 groupes (ex. A A B B C D).</div>
+    </div>
+    <div class="field">
+      <label>Composition des groupes</label>
+      <div class="puzzle-mode-row">
+        <button type="button" class="puzzle-mode-btn ap" id="puzzle-mode-hetero" onclick="puzzleSetMode('hetero')">🌈 Hétérogène</button>
+        <button type="button" class="puzzle-mode-btn" id="puzzle-mode-adapte" onclick="puzzleSetMode('adapte')">🎯 Adapté aux profils</button>
+      </div>
+      <div id="puzzle-mode-hint" style="font-size:.74rem;color:var(--ink3);font-weight:700;margin-top:6px">Les profils (en difficulté / moteur) sont répartis équitablement entre les sujets.</div>
+    </div>
+    <div class="form-actions" style="justify-content:flex-start;margin-bottom:14px">
+      <button class="btn btn-primary" onclick="genPuzzle()">Générer la classe puzzle</button>
+      <button class="btn btn-soft" onclick="genPuzzle()" id="puzzle-reroll" style="display:none">🎲 Refaire</button>
+    </div>
+    <div id="puzzle-result"></div>
+  </div>
 <div class="overlay" id="modal-plan">
 <div class="modal modal-lg">
   <button class="modal-close" onclick="closePlan()">✕</button>
@@ -1680,7 +1732,8 @@ function saveS(){
   sv('journal',S.journal);sv('passport',S.passport);
 }
 
-function uid(p){return p+Date.now()+Math.random().toString(36).slice(2,5)}
+var _uidCounter=0;
+function uid(p){return p+Date.now()+'_'+(_uidCounter++)+Math.random().toString(36).slice(2,5)}
 
 /* === SONS DE FEEDBACK === */
 var SOUND_ON=ld('sound')!==false; // par défaut activé
@@ -3710,9 +3763,12 @@ function openTirageModal(tab){
 function switchTirageTab(tab){
   document.getElementById('tir-tab-roue').className='btab'+(tab==='roue'?' ap':'');
   document.getElementById('tir-tab-grp').className='btab'+(tab==='grp'?' ap':'');
+  document.getElementById('tir-tab-puzzle').className='btab'+(tab==='puzzle'?' ap':'');
   document.getElementById('tir-pane-roue').style.display=tab==='roue'?'':'none';
   document.getElementById('tir-pane-grp').style.display=tab==='grp'?'':'none';
+  document.getElementById('tir-pane-puzzle').style.display=tab==='puzzle'?'':'none';
   if(tab==='roue') drawRoue();
+  if(tab==='puzzle') puzzleEnsureInit();
 }
 function roueAvailableEleves(){
   return cElvsPresents().filter(function(e){return !roueExcluded[e.id]});
@@ -3828,6 +3884,304 @@ function resetRoueExcluded(){
   document.getElementById('roue-result-actions').style.display='none';
   drawRoue();
 }
+/* ══════════════════════════════════════════════════════
+   CLASSE PUZZLE (méthode Jigsaw d'Aronson)
+   Phase 1 : groupes d'experts (un par sujet) — AAAA BBBB CCCC
+   Phase 2 : groupes de restitution (un expert de chaque sujet) — ABCD ABCD
+══════════════════════════════════════════════════════ */
+var PUZZLE_STATE={sujets:null,mode:'hetero',ngMode:'auto',nbGroupes:4,lastResult:null};
+
+// Bascule auto / manuel pour le nombre de groupes d'experts
+function puzzleSetNgMode(m){
+  PUZZLE_STATE.ngMode=m;
+  document.getElementById('puzzle-ng-auto').className='puzzle-mode-btn'+(m==='auto'?' ap':'');
+  document.getElementById('puzzle-ng-manual').className='puzzle-mode-btn'+(m==='manual'?' ap':'');
+  document.getElementById('puzzle-ng-manual-row').style.display=m==='manual'?'flex':'none';
+  var hint=document.getElementById('puzzle-ng-hint');
+  if(hint){
+    hint.textContent=m==='auto'
+      ? 'Automatique : un groupe d\'experts par sujet.'
+      : 'Vous choisissez le nombre de groupes d\'experts (≥ nombre de sujets). Si supérieur, certains sujets seront confiés à 2 groupes ou plus (ex. A A B B C D).';
+  }
+}
+
+// Initialise les sujets par défaut au premier affichage de l'onglet.
+function puzzleEnsureInit(){
+  if(!PUZZLE_STATE.sujets){
+    PUZZLE_STATE.sujets=[
+      {id:'suj0_'+uid('s'),nom:'Sujet 1',facile:false},
+      {id:'suj1_'+uid('s'),nom:'Sujet 2',facile:false},
+      {id:'suj2_'+uid('s'),nom:'Sujet 3',facile:false},
+      {id:'suj3_'+uid('s'),nom:'Sujet 4',facile:false}
+    ];
+  }
+  renderPuzzleSujets();
+  puzzleSetMode(PUZZLE_STATE.mode);
+  puzzleSetNgMode(PUZZLE_STATE.ngMode);
+}
+
+function renderPuzzleSujets(){
+  var box=document.getElementById('puzzle-sujets');
+  if(!box) return;
+  box.innerHTML='';
+  PUZZLE_STATE.sujets.forEach(function(s,i){
+    var row=document.createElement('div');
+    row.className='puzzle-sujet-row';
+    row.innerHTML=''
+      +'<span class="puzzle-sujet-letter">'+String.fromCharCode(65+i)+'</span>'
+      +'<input type="text" value="'+escapeXml(s.nom)+'" maxlength="40" placeholder="Nom du sujet" data-sid="'+s.id+'" data-f="nom">'
+      +'<label class="puzzle-sujet-facile" title="Sujet plus accessible : on y orientera les élèves fragiles en mode adapté">'
+      +'<input type="checkbox" '+(s.facile?'checked':'')+' data-sid="'+s.id+'" data-f="facile"> + accessible</label>'
+      +'<button class="puzzle-sujet-del" data-sid="'+s.id+'" title="Supprimer ce sujet">✕</button>';
+    box.appendChild(row);
+  });
+  // Bind
+  box.querySelectorAll('input[data-f="nom"]').forEach(function(inp){
+    inp.oninput=function(){var s=PUZZLE_STATE.sujets.find(function(x){return x.id===inp.dataset.sid});if(s)s.nom=inp.value};
+  });
+  box.querySelectorAll('input[data-f="facile"]').forEach(function(inp){
+    inp.onchange=function(){var s=PUZZLE_STATE.sujets.find(function(x){return x.id===inp.dataset.sid});if(s)s.facile=inp.checked};
+  });
+  box.querySelectorAll('.puzzle-sujet-del').forEach(function(b){
+    b.onclick=function(){
+      if(PUZZLE_STATE.sujets.length<=2){customAlert('Il faut au moins 2 sujets pour une classe puzzle.','Classe puzzle');return}
+      PUZZLE_STATE.sujets=PUZZLE_STATE.sujets.filter(function(x){return x.id!==b.dataset.sid});
+      renderPuzzleSujets();
+    };
+  });
+}
+
+function puzzleAddSujet(){
+  if(PUZZLE_STATE.sujets.length>=10){customAlert('Maximum 10 sujets.','Classe puzzle');return}
+  PUZZLE_STATE.sujets.push({id:uid('suj'),nom:'Sujet '+(PUZZLE_STATE.sujets.length+1),facile:false});
+  renderPuzzleSujets();
+}
+
+function puzzleSetMode(mode){
+  PUZZLE_STATE.mode=mode;
+  document.getElementById('puzzle-mode-hetero').className='puzzle-mode-btn'+(mode==='hetero'?' ap':'');
+  document.getElementById('puzzle-mode-adapte').className='puzzle-mode-btn'+(mode==='adapte'?' ap':'');
+  var hint=document.getElementById('puzzle-mode-hint');
+  if(hint){
+    hint.textContent=mode==='hetero'
+      ? 'Hétérogène : moteurs et élèves en difficulté sont mélangés sur tous les sujets.'
+      : 'Adapté : les élèves en difficulté sont orientés en priorité vers les sujets marqués « + accessible ».';
+  }
+}
+
+function genPuzzle(){
+  var eleves=cElvsPresents().slice();
+  var sujets=PUZZLE_STATE.sujets;
+  var nS=sujets.length;
+  var N=eleves.length;
+  if(N<nS){customAlert('Il faut au moins autant d\'élèves présents que de sujets ('+nS+').','Classe puzzle');return}
+
+  // Nombre de groupes d'experts
+  var nbExpertGroups=nS;
+  if(PUZZLE_STATE.ngMode==='manual'){
+    var v=parseInt(document.getElementById('puzzle-ng-input').value)||nS;
+    nbExpertGroups=Math.max(nS,Math.min(12,v)); // au moins 1 groupe par sujet
+  }
+  if(nbExpertGroups>N){customAlert('Trop de groupes d\'experts ('+nbExpertGroups+') pour '+N+' élève(s) présents.','Classe puzzle');return}
+
+  // Attribue un thème à chaque groupe d'experts (round-robin → dédoublement)
+  // ex. 4 thèmes / 6 groupes → [0,1,2,3,0,1] : thèmes A et B ont 2 groupes
+  var groupTheme=[];
+  for(var g=0;g<nbExpertGroups;g++) groupTheme.push(g % nS);
+
+  // Récupère les séparations (depuis le plan de classe)
+  var cls=aCls();
+  var sepPairs=(cls&&cls.plan&&cls.plan.affin&&cls.plan.affin.separer)?cls.plan.affin.separer:[];
+  var presentIds={};eleves.forEach(function(e){presentIds[e.id]=true});
+  sepPairs=sepPairs.filter(function(p){return p[0]&&p[1]&&presentIds[p[0]]&&presentIds[p[1]]});
+
+  // Tailles cibles par groupe d'experts (réparties aussi équitablement que possible)
+  var base=Math.floor(N/nbExpertGroups);
+  var reste=N%nbExpertGroups;
+  var tailles=[];for(var g=0;g<nbExpertGroups;g++) tailles.push(base+(g<reste?1:0));
+
+  // Construit la meilleure affectation élève -> groupe d'experts
+  var best=null,bestScore=Infinity;
+  for(var att=0;att<400;att++){
+    var assign=puzzleTryAssign(eleves,groupTheme,sujets,tailles,sepPairs);
+    var sc=puzzleScore(assign,groupTheme,sujets,sepPairs);
+    if(sc<bestScore){bestScore=sc;best=assign;if(sc===0)break}
+  }
+
+  // best : tableau (index = groupe d'experts) -> [eleves]
+  // RESTITUTION : un expert de CHAQUE THÈME par groupe.
+  // Nombre de groupes de restitution = taille du plus grand "pool de thème"
+  // (somme des experts d'un thème, puisqu'un thème peut avoir plusieurs groupes).
+  var parTheme=[];for(var t=0;t<nS;t++) parTheme.push([]);
+  best.forEach(function(membres,gi){
+    var th=groupTheme[gi];
+    membres.forEach(function(e){parTheme[th].push(e)});
+  });
+  // Nombre de groupes de restitution = plus petit pool de thème (pour que chaque groupe ait tous les thèmes)
+  // puis on redistribue le surplus des thèmes plus fournis comme experts "en double".
+  var minPool=Math.min.apply(null,parTheme.map(function(p){return p.length}));
+  var nbResti=Math.max(1,minPool);
+  var restitution=[];for(var r=0;r<nbResti;r++) restitution.push([]);
+  parTheme.forEach(function(pool,th){
+    shuffle(pool);
+    pool.forEach(function(e,k){
+      var gi;
+      if(k<nbResti) gi=k;            // un expert de ce thème par groupe
+      else gi=puzzleLeastFilledGroup(restitution); // surplus → groupe le moins rempli
+      restitution[gi].push({eleve:e,sujetIdx:th});
+    });
+  });
+
+  PUZZLE_STATE.lastResult={experts:best,groupTheme:groupTheme,restitution:restitution,sujets:sujets.slice()};
+  renderPuzzleResult(best,groupTheme,restitution,sujets,sepPairs,bestScore);
+  document.getElementById('puzzle-reroll').style.display='';
+}
+
+// Renvoie l'index du groupe de restitution ayant le moins de membres (équilibrage du surplus).
+function puzzleLeastFilledGroup(restitution){
+  var minI=0,minN=restitution[0].length;
+  for(var i=1;i<restitution.length;i++){
+    if(restitution[i].length<minN){minN=restitution[i].length;minI=i}
+  }
+  return minI;
+}
+
+// Tente une affectation élève -> groupe d'experts respectant tailles + mode + séparations.
+function puzzleTryAssign(eleves,groupTheme,sujets,tailles,sepPairs){
+  var arr=eleves.slice();shuffle(arr);
+  var nbG=groupTheme.length;
+  var groups=[];for(var g=0;g<nbG;g++) groups.push([]);
+
+  if(PUZZLE_STATE.mode==='adapte'){
+    // Les groupes dont le thème est "facile" accueillent en priorité les élèves en difficulté.
+    var facilesG=[],normauxG=[];
+    groupTheme.forEach(function(th,gi){(sujets[th].facile?facilesG:normauxG).push(gi)});
+    if(!facilesG.length){facilesG=groups.map(function(_,i){return i})}
+    var difficiles=arr.filter(function(e){return elhasProfil(e,'difficulte')});
+    var autres=arr.filter(function(e){return !elhasProfil(e,'difficulte')});
+    difficiles.forEach(function(e){
+      var cand=facilesG.filter(function(i){return groups[i].length<tailles[i]});
+      if(!cand.length) cand=groups.map(function(_,i){return i}).filter(function(i){return groups[i].length<tailles[i]});
+      groups[cand[Math.floor(Math.random()*cand.length)]].push(e);
+    });
+    autres.forEach(function(e){
+      var cand=groups.map(function(_,i){return i}).filter(function(i){return groups[i].length<tailles[i]});
+      groups[cand[Math.floor(Math.random()*cand.length)]].push(e);
+    });
+  } else {
+    arr.forEach(function(e){
+      var cand=groups.map(function(_,i){return i}).filter(function(i){return groups[i].length<tailles[i]});
+      groups[cand[Math.floor(Math.random()*cand.length)]].push(e);
+    });
+  }
+  return groups;
+}
+
+// Score (bas = mieux). Pénalise séparations dans le même groupe expert + déséquilibre profils.
+function puzzleScore(groups,groupTheme,sujets,sepPairs){
+  var penalty=0;
+  var grpOf={};
+  groups.forEach(function(membres,gi){membres.forEach(function(e){grpOf[e.id]=gi})});
+  // Séparations : deux élèves à éviter dans le même groupe expert
+  sepPairs.forEach(function(p){
+    if(grpOf[p[0]]!==undefined && grpOf[p[0]]===grpOf[p[1]]) penalty+=100;
+  });
+  if(PUZZLE_STATE.mode==='hetero'){
+    // équilibre : répartir moteurs et difficultés sur tous les groupes
+    groups.forEach(function(membres){
+      var d=0,s=0;
+      membres.forEach(function(e){if(elhasProfil(e,'difficulte'))d++;if(elhasProfil(e,'serieux'))s++});
+      if(d>1)penalty+=5*(d-1);
+      if(s>1)penalty+=5*(s-1);
+    });
+  }
+  return penalty;
+}
+
+function renderPuzzleResult(experts,groupTheme,restitution,sujets,sepPairs,score){
+  var box=document.getElementById('puzzle-result');
+  box.innerHTML='';
+
+  // Message séparations
+  if(sepPairs.length){
+    var grpOf={};experts.forEach(function(m,gi){m.forEach(function(e){grpOf[e.id]=gi})});
+    var conflits=sepPairs.filter(function(p){return grpOf[p[0]]===grpOf[p[1]]}).length;
+    var info=document.createElement('div');
+    info.style.cssText='font-size:.78rem;font-weight:800;margin-bottom:12px;padding:8px 12px;border-radius:10px;'+(conflits?'background:#fef3c7;color:#a16207':'background:#dcfce7;color:#15803d');
+    info.textContent=conflits?('⚠️ '+conflits+' séparation(s) non respectées en phase experts.'):'✅ Toutes les séparations sont respectées.';
+    box.appendChild(info);
+  }
+
+  // Sous-onglets phase 1 / phase 2
+  var tabs=document.createElement('div');
+  tabs.className='btabs';
+  tabs.style.marginBottom='12px';
+  tabs.innerHTML=''
+    +'<button class="btab ap" id="puzzle-phase-1" onclick="puzzleShowPhase(1)">1️⃣ Groupes d\'experts</button>'
+    +'<button class="btab" id="puzzle-phase-2" onclick="puzzleShowPhase(2)">2️⃣ Groupes de restitution</button>';
+  box.appendChild(tabs);
+
+  // Compte combien de groupes par thème (pour numéroter A1, A2 si dédoublé)
+  var themeCount={},themeSeen={};
+  groupTheme.forEach(function(th){themeCount[th]=(themeCount[th]||0)+1});
+
+  // Phase 1 : groupes d'experts (un par groupe, thème éventuellement dédoublé)
+  var pane1=document.createElement('div');
+  pane1.id='puzzle-pane-1';
+  experts.forEach(function(membres,gi){
+    var th=groupTheme[gi];
+    var col=GRP_COLORS[th%GRP_COLORS.length].h;
+    var letter=String.fromCharCode(65+th);
+    // Si le thème est dédoublé, on suffixe (A1, A2…)
+    var suffix='';
+    if(themeCount[th]>1){themeSeen[th]=(themeSeen[th]||0)+1;suffix=String(themeSeen[th])}
+    var card=document.createElement('div');
+    card.className='tirage-grp-card';
+    card.style.borderColor=col;card.style.boxShadow='3px 3px 0 '+col;
+    var pills=membres.map(function(e){
+      return '<span class="tirage-grp-pill"><img src="'+eleveAvatarSrc(e)+'" alt="" loading="lazy"><span>'+escapeXml(e.prenom)+'</span></span>';
+    }).join('');
+    card.innerHTML='<div class="tirage-grp-title" style="color:'+col+'"><span class="puzzle-badge" style="background:'+col+'">'+letter+suffix+'</span> '+escapeXml(sujets[th].nom)+(sujets[th].facile?' <span style="font-size:.72rem;color:var(--ink3)">(+ accessible)</span>':'')+' <span style="font-weight:700;color:var(--ink3);font-size:.78rem">('+membres.length+')</span></div>'+
+      '<div class="tirage-grp-members">'+pills+'</div>';
+    pane1.appendChild(card);
+  });
+  box.appendChild(pane1);
+
+  // Phase 2 : groupes de restitution (un expert de chaque THÈME)
+  var pane2=document.createElement('div');
+  pane2.id='puzzle-pane-2';
+  pane2.style.display='none';
+  restitution.forEach(function(membres,gi){
+    var col=GRP_COLORS[gi%GRP_COLORS.length].h;
+    var card=document.createElement('div');
+    card.className='tirage-grp-card';
+    card.style.borderColor=col;card.style.boxShadow='3px 3px 0 '+col;
+    var pills=membres.map(function(m){
+      var letter=String.fromCharCode(65+m.sujetIdx);
+      var lcol=GRP_COLORS[m.sujetIdx%GRP_COLORS.length].h;
+      return '<span class="tirage-grp-pill"><span class="puzzle-badge-sm" style="background:'+lcol+'">'+letter+'</span><span>'+escapeXml(m.eleve.prenom)+'</span></span>';
+    }).join('');
+    var sujetsCouverts={};membres.forEach(function(m){sujetsCouverts[m.sujetIdx]=true});
+    var nbCouverts=Object.keys(sujetsCouverts).length;
+    var incomplet=nbCouverts<sujets.length;
+    var doublon=membres.length>nbCouverts;
+    var meta='';
+    if(incomplet) meta=' — incomplet ('+nbCouverts+'/'+sujets.length+' thèmes)';
+    else if(doublon) meta=' — tous les thèmes couverts (certains à plusieurs experts)';
+    card.innerHTML='<div class="tirage-grp-title" style="color:'+col+'">Groupe '+(gi+1)+' <span style="font-weight:700;color:var(--ink3);font-size:.78rem">('+membres.length+' élève'+(membres.length>1?'s':'')+meta+')</span></div>'+
+      '<div class="tirage-grp-members">'+pills+'</div>';
+    pane2.appendChild(card);
+  });
+  box.appendChild(pane2);
+}
+
+function puzzleShowPhase(ph){
+  document.getElementById('puzzle-phase-1').className='btab'+(ph===1?' ap':'');
+  document.getElementById('puzzle-phase-2').className='btab'+(ph===2?' ap':'');
+  document.getElementById('puzzle-pane-1').style.display=ph===1?'':'none';
+  document.getElementById('puzzle-pane-2').style.display=ph===2?'':'none';
+}
+
 function genGroupes(){
   var n=parseInt(document.getElementById('tir-n-grp').value)||4;
   if(n<2)n=2;if(n>20)n=20;
@@ -5167,8 +5521,13 @@ function timerSet(wid){
 function renderTextBody(w,body){
   var s=w.state;
   if(typeof s.fontFamily==='undefined') s.fontFamily='Nunito';
-  if(typeof s.italic==='undefined') s.italic=false;
   if(typeof s.color==='undefined') s.color='#0f172a';
+  if(typeof s.fontSize==='undefined') s.fontSize=18;
+  if(typeof s.align==='undefined') s.align='left';
+  // Migration : ancien format texte brut -> html
+  if(typeof s.html==='undefined'){
+    s.html = s.text ? escapeXml(s.text).replace(/\n/g,'<br>') : '';
+  }
   body.style.padding='28px 12px 12px 12px';
   body.innerHTML=
     '<div class="dash-text-wrap">'+
@@ -5178,51 +5537,165 @@ function renderTextBody(w,body){
             return '<option value="'+f+'"'+(s.fontFamily===f?' selected':'')+'>'+f.replace(/"/g,'')+'</option>'
           }).join('')+
         '</select>'+
-        '<input data-act="fs" type="number" min="10" max="80" value="'+(s.fontSize||18)+'" title="Taille" style="width:54px">'+
+        '<input data-act="fs" type="number" min="10" max="80" value="'+(s.fontSize||18)+'" title="Taille de la sélection" style="width:54px">'+
         '<span class="dash-tt-sep"></span>'+
-        '<button data-act="bold" title="Gras" style="font-weight:900">B</button>'+
-        '<button data-act="italic" title="Italique" style="font-style:italic">I</button>'+
-        '<input data-act="color" type="color" value="'+(s.color||'#0f172a')+'" title="Couleur du texte">'+
+        '<button data-act="bold" title="Gras (sélection)" style="font-weight:900">B</button>'+
+        '<button data-act="italic" title="Italique (sélection)" style="font-style:italic">I</button>'+
+        '<button data-act="underline" title="Souligné (sélection)" style="text-decoration:underline">U</button>'+
+        '<label class="dash-tt-color" title="Couleur de la sélection"><input data-act="color" type="color" value="'+(s.color||'#0f172a')+'"><span data-act="color-apply">A</span></label>'+
+        '<button data-act="clear" title="Effacer la mise en forme de la sélection">⌫</button>'+
         '<span class="dash-tt-sep"></span>'+
         '<button data-act="align-left" title="Aligner à gauche"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="15" y2="12"/><line x1="3" y1="18" x2="18" y2="18"/></svg></button>'+
         '<button data-act="align-center" title="Centrer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="6" y1="12" x2="18" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/></svg></button>'+
         '<button data-act="align-right" title="Aligner à droite"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="9" y1="12" x2="21" y2="12"/><line x1="6" y1="18" x2="21" y2="18"/></svg></button>'+
       '</div>'+
-      '<textarea data-act="text" class="dash-text-area" placeholder="Tapez votre texte ici…"></textarea>'+
+      '<div data-act="text" class="dash-text-area" contenteditable="true" data-placeholder="Tapez votre texte ici… Sélectionnez des mots puis cliquez sur B, I ou une couleur."></div>'+
     '</div>';
-  var ta=body.querySelector('[data-act="text"]');
+  var ed=body.querySelector('[data-act="text"]');
   var btnB=body.querySelector('[data-act="bold"]');
   var btnI=body.querySelector('[data-act="italic"]');
+  var btnU=body.querySelector('[data-act="underline"]');
   var selFont=body.querySelector('[data-act="font"]');
   var inpFs=body.querySelector('[data-act="fs"]');
   var inpColor=body.querySelector('[data-act="color"]');
+  var colorApply=body.querySelector('[data-act="color-apply"]');
+  var btnClear=body.querySelector('[data-act="clear"]');
   var btnAL=body.querySelector('[data-act="align-left"]');
   var btnAC=body.querySelector('[data-act="align-center"]');
   var btnAR=body.querySelector('[data-act="align-right"]');
-  function applyStyle(){
-    ta.style.fontFamily=s.fontFamily;
-    ta.style.fontSize=(s.fontSize||18)+'px';
-    ta.style.fontWeight=s.bold?900:500;
-    ta.style.fontStyle=s.italic?'italic':'normal';
-    ta.style.color=s.color;
-    ta.style.textAlign=s.align||'left';
-    btnB.classList.toggle('active',s.bold);
-    btnI.classList.toggle('active',s.italic);
+
+  // Style global du bloc (police de base, taille de base, alignement)
+  function applyBaseStyle(){
+    ed.style.fontFamily=s.fontFamily;
+    ed.style.fontSize=(s.fontSize||18)+'px';
+    ed.style.color=s.color;
+    ed.style.textAlign=s.align||'left';
     btnAL.classList.toggle('active',s.align==='left');
     btnAC.classList.toggle('active',s.align==='center');
     btnAR.classList.toggle('active',s.align==='right');
   }
-  ta.value=s.text||'';
-  applyStyle();
-  ta.addEventListener('input',function(){s.text=ta.value;saveDashboard()});
-  btnB.addEventListener('click',function(){s.bold=!s.bold;applyStyle();saveDashboard()});
-  btnI.addEventListener('click',function(){s.italic=!s.italic;applyStyle();saveDashboard()});
-  selFont.addEventListener('change',function(){s.fontFamily=selFont.value;applyStyle();saveDashboard()});
-  inpFs.addEventListener('change',function(){s.fontSize=Math.max(10,Math.min(80,parseInt(inpFs.value)||18));applyStyle();saveDashboard()});
-  inpColor.addEventListener('change',function(){s.color=inpColor.value;applyStyle();saveDashboard()});
-  btnAL.addEventListener('click',function(){s.align='left';applyStyle();saveDashboard()});
-  btnAC.addEventListener('click',function(){s.align='center';applyStyle();saveDashboard()});
-  btnAR.addEventListener('click',function(){s.align='right';applyStyle();saveDashboard()});
+  ed.innerHTML=s.html||'';
+  applyBaseStyle();
+
+  function save(){s.html=ed.innerHTML;saveDashboard()}
+
+  // Garde la dernière sélection faite DANS l'éditeur (les clics sur la barre la perdent sinon)
+  var savedRange=null;
+  function captureSelection(){
+    var sel=window.getSelection();
+    if(sel && sel.rangeCount>0 && ed.contains(sel.anchorNode)){
+      savedRange=sel.getRangeAt(0).cloneRange();
+    }
+  }
+  function restoreSelection(){
+    if(!savedRange) return false;
+    var sel=window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(savedRange);
+    return true;
+  }
+  ed.addEventListener('keyup',captureSelection);
+  ed.addEventListener('mouseup',captureSelection);
+  ed.addEventListener('input',function(){captureSelection();save()});
+
+  // Enveloppe la sélection courante dans un élément stylé (gras, italique, couleur, taille…)
+  // Approche robuste basée sur l'API Range plutôt que execCommand seul.
+  function wrapSelection(styleFn){
+    ed.focus();
+    if(!restoreSelection()) return;
+    var sel=window.getSelection();
+    if(!sel.rangeCount || sel.isCollapsed){return}
+    var range=sel.getRangeAt(0);
+    // Extrait le contenu sélectionné et l'enveloppe dans un span stylé
+    var span=document.createElement('span');
+    styleFn(span);
+    try{
+      var frag=range.extractContents();
+      span.appendChild(frag);
+      range.insertNode(span);
+      // Re-sélectionne le span pour permettre des applications successives
+      sel.removeAllRanges();
+      var nr=document.createRange();
+      nr.selectNodeContents(span);
+      sel.addRange(nr);
+      savedRange=nr.cloneRange();
+      // Nettoie les spans imbriqués vides
+      mergeAdjacent(ed);
+      save();
+      refreshButtons();
+    }catch(e){console.warn('wrapSelection',e)}
+  }
+  // Bascule gras/italique/souligné : si déjà appliqué dans la sélection, on retire ; sinon on ajoute.
+  function toggleStyle(prop,onVal,offCheck){
+    ed.focus();
+    if(!restoreSelection()) return;
+    var sel=window.getSelection();
+    if(!sel.rangeCount || sel.isCollapsed) return;
+    // détecte si déjà actif
+    var node=sel.anchorNode;
+    var active=false;
+    var p=node && node.nodeType===3?node.parentNode:node;
+    while(p && p!==ed){
+      if(offCheck(p)){active=true;break}
+      p=p.parentNode;
+    }
+    if(active){
+      // retire : on utilise execCommand qui gère bien le dé-formatage
+      try{document.execCommand('styleWithCSS',false,true);document.execCommand(prop==='fontWeight'?'bold':prop==='fontStyle'?'italic':'underline',false,null)}catch(e){}
+      save();refreshButtons();
+    } else {
+      wrapSelection(function(span){
+        if(prop==='fontWeight')span.style.fontWeight='800';
+        else if(prop==='fontStyle')span.style.fontStyle='italic';
+        else if(prop==='underline')span.style.textDecoration='underline';
+      });
+    }
+  }
+  // Fusionne les spans adjacents identiques pour limiter l'empilement
+  function mergeAdjacent(root){
+    // simple nettoyage : retire les spans sans style ni attribut
+    root.querySelectorAll('span').forEach(function(sp){
+      if(!sp.getAttribute('style') && !sp.attributes.length){
+        while(sp.firstChild)sp.parentNode.insertBefore(sp.firstChild,sp);
+        sp.parentNode.removeChild(sp);
+      }
+    });
+  }
+  function refreshButtons(){
+    try{
+      btnB.classList.toggle('active',document.queryCommandState('bold'));
+      btnI.classList.toggle('active',document.queryCommandState('italic'));
+      btnU.classList.toggle('active',document.queryCommandState('underline'));
+    }catch(e){}
+  }
+
+  btnB.addEventListener('mousedown',function(e){e.preventDefault();toggleStyle('fontWeight','800',function(n){return n.style&&(n.style.fontWeight==='800'||n.style.fontWeight==='bold'||n.style.fontWeight>=600)||n.tagName==='B'||n.tagName==='STRONG'})});
+  btnI.addEventListener('mousedown',function(e){e.preventDefault();toggleStyle('fontStyle','italic',function(n){return n.style&&n.style.fontStyle==='italic'||n.tagName==='I'||n.tagName==='EM'})});
+  btnU.addEventListener('mousedown',function(e){e.preventDefault();toggleStyle('underline','underline',function(n){return n.style&&n.style.textDecoration&&n.style.textDecoration.indexOf('underline')>=0||n.tagName==='U'})});
+  // Couleur : enveloppe la sélection dans un span coloré
+  function applyColor(){wrapSelection(function(span){span.style.color=inpColor.value})}
+  colorApply.addEventListener('mousedown',function(e){e.preventDefault();applyColor()});
+  inpColor.addEventListener('change',applyColor);
+  // Taille : enveloppe la sélection dans un span à la taille voulue (ou change la base si rien de sélectionné)
+  inpFs.addEventListener('mousedown',captureSelection);
+  inpFs.addEventListener('change',function(){
+    var px=Math.max(10,Math.min(80,parseInt(inpFs.value)||18));
+    if(savedRange && !savedRange.collapsed){
+      wrapSelection(function(span){span.style.fontSize=px+'px'});
+    } else {
+      s.fontSize=px;applyBaseStyle();saveDashboard();
+    }
+  });
+  btnClear.addEventListener('mousedown',function(e){
+    e.preventDefault();ed.focus();restoreSelection();
+    try{document.execCommand('removeFormat',false,null)}catch(e){}
+    // retire aussi les spans de couleur/taille de la sélection
+    save();refreshButtons();
+  });
+  selFont.addEventListener('change',function(){s.fontFamily=selFont.value;applyBaseStyle();saveDashboard()});
+  btnAL.addEventListener('click',function(){s.align='left';applyBaseStyle();saveDashboard()});
+  btnAC.addEventListener('click',function(){s.align='center';applyBaseStyle();saveDashboard()});
+  btnAR.addEventListener('click',function(){s.align='right';applyBaseStyle();saveDashboard()});
 }
 
 function renderLightsBody(w,body){

@@ -413,8 +413,12 @@ footer{width:100%;background:var(--bg2);border-top:2.5px solid var(--ink);paddin
 .puzzle-sujet-row{display:flex;align-items:center;gap:8px;background:var(--bg2);border:2px solid var(--border);border-radius:12px;padding:6px 10px}
 .puzzle-sujet-letter{width:28px;height:28px;flex-shrink:0;border-radius:8px;background:var(--ink);color:var(--bg2);font-weight:900;display:flex;align-items:center;justify-content:center;font-size:.9rem}
 .puzzle-sujet-row input[type="text"]{flex:1;min-width:0;border:2px solid var(--border);border-radius:8px;padding:6px 10px;font-weight:700;font-size:.85rem;background:var(--bg3);color:var(--ink)}
-.puzzle-sujet-facile{display:flex;align-items:center;gap:4px;font-size:.72rem;font-weight:800;color:var(--ink2);white-space:nowrap;cursor:pointer;flex-shrink:0}
-.puzzle-sujet-facile input{width:15px;height:15px;accent-color:var(--orange);cursor:pointer}
+.puzzle-facile-btn{display:inline-flex;align-items:center;gap:5px;font-size:.72rem;font-weight:800;color:var(--ink2);white-space:nowrap;flex-shrink:0;border:2px solid var(--border);background:var(--bg3);border-radius:99px;padding:5px 11px;cursor:pointer;transition:.12s}
+.puzzle-facile-btn:hover{border-color:var(--ink3)}
+.puzzle-facile-btn.on{background:#dcfce7;border-color:#16a34a;color:#15803d}
+.puzzle-facile-check{display:inline-flex;align-items:center;justify-content:center;width:17px;height:17px;border-radius:5px;font-size:.72rem;font-weight:900;background:#fff;border:1.5px solid var(--border);color:#cbd5e1;transition:.12s}
+.puzzle-facile-btn.on .puzzle-facile-check{background:#16a34a;border-color:#16a34a;color:#fff}
+html[data-theme="dark"] .puzzle-facile-btn.on{background:#143524;border-color:#22c55e;color:#4ade80}
 .puzzle-sujet-del{width:28px;height:28px;flex-shrink:0;border-radius:8px;border:2px solid var(--border);background:var(--bg2);color:var(--ink3);font-weight:900;cursor:pointer;font-size:.72rem}
 .puzzle-sujet-del:hover{background:var(--red);color:#fff;border-color:var(--red)}
 .puzzle-mode-row{display:flex;gap:8px;margin-top:4px}
@@ -1419,6 +1423,8 @@ html[data-theme="dark"] .badge-stamp{background:#3a3015;color:#fbbf24}
     </div>
     <div id="puzzle-result"></div>
   </div>
+  </div>
+</div>
 <div class="overlay" id="modal-plan">
 <div class="modal modal-lg">
   <button class="modal-close" onclick="closePlan()">✕</button>
@@ -3930,8 +3936,8 @@ function renderPuzzleSujets(){
     row.innerHTML=''
       +'<span class="puzzle-sujet-letter">'+String.fromCharCode(65+i)+'</span>'
       +'<input type="text" value="'+escapeXml(s.nom)+'" maxlength="40" placeholder="Nom du sujet" data-sid="'+s.id+'" data-f="nom">'
-      +'<label class="puzzle-sujet-facile" title="Sujet plus accessible : on y orientera les élèves fragiles en mode adapté">'
-      +'<input type="checkbox" '+(s.facile?'checked':'')+' data-sid="'+s.id+'" data-f="facile"> + accessible</label>'
+      +'<button type="button" class="puzzle-facile-btn'+(s.facile?' on':'')+'" data-sid="'+s.id+'" data-f="facile" title="Marquer ce sujet comme plus accessible (pour orienter les élèves fragiles en mode adapté)">'
+      +'<span class="puzzle-facile-check">✓</span> + accessible</button>'
       +'<button class="puzzle-sujet-del" data-sid="'+s.id+'" title="Supprimer ce sujet">✕</button>';
     box.appendChild(row);
   });
@@ -3939,8 +3945,13 @@ function renderPuzzleSujets(){
   box.querySelectorAll('input[data-f="nom"]').forEach(function(inp){
     inp.oninput=function(){var s=PUZZLE_STATE.sujets.find(function(x){return x.id===inp.dataset.sid});if(s)s.nom=inp.value};
   });
-  box.querySelectorAll('input[data-f="facile"]').forEach(function(inp){
-    inp.onchange=function(){var s=PUZZLE_STATE.sujets.find(function(x){return x.id===inp.dataset.sid});if(s)s.facile=inp.checked};
+  box.querySelectorAll('.puzzle-facile-btn').forEach(function(btn){
+    btn.onclick=function(){
+      var s=PUZZLE_STATE.sujets.find(function(x){return x.id===btn.dataset.sid});
+      if(!s) return;
+      s.facile=!s.facile; // bascule INDÉPENDANTE de chaque sujet
+      btn.classList.toggle('on',s.facile);
+    };
   });
   box.querySelectorAll('.puzzle-sujet-del').forEach(function(b){
     b.onclick=function(){
@@ -4308,8 +4319,9 @@ function openPlanModal(){
   PLAN_STATE.boardPos=(cls.plan&&cls.plan.boardPos)||'top';
   PLAN_STATE.selectedEleveId=null;
   PLAN_STATE.history=[];
-  renderPlan();
   openModal('modal-plan');
+  // La modale est visible (classe .open appliquée synchroniquement) : on rend tout de suite.
+  renderPlan();
 }
 function closePlan(){closeModal('modal-plan')}
 // Calcule la taille de la table et la position de chaque chaise selon la forme et le nombre de places
@@ -4523,7 +4535,8 @@ function planSetBoardPos(pos){
 function planComputeRanks(){
   var pos=planBoardPos();
   var canvas=document.getElementById('plan-canvas-wrap');
-  var W=canvas?canvas.clientWidth:600, H=canvas?canvas.clientHeight:540;
+  var W=(canvas&&canvas.clientWidth)?canvas.clientWidth:700;
+  var H=(canvas&&canvas.clientHeight)?canvas.clientHeight:540;
   // distance de chaque table au tableau (plus petit = plus proche)
   function dist(t){
     if(pos==='top') return t.y;
@@ -4544,7 +4557,9 @@ function planComputeRanks(){
   return ranks;
 }
 function renderPlan(){
+  try{
   var canvas=document.getElementById('plan-canvas');
+  if(!canvas) return;
   canvas.innerHTML='';
   planRenderBoard();
   var eleves=cElvs();
@@ -4620,7 +4635,9 @@ function renderPlan(){
   if(!unassigned.length){
     pool.innerHTML+='<div style="font-size:.78rem;color:var(--ink3);font-weight:700;padding:6px">✓ Tous les élèves sont placés.</div>';
   }
-  document.getElementById('plan-unassigned-count').textContent=unassigned.length;
+  var uc=document.getElementById('plan-unassigned-count');
+  if(uc) uc.textContent=unassigned.length;
+  }catch(err){console.error('renderPlan error:',err);}
 }
 
 function buildChairHtml(t,i,eleves,pos){

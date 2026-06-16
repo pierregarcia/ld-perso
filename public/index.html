@@ -4319,11 +4319,12 @@ function openPlanModal(){
   PLAN_STATE.boardPos=(cls.plan&&cls.plan.boardPos)||'top';
   PLAN_STATE.selectedEleveId=null;
   PLAN_STATE.history=[];
+  PLAN_STATE._ready=true;
   openModal('modal-plan');
   // La modale est visible (classe .open appliquée synchroniquement) : on rend tout de suite.
   renderPlan();
 }
-function closePlan(){closeModal('modal-plan')}
+function closePlan(){PLAN_STATE._ready=false;persistPlan();closeModal('modal-plan')}
 // Calcule la taille de la table et la position de chaque chaise selon la forme et le nombre de places
 function planTableLayout(t){
   var cs=46;
@@ -4637,6 +4638,8 @@ function renderPlan(){
   }
   var uc=document.getElementById('plan-unassigned-count');
   if(uc) uc.textContent=unassigned.length;
+  // Auto-sauvegarde : tout changement du plan est persisté immédiatement.
+  if(PLAN_STATE._ready) persistPlan();
   }catch(err){console.error('renderPlan error:',err);}
 }
 
@@ -4801,8 +4804,14 @@ function enableChairInteraction(chair){
 }
 
 function savePlan(){
+  persistPlan();
+  closePlan();
+}
+// Persiste l'état courant du plan dans la classe (sans fermer la modale).
+function persistPlan(){
+  if(!S.activeClassId) return;
   S.classes=S.classes.map(function(c){return c.id===S.activeClassId?Object.assign({},c,{plan:{tables:PLAN_STATE.tables,affin:PLAN_STATE.affin,boardPos:PLAN_STATE.boardPos}}):c});
-  saveS();closePlan();
+  saveS();
 }
 function printPlan(){window.print()}
 

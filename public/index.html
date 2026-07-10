@@ -694,6 +694,7 @@ html[data-theme="dark"] .badge-stamp{background:#3a3015;color:#fbbf24}
   <button class="logo" onclick="goHome()" style="display:inline-flex;align-items:center;gap:6px"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" style="height:30px;width:30px;flex-shrink:0"><circle cx="250" cy="250" r="240" fill="#ffffff"/><circle cx="250" cy="250" r="205" fill="none" stroke="#F27A24" stroke-width="70"/><rect x="200" y="310" width="100" height="155" rx="25" fill="#F27A24"/><rect x="200" y="210" width="100" height="75" rx="25" fill="#F27A24"/><rect x="236" y="100" width="28" height="60" rx="14" fill="#F27A24"/><rect x="236" y="100" width="28" height="60" rx="14" fill="#F27A24" transform="rotate(-50 250 245)"/><rect x="236" y="100" width="28" height="60" rx="14" fill="#F27A24" transform="rotate(50 250 245)"/></svg><span><span class="logo-classe">Classe</span><span class="logo-active">Active</span></span></button>
   <div class="topbar-spacer"></div>
   <div class="topbar-right" id="topbar-right"></div>
+  <button class="icon-btn" id="cloud-btn" onclick="cloudOpenModal()" title="Se connecter à mon Nuage Apps Éducation" aria-label="Synchronisation Nuage" style="border-radius:99px">☁️</button>
   <button class="icon-btn" id="btn-theme" onclick="toggleTheme()" title="Mode sombre" aria-label="Basculer le mode sombre" style="border-radius:99px">🌙</button>
   <button class="icon-btn" id="btn-sound" onclick="toggleSound()" title="Sons" aria-label="Activer ou couper les sons" style="border-radius:99px">🔊</button>
   <button class="burger-btn" id="burger-btn" onclick="toggleBurger()" aria-label="Menu" style="display:none">
@@ -1549,7 +1550,7 @@ html[data-theme="dark"] .badge-stamp{background:#3a3015;color:#fbbf24}
   <div class="modal-title" id="confirm-title">Confirmation</div>
   <div class="modal-sub" id="confirm-message"></div>
   <div class="form-actions">
-    <button class="btn btn-outline btn-sm" onclick="confirmCancel()">Annuler</button>
+    <button class="btn btn-outline btn-sm" id="confirm-cancel-btn" onclick="confirmCancel()">Annuler</button>
     <button class="btn btn-sm" id="confirm-ok-btn" onclick="confirmOk()">Confirmer</button>
   </div>
 </div>
@@ -1561,6 +1562,54 @@ html[data-theme="dark"] .badge-stamp{background:#3a3015;color:#fbbf24}
   <div class="modal-sub" id="alert-message"></div>
   <div class="form-actions">
     <button class="btn btn-primary btn-sm" onclick="closeModal('modal-alert')">OK</button>
+  </div>
+</div>
+</div>
+
+<!-- Connexion au Nuage Apps Éducation -->
+<div class="overlay" id="modal-cloud">
+<div class="modal">
+  <button class="modal-close" onclick="closeModal('modal-cloud')">✕</button>
+  <!-- Vue connecté -->
+  <div id="cloud-connected" style="display:none;text-align:center">
+    <div style="font-size:44px;line-height:1">☁️✅</div>
+    <div class="modal-title" style="margin-top:8px">Connecté au Nuage</div>
+    <div class="modal-sub">Compte : <b id="cloud-who">—</b></div>
+    <p id="cloud-sync-state" style="font-size:.72rem;color:var(--ink3);font-weight:700;margin:6px 0 16px">Synchronisation active</p>
+    <div style="display:flex;flex-direction:column;gap:9px">
+      <button class="btn btn-primary" style="width:100%" onclick="cloudPullNow()">⬇️ Récupérer mes données du Nuage</button>
+      <button class="btn btn-soft" style="width:100%" onclick="cloudPushNow()">⬆️ Envoyer mes données au Nuage</button>
+      <button class="btn btn-outline btn-sm" style="width:100%" onclick="cloudLogout()">🚪 Se déconnecter</button>
+    </div>
+  </div>
+  <!-- Vue connexion -->
+  <div id="cloud-login">
+    <div style="text-align:center;margin-bottom:14px">
+      <div style="font-size:38px;line-height:1">📚☁️</div>
+      <div class="modal-title" style="margin-top:8px">Retrouvez vos classes partout</div>
+      <div class="modal-sub">Connectez-vous à votre Nuage pour synchroniser vos classes, élèves, plans et points sur tous vos appareils.</div>
+    </div>
+    <div style="border:2.5px solid var(--border);border-radius:var(--r2);padding:16px;background:var(--bg3)">
+      <div style="display:flex;gap:12px;align-items:flex-start;margin-bottom:14px">
+        <div style="flex-shrink:0;width:46px;height:46px;border-radius:12px;background:var(--orange);display:flex;align-items:center;justify-content:center;font-size:22px">☁️</div>
+        <div style="flex:1;min-width:0">
+          <div style="font-weight:900;font-size:.95rem">Nuage apps.education.fr</div>
+          <p style="font-size:.76rem;color:var(--ink2);margin:3px 0 0;font-weight:600;line-height:1.4">Accessible depuis n'importe quel poste. Vos données restent sur votre compte.</p>
+        </div>
+      </div>
+      <div class="field"><input id="cloud-user" placeholder="Identifiant apps.edu (ex : p.dupont)" autocomplete="username"></div>
+      <div class="field" style="display:flex;gap:8px">
+        <input id="cloud-pass" type="password" placeholder="Mot de passe d'application" autocomplete="current-password" style="flex:1;min-width:0" onkeydown="if(event.key==='Enter')cloudLogin()">
+        <button class="btn btn-primary btn-sm" id="cloud-login-btn" onclick="cloudLogin()" style="flex-shrink:0;white-space:nowrap">Se connecter</button>
+      </div>
+      <div class="field"><input id="cloud-instance" placeholder="Instance Nuage (ex : nuage03.apps.education.fr)"></div>
+      <label style="display:flex;align-items:center;gap:8px;font-size:.8rem;font-weight:700;cursor:pointer;margin-bottom:10px">
+        <input type="checkbox" id="cloud-stay" style="width:16px;height:16px;cursor:pointer;flex-shrink:0;accent-color:var(--orange)"> Rester connecté sur ce poste
+      </label>
+      <div id="cloud-error" style="display:none;background:#fee2e2;color:#b91c1c;border-radius:8px;padding:9px 12px;font-size:.78rem;font-weight:700;margin-bottom:10px"></div>
+      <p style="font-size:.72rem;color:var(--ink3);font-weight:700;line-height:1.5;margin:0 0 6px">💡 <b>Mot de passe d'application</b> : dans votre Nuage → Paramètres → Sécurité → <i>Créer un mot de passe d'application</i> (ne jamais utiliser votre mot de passe principal).</p>
+      <p style="font-size:.72rem;color:var(--ink3);font-weight:700;line-height:1.5;margin:0">💡 <b>Instance</b> : laisser vide par défaut. Si erreur, indiquez votre URL Nuage (visible dans l'adresse de votre navigateur sur apps.edu).</p>
+    </div>
   </div>
 </div>
 </div>
@@ -1736,6 +1785,7 @@ function saveS(){
   sv('groups',S.groups);sv('eleves',S.eleves);
   sv('comp_pos',S.comp_pos);sv('comp_neg',S.comp_neg);sv('stamps',S.stamps);
   sv('journal',S.journal);sv('passport',S.passport);
+  try{if(typeof cloudSchedulePush==='function') cloudSchedulePush()}catch(e){}
 }
 
 var _uidCounter=0;
@@ -3497,6 +3547,183 @@ function renderProject(){
   });
 }
 
+/* ══════════════════════════════════════════════════════
+   SYNCHRONISATION NUAGE (apps.education.fr via webhook n8n)
+   Logique reprise du « Séquenceur » : chaque enseignant utilise
+   ses propres identifiants → ses données vont dans SON Nuage.
+══════════════════════════════════════════════════════ */
+var NUAGE_WEBHOOK='https://n8n.incubateur.education.gouv.fr/webhook/classe-active';
+var CLOUD_KEY='cactive-cloud';
+var cloudState={user:'',pass:'',server:'',connected:false,persist:false};
+var _cloudPushTimer=null;
+
+function cloudLoadState(){
+  try{
+    var d=localStorage.getItem(CLOUD_KEY);
+    if(d){var s=JSON.parse(d);
+      cloudState.user=s.user||'';cloudState.pass=s.pass||'';cloudState.server=s.server||'';
+      cloudState.persist=!!s.persist;
+      if(cloudState.user&&cloudState.pass&&cloudState.persist) cloudState.connected=true;
+    }
+  }catch(e){}
+}
+function cloudSaveState(){
+  try{
+    if(cloudState.persist){
+      localStorage.setItem(CLOUD_KEY,JSON.stringify({user:cloudState.user,pass:cloudState.pass,server:cloudState.server,persist:true}));
+    } else { localStorage.removeItem(CLOUD_KEY); }
+  }catch(e){}
+}
+function cloudIsConnected(){return !!(cloudState.connected&&cloudState.user)}
+
+function cloudUpdateBtn(){
+  var b=document.getElementById('cloud-btn');if(!b) return;
+  b.textContent=cloudIsConnected()?'☁️✅':'☁️';
+  b.title=cloudIsConnected()?('Nuage : '+cloudState.user):'Se connecter à mon Nuage Apps Éducation';
+}
+
+function cloudOpenModal(){
+  cloudLoadState();
+  var conn=cloudIsConnected();
+  var cc=document.getElementById('cloud-connected'),cl=document.getElementById('cloud-login');
+  if(cc) cc.style.display=conn?'block':'none';
+  if(cl) cl.style.display=conn?'none':'block';
+  if(conn){var w=document.getElementById('cloud-who');if(w)w.textContent=cloudState.user}
+  else{
+    if(cloudState.user&&document.getElementById('cloud-user')) document.getElementById('cloud-user').value=cloudState.user;
+    if(cloudState.pass&&document.getElementById('cloud-pass')) document.getElementById('cloud-pass').value=cloudState.pass;
+    if(cloudState.server&&document.getElementById('cloud-instance')) document.getElementById('cloud-instance').value=cloudState.server;
+    if(document.getElementById('cloud-stay')) document.getElementById('cloud-stay').checked=!!cloudState.persist;
+    var e=document.getElementById('cloud-error');if(e)e.style.display='none';
+  }
+  openModal('modal-cloud');
+}
+
+// Appel générique au webhook — identifiants envoyés à chaque requête
+async function callNuage(action,options){
+  var ctrl=new AbortController();
+  var timer=setTimeout(function(){ctrl.abort()},20000);
+  var res;
+  try{
+    res=await fetch(NUAGE_WEBHOOK,{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(Object.assign({action:action,username:cloudState.user,password:cloudState.pass,server:cloudState.server},options||{})),
+      signal:ctrl.signal
+    });
+  }catch(netErr){
+    clearTimeout(timer);
+    if(netErr.name==='AbortError') throw new Error('Délai réseau dépassé (20 s).');
+    throw new Error('Impossible de joindre le serveur. Vérifiez votre connexion, ou que le webhook n8n est activé et autorise cette page (CORS).');
+  }
+  clearTimeout(timer);
+  if(!res.ok) throw new Error('Le serveur a répondu (code '+res.status+')'+(res.status===405?' — précisez votre instance Nuage.':'.'));
+  var data;try{data=await res.json()}catch(e){throw new Error('Réponse illisible du serveur (JSON attendu).')}
+  if(data&&data.success===false) throw new Error(data.error||'Identifiants refusés.');
+  return data||{};
+}
+
+// Rassemble toutes les données Classe Active (toutes les clés cvibe_v5_*)
+function cloudBundle(){
+  var bundle={};
+  for(var i=0;i<localStorage.length;i++){
+    var k=localStorage.key(i);
+    if(k && k.indexOf(SK)===0){
+      try{bundle[k]=JSON.parse(localStorage.getItem(k))}catch(e){bundle[k]=localStorage.getItem(k)}
+    }
+  }
+  return bundle;
+}
+// Applique un bundle reçu du Nuage
+function cloudApply(data){
+  if(!data) return false;
+  Object.keys(data).forEach(function(k){
+    if(k.indexOf(SK)!==0) return; // ne touche qu'aux clés Classe Active
+    if(k===SK+'') return;
+    var v=data[k];
+    try{localStorage.setItem(k,typeof v==='object'?JSON.stringify(v):v)}catch(e){}
+  });
+  return true;
+}
+function cloudHasLocalData(){
+  var c=ld('classes');
+  return !!(c&&c.length);
+}
+
+async function cloudLogin(){
+  var err=document.getElementById('cloud-error');if(err)err.style.display='none';
+  var user=document.getElementById('cloud-user').value.trim();
+  var pass=document.getElementById('cloud-pass').value;
+  var server=document.getElementById('cloud-instance')?document.getElementById('cloud-instance').value.trim():'';
+  var persist=!!(document.getElementById('cloud-stay')&&document.getElementById('cloud-stay').checked);
+  if(!user||!pass){if(err){err.textContent='⚠️ Identifiant et mot de passe requis.';err.style.display='block'}return}
+  var btn=document.getElementById('cloud-login-btn');var old=btn.textContent;btn.textContent='⏳ Connexion…';btn.disabled=true;
+  cloudState.user=user;cloudState.pass=pass;cloudState.server=server;cloudState.persist=persist;
+  try{
+    await callNuage('test');
+    cloudState.connected=true;
+    cloudSaveState();
+    cloudUpdateBtn();
+    await cloudReconcileOnLogin();
+    cloudOpenModal();
+  }catch(e){
+    cloudState.connected=false;
+    if(err){err.textContent='❌ '+(e.message||'Échec de la connexion.');err.style.display='block'}
+  }finally{btn.textContent=old;btn.disabled=false}
+}
+
+async function cloudReconcileOnLogin(){
+  var remote=null;
+  try{var r=await callNuage('load');remote=r?r.data:null}catch(e){}
+  var hasRemote=remote&&Object.keys(remote).some(function(k){return k.indexOf(SK)===0});
+  var hasLocal=cloudHasLocalData();
+  if(hasRemote&&hasLocal){
+    customConfirm('Des données existent sur votre Nuage ET sur cet appareil. Utiliser le Nuage remplace les données de cet appareil. Garder le local envoie cet appareil vers le Nuage. (Pensez à exporter une sauvegarde avant.)',
+      function(){cloudApply(remote);location.reload()},
+      {title:'☁️ Données des deux côtés',okText:'☁️ Utiliser le Nuage',cancelText:'💻 Garder le local',danger:false,onNo:function(){cloudPushNow(true)}});
+  } else if(hasRemote){
+    cloudApply(remote);location.reload();
+  } else {
+    await cloudPushNow(true);
+  }
+}
+
+async function cloudPullNow(){
+  if(!cloudIsConnected()) return;
+  try{
+    var r=await callNuage('load');
+    if(r&&r.data&&Object.keys(r.data).some(function(k){return k.indexOf(SK)===0})){
+      customConfirm('Cela remplacera les données de cet appareil par celles du Nuage. Continuer ?',function(){
+        cloudApply(r.data);location.reload();
+      },{title:'⬇️ Récupérer du Nuage',okText:'Récupérer',danger:false});
+    } else { customAlert('Aucune donnée trouvée sur le Nuage.','Nuage'); }
+  }catch(e){customAlert('Erreur : '+e.message,'Nuage')}
+}
+
+async function cloudPushNow(silent){
+  if(!cloudIsConnected()) return;
+  try{
+    await callNuage('save',{data:cloudBundle()});
+    var s=document.getElementById('cloud-sync-state');
+    if(s) s.textContent='Dernière synchro : '+new Date().toLocaleTimeString('fr-FR');
+    if(!silent) customAlert('⬆️ Vos données ont été envoyées au Nuage.','Nuage');
+  }catch(e){if(!silent)customAlert('Erreur d\'envoi : '+e.message,'Nuage')}
+}
+
+// Envoi automatique différé (après une modification)
+function cloudSchedulePush(){
+  if(!cloudIsConnected()) return;
+  clearTimeout(_cloudPushTimer);
+  _cloudPushTimer=setTimeout(function(){cloudPushNow(true)},4000);
+}
+
+function cloudLogout(){
+  customConfirm('Vos données restent sur cet appareil et sur votre Nuage. Se déconnecter ?',function(){
+    cloudState={user:'',pass:'',server:cloudState.server,connected:false,persist:false};
+    try{localStorage.removeItem(CLOUD_KEY)}catch(e){}
+    cloudUpdateBtn();closeModal('modal-cloud');
+  },{title:'🚪 Se déconnecter',okText:'Se déconnecter'});
+}
+
 function exportData(){
   var data={};
   for(var i=0;i<localStorage.length;i++){
@@ -3566,19 +3793,23 @@ function ensureScrollSane(){
 }
 
 var _confirmCallback=null;
+var _confirmCancelCallback=null;
 function customConfirm(message,onYes,opts){
   opts=opts||{};
   document.getElementById('confirm-message').textContent=message;
   document.getElementById('confirm-title').textContent=opts.title||'Confirmation';
   var btn=document.getElementById('confirm-ok-btn');
-  btn.textContent=opts.okText||'Confirmer';
+  btn.textContent=opts.okText||opts.yesLabel||'Confirmer';
   btn.className='btn btn-sm '+(opts.danger===false?'btn-primary':'btn-danger');
+  var cancelBtn=document.getElementById('confirm-cancel-btn');
+  if(cancelBtn) cancelBtn.textContent=opts.cancelText||opts.noLabel||'Annuler';
   _confirmCallback=onYes;
+  _confirmCancelCallback=opts.onNo||null;
   openModal('modal-confirm');
 }
-function confirmCancel(){_confirmCallback=null;closeModal('modal-confirm')}
+function confirmCancel(){var cb=_confirmCancelCallback;_confirmCallback=null;_confirmCancelCallback=null;closeModal('modal-confirm');if(cb)cb()}
 function confirmOk(){
-  var cb=_confirmCallback;_confirmCallback=null;
+  var cb=_confirmCallback;_confirmCallback=null;_confirmCancelCallback=null;
   closeModal('modal-confirm');
   if(cb) cb();
 }
@@ -6514,6 +6745,8 @@ buildColorPicker('color-row-grp','f-grp-color',GRP_COLORS,0);
 syncNewClsToggle();syncNewClsPassportToggle();
 render();
 showWelcomeIfFirstVisit();
+// Initialise l'état de synchronisation Nuage (bouton + reconnexion auto si "rester connecté")
+cloudLoadState();cloudUpdateBtn();
 </script>
 </body>
 </html>

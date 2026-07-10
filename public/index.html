@@ -3765,6 +3765,7 @@ function resetApp(){
 }
 
 var _savedScrollY=0;
+var _modalZ=2700;
 function openModal(id){
   var el=document.getElementById(id);
   if(!el) return;
@@ -3772,15 +3773,20 @@ function openModal(id){
     _savedScrollY=window.scrollY||window.pageYOffset||0;
     document.body.style.top='-'+_savedScrollY+'px';
   }
+  // z-index croissant : la dernière modale ouverte passe toujours au-dessus des précédentes
+  _modalZ+=10;
+  el.style.zIndex=_modalZ;
   el.classList.add('open');
   document.body.classList.add('modal-open');
 }
 function closeModal(id){
-  var el=document.getElementById(id);if(el)el.classList.remove('open');
+  var el=document.getElementById(id);
+  if(el){el.classList.remove('open');el.style.zIndex=''}
   if(!document.querySelector('.overlay.open')){
     document.body.classList.remove('modal-open');
     document.body.style.top='';
     window.scrollTo(0,_savedScrollY);
+    _modalZ=2700; // réinitialise quand plus aucune modale n'est ouverte
   }
 }
 // Sécurité globale : si jamais on se retrouve avec body verrouillé mais aucune modale ouverte

@@ -35,7 +35,7 @@ Première version publique, publiée sur la Forge des Communs Numériques Éduca
 - Bannière décorative en fond d'en-tête, recadrable au glisser-déposer.
 - Image de couverture pour la vignette du tableau de bord.
 - 5 styles de fiche et 10 polices, dont OpenDyslexic, Luciole, Andika
-  et Marelle (police cursive libre de la Forge).
+  et Marelle (police cursive libre de la Forge, en deux variantes).
 - Ajustement automatique pour garantir la tenue sur une seule page A4,
   avec alerte en cas de débordement.
 
@@ -53,7 +53,7 @@ Première version publique, publiée sur la Forge des Communs Numériques Éduca
 
 **Impression**
 - Format A4 portrait, aperçu à la taille réelle.
-- Rendu en noir et nuances de gris pour économiser l'encre.
+- Impression en couleur, ou en niveaux de gris au choix pour économiser l'encre.
 - L'interface disparaît à l'impression : seule la fiche est imprimée.
 
 ### Sécurité et vie privée

@@ -166,6 +166,7 @@ img.vignette{ height:34px; border-radius:8px; border:1px solid var(--ligne); }
    ========================================================================== */
 .fiche{
   --f-trait:#111; --f-fond-q:#fff; --f-rayon:9px; --f-epais:1.5px;
+  --f-echelle:1;   /* échelle du texte des questions/réponses (réglable) */
   width:210mm; min-height:297mm; flex:none;
   background:#fff; color:#111; box-shadow:0 6px 30px rgba(30,58,70,.22);
   padding:9mm 8mm; transform-origin:top center;
@@ -198,8 +199,14 @@ img.vignette{ height:34px; border-radius:8px; border:1px solid var(--ligne); }
 /* Éléments partagés (utilisés par le tableau) */
 .q-vide{ color:#bbb; font-style:italic; font-size:12.5px; }
 .c-texte{ min-width:0; }
-.points{ flex:none; text-align:right; font-size:11px; letter-spacing:2.5px; font-weight:900;
-  color:var(--f-trait); font-family:"Segoe UI Symbol", var(--fiche-police, var(--police)); }
+/* --- Les ronds du boîtier ---
+   Dessinés en CSS (et non avec le caractère « ● ») : leur taille est fixée en
+   millimètres, donc elle ne dépend JAMAIS de la police choisie pour la fiche.
+   --f-rond : diamètre d'un rond. */
+.points{ --f-rond:2.6mm; flex:none; display:inline-flex; align-items:center; gap:1.4mm;
+  justify-content:flex-end; line-height:0; }
+.points i{ width:var(--f-rond); height:var(--f-rond); border-radius:50%;
+  background:var(--f-trait); display:block; flex:none; }
 .fiche-pied{ margin-top:9px; padding-top:5px; border-top:1.5px dashed var(--f-trait); font-size:10px; color:#555; display:flex; justify-content:space-between; gap:10px; }
 
 /* ---------- 8. Les 5 styles ---------- */
@@ -208,13 +215,13 @@ img.vignette{ height:34px; border-radius:8px; border:1px solid var(--ligne); }
 .fiche[data-theme="s2"]{ --f-rayon:16px; --f-epais:2px; --f-fond-q:#fafafa; }
 .fiche[data-theme="s2"] .badge-fiche{ border-radius:16px; border-style:dashed; }
 .fiche[data-theme="s2"] .fiche-entete{ border-bottom-style:dashed; }
-.fiche[data-theme="s2"] .points{ background:#efefef; border-radius:999px; padding:1px 7px 1px 9px; min-width:42px; }
+.fiche[data-theme="s2"] .points{ background:#efefef; border-radius:999px; padding:1.2mm 2.4mm; }
 
 .fiche[data-theme="s3"]{ --f-rayon:20px; --f-epais:2.5px; --f-fond-q:#fff; }
 .fiche[data-theme="s3"] .badge-fiche{ border-radius:20px; border-style:dashed; transform:rotate(-1.5deg); }
 .fiche[data-theme="s3"] .fiche-entete{ border-bottom-style:dashed; }
 .fiche[data-theme="s3"] .choix{ border-top-style:dashed; }
-.fiche[data-theme="s3"] .points{ background:color-mix(in srgb, var(--f-trait) 10%, transparent); border-radius:999px; padding:1px 9px; min-width:44px; }
+.fiche[data-theme="s3"] .points{ background:color-mix(in srgb, var(--f-trait) 10%, transparent); border-radius:999px; padding:1.2mm 2.4mm; }
 .fiche[data-theme="s3"] .t1::after{ content:" ✳"; color:var(--f-trait); }
 
 .fiche[data-theme="s4"]{ --f-rayon:3px; --f-epais:2.5px; }
@@ -222,12 +229,12 @@ img.vignette{ height:34px; border-radius:8px; border:1px solid var(--ligne); }
   background:repeating-linear-gradient(-45deg, transparent 0 7px, color-mix(in srgb, var(--f-trait) 8%, transparent) 7px 9px); }
 .fiche[data-theme="s4"] .t1{ text-transform:uppercase; letter-spacing:1.5px; }
 .fiche[data-theme="s4"] .badge-fiche{ border-radius:0; background:#fff; }
-.fiche[data-theme="s4"] .points{ letter-spacing:3px; }
+.fiche[data-theme="s4"] .points i{ border-radius:0; }
 
 .fiche[data-theme="s5"]{ --f-rayon:4px; --f-epais:3px; }
 .fiche[data-theme="s5"] .badge-fiche{ border-radius:4px; box-shadow:3px 3px 0 var(--f-trait); }
 .fiche[data-theme="s5"] .fiche-entete{ border-bottom-width:3px; }
-.fiche[data-theme="s5"] .points{ letter-spacing:2px; }
+.fiche[data-theme="s5"] .points{ gap:1.6mm; }
 
 /* ---------- 8bis. Disposition TABLEAU (une ligne par question) ----------
    --f-img : hauteur des illustrations. Valeur standard posée par ajusterTenue()
@@ -246,7 +253,8 @@ img.vignette{ height:34px; border-radius:8px; border:1px solid var(--ligne); }
   border-bottom:1px solid color-mix(in srgb, var(--f-trait) 70%, transparent);
   padding:5px 6px; display:flex; align-items:center; min-width:0;
   min-height:9mm;                 /* respire : le texte n'est jamais écrasé */
-  font-size:12.5px; line-height:1.25; overflow-wrap:anywhere; word-break:break-word;
+  font-size:calc(12.5px * var(--f-echelle)); line-height:1.25;
+  overflow-wrap:anywhere; word-break:break-word;
 }
 /* Bordures extérieures nettes : dernière colonne / dernière ligne.
    En 3 colonnes, une ligne = 5 cellules ; en 2 colonnes, 4 cellules. */
@@ -256,8 +264,7 @@ img.vignette{ height:34px; border-radius:8px; border:1px solid var(--ligne); }
 .fiche-tableau.deux .cell:nth-last-child(-n+4){ border-bottom:0; }
 .fiche-tableau .th{ font-weight:800; justify-content:center; min-height:7mm;
   background:color-mix(in srgb, var(--f-trait) 6%, transparent); }
-.fiche-tableau .th-pos{ font-size:12px; letter-spacing:1.5px; color:var(--f-trait);
-  font-family:"Segoe UI Symbol", var(--fiche-police, var(--police)); }
+.fiche-tableau .th-pos{ justify-content:center; }
 /* Numéro : jamais coupé (le « 11 » ne doit pas se casser en 1/1) */
 .fiche-tableau .td-num{ justify-content:center; font-weight:800; white-space:nowrap;
   overflow-wrap:normal; word-break:keep-all; padding:5px 2px; }
@@ -272,7 +279,7 @@ img.vignette{ height:34px; border-radius:8px; border:1px solid var(--ligne); }
 .fiche-tableau.deux .td-a{ flex-direction:row; justify-content:space-between; gap:6px; }
 .fiche-tableau.deux .td-a .c-texte{ flex:1; text-align:left; }
 .fiche-tableau.deux .td-a img{ max-height:var(--f-img); max-width:26mm; }
-.fiche-tableau.deux .td-a .points{ min-width:auto; margin-left:4px; }
+.fiche-tableau.deux .td-a .points{ margin-left:4px; }
 .fiche[data-theme="s2"] .fiche-tableau, .fiche[data-theme="s3"] .fiche-tableau{ border-style:dashed; }
 .fiche[data-theme="s5"] .fiche-tableau{ box-shadow:3px 3px 0 var(--f-trait); }
 
@@ -294,10 +301,9 @@ img.vignette{ height:34px; border-radius:8px; border:1px solid var(--ligne); }
 .carte-q .c-reps{ display:flex; flex-direction:column; justify-content:center; gap:7px; min-width:0; }
 /* Ordre de lecture : image → ronds → réponse. Les ronds sont plus gros et
    posés dans une pastille, pour que l'élève repère vite le cran du boîtier. */
-.carte-q .c-rep{ display:flex; align-items:center; gap:10px; font-size:14.5px; line-height:1.35;
-  min-height:6.5mm; letter-spacing:.1px; }
-.carte-q .c-rep .points{ flex:none; order:-1; font-size:15px; letter-spacing:2.5px;
-  min-width:16mm; text-align:left; }
+.carte-q .c-rep{ display:flex; align-items:center; gap:10px; line-height:1.35;
+  font-size:calc(14.5px * var(--f-echelle)); min-height:6.5mm; letter-spacing:.1px; }
+.carte-q .c-rep .points{ order:-1; --f-rond:3.2mm; min-width:17mm; justify-content:flex-start; }
 .carte-q .c-rep .c-texte{ flex:1; overflow-wrap:anywhere; }
 .fiche[data-theme="s5"] .carte-q{ box-shadow:3px 3px 0 var(--f-trait); }
 .fiche[data-theme="s3"] .carte-q{ border-style:dashed; }
@@ -440,6 +446,16 @@ footer.app-footer a:hover{ text-decoration:underline; }
           <label for="sel-police">Police de la fiche</label>
           <select id="sel-police"></select>
         </div>
+        <div class="champ" style="flex:0 1 150px">
+          <label for="sel-taille">Taille du texte</label>
+          <select id="sel-taille">
+            <option value="0.9">Compact</option>
+            <option value="1">Normal</option>
+            <option value="1.15">Grand</option>
+            <option value="1.3">Très grand</option>
+            <option value="1.5">Maxi</option>
+          </select>
+        </div>
       </div>
       <p class="aide" style="margin:-4px 0 10px">
         <strong>Question texte → réponses</strong> : tableau, une ligne par question ;
@@ -482,7 +498,7 @@ footer.app-footer a:hover{ text-decoration:underline; }
       <h2>✏️ Les 12 questions</h2>
       <p class="aide" style="margin:0 0 6px">
         Saisissez la question et les propositions (texte et/ou image), puis cochez la bonne réponse.
-        L'application place automatiquement la bonne réponse sur les points (●, ●● ou ●●●) exigés par le boîtier.
+        L'application place automatiquement la bonne réponse sur le nombre de ronds exigé par le boîtier.
       </p>
     </div>
     <div id="liste-questions"></div>
@@ -490,7 +506,7 @@ footer.app-footer a:hover{ text-decoration:underline; }
 
   <section id="apercu" aria-label="Aperçu de la fiche">
     <p class="apercu-titre">Aperçu — format A4 portrait (taille réelle)</p>
-    <p class="alerte-page" id="alerte-page" hidden>⚠️ La fiche dépasse d'une page : réduisez le texte, ou choisissez « Image seule » / « Texte seul ».</p>
+    <p class="alerte-page" id="alerte-page" hidden>⚠️ La fiche dépasse d'une page : réduisez la taille du texte, ou raccourcissez vos énoncés.</p>
     <div id="fiche-zone"><article class="fiche" id="fiche" data-theme="s2" aria-live="polite"></article></div>
   </section>
 </main>
@@ -594,7 +610,7 @@ function propositionVide(){ return { texte:"", image:"" }; }
 function questionVide(){ return { texte:"", image:"", propositions:[propositionVide(),propositionVide(),propositionVide()], bonne:0 }; }
 function ficheVide(){
   return { id:identifiant(), version:5, groupe:"", serie:"", nbReponses:3,
-    format:"tableau", theme:"s2", police:"systeme",
+    format:"tableau", theme:"s2", police:"systeme", taille:1,
     titre:"", consigne:"", couverture:"", banniere:{ image:"", x:50, y:50 },
     questions:Array.from({length:NB_QUESTIONS}, questionVide), creele:Date.now(), modifiele:Date.now() };
 }
@@ -647,7 +663,8 @@ function positionsActives(){ return LEXIDATA.positions(parseInt(fiche.groupe,10)
    5. OUTILS
    ========================================================================== */
 function e(t){ const d = document.createElement("div"); d.textContent = t ?? ""; return d.innerHTML; }
-function points(n){ return "●".repeat(n); }
+/** Les n ronds du boîtier, dessinés en CSS (taille indépendante de la police). */
+function points(n){ return "<i></i>".repeat(n); }
 function propRenseignee(p){ return p.texte.trim() !== "" || p.image.trim() !== ""; }
 /* En mise en page « cartes », une réponse doit avoir du TEXTE (les images de
    réponse n'y sont pas utilisées) ; ailleurs, texte ou image suffit. */
@@ -958,6 +975,7 @@ function synchroniserFormulaire(){
   document.getElementById("sel-format").value = fiche.format;
   document.getElementById("sel-theme").value  = fiche.theme;
   document.getElementById("sel-police").value = fiche.police;
+  document.getElementById("sel-taille").value = String(fiche.taille);
   document.getElementById("inp-titre").value  = fiche.titre;
   document.getElementById("inp-consigne").value = fiche.consigne;
   rafraichirCouverture();
@@ -1040,6 +1058,7 @@ function rendreFiche(){
   const el = document.getElementById("fiche");
   el.dataset.theme = fiche.theme;
   el.style.setProperty("--fiche-police", familleCss(fiche.police));
+  el.style.setProperty("--f-echelle", fiche.taille);
   const solutions = positionsActives();
   const nb = nbRepDe(fiche);
 
@@ -1077,7 +1096,7 @@ function rendreFiche(){
     </header>
     ${corps}
     <footer class="fiche-pied">
-      <span>Fiche Lexidata — glisse chaque curseur sur ${nb === 2 ? "les points indiqués" : "●, ●● ou ●●●"}.</span>
+      <span>Fiche Lexidata — glisse chaque curseur sur les ronds indiqués.</span>
       <span>Réalisée avec Lexidatelier</span>
     </footer>`;
 
@@ -1203,9 +1222,9 @@ function rendreTableau(solutions, nb, rendreProp){
   const enTete = `
     <div class="cell th th-num"></div>
     <div class="cell th th-q"></div>
-    <div class="cell th th-pos">${points(1)}</div>
-    <div class="cell th th-pos">${points(2)}</div>
-    <div class="cell th th-pos">${points(3)}</div>`;
+    <div class="cell th th-pos"><span class="points">${points(1)}</span></div>
+    <div class="cell th th-pos"><span class="points">${points(2)}</span></div>
+    <div class="cell th th-pos"><span class="points">${points(3)}</span></div>`;
   const lignes = fiche.questions.map((q, i) => {
     const cible = solutions ? solutions[i] : (q.bonne < nb ? q.bonne+1 : 1);
     const rangees = agencerRangees(q, cible, nb);
@@ -1433,6 +1452,7 @@ function normaliserFiche(donnees){
   f.version = 5; f.id = f.id || identifiant();
   f.nbReponses = (donnees && donnees.nbReponses === 2) ? 2 : 3;
   f.format = ["tableau","cartes"].includes(f.format) ? f.format : "tableau";
+  f.taille = [0.9,1,1.15,1.3,1.5].includes(Number(f.taille)) ? Number(f.taille) : 1;
   delete f.repMedia; // remplacé par « format » (le mode texte+image a été retiré)
   delete f.layout;   // la disposition « tuiles » a été retirée
   f.theme = IDS_THEMES.includes(f.theme) ? f.theme : "s2";
@@ -1498,6 +1518,7 @@ function brancherEditeur(){
   });
   document.getElementById("sel-theme").addEventListener("change",  ev => { fiche.theme = IDS_THEMES.includes(ev.target.value) ? ev.target.value : "s1"; rendreFiche(); });
   document.getElementById("sel-police").addEventListener("change", ev => { fiche.police = POLICES.some(p => p.id === ev.target.value) ? ev.target.value : "systeme"; rendreFiche(); });
+  document.getElementById("sel-taille").addEventListener("change", ev => { fiche.taille = Number(ev.target.value) || 1; rendreFiche(); });
   document.getElementById("inp-titre").addEventListener("input",   ev => { fiche.titre = ev.target.value; rendreFiche(); });
   document.getElementById("inp-consigne").addEventListener("input",ev => { fiche.consigne = ev.target.value; rendreFiche(); });
 

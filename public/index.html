@@ -200,10 +200,7 @@ img.vignette{ height:34px; border-radius:8px; border:1px solid var(--ligne); }
 .fiche[data-double="1"] .fiche-tableau .th{ min-height:5mm; }
 
 /* Ligne de découpe entre les deux exemplaires */
-.ligne-decoupe{ border-top:1.5px dashed #999; margin:5mm 0 4mm; height:0;
-  display:flex; justify-content:center; }
-.ligne-decoupe span{ transform:translateY(-50%); background:#fff; padding:0 8px;
-  font-size:11px; color:#888; letter-spacing:2px; }
+.ligne-decoupe{ border-top:1.5px dashed #999; margin:5mm 0 4mm; height:0; }
 /* Impression en couleur par défaut. Le mode « niveaux de gris » (économie
    d'encre) s'applique aussi à l'aperçu, pour que l'enseignant voie le résultat. */
 .fiche[data-encre="gris"]{ filter:grayscale(100%); }
@@ -1205,7 +1202,7 @@ function rendreFiche(){
 
   el.dataset.double = fiche.double ? "1" : "0";
   el.innerHTML = fiche.double
-    ? exemplaire + `<div class="ligne-decoupe" aria-hidden="true"><span>✂ — — — — — — — — — — — — — — — — — — — — — — — —</span></div>` + exemplaire
+    ? exemplaire + `<div class="ligne-decoupe" aria-hidden="true"></div>` + exemplaire
     : exemplaire;
 
   const info = document.getElementById("info-matrice");

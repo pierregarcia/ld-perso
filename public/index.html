@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Lexidatelier — Créateur de fiches Lexidata</title>
 <meta name="description" content="Concevez, organisez, prévisualisez et imprimez des fiches compatibles avec le boîtier Lexidata. Application autonome, synchronisable sur votre Nuage.">
+<!-- Miniature d'onglet : emoji 🛠 dessiné en SVG, embarqué (aucun fichier externe) -->
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>%F0%9F%9B%A0</text></svg>">
 
 <style>
 /* ==========================================================================
@@ -290,11 +292,13 @@ img.vignette{ height:34px; border-radius:8px; border:1px solid var(--ligne); }
 .carte-q .c-visuel img{ max-width:100%; max-height:var(--c-img); display:block; }
 .carte-q .c-visuel .td-vide{ color:#ccc; font-size:11px; text-align:center; }
 .carte-q .c-reps{ display:flex; flex-direction:column; justify-content:center; gap:7px; min-width:0; }
-/* Réponses : plus grandes et mieux espacées, pour respirer */
+/* Ordre de lecture : image → ronds → réponse. Les ronds sont plus gros et
+   posés dans une pastille, pour que l'élève repère vite le cran du boîtier. */
 .carte-q .c-rep{ display:flex; align-items:center; gap:10px; font-size:14.5px; line-height:1.35;
   min-height:6.5mm; letter-spacing:.1px; }
+.carte-q .c-rep .points{ flex:none; order:-1; font-size:15px; letter-spacing:2.5px;
+  min-width:16mm; text-align:left; }
 .carte-q .c-rep .c-texte{ flex:1; overflow-wrap:anywhere; }
-.carte-q .c-rep .points{ margin-left:auto; font-size:12px; letter-spacing:3px; }
 .fiche[data-theme="s5"] .carte-q{ box-shadow:3px 3px 0 var(--f-trait); }
 .fiche[data-theme="s3"] .carte-q{ border-style:dashed; }
 
@@ -316,6 +320,10 @@ img.vignette{ height:34px; border-radius:8px; border:1px solid var(--ligne); }
 .emoji-choix{ display:flex; flex-wrap:wrap; gap:6px; margin:6px 0 10px; }
 .emoji-choix button{ border:1.5px solid var(--ligne); background:#fff; border-radius:10px; width:40px; height:40px; font-size:20px; }
 .emoji-choix button.actif{ border-color:var(--accent); background:var(--accent-pale); }
+.mentions{ font-size:13.5px; line-height:1.5; color:var(--encre-douce); }
+.mentions p{ margin:0 0 12px; }
+.mentions strong{ color:var(--encre); }
+.mentions a{ color:var(--accent-fonce); font-weight:700; }
 
 /* ---------- 10. Footer fixe ---------- */
 footer.app-footer{ position:fixed; left:0; right:0; bottom:0; z-index:30; height:var(--footer-h);
@@ -323,6 +331,9 @@ footer.app-footer{ position:fixed; left:0; right:0; bottom:0; z-index:30; height
   background:var(--carte); border-top:1px solid var(--ligne); font-size:12.5px; color:var(--encre-douce); }
 footer.app-footer a{ color:var(--accent-fonce); font-weight:700; text-decoration:none; }
 footer.app-footer a:hover{ text-decoration:underline; }
+.lien-pied{ border:0; background:none; padding:0; font-size:12.5px; font-weight:700;
+  color:var(--accent-fonce); font-family:inherit; }
+.lien-pied:hover{ text-decoration:underline; }
 
 /* ---------- 11. Impression ---------- */
 @page{ size:A4 portrait; margin:9mm; }
@@ -489,8 +500,13 @@ footer.app-footer a:hover{ text-decoration:underline; }
 
 <!-- ======================= FOOTER ======================= -->
 <footer class="app-footer">
-  <span><strong>Lexidatelier</strong> · <a href="https://www.gnu.org/licenses/agpl-3.0.fr.html" target="_blank" rel="noopener">GNU AGPL v3</a></span>
-  <a href="https://forge.apps.education.fr/exemple/lexidatelier/-/issues" target="_blank" rel="noopener">💡 Suggérer et Signaler</a>
+  <a href="https://forge.apps.education.fr/lelabodecharlie/lexidatelier/-/blob/main/CHANGELOG?ref_type=heads"
+     target="_blank" rel="noopener" title="Voir le journal des modifications"><strong>Lexidatelier</strong></a>
+  <span>·</span>
+  <a href="https://www.gnu.org/licenses/gpl-3.0.fr.html" target="_blank" rel="noopener">GNU GPL v3</a>
+  <a href="https://forge.apps.education.fr/lelabodecharlie/lexidatelier/-/work_items" target="_blank" rel="noopener">💡 Suggérer et Signaler</a>
+  <a href="https://forge.apps.education.fr/lelabodecharlie/lexidatelier/-/blob/main/public/index.html" target="_blank" rel="noopener">&lt;/&gt; Code source</a>
+  <button type="button" id="btn-mentions" class="lien-pied">⚖️ Mentions légales</button>
 </footer>
 
 <script>
@@ -524,29 +540,48 @@ const THEMES = [
 ];
 const IDS_THEMES = THEMES.map(t => t.id);
 
-/* POLICES TÉLÉCHARGEABLES — ⚠️ ZONE À PERSONNALISER ⚠️
-   Déposez les .woff2 dans « polices/ » sur GitLab et ajustez l'URL « raw » ci-dessous.
-   Fichier absent → repli automatique sur la pile système (le sélecteur reste utilisable). */
-const GITLAB_FONTS_BASE = "https://forge.apps.education.fr/VOTRE-COMPTE/lexidatelier/-/raw/main/polices/";
+/* --------------------------------------------------------------------------
+   POLICES TÉLÉCHARGEABLES — ⚠️ ZONE À PERSONNALISER ⚠️
+   --------------------------------------------------------------------------
+   1. Déposez les fichiers .woff2 dans un dossier « polices/ » de votre dépôt.
+   2. Ajustez GITLAB_FONTS_BASE vers l'URL « raw » de ce dossier.
+   3. Nommez les fichiers exactement comme indiqué dans « fichiers » ci-dessous :
+      la graisse 400 (normal) et la graisse 700 (gras), sous-ensemble latin.
+      Marelle n'existe qu'en Regular : seul le 400 est déclaré, le navigateur
+      graissera lui-même les titres.
+   Un fichier absent est simplement ignoré par le navigateur : la police se
+   rabat proprement sur sa pile de secours, sans rien casser.
+   Licences : SIL Open Font License (Fredoka, Baloo 2, Quicksand, Nunito,
+   Comfortaa, Andika, Marelle, OpenDyslexic) ; Luciole est gratuite (CC BY).
+   -------------------------------------------------------------------------- */
+const GITLAB_FONTS_BASE = "https://forge.apps.education.fr/lelabodecharlie/lexidatelier/-/raw/main/polices/";
 const PILE_SYSTEME = 'ui-rounded, "Hiragino Maru Gothic ProN", "Quicksand", "Comfortaa", "Arial Rounded MT Bold", "Trebuchet MS", "Segoe UI", system-ui, sans-serif';
 const POLICES = [
-  { id:"systeme",      nom:"Système (arrondie)",          fichier:null,                 css:PILE_SYSTEME },
-  { id:"fredoka",      nom:"Fredoka",                     fichier:"fredoka.woff2",      css:PILE_SYSTEME },
-  { id:"baloo2",       nom:"Baloo 2",                     fichier:"baloo2.woff2",       css:PILE_SYSTEME },
-  { id:"quicksand",    nom:"Quicksand",                   fichier:"quicksand.woff2",    css:PILE_SYSTEME },
-  { id:"nunito",       nom:"Nunito",                      fichier:"nunito.woff2",       css:'"Segoe UI", system-ui, sans-serif' },
-  { id:"comfortaa",    nom:"Comfortaa",                   fichier:"comfortaa.woff2",    css:PILE_SYSTEME },
-  { id:"andika",       nom:"Andika (apprentis lecteurs)", fichier:"andika.woff2",       css:'"Segoe UI", system-ui, sans-serif' },
-  { id:"luciole",      nom:"Luciole (basse vision)",      fichier:"luciole.woff2",      css:'"Segoe UI", system-ui, sans-serif' },
-  { id:"opendyslexic", nom:"OpenDyslexic (dyslexie)",     fichier:"opendyslexic.woff2", css:'"Comic Sans MS", "Segoe UI", system-ui, sans-serif' }
+  { id:"systeme",      nom:"Système (arrondie)",          fichiers:null, css:PILE_SYSTEME },
+  { id:"fredoka",      nom:"Fredoka",                     fichiers:{ 400:"fredoka-400.woff2",      700:"fredoka-700.woff2" },      css:PILE_SYSTEME },
+  { id:"baloo2",       nom:"Baloo 2",                     fichiers:{ 400:"baloo2-400.woff2",       700:"baloo2-700.woff2" },       css:PILE_SYSTEME },
+  { id:"quicksand",    nom:"Quicksand",                   fichiers:{ 400:"quicksand-400.woff2",    700:"quicksand-700.woff2" },    css:PILE_SYSTEME },
+  { id:"nunito",       nom:"Nunito",                      fichiers:{ 400:"nunito-400.woff2",       700:"nunito-700.woff2" },       css:'"Segoe UI", system-ui, sans-serif' },
+  { id:"comfortaa",    nom:"Comfortaa",                   fichiers:{ 400:"comfortaa-400.woff2",    700:"comfortaa-700.woff2" },    css:PILE_SYSTEME },
+  { id:"andika",       nom:"Andika (apprentis lecteurs)", fichiers:{ 400:"andika-400.woff2",       700:"andika-700.woff2" },       css:'"Segoe UI", system-ui, sans-serif' },
+  { id:"luciole",      nom:"Luciole (basse vision)",      fichiers:{ 400:"luciole-400.woff2",      700:"luciole-700.woff2" },      css:'"Segoe UI", system-ui, sans-serif' },
+  { id:"opendyslexic", nom:"OpenDyslexic (dyslexie)",     fichiers:{ 400:"opendyslexic-400.woff2", 700:"opendyslexic-700.woff2" }, css:'"Comic Sans MS", "Segoe UI", system-ui, sans-serif' },
+  { id:"marelle",      nom:"Marelle (cursive · Forge)",   fichiers:{ 400:"marelle-400.woff2" },                                    css:'"Marelle", cursive' }
 ];
+
+/** Une règle @font-face par graisse déclarée. */
 function injecterPolices(){
-  const regles = POLICES.filter(p => p.fichier).map(p =>
-    `@font-face{font-family:"lex-${p.id}";src:url("${GITLAB_FONTS_BASE}${p.fichier}") format("woff2");font-weight:100 900;font-display:swap;}`).join("");
-  const style = document.createElement("style"); style.id = "polices-injectees"; style.textContent = regles;
+  const regles = POLICES.filter(p => p.fichiers).flatMap(p =>
+    Object.entries(p.fichiers).map(([poids, fichier]) =>
+      `@font-face{font-family:"lex-${p.id}";`
+      + `src:url("${GITLAB_FONTS_BASE}${fichier}") format("woff2");`
+      + `font-weight:${poids};font-style:normal;font-display:swap;}`)
+  ).join("");
+  const style = document.createElement("style");
+  style.id = "polices-injectees"; style.textContent = regles;
   document.head.appendChild(style);
 }
-function familleCss(id){ const p = POLICES.find(x => x.id === id) || POLICES[0]; return p.fichier ? `"lex-${p.id}", ${p.css}` : p.css; }
+function familleCss(id){ const p = POLICES.find(x => x.id === id) || POLICES[0]; return p.fichiers ? `"lex-${p.id}", ${p.css}` : p.css; }
 
 /* ==========================================================================
    3. STOCKAGE — bibliothèque (dossiers + fiches) dans une seule clé,
@@ -1367,6 +1402,30 @@ function confirmer(message, onOui, opts){
 }
 
 /* ==========================================================================
+   11bis. MENTIONS LÉGALES
+   ========================================================================== */
+function ouvrirMentions(){
+  ouvrirModal(`
+    <div class="modal-titre">⚖️ Mentions légales</div>
+    <div class="mentions">
+      <p><strong>Éditeur</strong><br>
+        Charlie ROLLO — <a href="mailto:charlie.rollo@ac-versailles.fr">charlie.rollo@ac-versailles.fr</a></p>
+      <p><strong>Hébergement</strong><br>
+        Forge des Communs Numériques Éducatifs, Ministère de l'Éducation nationale —
+        110 rue de Grenelle, 75007 Paris.</p>
+      <p><strong>Licence</strong><br>
+        GNU General Public License v3.0 (<a href="https://www.gnu.org/licenses/gpl-3.0.fr.html" target="_blank" rel="noopener">GPLv3</a>) —
+        Toute redistribution ou modification doit citer l'auteur original : Charlie ROLLO.</p>
+      <p><strong>Données personnelles</strong><br>
+        Aucune donnée personnelle n'est collectée ni transmise. Tout est stocké localement
+        dans votre navigateur (localStorage).</p>
+    </div>
+    <div class="actions-modal">
+      <button class="btn-clair orange" id="m-ok">Fermer</button>
+    </div>`);
+  document.getElementById("m-ok").onclick = fermerModal;
+}
+/* ==========================================================================
    12. NORMALISATION / IMPORT-EXPORT
    ========================================================================== */
 function normaliserFiche(donnees){
@@ -1400,6 +1459,7 @@ function brancherActions(){
   document.getElementById("logo-accueil").onclick = () => { if(!document.getElementById("vue-editeur").hidden) retourDashboard(); else afficherDashboard(); };
   document.getElementById("btn-retour").onclick = retourDashboard;
   document.getElementById("btn-nuage").onclick = ouvrirModalNuage;
+  document.getElementById("btn-mentions").onclick = ouvrirMentions;
   document.getElementById("btn-print").onclick = () => window.print();
   document.getElementById("btn-export").onclick = () => {
     const blob = new Blob([JSON.stringify(fiche, null, 2)], { type:"application/json" });

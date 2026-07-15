@@ -92,27 +92,34 @@ Sur la Forge, les GitLab Pages publient automatiquement le dossier `public/`.
 Le sélecteur de polices fonctionne sans rien installer : tant qu'un fichier est
 absent, l'application se rabat proprement sur les polices du système.
 
-Pour activer les polices personnalisées, déposez les fichiers `.woff2`
-(sous-ensemble **latin**, graisses **400** et **700**) dans un dossier `polices/` :
+Pour activer les polices personnalisées, déposez les fichiers dans
+**`public/polices/`**, à côté de `index.html`.
+
+> ⚠️ Le dossier doit impérativement être dans `public/` : sur GitLab Pages, c'est
+> le seul dossier publié. Le chemin relatif évite par ailleurs tout problème de
+> CORS — les polices web ne se chargent pas de façon fiable depuis une URL `raw`.
+
+Les formats `.woff2`, `.ttf` et `.otf` sont tous acceptés (`.woff2` reste le plus
+léger). Les noms de fichiers attendus, **casse comprise** :
 
 | Police | Source | Fichiers attendus |
 |---|---|---|
 | Fredoka | Google Fonts | `fredoka-400.woff2`, `fredoka-700.woff2` |
-| Baloo 2 | Google Fonts | `baloo2-400.woff2`, `baloo2-700.woff2` |
-| Quicksand | Google Fonts | `quicksand-400.woff2`, `quicksand-700.woff2` |
-| Nunito | Google Fonts | `nunito-400.woff2`, `nunito-700.woff2` |
-| Comfortaa | Google Fonts | `comfortaa-400.woff2`, `comfortaa-700.woff2` |
-| Andika | [SIL](https://software.sil.org/andika/) | `andika-400.woff2`, `andika-700.woff2` |
-| Luciole | [luciole-vision.com](https://www.luciole-vision.com/) | `luciole-400.woff2`, `luciole-700.woff2` |
-| OpenDyslexic | [opendyslexic.org](https://opendyslexic.org/) | `opendyslexic-400.woff2`, `opendyslexic-700.woff2` |
-| Marelle | [Forge](https://marelle.forge.apps.education.fr/) | `marelle-400.woff2` *(Regular uniquement)* |
+| Baloo 2 | Google Fonts | `Baloo_2.woff2` *(police variable, un seul fichier)* |
+| Quicksand | Google Fonts | `quicksand-latin-400-normal.ttf`, `quicksand-latin-700-normal.ttf` |
+| Nunito | Google Fonts | `Nunito-Regular.ttf`, `Nunito-Bold.ttf` |
+| Comfortaa | Google Fonts | `Comfortaa-Regular.ttf`, `Comfortaa-Bold.ttf` |
+| Andika | [SIL](https://software.sil.org/andika/) | `Andika-400.ttf`, `Andika-700.ttf` |
+| Luciole | [luciole-vision.com](https://www.luciole-vision.com/) | `Luciole-400.woff2`, `Luciole-700.woff2` |
+| OpenDyslexic | [opendyslexic.org](https://opendyslexic.org/) | `OpenDyslexic-Regular.otf` *(gras synthétique)* |
+| Marelle | [Forge](https://marelle.forge.apps.education.fr/) | `Marelle2-Regular.ttf` *(Regular uniquement)* |
+
+Pour ajouter, retirer ou renommer une police, modifiez la constante `POLICES` en
+tête du script : chaque entrée liste ses fichiers et leur graisse, et le format
+CSS est déduit automatiquement de l'extension.
 
 > 💡 [google-webfonts-helper](https://gwfh.mranftl.com) fournit directement les
-> `.woff2` des polices Google. Pour les `.ttf` (Andika, Luciole), une conversion
-> via [cloudconvert](https://cloudconvert.com/ttf-to-woff2) suffit.
-
-Ajustez ensuite la constante `GITLAB_FONTS_BASE` en tête du script si votre dépôt
-diffère.
+> `.woff2` des polices Google (charset **latin**, graisses **400** et **700**).
 
 ### La synchronisation Nuage (facultatif)
 

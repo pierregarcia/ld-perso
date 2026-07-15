@@ -1,160 +1,61 @@
-# Changelog — Classe Active
+# Journal des modifications — Lexidatelier
 
+Toutes les évolutions notables de l'application sont consignées ici.
 Format inspiré de [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/).
-Le projet suit globalement le [Semantic Versioning](https://semver.org/lang/fr/).
+Ce projet suit le [versionnage sémantique](https://semver.org/lang/fr/).
 
----
+Lexidatelier est un logiciel libre sous licence GNU GPL v3.
+Auteur original : Charlie ROLLO.
 
-## [1.5.0] — 2026-06-07
 
-### 🎉 Renommage du projet
+## [1.0.0] — 2026-07-15
 
-- **ClasseVibe → Classe Active** dans toute l'interface (titre de l'onglet, logo en-tête, page d'accueil, modale de bienvenue, mentions légales, exports PDF, bookmarklet Pronote).
-- L'animation de tremblement (`vibeShake`) reste appliquée au mot **Active** sur la page d'accueil, lancée une fois au chargement.
-- Nouveau favicon : 💬 (data URI SVG inline, pas de fichier externe).
-- Les noms de fichiers téléchargés deviennent `classe-active-AAAA-MM-JJ.json` (export complet) et `classe-active-CODE.json` (export session).
-- **Compatibilité ascendante** préservée : la clé localStorage (`cvibe_v5_`) et le marqueur de fichier JSON (`_classevibe_session`) restent inchangés pour ne pas casser les données existantes ou les imports d'anciennes sessions.
+Première version publique, publiée sur la Forge des Communs Numériques Éducatifs.
 
-### 🟦 Class Screen — Tableau personnalisé (nouveau)
+### Ajouté
 
-Nouveau bouton **🟦 Class Screen** dans la topbar de chaque classe, ouvrant un tableau plein écran inspiré de Classroom Screen. Chaque classe possède son propre tableau, sauvegardé en localStorage (positions, tailles, contenus, fond).
+**Moteur Lexidata**
+- Calcul automatique des positions de curseurs à partir du couple Groupe × Série,
+  soit 3 600 combinaisons (60 × 60) sans aucune saisie manuelle.
+- Algorithme rétro-conçu depuis le classeur « Générateur de codes lexidata »,
+  et validé sur les 720 valeurs de la feuille « Grille réponses ».
+- Placement automatique et transparent de la bonne réponse sur la position
+  imposée par le boîtier : l'enseignant coche simplement la bonne réponse.
+- Aide anti-doublon : les combinaisons Groupe × Série déjà utilisées dans le
+  dossier courant sont signalées dans les menus et par une alerte.
 
-#### Widgets disponibles
+**Création de fiches**
+- Éditeur en écran partagé : formulaire à gauche, aperçu A4 en temps réel à droite.
+- 12 questions, avec choix entre 2 ou 3 réponses par question.
+- Deux mises en page :
+  - « Question texte → réponses » : tableau, une ligne par question ;
+  - « Question image → réponses texte » : grandes illustrations et réponses
+    en toutes lettres, façon fiche Lexidata classique.
+- Images par import local (converties et compressées) ou par URL.
+- Bannière décorative en fond d'en-tête, recadrable au glisser-déposer.
+- Image de couverture pour la vignette du tableau de bord.
+- 5 styles de fiche et 10 polices, dont OpenDyslexic, Luciole, Andika
+  et Marelle (police cursive libre de la Forge).
+- Ajustement automatique pour garantir la tenue sur une seule page A4,
+  avec alerte en cas de débordement.
 
-- **⏱️ Timer** — compte à rebours ou chronomètre, anneau SVG de progression, bip sonore à zéro, alerte rouge à 10 secondes. Réglable via ⚙️ : mode, durée initiale, décompte visuel (fluide à la seconde **OU** changement minute par minute).
-- **📝 Texte** — zone de texte avec barre d'outils intégrée : police (9 choix), taille, gras, italique, couleur, alignement (gauche/centre/droite avec icônes style traitement de texte).
-- **🚦 Feux tricolores** — SVG vectoriel avec boîtier noir, dégradés radiaux, halo lumineux et reflet brillant. Clic pour activer/désactiver une couleur.
-- **🎡 Roue aléatoire** — basée sur les élèves présents de la classe. Labels **radiaux** alignés dans le sens de chaque bande colorée, animation manuelle `requestAnimationFrame` (4,2 s, easing quartic), persistence de la rotation finale, bouton « Retirer » le gagnant, « ↺ Tous » pour réinitialiser.
-- **👥 Groupes aléatoires** — N groupes (2-20), avec photos ou prénoms seuls, grille responsive (cases équilibrées en `1fr`, pills et photos qui s'adaptent à 5 paliers de taille).
-- **🌐 Site web** — iframe avec sandbox sécurisé (`allow-scripts allow-same-origin allow-popups allow-forms allow-presentation`). Saisie d'URL inline + bouton ✎ pour modifier.
-- **📱 QR Code** — génération **100 % locale** via la bibliothèque `qrcode-generator` (Kazuhiko Arase, MIT) embarquée. Format SVG vectoriel, mode UTF-8, boutons ✎ (modifier) et 📋 (copier l'URL). Aucune dépendance réseau.
+**Organisation**
+- Tableau de bord avec dossiers thématiques créés librement par l'enseignant.
+- Fiches classées par dossier : création, duplication, suppression.
+- Sauvegarde automatique locale (localStorage).
+- Export et import de fiches au format JSON.
 
-#### Système de widgets
+**Synchronisation**
+- Connexion au Nuage apps.education.fr via un webhook n8n (WebDAV Nextcloud).
+- Chaque enseignant utilise ses propres identifiants : ses fiches restent
+  dans son propre Nuage.
+- Réconciliation local / distant à la connexion, envoi différé automatique.
 
-- Header flottant en haut-droite avec boutons ⛶ (plein écran) et ✕ (supprimer) ; ⚙️ uniquement pour le Timer.
-- **Drag and drop** sur la barre d'en-tête (zone invisible mais cliquable).
-- **Redimensionnement** par poignée en bas-droite (apparaît au survol).
-- **Plein écran** : bouton ⛶ étend le widget à tout le viewport ; bouton 🗗 le restaure.
-- **Click-to-front** : un clic sur un widget l'amène au premier plan (compteur de z-index global).
-- **Persistance** : chaque modification (déplacement, redimensionnement, contenu, état du timer, rotation de la roue, etc.) est immédiatement sauvegardée dans `cls.dashboard`.
+**Impression**
+- Format A4 portrait, aperçu à la taille réelle.
+- Rendu en noir et nuances de gris pour économiser l'encre.
+- L'interface disparaît à l'impression : seule la fiche est imprimée.
 
-#### Fond personnalisé
-
-- Bouton 🖼️ Fond : URL d'image (Unsplash, Wikipedia, etc.) **OU** couleur unie (color picker).
-- Le fond est sauvegardé avec le tableau et persiste entre les sessions.
-
-#### Toolbar
-
-- Boutons icônes uniquement (gain de place sur petit écran).
-- Tooltips détaillés sur chaque action.
-- Bouton 🏠 Maison transparent à droite pour revenir à la classe (avec sauvegarde automatique).
-- Bouton 🗑️ Vider avec modale de confirmation personnalisée (au-dessus du dashboard, z-index 2600).
-
-#### Mobile
-
-- Sur écran ≤ 760 px : les widgets s'empilent verticalement avec scroll, taille auto (la position absolue est désactivée pour ne pas dépasser de l'écran).
-
-### 📸 Import Pronote — refonte (Mathix-style)
-
-L'import des élèves depuis le trombinoscope Pronote a été complètement réécrit sur la base de la méthode du site [Mathix](https://mathix.fr) (créditée dans les deux modales d'import et dans les mentions légales).
-
-- Nouvelle approche : parcourt tous les `<img>` (récursivement dans les iframes accessibles), filtre par `alt` contenant « photo », nettoie l'alt-text (`cleanAlt`) et sépare prénom / nom (`smartSplit` reconnaît 6 patterns différents : NOM Prénom, Prénom NOM, NOM-COMPOSÉ Prénom, etc.).
-- Photos récupérées via `fetch + FileReader` avec `credentials: 'include'` (accès aux ressources authentifiées Pronote).
-- Diagnostic visible si aucune photo trouvée : liste les 8 premiers alt-text de la page pour aider à diagnostiquer.
-- Format de sortie compatible avec l'autre outil : `{generated, exportedAt, eleves, students}`.
-- **Méthode console** alternative (modale dédiée) si le bookmarklet est bloqué par la CSP du Pronote.
-
-### 📷 Affichage photos Pronote
-
-- Nouveau toggle Oui / Non « Afficher les photos importées » dans la création et l'édition de classe (cohérent avec les autres toggles Groupes/Passeports).
-- Diagnostic en temps réel dans la modale d'édition : *« N / M élèves ont une photo Pronote en mémoire »*.
-- Quand le toggle est désactivé, l'app utilise les avatars Lorelei à la place des photos (utile pour faire des projections anonymes).
-
-### ⚖️ RGPD
-
-- Nouvel encadré orange dans les mentions légales : rappel que la saisie des noms et photos d'élèves constitue un traitement de données personnelles, avec lien direct vers [le registre des activités de traitement (CNIL)](https://cnil.fr/fr/RGPD-le-registre-des-activites-de-traitement).
-- Crédit Mathix dans les mentions légales (méthode d'import du bookmarklet).
-
-### 🐛 Corrections
-
-- **Bug critique** : la minification du bookmarklet écrasait les retours-ligne, ce qui faisait que les commentaires `//` mangeaient toute la suite du code (« Unexpected end of input »). Fix : strip des commentaires de ligne avant le whitespace collapse.
-- `renderTextBody` crashait avec « Cannot set properties of null » car `document.getElementById` ne trouvait pas les éléments d'un widget pas encore inséré dans le DOM. Remplacé par `body.querySelector` qui fonctionne sur les sous-arbres détachés.
-- `ResizeObserver loop` corrigée en différant le re-render des widgets dans un double `requestAnimationFrame`.
-- Le bouton 🖼️ Fond du dashboard s'ouvrait derrière le tableau (z-index 800 vs 2000). Modale dash-bg passée à z-index 2600.
-- Bouton burger menu : les 3 traits étaient empilés horizontalement sur desktop car `.burger-btn` n'avait pas de `display:none` par défaut. Corrigé.
-- Toggle Photos : passage du label dynamique (« 📸 Photos » / « 🎨 Illustrations ») à un Oui / Non clair avec descriptif (le label précédent était trompeur — cliquer sur le bouton « Photos » désactivait en fait les photos).
-- Roue : recalcul des angles pour que la slice gagnante s'arrête bien sous le pointeur ▼, et que la rotation soit persistée entre les re-renders.
-
----
-
-## [1.4.0] — 2026-06-06
-
-### Améliorations
-
-- Avatars Lorelei : DiceBear avec `hairProbability=100&beardProbability=0` et liste de sourcils choisis (exclusion des bald / unibrow / variants peu lisibles).
-- Plan de classe : tables rectangulaires (≥ 4 places en 2 rangées face-à-face) ou rondes (chaises positionnées mathématiquement). Drag-and-drop pour échanger élèves entre chaises.
-- Tirage roue et répartition de groupes (sur la page Classe) : élèves absents automatiquement exclus.
-- Système d'absences (🚪) avec exclusion automatique des classements, tirages, plans.
-- Système d'annulation (↶) sur chaque entrée du journal : restaure les scores et compteurs de comportements.
-- Export PDF amélioré : page 1 vue d'ensemble (mini-cartes) + 3 fiches d'identité par page A4.
-
----
-
-## [1.3.0] — 2026-06-05
-
-### Ajouts
-
-- Système de classes multiples avec niveau libre (collège / lycée / autre).
-- Score de base configurable par classe (0-100).
-- Stat row par classe : nombre d'élèves, moyenne, top, bottom.
-- Classement des élèves et des groupes.
-- Journal détaillé des 60 dernières actions avec horodatage et undo.
-- Export / import JSON complet.
-- Sessions partageables par code projection.
-
----
-
-## Première mise en ligne — 2026-06-04
-
-- Application de classe en single-file HTML, 100 % côté client (localStorage), style néo-brutaliste, police Nunito (Bunny Fonts, RGPD-compliant).
-- Inspirée de [La Classe des Héros](https://github.com/clascomdiv/laclassedesheros), licence GPLv3.
-
-## Nouveautés (session du 2026-06-08, suite)
-
-### Nouvelles fonctionnalités
-- **🔊 Sons de feedback** : son positif/négatif à l'attribution de points (Web Audio, 100 % local). Bouton 🔊/🔇 dans la barre du haut pour couper.
-- **🌙 Mode sombre** : bascule clair/sombre persistante, bouton dans la barre du haut.
-- **📈 Graphique d'évolution** : courbe des points nets de la classe jour par jour (canvas natif, max 120 jours par classe). Bouton 📈 dans les actions de classe.
-- **✅ Widget Liste de tâches** (Class Screen) : consignes cochables affichées au tableau, gros caractères, son à la validation.
-- **🎨 Couleur par classe** : 8 couleurs d'accent au choix dans la création/édition de classe. Visible sur la carte d'accueil et appliquée à toute l'interface de la classe.
-- **🎡 Roue — retrait auto** : case à cocher « Retrait auto après tirage » pour interroger équitablement tous les élèves sans clics supplémentaires.
-
-### Correctifs
-- Favicon : suppression du favicon dynamique « CV » qui écrasait le logo Classe Active.
-- Modale de bienvenue : dimensionnement adapté aux mobiles.
-- Barre d'outils du Class Screen : passage à la ligne sur mobile + ombres de défilement.
-
-## Plan de classe — Système d'affinités (session 2026-06-08)
-
-### Nouveau : placement intelligent
-- **Profils d'élève** (fiche élève) : tags Bavard, Sérieux/moteur, En difficulté, Besoin particulier, Discret/timide, Agité.
-- **Rang imposé** (fiche élève) : forcer un élève au rang 1, 2 ou 3 (proximité du tableau).
-- **Repère TABLEAU** affiché en haut du plan ; chaque table reçoit automatiquement un **numéro de rang** selon sa position verticale (on place les tables librement, les rangs se déduisent).
-- **Modale 🔗 Affinités** : paires d'élèves à séparer, paires à rapprocher, et **accompagnants AESH** (nom + élève rattaché).
-- **✨ Placement intelligent** : algorithme qui respecte au mieux toutes les contraintes simultanément (rangs imposés, séparations, rapprochements, équilibrage des profils par table, AESH placé sur une chaise voisine de son élève). 400 essais, on garde le meilleur score. Affiche un score de contraintes (0 = parfait).
-
-### Répartition fiche élève / plan
-- Attribut d'UN élève (profil, rang) → fiche élève.
-- Relation entre DEUX personnes (séparer, rapprocher, AESH) → modale Affinités du plan.
-
-## Plan de classe — Position du tableau & mobile (session 2026-06-08)
-
-- **Position du tableau réglable** : le bandeau TABLEAU peut être placé en haut, en bas, à gauche ou à droite. Les **rangs des tables sont recalculés automatiquement** selon l'axe de proximité (vertical pour haut/bas, horizontal pour gauche/droite). La position est sauvegardée avec le plan et incluse dans l'annulation (Ctrl+Z).
-- **Vue mobile du plan repensée** : barre d'outils en défilement horizontal compact (au lieu d'un empilement vertical qui mangeait l'écran), canvas dimensionné à 62 % de la hauteur visible, liste des élèves à placer en zone scrollable, contrôles de table et badges de rang agrandis pour le tactile.
-
-## Plan de classe — Affinités v2 (session 2026-06-08)
-
-- **Rangs recalculés en direct** : déplacer une table devant une autre met immédiatement à jour les numéros de rang (la table avancée devient rang 1, etc.). Le recalcul suit la position du tableau (haut/bas/gauche/droite).
-- **Élèves en difficulté placés devant** : un élève marqué « En difficulté » (sans rang imposé) est placé en priorité sur les rangs 1 à 3 par le placement intelligent.
-- **AESH garantie à côté de son élève** : l'algorithme réserve désormais la chaise voisine AVANT de placer les autres élèves. L'AESH ne peut plus se retrouver ailleurs. Si la disposition ne le permet pas (pas assez de tables de 2+ places), un message prévient avant de lancer.
-- **Le placement intelligent ne déplace plus les tables** : seuls les élèves sont réorganisés sur les chaises existantes ; la disposition de la salle reste intacte.
+### Sécurité et vie privée
+- Aucune donnée personnelle collectée ni transmise.
+- Aucune ressource tierce chargée : l'application fonctionne hors ligne.

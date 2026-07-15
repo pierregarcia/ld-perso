@@ -47,9 +47,9 @@ automatiquement chaque bonne réponse sur la position exigée par le boîtier.
 - **Images** par import depuis l'ordinateur (compressées automatiquement) ou par URL.
 - **Bannière décorative** en fond d'en-tête, recadrable au glisser-déposer.
 - **5 styles** de fiche, du plus sobre au plus ludique.
-- **10 polices**, dont OpenDyslexic, Luciole (basse vision), Andika (apprentis
+- **11 polices**, dont OpenDyslexic, Luciole (basse vision), Andika (apprentis
   lecteurs) et [Marelle](https://marelle.forge.apps.education.fr/), la police
-  cursive libre de la Forge.
+  cursive libre de la Forge, dans ses deux variantes (hampes longues ou courtes).
 
 ### 📂 L'organisation
 - Un **tableau de bord** avec des dossiers thématiques que vous créez librement.
@@ -66,7 +66,8 @@ automatiquement chaque bonne réponse sur la position exigée par le boîtier.
 - **A4 portrait**, aperçu à la taille réelle.
 - **Ajustement automatique** pour garantir la tenue sur une seule page, avec une
   alerte si un contenu déborde.
-- Rendu en **noir et nuances de gris** pour économiser l'encre.
+- Impression **en couleur** par défaut, ou en **niveaux de gris** au choix
+  pour économiser l'encre.
 - L'interface disparaît : seule la fiche s'imprime.
 
 ---
@@ -112,7 +113,8 @@ léger). Les noms de fichiers attendus, **casse comprise** :
 | Andika | [SIL](https://software.sil.org/andika/) | `Andika-400.ttf`, `Andika-700.ttf` |
 | Luciole | [luciole-vision.com](https://www.luciole-vision.com/) | `Luciole-400.woff2`, `Luciole-700.woff2` |
 | OpenDyslexic | [opendyslexic.org](https://opendyslexic.org/) | `OpenDyslexic-Regular.otf` *(gras synthétique)* |
-| Marelle | [Forge](https://marelle.forge.apps.education.fr/) | `Marelle2-Regular.ttf` *(Regular uniquement)* |
+| Marelle | [Forge](https://marelle.forge.apps.education.fr/) | `marelle-regular.ttf` *(hampes longues)* |
+| Marelle 2 | [Forge](https://marelle.forge.apps.education.fr/) | `Marelle2-Regular.ttf` *(hampes courtes)* |
 
 Pour ajouter, retirer ou renommer une police, modifiez la constante `POLICES` en
 tête du script : chaque entrée liste ses fichiers et leur graisse, et le format

@@ -557,40 +557,61 @@ const THEMES = [
 const IDS_THEMES = THEMES.map(t => t.id);
 
 /* --------------------------------------------------------------------------
-   POLICES TÉLÉCHARGEABLES — ⚠️ ZONE À PERSONNALISER ⚠️
+   POLICES — configuration
    --------------------------------------------------------------------------
-   1. Déposez les fichiers .woff2 dans un dossier « polices/ » de votre dépôt.
-   2. Ajustez GITLAB_FONTS_BASE vers l'URL « raw » de ce dossier.
-   3. Nommez les fichiers exactement comme indiqué dans « fichiers » ci-dessous :
-      la graisse 400 (normal) et la graisse 700 (gras), sous-ensemble latin.
-      Marelle n'existe qu'en Regular : seul le 400 est déclaré, le navigateur
-      graissera lui-même les titres.
-   Un fichier absent est simplement ignoré par le navigateur : la police se
-   rabat proprement sur sa pile de secours, sans rien casser.
+   ⚠️ Les fichiers doivent se trouver dans « public/polices/ », à côté de ce
+   fichier index.html : sur GitLab Pages, seul le dossier public/ est publié,
+   et un chemin relatif évite tout problème de CORS (les polices web exigent
+   des en-têtes que les URL « raw » de GitLab ne fournissent pas).
+
+   Les noms ci-dessous correspondent EXACTEMENT aux fichiers déposés
+   (attention : la casse compte). Formats acceptés : .woff2, .ttf, .otf.
+   Une police dont le fichier est absent est simplement ignorée par le
+   navigateur : le sélecteur reste utilisable et se rabat sur la pile système.
+
    Licences : SIL Open Font License (Fredoka, Baloo 2, Quicksand, Nunito,
-   Comfortaa, Andika, Marelle, OpenDyslexic) ; Luciole est gratuite (CC BY).
+   Comfortaa, Andika, Marelle, OpenDyslexic) ; Luciole : gratuite (CC BY).
    -------------------------------------------------------------------------- */
-const GITLAB_FONTS_BASE = "https://forge.apps.education.fr/lelabodecharlie/lexidatelier/-/raw/main/polices/";
+const GITLAB_FONTS_BASE = "polices/";
 const PILE_SYSTEME = 'ui-rounded, "Hiragino Maru Gothic ProN", "Quicksand", "Comfortaa", "Arial Rounded MT Bold", "Trebuchet MS", "Segoe UI", system-ui, sans-serif';
+
+/* Chaque entrée « fichiers » liste { f: nom du fichier, poids: 400 | 700 }.
+   « poids » peut être une plage (ex. "400 800") pour une police variable
+   livrée en un seul fichier — c'est le cas de Baloo 2. */
 const POLICES = [
   { id:"systeme",      nom:"Système (arrondie)",          fichiers:null, css:PILE_SYSTEME },
-  { id:"fredoka",      nom:"Fredoka",                     fichiers:{ 400:"fredoka-400.woff2",      700:"fredoka-700.woff2" },      css:PILE_SYSTEME },
-  { id:"baloo2",       nom:"Baloo 2",                     fichiers:{ 400:"baloo2-400.woff2",       700:"baloo2-700.woff2" },       css:PILE_SYSTEME },
-  { id:"quicksand",    nom:"Quicksand",                   fichiers:{ 400:"quicksand-400.woff2",    700:"quicksand-700.woff2" },    css:PILE_SYSTEME },
-  { id:"nunito",       nom:"Nunito",                      fichiers:{ 400:"nunito-400.woff2",       700:"nunito-700.woff2" },       css:'"Segoe UI", system-ui, sans-serif' },
-  { id:"comfortaa",    nom:"Comfortaa",                   fichiers:{ 400:"comfortaa-400.woff2",    700:"comfortaa-700.woff2" },    css:PILE_SYSTEME },
-  { id:"andika",       nom:"Andika (apprentis lecteurs)", fichiers:{ 400:"andika-400.woff2",       700:"andika-700.woff2" },       css:'"Segoe UI", system-ui, sans-serif' },
-  { id:"luciole",      nom:"Luciole (basse vision)",      fichiers:{ 400:"luciole-400.woff2",      700:"luciole-700.woff2" },      css:'"Segoe UI", system-ui, sans-serif' },
-  { id:"opendyslexic", nom:"OpenDyslexic (dyslexie)",     fichiers:{ 400:"opendyslexic-400.woff2", 700:"opendyslexic-700.woff2" }, css:'"Comic Sans MS", "Segoe UI", system-ui, sans-serif' },
-  { id:"marelle",      nom:"Marelle (cursive · Forge)",   fichiers:{ 400:"marelle-400.woff2" },                                    css:'"Marelle", cursive' }
+  { id:"fredoka",      nom:"Fredoka",                     css:PILE_SYSTEME,
+    fichiers:[ { f:"fredoka-400.woff2", poids:400 }, { f:"fredoka-700.woff2", poids:700 } ] },
+  { id:"baloo2",       nom:"Baloo 2",                     css:PILE_SYSTEME,
+    fichiers:[ { f:"Baloo_2.woff2", poids:"400 800" } ] },              // police variable
+  { id:"quicksand",    nom:"Quicksand",                   css:PILE_SYSTEME,
+    fichiers:[ { f:"quicksand-latin-400-normal.ttf", poids:400 }, { f:"quicksand-latin-700-normal.ttf", poids:700 } ] },
+  { id:"nunito",       nom:"Nunito",                      css:'"Segoe UI", system-ui, sans-serif',
+    fichiers:[ { f:"Nunito-Regular.ttf", poids:400 }, { f:"Nunito-Bold.ttf", poids:700 } ] },
+  { id:"comfortaa",    nom:"Comfortaa",                   css:PILE_SYSTEME,
+    fichiers:[ { f:"Comfortaa-Regular.ttf", poids:400 }, { f:"Comfortaa-Bold.ttf", poids:700 } ] },
+  { id:"andika",       nom:"Andika (apprentis lecteurs)", css:'"Segoe UI", system-ui, sans-serif',
+    fichiers:[ { f:"Andika-400.ttf", poids:400 }, { f:"Andika-700.ttf", poids:700 } ] },
+  { id:"luciole",      nom:"Luciole (basse vision)",      css:'"Segoe UI", system-ui, sans-serif',
+    fichiers:[ { f:"Luciole-400.woff2", poids:400 }, { f:"Luciole-700.woff2", poids:700 } ] },
+  { id:"opendyslexic", nom:"OpenDyslexic (dyslexie)",     css:'"Comic Sans MS", "Segoe UI", system-ui, sans-serif',
+    fichiers:[ { f:"OpenDyslexic-Regular.otf", poids:400 } ] },         // Regular seul : gras synthétique
+  { id:"marelle",      nom:"Marelle (cursive · Forge)",   css:'"Marelle", cursive',
+    fichiers:[ { f:"Marelle2-Regular.ttf", poids:400 } ] }              // Regular seul
 ];
 
-/** Une règle @font-face par graisse déclarée. */
+/** Déduit l'indication de format CSS depuis l'extension du fichier. */
+function formatPolice(fichier){
+  const ext = fichier.split(".").pop().toLowerCase();
+  return ext === "woff2" ? "woff2" : ext === "otf" ? "opentype" : ext === "ttf" ? "truetype" : ext === "woff" ? "woff" : "woff2";
+}
+
+/** Une règle @font-face par fichier déclaré. */
 function injecterPolices(){
   const regles = POLICES.filter(p => p.fichiers).flatMap(p =>
-    Object.entries(p.fichiers).map(([poids, fichier]) =>
+    p.fichiers.map(({ f, poids }) =>
       `@font-face{font-family:"lex-${p.id}";`
-      + `src:url("${GITLAB_FONTS_BASE}${fichier}") format("woff2");`
+      + `src:url("${GITLAB_FONTS_BASE}${encodeURIComponent(f)}") format("${formatPolice(f)}");`
       + `font-weight:${poids};font-style:normal;font-display:swap;}`)
   ).join("");
   const style = document.createElement("style");

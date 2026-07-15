@@ -118,7 +118,10 @@ input,textarea,select{ font-family:inherit; font-size:14px; color:var(--encre); 
 #apercu .apercu-titre{ font-size:13px; text-transform:uppercase; letter-spacing:1.5px; color:var(--encre-douce); }
 .alerte-page{ background:#fdecec; color:#a33; border-radius:10px; padding:7px 12px; font-size:12.5px;
   font-weight:700; margin:0; max-width:780px; text-align:center; }
-#fiche-zone{ width:100%; display:flex; justify-content:center; overflow:hidden; }
+/* flex:none → la zone conserve la hauteur exacte calculée par ajusterEchelle().
+   Sans cela, en tant qu'élément d'un conteneur flex, elle serait comprimée
+   pour tenir dans le panneau, et la fiche apparaîtrait tronquée. */
+#fiche-zone{ width:100%; flex:none; display:flex; justify-content:center; overflow:hidden; }
 
 /* ---------- 6. Formulaire ---------- */
 .panneau{ background:var(--carte); border:1px solid var(--ligne); border-radius:var(--rayon); padding:16px; margin-bottom:14px; }
@@ -176,6 +179,10 @@ img.vignette{ height:34px; border-radius:8px; border:1px solid var(--ligne); }
    Sans bannière : en-tête classique sur fond blanc.
    Avec bannière : l'image passe en FOND de l'en-tête et le titre s'affiche
    par-dessus, protégé par un voile blanc dégradé pour rester lisible. */
+/* Impression en couleur par défaut. Le mode « niveaux de gris » (économie
+   d'encre) s'applique aussi à l'aperçu, pour que l'enseignant voie le résultat. */
+.fiche[data-encre="gris"]{ filter:grayscale(100%); }
+
 .fiche-entete{ display:flex; align-items:center; gap:10px; border-bottom:2.5px solid var(--f-trait); padding-bottom:6px; margin-bottom:9px; }
 .fiche-entete.avec-banniere{
   position:relative; overflow:hidden; isolation:isolate;
@@ -190,7 +197,9 @@ img.vignette{ height:34px; border-radius:8px; border:1px solid var(--ligne); }
   background:linear-gradient(90deg, rgba(255,255,255,.92) 0%, rgba(255,255,255,.80) 45%, rgba(255,255,255,.35) 100%);
 }
 .fiche-entete.avec-banniere .badge-fiche{ background:rgba(255,255,255,.9); }
-.badge-fiche{ flex:none; border:2.5px solid var(--f-trait); border-radius:10px; padding:4px 12px; font-weight:800; font-size:15px; letter-spacing:.6px; white-space:nowrap; text-align:center; line-height:1.25; }
+.badge-fiche{ flex:none; border:2.5px solid var(--f-trait); border-radius:10px; padding:4px 12px; font-weight:800; font-size:15px; letter-spacing:.6px; white-space:nowrap; text-align:center; line-height:1.25;
+  /* Repère technique : toujours dans une police lisible, jamais en cursive. */
+  font-family:var(--fiche-police-tech, var(--fiche-police, var(--police))); }
 .badge-fiche small{ display:block; font-size:10px; font-weight:700; letter-spacing:1.5px; }
 .fiche-entete .titres{ flex:1; min-width:0; }
 .fiche-entete .t1{ font-size:19px; font-weight:800; }
@@ -350,7 +359,8 @@ footer.app-footer a:hover{ text-decoration:underline; }
   #apercu{ padding:0; max-height:none; overflow:visible; display:block; background:#fff; }
   #fiche-zone{ display:block; height:auto !important; overflow:visible; }
   .fiche{ width:auto !important; min-height:auto !important; box-shadow:none; padding:0 !important;
-    transform:none !important; filter:grayscale(100%); -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+    transform:none !important; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+
   .fiche-tableau .cell{ page-break-inside:avoid; }
 }
 
@@ -454,6 +464,13 @@ footer.app-footer a:hover{ text-decoration:underline; }
             <option value="1.15">Grand</option>
             <option value="1.3">Très grand</option>
             <option value="1.5">Maxi</option>
+          </select>
+        </div>
+        <div class="champ" style="flex:0 1 190px">
+          <label for="sel-encre">Impression</label>
+          <select id="sel-encre">
+            <option value="couleur">Couleur</option>
+            <option value="gris">Niveaux de gris (économise l'encre)</option>
           </select>
         </div>
       </div>
@@ -596,9 +613,19 @@ const POLICES = [
     fichiers:[ { f:"Luciole-400.woff2", poids:400 }, { f:"Luciole-700.woff2", poids:700 } ] },
   { id:"opendyslexic", nom:"OpenDyslexic (dyslexie)",     css:'"Comic Sans MS", "Segoe UI", system-ui, sans-serif',
     fichiers:[ { f:"OpenDyslexic-Regular.otf", poids:400 } ] },         // Regular seul : gras synthétique
-  { id:"marelle",      nom:"Marelle (cursive · Forge)",   css:'"Marelle", cursive',
-    fichiers:[ { f:"Marelle2-Regular.ttf", poids:400 } ] }              // Regular seul
+  { id:"marelle",      nom:"Marelle (cursive · Forge)",   css:'"Marelle", cursive', cursive:true,
+    fichiers:[ { f:"marelle-regular.ttf", poids:400 } ] },             // Marelle 1 — hampes longues
+  { id:"marelle2",     nom:"Marelle 2 (cursive · hampes courtes)", css:'"Marelle 2", "Marelle", cursive', cursive:true,
+    fichiers:[ { f:"Marelle2-Regular.ttf", poids:400 } ] }             // Marelle 2 — dès la fin du primaire
 ];
+
+/* Police de secours pour les repères techniques (badge « GROUPE·SÉRIE ») :
+   une cursive y serait illisible, on lui substitue donc Nunito. */
+const POLICE_TECHNIQUE = "nunito";
+function familleCssTechnique(id){
+  const p = POLICES.find(x => x.id === id);
+  return (p && p.cursive) ? familleCss(POLICE_TECHNIQUE) : familleCss(id);
+}
 
 /** Déduit l'indication de format CSS depuis l'extension du fichier. */
 function formatPolice(fichier){
@@ -631,7 +658,7 @@ function propositionVide(){ return { texte:"", image:"" }; }
 function questionVide(){ return { texte:"", image:"", propositions:[propositionVide(),propositionVide(),propositionVide()], bonne:0 }; }
 function ficheVide(){
   return { id:identifiant(), version:5, groupe:"", serie:"", nbReponses:3,
-    format:"tableau", theme:"s2", police:"systeme", taille:1,
+    format:"tableau", theme:"s2", police:"systeme", taille:1, encre:"couleur",
     titre:"", consigne:"", couverture:"", banniere:{ image:"", x:50, y:50 },
     questions:Array.from({length:NB_QUESTIONS}, questionVide), creele:Date.now(), modifiele:Date.now() };
 }
@@ -997,6 +1024,7 @@ function synchroniserFormulaire(){
   document.getElementById("sel-theme").value  = fiche.theme;
   document.getElementById("sel-police").value = fiche.police;
   document.getElementById("sel-taille").value = String(fiche.taille);
+  document.getElementById("sel-encre").value = fiche.encre;
   document.getElementById("inp-titre").value  = fiche.titre;
   document.getElementById("inp-consigne").value = fiche.consigne;
   rafraichirCouverture();
@@ -1079,7 +1107,9 @@ function rendreFiche(){
   const el = document.getElementById("fiche");
   el.dataset.theme = fiche.theme;
   el.style.setProperty("--fiche-police", familleCss(fiche.police));
+  el.style.setProperty("--fiche-police-tech", familleCssTechnique(fiche.police));
   el.style.setProperty("--f-echelle", fiche.taille);
+  el.dataset.encre = fiche.encre;   // pilote le rendu N&B à l'impression
   const solutions = positionsActives();
   const nb = nbRepDe(fiche);
 
@@ -1474,6 +1504,7 @@ function normaliserFiche(donnees){
   f.nbReponses = (donnees && donnees.nbReponses === 2) ? 2 : 3;
   f.format = ["tableau","cartes"].includes(f.format) ? f.format : "tableau";
   f.taille = [0.9,1,1.15,1.3,1.5].includes(Number(f.taille)) ? Number(f.taille) : 1;
+  f.encre = ["couleur","gris"].includes(f.encre) ? f.encre : "couleur";
   delete f.repMedia; // remplacé par « format » (le mode texte+image a été retiré)
   delete f.layout;   // la disposition « tuiles » a été retirée
   f.theme = IDS_THEMES.includes(f.theme) ? f.theme : "s2";
@@ -1540,6 +1571,7 @@ function brancherEditeur(){
   document.getElementById("sel-theme").addEventListener("change",  ev => { fiche.theme = IDS_THEMES.includes(ev.target.value) ? ev.target.value : "s1"; rendreFiche(); });
   document.getElementById("sel-police").addEventListener("change", ev => { fiche.police = POLICES.some(p => p.id === ev.target.value) ? ev.target.value : "systeme"; rendreFiche(); });
   document.getElementById("sel-taille").addEventListener("change", ev => { fiche.taille = Number(ev.target.value) || 1; rendreFiche(); });
+  document.getElementById("sel-encre").addEventListener("change", ev => { fiche.encre = ev.target.value === "gris" ? "gris" : "couleur"; rendreFiche(); });
   document.getElementById("inp-titre").addEventListener("input",   ev => { fiche.titre = ev.target.value; rendreFiche(); });
   document.getElementById("inp-consigne").addEventListener("input",ev => { fiche.consigne = ev.target.value; rendreFiche(); });
 

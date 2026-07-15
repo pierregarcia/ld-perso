@@ -1498,6 +1498,35 @@ function ouvrirMentions(){
 /* ==========================================================================
    12. NORMALISATION / IMPORT-EXPORT
    ========================================================================== */
+
+/** Transforme le titre de la fiche en nom de fichier propre :
+    accents retirés, ponctuation nettoyée, espaces en tirets.
+    Repli sur la combinaison Groupe-Série, puis sur « fiche ». */
+function nomFichier(f){
+  const brut = (f.titre || "").trim();
+  const slug = brut
+    .normalize("NFD").replace(/[\u0300-\u036f]/g, "")   // « é » → « e »
+    .replace(/[^a-zA-Z0-9\s-]/g, "")                    // ponctuation
+    .trim().replace(/\s+/g, "-")                        // espaces → tirets
+    .replace(/-+/g, "-").slice(0, 60);
+  if(slug) return slug;
+  if(f.groupe && f.serie) return `fiche-G${f.groupe}-S${f.serie}`;
+  return "fiche";
+}
+
+/** Imprime la fiche en donnant au document le nom du titre : la plupart des
+    navigateurs s'en servent comme nom de fichier proposé pour le PDF.
+    Le titre d'origine est restauré juste après. */
+function imprimerFiche(){
+  const titreInitial = document.title;
+  document.title = nomFichier(fiche);
+  const restaurer = () => { document.title = titreInitial; window.removeEventListener("afterprint", restaurer); };
+  window.addEventListener("afterprint", restaurer);
+  window.print();
+  // Filet de sécurité : certains navigateurs n'émettent pas « afterprint ».
+  setTimeout(restaurer, 3000);
+}
+
 function normaliserFiche(donnees){
   const f = Object.assign(ficheVide(), donnees || {});
   f.version = 5; f.id = f.id || identifiant();
@@ -1532,11 +1561,11 @@ function brancherActions(){
   document.getElementById("btn-retour").onclick = retourDashboard;
   document.getElementById("btn-nuage").onclick = ouvrirModalNuage;
   document.getElementById("btn-mentions").onclick = ouvrirMentions;
-  document.getElementById("btn-print").onclick = () => window.print();
+  document.getElementById("btn-print").onclick = imprimerFiche;
   document.getElementById("btn-export").onclick = () => {
     const blob = new Blob([JSON.stringify(fiche, null, 2)], { type:"application/json" });
     const a = document.createElement("a"); a.href = URL.createObjectURL(blob);
-    a.download = `lexidatelier-${(fiche.groupe && fiche.serie) ? "G"+fiche.groupe+"-S"+fiche.serie : "brouillon"}.json`;
+    a.download = `${nomFichier(fiche)}.json`;
     a.click(); URL.revokeObjectURL(a.href);
   };
   const input = document.getElementById("input-import");

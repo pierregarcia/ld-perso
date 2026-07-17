@@ -306,11 +306,11 @@ img.vignette{ height:34px; border-radius:8px; border:1px solid var(--ligne); }
   flex-direction:column; gap:3px; }
 .fiche-tableau .td-a img{ max-height:var(--f-img); max-width:100%; border-radius:4px; display:block; }
 .fiche-tableau .td-vide{ color:#c8c8c8; }
-/* 2 réponses : image À CÔTÉ du texte, et chaque réponse porte ses points */
-.fiche-tableau.deux .td-a{ flex-direction:row; justify-content:space-between; gap:6px; }
+/* 2 réponses : ronds à GAUCHE de la case, libellé (ou image) à droite. */
+.fiche-tableau.deux .td-a{ flex-direction:row; justify-content:flex-start; gap:8px; }
 .fiche-tableau.deux .td-a .c-texte{ flex:1; text-align:left; }
 .fiche-tableau.deux .td-a img{ max-height:var(--f-img); max-width:26mm; }
-.fiche-tableau.deux .td-a .points{ margin-left:4px; }
+.fiche-tableau.deux .td-a .points{ order:-1; margin-left:0; justify-content:flex-start; min-width:11mm; }
 .fiche[data-theme="s2"] .fiche-tableau, .fiche[data-theme="s3"] .fiche-tableau{ border-style:dashed; }
 .fiche[data-theme="s5"] .fiche-tableau{ box-shadow:3px 3px 0 var(--f-trait); }
 

@@ -160,6 +160,22 @@ details .corps{ padding:4px 14px 14px; border-top:1px dashed var(--ligne); }
 .btn-mini:hover{ border-color:var(--accent); color:var(--accent-fonce); }
 img.vignette{ height:34px; border-radius:8px; border:1px solid var(--ligne); }
 .zone-image{ display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin-top:6px; }
+
+/* --- Réponses communes --- */
+#com-liste .proposition{ margin-bottom:8px; }
+#com-liste .rang{ flex:none; width:22px; height:22px; border-radius:50%; display:grid;
+  place-items:center; background:var(--encre); color:#fff; font-size:12px; font-weight:800; }
+/* Choix de la bonne réponse quand les propositions sont communes :
+   des étiquettes cliquables pleine largeur, plus rapides à viser. */
+.choix-communs{ display:flex; flex-direction:column; gap:5px; }
+.radio-large{ display:flex; align-items:center; gap:9px; cursor:pointer;
+  border:1px solid var(--ligne); border-radius:10px; padding:7px 10px; font-size:13.5px; }
+.radio-large:hover{ border-color:var(--accent); }
+.radio-large:has(input:checked){ border-color:var(--accent); background:var(--accent-pale); font-weight:700; }
+.radio-large input[type=radio]{ accent-color:var(--accent); flex:none; }
+.radio-large .lib{ flex:1; min-width:0; overflow-wrap:anywhere; }
+.radio-large .lib.vide{ color:var(--encre-douce); font-style:italic; }
+.radio-large .apercu-img{ height:26px; border-radius:6px; border:1px solid var(--ligne); }
 /* Aperçu déplaçable de la bannière (glisser pour recadrer) */
 .banniere-preview{ width:100%; height:74px; margin-top:8px; border-radius:10px; border:1px solid var(--ligne);
   background-size:cover; background-position:50% 50%; background-repeat:no-repeat; cursor:grab; touch-action:none;
@@ -542,6 +558,18 @@ footer.app-footer a:hover{ text-decoration:underline; }
       </div>
     </div>
 
+    <div class="panneau" id="panneau-communes">
+      <h2>♻️ Réponses communes</h2>
+      <label class="interrupteur">
+        <input type="checkbox" id="com-actif"> Utiliser les mêmes réponses pour les 12 questions
+      </label>
+      <p class="aide" id="com-aide" style="margin:0 0 8px">
+        Pratique quand les propositions ne changent jamais (ex. : <em>there is</em> / <em>there are</em>).
+        Saisissez-les une seule fois : il ne restera qu'à cocher la bonne réponse de chaque question.
+      </p>
+      <div id="com-liste" hidden></div>
+    </div>
+
     <div class="panneau" style="padding-bottom:8px">
       <h2>✏️ Les 12 questions</h2>
       <p class="aide" style="margin:0 0 6px">
@@ -691,6 +719,7 @@ function ficheVide(){
   return { id:identifiant(), version:5, groupe:"", serie:"", nbReponses:3,
     format:"tableau", theme:"s2", police:"systeme", taille:1, encre:"couleur", double:false,
     titre:"", consigne:"", couverture:"", banniere:{ image:"", x:50, y:50 },
+    communes:{ actif:false, props:[propositionVide(),propositionVide(),propositionVide()] },
     questions:Array.from({length:NB_QUESTIONS}, questionVide), creele:Date.now(), modifiele:Date.now() };
 }
 function dossierVide(nom, emoji){ return { id:identifiant(), nom:nom||"Nouveau dossier", emoji:emoji||"📁", fiches:[], creele:Date.now() }; }
@@ -1014,6 +1043,8 @@ function construireEditeurQuestions(){
   // En mise en page « cartes », les réponses sont en toutes lettres :
   // on n'affiche donc pas les outils d'image sur les propositions.
   const cartes = fiche.format === "cartes";
+  // Réponses communes : on n'affiche alors que le choix de la bonne réponse.
+  const communes = !!(fiche.communes && fiche.communes.actif);
   fiche.questions.forEach((q, i) => {
     const det = document.createElement("details"); det.className = "question"; det.dataset.index = i;
     if(i === 0) det.open = true;
@@ -1028,8 +1059,22 @@ function construireEditeurQuestions(){
           <textarea id="q${i}-texte" data-champ="texte" rows="2" placeholder="${cartes ? "Ex. : la poule (sert de repli si aucune image)" : "Ex. : Quel animal vit dans une ruche ?"}"></textarea></div>
         <div class="champ" style="margin-bottom:6px"><label>${cartes ? "Illustration de la question" : "Illustration de l'énoncé (facultative)"}</label>
           <div class="zone-image">${outilsImageHTML("q")}</div></div>
-        <label style="font-size:13px;font-weight:700;color:var(--encre-douce)">Les ${nb} propositions${cartes ? " (texte)" : " (texte et/ou image)"}</label>
-        ${Array.from({length:nb}, (_, p) => `
+        <label style="font-size:13px;font-weight:700;color:var(--encre-douce)">${communes ? "Bonne réponse" : "Les " + nb + " propositions" + (cartes ? " (texte)" : " (texte et/ou image)")}</label>
+        ${communes
+          ? `<div class="choix-communs">
+              ${Array.from({length:nb}, (_, p) => {
+                const prop = fiche.communes.props[p];
+                const lib = prop.texte.trim()
+                  ? `<span class="lib">${e(prop.texte)}</span>`
+                  : (prop.image.trim() ? `<span class="lib">réponse ${p+1}</span>` : `<span class="lib vide">réponse ${p+1} — à saisir ci-dessus</span>`);
+                const vig = prop.image.trim() ? `<img class="apercu-img" src="${e(prop.image)}" alt="">` : "";
+                return `<label class="radio-large" for="q${i}-r${p}">
+                    <input type="radio" id="q${i}-r${p}" name="q${i}-bonne" data-champ="bonne" value="${p}" ${p===0?"checked":""}>
+                    ${lib}${vig}
+                  </label>`;
+              }).join("")}
+            </div>`
+          : Array.from({length:nb}, (_, p) => `
           <div class="proposition">
             <input type="text" data-champ="prop" data-prop="${p}" id="q${i}-p${p}" placeholder="Proposition ${p+1}" aria-label="Question ${i+1}, proposition ${p+1}">
             ${cartes ? "" : outilsImageHTML("p"+p)}
@@ -1074,10 +1119,14 @@ function synchroniserFormulaire(){
   document.getElementById("inp-consigne").value = fiche.consigne;
   rafraichirCouverture();
   rafraichirBanniere();
+  construireCommunes();
+  appliquerCommunes();
   const nb = nbRepDe(fiche);
+  const communes = !!(fiche.communes && fiche.communes.actif);
   fiche.questions.forEach((q, i) => {
     document.getElementById(`q${i}-texte`).value = q.texte;
-    for(let j=0;j<nb;j++) document.getElementById(`q${i}-p${j}`).value = q.propositions[j].texte;
+    // En réponses communes, les champs de proposition n'existent pas.
+    if(!communes) for(let j=0;j<nb;j++) document.getElementById(`q${i}-p${j}`).value = q.propositions[j].texte;
     const bonne = q.bonne < nb ? q.bonne : 0;
     document.getElementById(`q${i}-r${bonne}`).checked = true;
     rafraichirResume(i);
@@ -1145,6 +1194,93 @@ function rafraichirDisponibilites(){
   });
   return prises;
 }
+/* ==========================================================================
+   7ter. RÉPONSES COMMUNES
+   --------------------------------------------------------------------------
+   Quand les propositions ne changent pas d'une question à l'autre (there is /
+   there are, vrai / faux, masculin / féminin…), l'enseignant les saisit une
+   seule fois. Elles sont recopiées dans les 12 questions : le reste de
+   l'application continue de travailler sur q.propositions sans rien savoir de
+   ce mode, et la fiche exportée reste lisible telle quelle.
+   Seul q.bonne demeure propre à chaque question.
+   ========================================================================== */
+
+/** Recopie les propositions communes dans les 12 questions. */
+function appliquerCommunes(){
+  if(!fiche.communes || !fiche.communes.actif) return;
+  const nb = nbRepDe(fiche);
+  fiche.questions.forEach(q => {
+    q.propositions = fiche.communes.props.map(p => ({ texte:p.texte, image:p.image }));
+    if(q.bonne >= nb) q.bonne = 0;   // la bonne réponse doit rester atteignable
+  });
+}
+
+/** Construit les champs de saisie des réponses communes. */
+function construireCommunes(){
+  const zone = document.getElementById("com-liste");
+  const actif = !!(fiche.communes && fiche.communes.actif);
+  zone.hidden = !actif;
+  document.getElementById("com-actif").checked = actif;
+  if(!actif){ zone.innerHTML = ""; return; }
+
+  const nb = nbRepDe(fiche);
+  const cartes = fiche.format === "cartes";   // en mode cartes, réponses en toutes lettres
+  zone.innerHTML = Array.from({length:nb}, (_, p) => `
+    <div class="proposition">
+      <span class="rang">${p+1}</span>
+      <input type="text" data-champ="com" data-prop="${p}" id="com-p${p}"
+             placeholder="Proposition ${p+1}" aria-label="Réponse commune ${p+1}">
+      ${cartes ? "" : outilsImageHTML("c"+p)}
+    </div>`).join("");
+
+  fiche.communes.props.slice(0, nb).forEach((prop, p) => {
+    document.getElementById(`com-p${p}`).value = prop.texte;
+  });
+  rafraichirCommunes();
+}
+
+/** Met à jour vignettes et boutons « retirer » des réponses communes. */
+function rafraichirCommunes(){
+  if(!fiche.communes || !fiche.communes.actif) return;
+  const zone = document.getElementById("com-liste");
+  const nb = nbRepDe(fiche);
+  for(let p = 0; p < nb; p++){
+    const image = fiche.communes.props[p].image;
+    const vig = zone.querySelector(`img[data-cible="c${p}"]`);
+    const sup = zone.querySelector(`button[data-action="suppr"][data-cible="c${p}"]`);
+    if(!vig) continue;
+    const presente = image.trim() !== "";
+    vig.hidden = !presente; sup.hidden = !presente;
+    if(presente) vig.src = image;
+  }
+}
+
+/** Met à jour les étiquettes des 12 questions quand une réponse commune change.
+    On modifie le texte en place plutôt que de reconstruire l'éditeur : le champ
+    en cours de saisie ne perd donc jamais le focus. */
+function majEtiquettesCommunes(){
+  if(!fiche.communes || !fiche.communes.actif) return;
+  const nb = nbRepDe(fiche);
+  document.querySelectorAll("details.question").forEach(det => {
+    det.querySelectorAll(".radio-large").forEach((label, p) => {
+      if(p >= nb) return;
+      const prop = fiche.communes.props[p];
+      const lib = label.querySelector(".lib");
+      if(lib){
+        const aTexte = prop.texte.trim() !== "";
+        lib.textContent = aTexte ? prop.texte
+          : (prop.image.trim() ? `réponse ${p+1}` : `réponse ${p+1} — à saisir ci-dessus`);
+        lib.classList.toggle("vide", !aTexte && !prop.image.trim());
+      }
+      let vig = label.querySelector(".apercu-img");
+      if(prop.image.trim()){
+        if(!vig){ vig = document.createElement("img"); vig.className = "apercu-img"; vig.alt = ""; label.appendChild(vig); }
+        vig.src = prop.image;
+      } else if(vig) vig.remove();
+    });
+  });
+}
+
 /* ==========================================================================
    8. RENDU DE LA FICHE + mise à l'échelle A4
    ========================================================================== */
@@ -1613,6 +1749,11 @@ function normaliserFiche(donnees){
   f.taille = [0.9,1,1.15,1.3,1.5].includes(Number(f.taille)) ? Number(f.taille) : 1;
   f.encre = ["couleur","gris"].includes(f.encre) ? f.encre : "couleur";
   f.double = f.double === true;
+  // Réponses communes : toujours 3 propositions normalisées
+  const c = (donnees && donnees.communes) || {};
+  const cp = Array.isArray(c.props) ? c.props : [];
+  f.communes = { actif: c.actif === true,
+    props: Array.from({length:3}, (_, i) => ({ ...propositionVide(), ...(cp[i] || {}) })) };
   delete f.repMedia; // remplacé par « format » (le mode texte+image a été retiré)
   delete f.layout;   // la disposition « tuiles » a été retirée
   f.theme = IDS_THEMES.includes(f.theme) ? f.theme : "s2";
@@ -1683,6 +1824,49 @@ function brancherEditeur(){
   document.getElementById("sel-double").addEventListener("change", ev => { fiche.double = ev.target.value === "1"; rendreFiche(); });
   document.getElementById("inp-titre").addEventListener("input",   ev => { fiche.titre = ev.target.value; rendreFiche(); });
   document.getElementById("inp-consigne").addEventListener("input",ev => { fiche.consigne = ev.target.value; rendreFiche(); });
+
+  // --- Réponses communes ---
+  document.getElementById("com-actif").addEventListener("change", ev => {
+    fiche.communes.actif = ev.target.checked;
+    // À l'activation, on amorce les réponses communes avec celles de la 1re question.
+    if(fiche.communes.actif && fiche.communes.props.every(p => !p.texte.trim() && !p.image.trim())){
+      fiche.communes.props = fiche.questions[0].propositions.map(p => ({ texte:p.texte, image:p.image }));
+    }
+    construireCommunes(); appliquerCommunes();
+    construireEditeurQuestions(); synchroniserFormulaire(); rendreFiche();
+  });
+
+  const zoneCom = document.getElementById("com-liste");
+  // Saisie du texte d'une réponse commune
+  zoneCom.addEventListener("input", ev => {
+    if(ev.target.dataset.champ !== "com") return;
+    fiche.communes.props[Number(ev.target.dataset.prop)].texte = ev.target.value;
+    appliquerCommunes(); majEtiquettesCommunes(); rendreFiche();
+  });
+  // Boutons image d'une réponse commune (cible « c0 », « c1 », « c2 »)
+  zoneCom.addEventListener("click", ev => {
+    const bouton = ev.target.closest("button[data-action]"); if(!bouton) return;
+    const cible = bouton.dataset.cible; const p = Number(cible[1]);
+    if(bouton.dataset.action === "fichier") zoneCom.querySelector(`input[data-role="fichier"][data-cible="${cible}"]`).click();
+    if(bouton.dataset.action === "url"){
+      const u = prompt("URL de l'image (https://…) :", "");
+      if(u && u.trim()){ fiche.communes.props[p].image = u.trim(); appliquerCommunes(); rafraichirCommunes(); majEtiquettesCommunes(); rendreFiche(); }
+    }
+    if(bouton.dataset.action === "suppr"){
+      fiche.communes.props[p].image = "";
+      zoneCom.querySelector(`input[data-role="fichier"][data-cible="${cible}"]`).value = "";
+      appliquerCommunes(); rafraichirCommunes(); majEtiquettesCommunes(); rendreFiche();
+    }
+  });
+  zoneCom.addEventListener("change", async ev => {
+    if(ev.target.dataset.role !== "fichier") return;
+    const f = ev.target.files[0]; if(!f) return;
+    const p = Number(ev.target.dataset.cible[1]);
+    try { fiche.communes.props[p].image = await importerImageLocale(f); }
+    catch(_){ customAlert("Impossible de lire cette image."); }
+    ev.target.value = "";
+    appliquerCommunes(); rafraichirCommunes(); majEtiquettesCommunes(); rendreFiche();
+  });
 
   // Image de couverture
   document.getElementById("couv-fichier").onclick = () => document.getElementById("couv-file").click();

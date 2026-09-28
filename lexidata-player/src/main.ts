@@ -65,13 +65,13 @@ function render(): void {
     <header class="topbar">
       <div class="brand-block"><span class="brand-mark"><b>LEXI</b>DATA</span><p>${t('subtitle')}</p></div>
       <div class="utility-controls">
+        ${installPrompt ? `<button class="install-button" id="install-button" type="button">${t('install')}</button>` : ''}
         <button class="icon-button" id="sound-toggle" type="button" aria-pressed="${soundEnabled}"
           title="${soundEnabled ? t('soundOn') : t('soundOff')}"><span aria-hidden="true">${soundEnabled ? '&#9835;' : '&#215;'}</span>
           <span class="sr-only">${soundEnabled ? t('soundOn') : t('soundOff')}</span></button>
-        <button class="language-button" id="language-toggle" type="button" aria-label="${t('switchLanguage')}">${language === 'fr' ? 'EN' : 'FR'}</button>
       </div>
     </header>
-    <section class="device" aria-labelledby="device-title">
+    <section class="device ${state.succeeded ? 'is-complete' : ''}" aria-labelledby="device-title">
       <h1 id="device-title" class="sr-only">${t('title')}</h1>
       <div class="activity-controls">
         <label><span>${t('group')}</span><select id="group-select">${selectorOptions(state.group)}</select></label>
@@ -87,9 +87,6 @@ function render(): void {
       </div>
     </section>
   </main>
-  <div class="install-notice ${installPrompt ? 'is-visible' : ''}" role="status">
-    <span>${t('installPrompt')}</span><button id="install-button" type="button">${t('install')}</button>
-  </div>
   <div class="update-notice ${updateAvailable ? 'is-visible' : ''}" role="status">
     <span>${t('updateReady')}</span><button id="update-button" type="button">${t('update')}</button>
   </div>${celebration()}`
@@ -105,20 +102,59 @@ async function installApp(): Promise<void> {
 }
 
 function playSuccessSound(): void {
-  if (!soundEnabled) return
-  const audioContext = new AudioContext()
-  ;[523.25, 659.25, 783.99].forEach((frequency, index) => {
-    const oscillator = audioContext.createOscillator()
-    const gain = audioContext.createGain()
-    const start = audioContext.currentTime + index * 0.12
-    oscillator.frequency.value = frequency
-    gain.gain.setValueAtTime(0.0001, start)
-    gain.gain.exponentialRampToValueAtTime(0.16, start + 0.02)
-    gain.gain.exponentialRampToValueAtTime(0.0001, start + 0.22)
-    oscillator.connect(gain).connect(audioContext.destination)
-    oscillator.start(start)
-    oscillator.stop(start + 0.23)
-  })
+  if (!soundEnabled || typeof AudioContext === 'undefined') return
+
+  try {
+    const audioContext = new AudioContext()
+    const notes = [
+      { frequency: 523.25, delay: 0, duration: 0.38 },
+      { frequency: 659.25, delay: 0.11, duration: 0.4 },
+      { frequency: 783.99, delay: 0.22, duration: 0.46 },
+      { frequency: 1046.5, delay: 0.35, duration: 0.72 },
+    ]
+
+    audioContext.resume().catch(() => undefined)
+    notes.forEach(({ frequency, delay, duration }, index) => {
+      const start = audioContext.currentTime + delay
+      const fundamental = audioContext.createOscillator()
+      const overtone = audioContext.createOscillator()
+      const fundamentalGain = audioContext.createGain()
+      const overtoneGain = audioContext.createGain()
+
+      fundamental.type = 'triangle'
+      fundamental.frequency.value = frequency
+      fundamentalGain.gain.setValueAtTime(0.0001, start)
+      fundamentalGain.gain.linearRampToValueAtTime(index === 3 ? 0.12 : 0.09, start + 0.025)
+      fundamentalGain.gain.exponentialRampToValueAtTime(0.0001, start + duration)
+      fundamental.connect(fundamentalGain).connect(audioContext.destination)
+      fundamental.start(start)
+      fundamental.stop(start + duration + 0.02)
+
+      overtone.type = 'sine'
+      overtone.frequency.value = frequency * 2
+      overtoneGain.gain.setValueAtTime(0.0001, start)
+      overtoneGain.gain.linearRampToValueAtTime(0.018, start + 0.02)
+      overtoneGain.gain.exponentialRampToValueAtTime(0.0001, start + duration * 0.72)
+      overtone.connect(overtoneGain).connect(audioContext.destination)
+      overtone.start(start)
+      overtone.stop(start + duration * 0.72 + 0.02)
+
+      if (index === notes.length - 1) {
+        fundamental.addEventListener('ended', () => { void audioContext.close() }, { once: true })
+      }
+    })
+  } catch {
+    // Audio is an optional enhancement; success feedback should still work without it.
+  }
+}
+
+function celebrateWithVibration(): void {
+  if (typeof navigator.vibrate !== 'function') return
+  try {
+    navigator.vibrate([45, 35, 75, 35, 120])
+  } catch {
+    // Vibration may be unavailable or blocked by the browser/device.
+  }
 }
 
 function update(nextState: PlayerState): void {
@@ -128,6 +164,7 @@ function update(nextState: PlayerState): void {
   if (justSucceeded && !successAnnounced) {
     successAnnounced = true
     playSuccessSound()
+    celebrateWithVibration()
   }
   if (!state.succeeded) successAnnounced = false
 }

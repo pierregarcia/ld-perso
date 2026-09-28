@@ -35,6 +35,17 @@ test('keeps a complete wrong attempt private', async ({ page }) => {
 test('raises the pin only for the exact solution and reset clears it', async ({ page }) => {
   await page.goto('/')
   await page.locator('#sound-toggle').click()
+  await page.evaluate(() => {
+    Object.defineProperty(window, '__vibrationCalls', { configurable: true, value: [] })
+    Object.defineProperty(navigator, 'vibrate', {
+      configurable: true,
+      value: (pattern: number | number[]) => {
+        const calls = (window as unknown as { __vibrationCalls: number[][] }).__vibrationCalls
+        calls.push(Array.isArray(pattern) ? pattern : [pattern])
+        return true
+      },
+    })
+  })
   await selectActivity(page)
 
   for (const [question, answer] of GROUP_ONE_SERIES_ONE.entries()) {
@@ -43,7 +54,11 @@ test('raises the pin only for the exact solution and reset clears it', async ({ 
 
   await expect(page.locator('.status-pin')).toHaveClass(/is-raised/)
   await expect(page.locator('.celebration')).toHaveClass(/is-visible/)
+  await expect(page.locator('.device')).toHaveClass(/is-complete/)
   await expect(page.locator('[data-answer]').first()).toBeDisabled()
+  await expect.poll(() => page.evaluate(() =>
+    (window as unknown as { __vibrationCalls: number[][] }).__vibrationCalls,
+  )).toEqual([[45, 35, 75, 35, 120]])
 
   await page.locator('#reset-button').click()
   await expect(page.locator('.status-pin')).not.toHaveClass(/is-raised/)
@@ -53,7 +68,6 @@ test('raises the pin only for the exact solution and reset clears it', async ({ 
 
 test('remembers language but not activity state', async ({ page }) => {
   await page.goto('/')
-  await expect(page.locator('#language-toggle')).toBeHidden()
   await page.evaluate(() => localStorage.setItem('lexidata-player.language', 'en'))
   await page.reload()
   await selectActivity(page)
@@ -68,7 +82,6 @@ test('remembers language but not activity state', async ({ page }) => {
 test('offers local installation when the browser supports it', async ({ page }) => {
   await page.goto('/')
 
-  await expect(page.locator('#language-toggle')).toBeHidden()
   await page.evaluate(() => {
     const event = new Event('beforeinstallprompt', { cancelable: true })
     Object.defineProperties(event, {
@@ -80,7 +93,7 @@ test('offers local installation when the browser supports it', async ({ page }) 
 
   await expect(page.locator('#install-button')).toHaveText('Installer')
   await page.locator('#install-button').click()
-  await expect(page.locator('#install-button')).toBeHidden()
+  await expect(page.locator('#install-button')).toHaveCount(0)
 })
 
 test('reloads from the service-worker cache while offline', async ({ page, context }) => {

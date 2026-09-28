@@ -8,6 +8,7 @@ const translations = {
     question: 'Question', answer: 'Réponse', reset: 'Recommencer',
     soundOn: 'Son activé', soundOff: 'Son coupé', success: 'Bravo !',
     successDetail: 'Toutes tes réponses sont correctes.', switchLanguage: 'Passer en anglais',
+    installPrompt: 'Installe Lexidata pour jouer sans connexion internet.', install: 'Installer',
     updateReady: 'Une nouvelle version est disponible.', update: 'Mettre à jour',
   },
   en: {
@@ -17,6 +18,7 @@ const translations = {
     question: 'Question', answer: 'Answer', reset: 'Reset',
     soundOn: 'Sound on', soundOff: 'Sound off', success: 'Well done!',
     successDetail: 'All your answers are correct.', switchLanguage: 'Switch to French',
+    installPrompt: 'Install Lexidata to play without an internet connection.', install: 'Install',
     updateReady: 'A new version is available.', update: 'Update',
   },
 } as const

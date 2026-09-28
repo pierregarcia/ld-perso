@@ -53,7 +53,9 @@ test('raises the pin only for the exact solution and reset clears it', async ({ 
 
 test('remembers language but not activity state', async ({ page }) => {
   await page.goto('/')
-  await page.locator('#language-toggle').click()
+  await expect(page.locator('#language-toggle')).toBeHidden()
+  await page.evaluate(() => localStorage.setItem('lexidata-player.language', 'en'))
+  await page.reload()
   await selectActivity(page)
   await page.reload()
 
@@ -61,6 +63,24 @@ test('remembers language but not activity state', async ({ page }) => {
   await expect(page.locator('#group-select')).toHaveValue('')
   await expect(page.locator('#series-select')).toHaveValue('')
   await expect(page.locator('#reset-button')).toHaveText('Reset')
+})
+
+test('offers local installation when the browser supports it', async ({ page }) => {
+  await page.goto('/')
+
+  await expect(page.locator('#language-toggle')).toBeHidden()
+  await page.evaluate(() => {
+    const event = new Event('beforeinstallprompt', { cancelable: true })
+    Object.defineProperties(event, {
+      prompt: { value: () => Promise.resolve() },
+      userChoice: { value: Promise.resolve({ outcome: 'accepted' }) },
+    })
+    window.dispatchEvent(event)
+  })
+
+  await expect(page.locator('#install-button')).toHaveText('Installer')
+  await page.locator('#install-button').click()
+  await expect(page.locator('#install-button')).toBeHidden()
 })
 
 test('reloads from the service-worker cache while offline', async ({ page, context }) => {

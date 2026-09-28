@@ -61,12 +61,13 @@ try {
     titre:model.titre,
     consigne:model.consigne,
     choix:model.choix,
+    positions:LEXIDATA.positions(model.groupe, model.serie),
     items:globalThis.lexidatelierMelangerItems(model.items, model.groupe * 1000 + model.serie)
   })));
 
   const cards = worksheets.map(sheet => {
     const answers = sheet.items.map((item, index) => `
-      <li><strong>${index + 1}.</strong> ${escapeHtml(sheet.choix[item.bonne])}</li>`).join("");
+      <li><strong>${sheet.positions[index]}.</strong> ${escapeHtml(sheet.choix[item.bonne])}</li>`).join("");
     return `<article class="card">
       <header><span class="code">G${sheet.groupe} · S${sheet.serie}</span><h1>${escapeHtml(sheet.titre)}</h1></header>
       <ol>${answers}</ol>

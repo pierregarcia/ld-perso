@@ -14,7 +14,13 @@ let state: PlayerState = createInitialState()
 let soundEnabled = true
 let successAnnounced = false
 let updateAvailable = false
+let installPrompt: BeforeInstallPromptEvent | null = null
 let applyUpdate: (reloadPage?: boolean) => Promise<void>
+
+interface BeforeInstallPromptEvent extends Event {
+  prompt(): Promise<void>
+  userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>
+}
 
 const t = (key: TranslationKey): string => translate(language, key)
 
@@ -81,9 +87,21 @@ function render(): void {
       </div>
     </section>
   </main>
+  <div class="install-notice ${installPrompt ? 'is-visible' : ''}" role="status">
+    <span>${t('installPrompt')}</span><button id="install-button" type="button">${t('install')}</button>
+  </div>
   <div class="update-notice ${updateAvailable ? 'is-visible' : ''}" role="status">
     <span>${t('updateReady')}</span><button id="update-button" type="button">${t('update')}</button>
   </div>${celebration()}`
+}
+
+async function installApp(): Promise<void> {
+  if (!installPrompt) return
+  const prompt = installPrompt
+  installPrompt = null
+  await prompt.prompt()
+  await prompt.userChoice
+  render()
 }
 
 function playSuccessSound(): void {
@@ -136,9 +154,22 @@ app.addEventListener('click', (event) => {
   } else if (target.closest('#sound-toggle')) {
     soundEnabled = !soundEnabled
     render()
+  } else if (target.closest('#install-button')) {
+    void installApp()
   } else if (target.closest('#update-button')) {
     void applyUpdate(true)
   }
+})
+
+window.addEventListener('beforeinstallprompt', (event) => {
+  event.preventDefault()
+  installPrompt = event as BeforeInstallPromptEvent
+  render()
+})
+
+window.addEventListener('appinstalled', () => {
+  installPrompt = null
+  render()
 })
 
 applyUpdate = registerSW({

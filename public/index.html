@@ -601,6 +601,7 @@ footer.app-footer a:hover{ text-decoration:underline; }
   <button type="button" id="btn-mentions" class="lien-pied">⚖️ Mentions légales</button>
 </footer>
 
+<script src="cp-parcours.js"></script>
 <script>
 "use strict";
 
@@ -858,8 +859,11 @@ function rendreListeDossiers(){
   const nbFiches = biblio.dossiers.reduce((n,d)=>n+d.fiches.length, 0);
   document.getElementById("dash-compteur").textContent =
     `${biblio.dossiers.length} dossier${biblio.dossiers.length>1?"s":""} · ${nbFiches} fiche${nbFiches>1?"s":""}`;
-  document.getElementById("dash-actions").innerHTML = `<button class="btn-clair orange" id="a-nouveau-dossier">➕ Nouveau dossier</button>`;
+  document.getElementById("dash-actions").innerHTML = `
+    <button class="btn-clair orange" id="a-nouveau-dossier">➕ Nouveau dossier</button>
+    <button class="btn-contour" id="a-parcours-cp">📘 Ajouter le parcours CP</button>`;
   document.getElementById("a-nouveau-dossier").onclick = () => ouvrirModalDossier();
+  document.getElementById("a-parcours-cp").onclick = ajouterParcoursCP;
 
   const cartes = biblio.dossiers.map(d => `
     <div class="carte-dossier" data-dossier="${d.id}">

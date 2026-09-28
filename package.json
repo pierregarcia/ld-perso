@@ -1,0 +1,13 @@
+{
+  "name": "lexidatelier",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "pdf:cp": "node scripts/generer-pdf-cp.mjs",
+    "pdf:corrige": "node scripts/generer-corrige-cp.mjs",
+    "pdf:recueil": "node scripts/generer-recueil-cp.mjs"
+  },
+  "devDependencies": {
+    "playwright": "^1.57.0"
+  }
+}

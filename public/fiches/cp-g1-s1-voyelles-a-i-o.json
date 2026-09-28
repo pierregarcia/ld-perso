@@ -1,0 +1,30 @@
+{
+  "version": 5,
+  "groupe": "1",
+  "serie": "1",
+  "nbReponses": 3,
+  "format": "cartes",
+  "theme": "s2",
+  "police": "andika",
+  "taille": 1,
+  "encre": "couleur",
+  "double": false,
+  "titre": "CP - Les voyelles a, i, o",
+  "consigne": "Regarde l'image. Choisis la lettre qui commence le mot.",
+  "couverture": "https://openmoji.org/data/color/svg/1F34A.svg",
+  "banniere": { "image": "https://openmoji.org/data/color/svg/1F34A.svg", "x": 50, "y": 50 },
+  "questions": [
+    { "texte": "ananas", "image": "https://openmoji.org/data/color/svg/1F34D.svg", "propositions": [{ "texte": "a" }, { "texte": "i" }, { "texte": "o" }], "bonne": 0 },
+    { "texte": "avion", "image": "https://openmoji.org/data/color/svg/2708.svg", "propositions": [{ "texte": "a" }, { "texte": "i" }, { "texte": "o" }], "bonne": 0 },
+    { "texte": "araignee", "image": "https://openmoji.org/data/color/svg/1F577.svg", "propositions": [{ "texte": "a" }, { "texte": "i" }, { "texte": "o" }], "bonne": 0 },
+    { "texte": "abeille", "image": "https://openmoji.org/data/color/svg/1F41D.svg", "propositions": [{ "texte": "a" }, { "texte": "i" }, { "texte": "o" }], "bonne": 0 },
+    { "texte": "igloo", "image": "https://openmoji.org/data/color/svg/1F3D4.svg", "propositions": [{ "texte": "a" }, { "texte": "i" }, { "texte": "o" }], "bonne": 1 },
+    { "texte": "insecte", "image": "https://openmoji.org/data/color/svg/1F41B.svg", "propositions": [{ "texte": "a" }, { "texte": "i" }, { "texte": "o" }], "bonne": 1 },
+    { "texte": "ile", "image": "https://openmoji.org/data/color/svg/1F3DD.svg", "propositions": [{ "texte": "a" }, { "texte": "i" }, { "texte": "o" }], "bonne": 1 },
+    { "texte": "image", "image": "https://openmoji.org/data/color/svg/1F5BC.svg", "propositions": [{ "texte": "a" }, { "texte": "i" }, { "texte": "o" }], "bonne": 1 },
+    { "texte": "orange", "image": "https://openmoji.org/data/color/svg/1F34A.svg", "propositions": [{ "texte": "a" }, { "texte": "i" }, { "texte": "o" }], "bonne": 2 },
+    { "texte": "ours", "image": "https://openmoji.org/data/color/svg/1F43B.svg", "propositions": [{ "texte": "a" }, { "texte": "i" }, { "texte": "o" }], "bonne": 2 },
+    { "texte": "ordinateur", "image": "https://openmoji.org/data/color/svg/1F4BB.svg", "propositions": [{ "texte": "a" }, { "texte": "i" }, { "texte": "o" }], "bonne": 2 },
+    { "texte": "oiseau", "image": "https://openmoji.org/data/color/svg/1F426.svg", "propositions": [{ "texte": "a" }, { "texte": "i" }, { "texte": "o" }], "bonne": 2 }
+  ]
+}

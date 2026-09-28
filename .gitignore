@@ -1,0 +1,6 @@
+node_modules/
+lexidata-player/node_modules/
+lexidata-player/dist/
+lexidata-player/test-results/
+lexidata-player/playwright-report/
+*.log

@@ -1,0 +1,30 @@
+{
+  "version": 5,
+  "groupe": "1",
+  "serie": "3",
+  "nbReponses": 3,
+  "format": "cartes",
+  "theme": "s2",
+  "police": "andika",
+  "taille": 1,
+  "encre": "couleur",
+  "double": false,
+  "titre": "CP - Les consonnes m, l, r",
+  "consigne": "Regarde l'image. Choisis la lettre qui commence le mot.",
+  "couverture": "https://openmoji.org/data/color/svg/1F3CD.svg",
+  "banniere": { "image": "https://openmoji.org/data/color/svg/1F3CD.svg", "x": 50, "y": 50 },
+  "questions": [
+    { "texte": "moto", "image": "https://openmoji.org/data/color/svg/1F3CD.svg", "propositions": [{ "texte": "m" }, { "texte": "l" }, { "texte": "r" }], "bonne": 0 },
+    { "texte": "maison", "image": "https://openmoji.org/data/color/svg/1F3E0.svg", "propositions": [{ "texte": "m" }, { "texte": "l" }, { "texte": "r" }], "bonne": 0 },
+    { "texte": "main", "image": "https://openmoji.org/data/color/svg/270B.svg", "propositions": [{ "texte": "m" }, { "texte": "l" }, { "texte": "r" }], "bonne": 0 },
+    { "texte": "montagne", "image": "https://openmoji.org/data/color/svg/26F0.svg", "propositions": [{ "texte": "m" }, { "texte": "l" }, { "texte": "r" }], "bonne": 0 },
+    { "texte": "lune", "image": "https://openmoji.org/data/color/svg/1F319.svg", "propositions": [{ "texte": "m" }, { "texte": "l" }, { "texte": "r" }], "bonne": 1 },
+    { "texte": "livre", "image": "https://openmoji.org/data/color/svg/1F4D6.svg", "propositions": [{ "texte": "m" }, { "texte": "l" }, { "texte": "r" }], "bonne": 1 },
+    { "texte": "lion", "image": "https://openmoji.org/data/color/svg/1F981.svg", "propositions": [{ "texte": "m" }, { "texte": "l" }, { "texte": "r" }], "bonne": 1 },
+    { "texte": "lit", "image": "https://openmoji.org/data/color/svg/1F6CF.svg", "propositions": [{ "texte": "m" }, { "texte": "l" }, { "texte": "r" }], "bonne": 1 },
+    { "texte": "renard", "image": "https://openmoji.org/data/color/svg/1F98A.svg", "propositions": [{ "texte": "m" }, { "texte": "l" }, { "texte": "r" }], "bonne": 2 },
+    { "texte": "robot", "image": "https://openmoji.org/data/color/svg/1F916.svg", "propositions": [{ "texte": "m" }, { "texte": "l" }, { "texte": "r" }], "bonne": 2 },
+    { "texte": "rose", "image": "https://openmoji.org/data/color/svg/1F339.svg", "propositions": [{ "texte": "m" }, { "texte": "l" }, { "texte": "r" }], "bonne": 2 },
+    { "texte": "route", "image": "https://openmoji.org/data/color/svg/1F6E3.svg", "propositions": [{ "texte": "m" }, { "texte": "l" }, { "texte": "r" }], "bonne": 2 }
+  ]
+}

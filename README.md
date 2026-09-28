@@ -86,6 +86,40 @@ transitent uniquement vers *votre* Nuage, avec *vos* identifiants.
 L'application tient dans un **unique fichier** `public/index.html` : ni backend,
 ni base de données, ni dépendance. Il suffit de le servir en statique.
 
+### Générer les PDF du parcours CP
+
+Le script suivant génère un PDF A4 pour chacune des fiches du parcours CP dans
+le dossier `sortie-pdf/` :
+
+```powershell
+npm install
+npx playwright install chromium
+npm run pdf:cp
+```
+
+Cette commande genere aussi automatiquement `corrige-parcours-cp-v2.pdf` et
+`recueil-parcours-cp-v2.pdf` dans le meme dossier de sortie, apres les fiches
+individuelles.
+
+Pour générer un seul PDF contenant le corrigé de toutes les fiches :
+
+```powershell
+npm run pdf:corrige
+```
+
+Pour générer un seul PDF contenant toutes les fiches, prêt a envoyer a
+l'impression :
+
+```powershell
+npm run pdf:recueil
+```
+
+Pour choisir un autre dossier de sortie, donnez-le en argument :
+
+```powershell
+npm run pdf:cp -- mes-pdf-cp
+```
+
 Sur la Forge, les GitLab Pages publient automatiquement le dossier `public/`.
 
 ### Les polices (facultatif)

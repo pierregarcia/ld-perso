@@ -1,0 +1,30 @@
+{
+  "version": 5,
+  "groupe": "1",
+  "serie": "2",
+  "nbReponses": 3,
+  "format": "cartes",
+  "theme": "s2",
+  "police": "andika",
+  "taille": 1,
+  "encre": "couleur",
+  "double": false,
+  "titre": "CP - Les voyelles e, u",
+  "consigne": "Regarde l'image. Choisis la lettre qui commence le mot.",
+  "couverture": "https://openmoji.org/data/color/svg/1F40C.svg",
+  "banniere": { "image": "https://openmoji.org/data/color/svg/1F40C.svg", "x": 50, "y": 50 },
+  "questions": [
+    { "texte": "ecole", "image": "https://openmoji.org/data/color/svg/1F3EB.svg", "propositions": [{ "texte": "e" }, { "texte": "u" }, { "texte": "o" }], "bonne": 0 },
+    { "texte": "escargot", "image": "https://openmoji.org/data/color/svg/1F40C.svg", "propositions": [{ "texte": "e" }, { "texte": "u" }, { "texte": "o" }], "bonne": 0 },
+    { "texte": "elephant", "image": "https://openmoji.org/data/color/svg/1F418.svg", "propositions": [{ "texte": "e" }, { "texte": "u" }, { "texte": "o" }], "bonne": 0 },
+    { "texte": "etoile", "image": "https://openmoji.org/data/color/svg/2B50.svg", "propositions": [{ "texte": "e" }, { "texte": "u" }, { "texte": "o" }], "bonne": 0 },
+    { "texte": "echelle", "image": "https://openmoji.org/data/color/svg/1FA9C.svg", "propositions": [{ "texte": "e" }, { "texte": "u" }, { "texte": "o" }], "bonne": 0 },
+    { "texte": "eglise", "image": "https://openmoji.org/data/color/svg/26EA.svg", "propositions": [{ "texte": "e" }, { "texte": "u" }, { "texte": "o" }], "bonne": 0 },
+    { "texte": "usine", "image": "https://openmoji.org/data/color/svg/1F3ED.svg", "propositions": [{ "texte": "e" }, { "texte": "u" }, { "texte": "o" }], "bonne": 1 },
+    { "texte": "uniforme", "image": "https://openmoji.org/data/color/svg/1F455.svg", "propositions": [{ "texte": "e" }, { "texte": "u" }, { "texte": "o" }], "bonne": 1 },
+    { "texte": "ustensile", "image": "https://openmoji.org/data/color/svg/1F374.svg", "propositions": [{ "texte": "e" }, { "texte": "u" }, { "texte": "o" }], "bonne": 1 },
+    { "texte": "un", "image": "https://openmoji.org/data/color/svg/0031-FE0F-20E3.svg", "propositions": [{ "texte": "e" }, { "texte": "u" }, { "texte": "o" }], "bonne": 1 },
+    { "texte": "ours", "image": "https://openmoji.org/data/color/svg/1F43B.svg", "propositions": [{ "texte": "e" }, { "texte": "u" }, { "texte": "o" }], "bonne": 2 },
+    { "texte": "orange", "image": "https://openmoji.org/data/color/svg/1F34A.svg", "propositions": [{ "texte": "e" }, { "texte": "u" }, { "texte": "o" }], "bonne": 2 }
+  ]
+}

@@ -78,7 +78,6 @@ function render(): void {
       </section>
       <div class="device-footer">
         <button id="reset-button" class="reset-button" type="button" ${ready ? '' : 'disabled'}>${t('reset')}</button>
-        <span class="device-wordmark"><b>LEXI</b>DATA</span>
       </div>
     </section>
   </main>

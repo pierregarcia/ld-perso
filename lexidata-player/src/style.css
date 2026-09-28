@@ -94,6 +94,7 @@ button:disabled { cursor: not-allowed; }
 .success-message { display: grid; gap: 5px; width: min(88vw,430px); padding: 24px 28px; border: 4px solid var(--ink); border-radius: 8px; background: var(--paper); box-shadow: 0 16px 0 rgba(33,31,27,.22); text-align: center; transform: translateY(16px) scale(.92); opacity: 0; }
 .is-visible .success-message { animation: message-in 420ms 220ms cubic-bezier(.2,1.5,.4,1) forwards; }
 .success-message strong { color: var(--coral-dark); font-size: 2rem; }
+.confetti { position: absolute; inset: 0; overflow: hidden; }
 .confetti i { position: absolute; left: calc(8% + (var(--i) * 3.7%)); top: -20px; width: 10px; height: 18px; background: hsl(calc(var(--i) * 47deg),75%,46%); animation: confetti-fall 1.8s calc(var(--i) * 35ms) ease-in forwards; }
 @keyframes message-in { to { opacity: 1; transform: translateY(0) scale(1); } }
 @keyframes confetti-fall { to { transform: translateY(105vh) rotate(520deg); } }
